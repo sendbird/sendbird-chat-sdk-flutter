@@ -200,12 +200,12 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<UserMessage> sendUserMessage(
+  Future<UserMessage> sendUserMessageWithText(
     String text, {
     OnMessageCallback onCompleted,
   }) async {
     final params = UserMessageParams()..message = text;
-    return sendUserMessageWithParams(
+    return sendUserMessage(
       params,
       onCompleted: onCompleted,
     );
@@ -217,7 +217,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<UserMessage> sendUserMessageWithParams(
+  Future<UserMessage> sendUserMessage(
     UserMessageParams params, {
     OnMessageCallback onCompleted,
   }) async {
@@ -280,7 +280,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
     }
 
     final params = UserMessageParams.withMessage(message, deepCopy: false);
-    return sendUserMessageWithParams(
+    return sendUserMessage(
       params,
       onCompleted: onCompleted,
     );
@@ -511,7 +511,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
 
     if (message is UserMessage) {
       final params = UserMessageParams.withMessage(message, deepCopy: false);
-      return targetChannel.sendUserMessageWithParams(
+      return targetChannel.sendUserMessage(
         params,
         onCompleted: onCompleted,
       );
@@ -526,15 +526,12 @@ class BaseChannel implements Cacheable<BaseChannel> {
     }
   }
 
-  /// Retreieve massage change logs with [token] and [params].
-  Future<MessageChangeLogsResponse> getMessageChangeLogsWithToken(
+  /// Retreieve massage change logs with [timestamp] or [token] and [params].
+  Future<MessageChangeLogsResponse> getMessageChangeLogs({
+    int timestamp,
     String token,
     MessageChangeLogParams params,
-  ) async {
-    if (token == null || token.isEmpty) {
-      throw InvalidParameterError();
-    }
-
+  }) async {
     if (params == null) {
       throw InvalidParameterError();
     }
@@ -544,27 +541,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
       channelUrl: channelUrl,
       params: params,
       token: token,
-    );
-  }
-
-  /// Retreieve massage change logs with [timestamp] and [params].
-  Future<MessageChangeLogsResponse> getMessageChangeLogsWithTimestamp(
-    int timestamp,
-    MessageChangeLogParams params,
-  ) async {
-    if (timestamp == null || timestamp <= 0) {
-      throw InvalidParameterError();
-    }
-
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
-    return _sdk.api.getMessageChangeLogs(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params,
-      timestamp: timestamp,
+      timestamp: timestamp ?? double.maxFinite.round(),
     );
   }
 

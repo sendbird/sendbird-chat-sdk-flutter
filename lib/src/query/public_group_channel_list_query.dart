@@ -6,47 +6,50 @@ import '../models/error.dart';
 import '../models/group_channel_filters.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
-/// A query object to retrieve list of group channel.
-class GroupChannelListQuery extends QueryBase {
-  /// True if query result includes empty (message) channel
+/// A query object to retrieve list of public group channel.
+class PublicGroupChannelListQuery extends QueryBase {
+  /// Query result includes empty (message) channel if `true`
   /// default value is `true`
   bool includeEmptyChannel = true;
 
-  /// True if query result includes frozen channels.
+  /// Query result includes frozen channels if `true`
   /// default value is `true`
   bool includeFrozenChannel = true;
 
-  /// True if query result of channel object contains member list
+  /// Query result of channel object contains member list if `true`
   /// default value is `true`
   bool includeMemberList = true;
 
-  /// Order of the query result
-  GroupChannelListOrder order;
+  // Query result of channel object contains meta data if `true`
+  // deault value is `false`
+  // bool includeMetaData = false;
 
-  /// Sets query type user Id filter, it only will work when `includeMemberList` is true
-  GroupChannelListQueryType queryType;
+  /// Order of query result
+  PublicGroupChannelListOrder order;
 
-  /// Sets filter channel urls. It will return a list containing only and exactly matched
+  /// Filter for channel urls.
+  ///
+  /// Result will return a list containing only and exactly matched
   /// with given urls. This filter does not cooperate with other filters.
   List<String> channelUrls;
 
-  /// Sets the member state filter
-  MemberStateFilter memberStateFilter;
-
-  /// Sets to filter super channel. Default is `all`
+  /// Filter channels for super group channel. Default is `all`
   GroupChannelSuperChannelFilter superChannelFilter;
 
-  /// Sets to filter channels by custom type that starts with
+  /// Filter by current user's member state in public group channel
+  PublicGroupChannelMembershipFilter membershipFilter;
+
+  /// Filter by custom type that starts with
   String customTypeStartWithFilter;
 
-  /// Sets the custom type filter.
+  /// Filter by custom types.
   List<String> customTypesFilter;
 
-  /// Sets a filter to return only channels that contains the
-  /// specified group channel name
+  /// Filter by channel name contains certain text
   String channelNameContainsFilter;
 
-  /// Sets a key for ordering by value in the metadata.
+  /// Sets metadata's key for ordering its value
+  ///
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
   String metaDataOrderKeyFilter;
 
@@ -63,15 +66,16 @@ class GroupChannelListQuery extends QueryBase {
     if (includeEmptyChannel)
       options.add(ChannelQueryIncludeOption.emptyChannel);
     if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
+    // if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
 
     final filter = GroupChannelFilter()
       ..customTypeStartswith = customTypeStartWithFilter
       ..customTypes = customTypesFilter
-      ..memberStateFilter = memberStateFilter
-      ..memberStateFilter = memberStateFilter
       ..nameContains = channelNameContainsFilter
       ..superMode = superChannelFilter
-      ..metadataOrderKey = metaDataOrderKeyFilter;
+      ..publicMembershipFilter = membershipFilter
+      ..metadataOrderKey = metaDataOrderKeyFilter
+      ..publicMode = GroupChannelPublicChannelFilter.public;
 
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.getPublicGroupChannels(

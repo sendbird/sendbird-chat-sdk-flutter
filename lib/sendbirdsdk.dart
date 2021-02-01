@@ -47,8 +47,9 @@ export 'src/params/scheduled_user_message_params.dart';
 export 'src/params/threaded_message_list_params.dart';
 export 'src/params/user_message_params.dart';
 
+export 'src/query/message_search_query.dart';
 export 'src/query/user_list_query.dart';
 export 'src/query/group_channel_list_query.dart';
 export 'src/query/open_channel_list_query.dart';
 export 'src/query/operator_list_query.dart';
-export 'src/query/message_search_query.dart';
+export 'src/query/public_group_channel_list_query.dart';

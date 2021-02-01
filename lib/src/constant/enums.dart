@@ -60,29 +60,31 @@ enum MemberState { none, invited, joined }
 /// Represents a filter for member state
 enum MemberStateFilter {
   all,
+
   invited,
+
   joined,
+
   @JsonValue('invited_by_friend')
   invitedByFriend,
+
   @JsonValue('invited_by_non_friend')
   invitedByNonFriend,
 }
 
-String memberStateFilterToString(MemberStateFilter filter) {
-  switch (filter) {
-    case MemberStateFilter.all:
-      return 'all';
-    case MemberStateFilter.invited:
-      return 'invited';
-    case MemberStateFilter.joined:
-      return 'joined';
-    case MemberStateFilter.invitedByFriend:
-      return 'invited_by_friend';
-    case MemberStateFilter.invitedByNonFriend:
-      return 'invited_by_non_friend';
-    default:
-      return 'all';
-  }
+const memberStateFilterEnumMap = <MemberStateFilter, String>{
+  MemberStateFilter.all: 'all',
+  MemberStateFilter.invited: 'invited',
+  MemberStateFilter.joined: 'joined',
+  MemberStateFilter.invitedByFriend: 'invited_by_friend',
+  MemberStateFilter.invitedByNonFriend: 'invited_by_non_friend',
+};
+
+/// Represents a filter for public group channel member state
+enum PublicGroupChannelMembershipFilter {
+  all,
+
+  joined,
 }
 
 /// Represents a filter for message type
@@ -100,12 +102,15 @@ enum MessageTypeFilter {
 /// Represents a filter for super group channel
 enum GroupChannelSuperChannelFilter {
   all,
+
   @JsonValue('super')
   superChannel,
+
   @JsonValue('nonsuper')
   nonsuperChannel,
 }
 
+/// Represents a filter for group channel visibilty
 enum GroupChannelPublicChannelFilter { all, public, private }
 
 const groupChannelSuperFilterEnumMap = <GroupChannelSuperChannelFilter, String>{
@@ -207,8 +212,10 @@ T enumDecode<T>(
 /// Represents channel's visibility state
 enum GroupChannelHiddenState {
   unhidden,
+
   @JsonValue('allow_auto_unhide')
   allowAutoUnhide,
+
   @JsonValue('prevent_auto_unhide')
   preventAutoUnhide,
 }
@@ -217,10 +224,13 @@ enum GroupChannelHiddenState {
 enum ChannelHiddenStateFilter {
   @JsonValue('unhidden_only')
   unhiddenOnly,
+
   @JsonValue('hidden_only')
   hiddenOnly,
+
   @JsonValue('hidden_allow_auto_hide')
   hiddenAllowAutoUnhide,
+
   @JsonValue('hidden_prevent_auto_unhide')
   hiddenPreventAutoUnhide
 }
@@ -229,11 +239,12 @@ enum ChannelHiddenStateFilter {
 enum GroupChannelListOrder {
   chronological,
 
-  /// only support in my group channel
   @JsonValue('latest_last_message')
   latestLastMessage,
+
   @JsonValue('channel_name_alphabetical')
   channelNameAlphabetical,
+
   @JsonValue('metadata_value_alphabetical')
   channelMetaDataValueAlphabetical
 }
@@ -243,6 +254,26 @@ const groupChannelListOrderEnumMap = <GroupChannelListOrder, String>{
   GroupChannelListOrder.latestLastMessage: 'latest_last_message',
   GroupChannelListOrder.channelNameAlphabetical: 'channel_name_alphabetical',
   GroupChannelListOrder.channelMetaDataValueAlphabetical:
+      'metadata_value_alphabetical',
+};
+
+/// Represents result order of public group channel query
+enum PublicGroupChannelListOrder {
+  chronological,
+
+  @JsonValue('channel_name_alphabetical')
+  channelNameAlphabetical,
+
+  @JsonValue('metadata_value_alphabetical')
+  channelMetaDataValueAlphabetical
+}
+
+const publicGroupChannelListOrderEnumMap =
+    <PublicGroupChannelListOrder, String>{
+  PublicGroupChannelListOrder.chronological: 'chronological',
+  PublicGroupChannelListOrder.channelNameAlphabetical:
+      'channel_name_alphabetical',
+  PublicGroupChannelListOrder.channelMetaDataValueAlphabetical:
       'metadata_value_alphabetical',
 };
 

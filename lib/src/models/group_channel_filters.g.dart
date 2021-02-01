@@ -24,7 +24,10 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) {
     ..unreadFilter = _$enumDecodeNullable(
         _$UnreadChannelFilterEnumMap, json['unread_filter'])
     ..hiddenMode = _$enumDecodeNullable(
-        _$ChannelHiddenStateFilterEnumMap, json['hidden_mode']);
+        _$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
+    ..publicMembershipFilter = _$enumDecodeNullable(
+        _$PublicGroupChannelMembershipFilterEnumMap,
+        json['public_membership_filter']);
 }
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
@@ -41,6 +44,8 @@ Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
       'name_contains': instance.nameContains,
       'unread_filter': _$UnreadChannelFilterEnumMap[instance.unreadFilter],
       'hidden_mode': _$ChannelHiddenStateFilterEnumMap[instance.hiddenMode],
+      'public_membership_filter': _$PublicGroupChannelMembershipFilterEnumMap[
+          instance.publicMembershipFilter],
     };
 
 T _$enumDecode<T>(
@@ -106,4 +111,9 @@ const _$ChannelHiddenStateFilterEnumMap = {
   ChannelHiddenStateFilter.hiddenAllowAutoUnhide: 'hidden_allow_auto_hide',
   ChannelHiddenStateFilter.hiddenPreventAutoUnhide:
       'hidden_prevent_auto_unhide',
+};
+
+const _$PublicGroupChannelMembershipFilterEnumMap = {
+  PublicGroupChannelMembershipFilter.all: 'all',
+  PublicGroupChannelMembershipFilter.joined: 'joined',
 };

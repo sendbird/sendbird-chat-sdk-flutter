@@ -409,7 +409,7 @@ class ApiClient {
     @required String userId,
   }) async {
     final url = endpoint.Users.userid_groupchannel_count.format([userId]);
-    final params = {'state': memberStateFilterToString(memberFilter)};
+    final params = {'state': memberStateFilterEnumMap[memberFilter]};
     final res = await client.get(url: url, queryParams: params);
     return res['group_channel_count'];
   }
@@ -1293,7 +1293,7 @@ class ApiClient {
     if (sessionKey != null) {
       headers['Access-Token'] = sessionKey;
     }
-    return await client.post(url: url, body: body, headers: headers);
+    return client.post(url: url, body: body, headers: headers);
   }
 
   //fetch list
@@ -1324,7 +1324,7 @@ class ApiClient {
   }
 
   Future<ChannelListQueryResponse> getPublicGroupChannels({
-    GroupChannelListOrder order,
+    PublicGroupChannelListOrder order,
     String token,
     int limit = 30,
     List<String> channelUrls,
@@ -1337,10 +1337,11 @@ class ApiClient {
       'token': token,
       'limit': limit,
       'channelUrls': channelUrls,
-      'order': groupChannelListOrderEnumMap[order],
+      'order': publicGroupChannelListOrderEnumMap[order],
       'show_empty': options.contains(ChannelQueryIncludeOption.emptyChannel),
       'show_member': options.contains(ChannelQueryIncludeOption.memberList),
       'show_frozen': options.contains(ChannelQueryIncludeOption.frozenChannel),
+      // 'show_metadata': options.contains(ChannelQueryIncludeOption.metaData),
       'show_read_receipt': 'true',
       'show_delivery_receipt': 'true',
       'distinct_mode': 'all',
@@ -1348,7 +1349,7 @@ class ApiClient {
 
     params.addAll(filter.toJson());
 
-    if (order == GroupChannelListOrder.channelMetaDataValueAlphabetical &&
+    if (order == PublicGroupChannelListOrder.channelMetaDataValueAlphabetical &&
         filter.metadataOrderKey != null) {
       params['metadata_order_key'] = filter.metadataOrderKey;
     }
@@ -1383,6 +1384,7 @@ class ApiClient {
       'show_empty': options.contains(ChannelQueryIncludeOption.emptyChannel),
       'show_member': options.contains(ChannelQueryIncludeOption.memberList),
       'show_frozen': options.contains(ChannelQueryIncludeOption.frozenChannel),
+      // 'show_metadata': options.contains(ChannelQueryIncludeOption.metaData),
       'show_read_receipt': 'true',
       'show_delivery_receipt': 'true',
       'distinct_mode': 'all',

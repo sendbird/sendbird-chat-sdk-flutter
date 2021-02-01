@@ -53,5 +53,7 @@ class GroupChannelFilter {
   /// The default value is `unhiddenOnly`
   ChannelHiddenStateFilter hiddenMode = ChannelHiddenStateFilter.unhiddenOnly;
 
+  PublicGroupChannelMembershipFilter publicMembershipFilter;
+
   Map<String, dynamic> toJson() => _$GroupChannelFilterToJson(this);
 }

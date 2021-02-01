@@ -230,7 +230,7 @@ class BaseMessage {
     }
 
     final sdk = SendbirdSdk().getInternal();
-    return await sdk.api.getMessage(
+    return sdk.api.getMessage(
       channelType: params.channelType,
       channelUrl: params.channelUrl,
       messageId: params.messageId,
@@ -240,10 +240,10 @@ class BaseMessage {
 
   /// Retrieves threaded messages (replies) on this message with [timestamp]
   /// and [params].
-  Future<ThreadedMessageResponse> getThreadedMessages({
+  Future<ThreadedMessageResponse> getThreadedMessageByTimestamp(
     int timestamp,
-    @required ThreadedMessageListParams params,
-  }) async {
+    ThreadedMessageListParams params,
+  ) async {
     if (params == null) {
       throw InvalidParameterError();
     }

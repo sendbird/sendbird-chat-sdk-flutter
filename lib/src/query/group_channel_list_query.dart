@@ -7,17 +7,21 @@ import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of my group channel.
 class GroupChannelListQuery extends QueryBase {
-  /// True if query result includes empty (message) channel
+  /// Query result includes empty (message) channel if `true`.
   /// default value is `true`
   bool includeEmptyChannel = true;
 
-  /// True if query result includes frozen channels.
+  /// Query result includes frozen channels if `true`.
   /// default value is `true`
   bool includeFrozenChannel = true;
 
-  /// True if query result of channel object contains member list
+  /// Query result of channel object contains member list if `true`.
   /// default value is `true`
   bool includeMemberList = true;
+
+  // Query result of channel object contains meta data if `true`.
+  // deault value is `false`
+  // bool includeMetaData = false;
 
   /// Order of the query result
   GroupChannelListOrder order;
@@ -25,7 +29,9 @@ class GroupChannelListQuery extends QueryBase {
   /// Sets query type user Id filter, it only will work when `includeMemberList` is true
   GroupChannelListQueryType queryType;
 
-  /// Sets filter channel urls. It will return a list containing only and exactly matched
+  /// Sets filter channel urls.
+  ///
+  /// It will return a list containing only and exactly matched
   /// with given urls. This filter does not cooperate with other filters.
   List<String> channelUrls;
 
@@ -44,16 +50,21 @@ class GroupChannelListQuery extends QueryBase {
   /// Sets the custom type filter.
   List<String> customTypesFilter;
 
-  /// Sets the filter with nickname. Query result will contains
+  /// Sets the filter with nickname.
+  ///
+  /// Query result will contains
   /// channels that any one of member contains given nickname
   String nicknameContainsFilter;
 
-  /// Sets the filter with user IDs that query result will return
-  /// if any one of user id matches with channel's members
+  /// Sets the filter with user IDs
+  ///
+  /// Query result will return if any one of user id matches with channel's members
   List<String> userIdsIncludeFilter;
 
-  /// Sets the filter with user IDs that query result will return
-  /// only if channel's members are exactly matched with this property
+  /// Sets the filter with user IDs
+  ///
+  /// Query result will return only if channel's members are exactly matched
+  /// with this property
   List<String> userIdsExactFilter;
 
   /// Sets a filter to return only channels that contains the
@@ -123,6 +134,7 @@ class GroupChannelListQuery extends QueryBase {
     if (includeEmptyChannel)
       options.add(ChannelQueryIncludeOption.emptyChannel);
     if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
+    // if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
 
     final filter = GroupChannelFilter()
       ..customTypeStartswith = customTypeStartWithFilter

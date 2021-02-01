@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:yaml/yaml.dart';
 
 import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
@@ -160,7 +163,11 @@ class SendbirdSdk {
   }
 
   Future<String> getSdkVersion() async {
-    return "3.0.0";
+    final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
+    final file = File(pubspecPath);
+    String configText = file.readAsStringSync();
+    final configMap = loadYaml(configText);
+    return configMap['version'];
   }
 
   bool isInitialized() {
@@ -380,7 +387,7 @@ class SendbirdSdk {
       _int.sessionManager.setSessionKey(sessionKey);
       await _int.api.markAsDelivered(channelUrl: channelUrl, userId: userId);
     } else {
-      //error payload
+      throw InvalidParameterError();
     }
   }
 
