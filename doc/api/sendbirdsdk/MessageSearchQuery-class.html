@@ -83,6 +83,9 @@
       <li><a href="../sendbirdsdk/OpenChannelListQuery-class.html">OpenChannelListQuery</a></li>
       <li><a href="../sendbirdsdk/OpenChannelParams-class.html">OpenChannelParams</a></li>
       <li><a href="../sendbirdsdk/OperatorListQuery-class.html">OperatorListQuery</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></li>
+      <li><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></li>
+      <li><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></li>
       <li><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk-class.html">SendbirdSdk</a></li>
       <li><a href="../sendbirdsdk/Sender-class.html">Sender</a></li>
@@ -109,13 +112,15 @@
       <li><a href="../sendbirdsdk/groupChannelPublicFilterEnumMap-constant.html">groupChannelPublicFilterEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelPushTriggerOptionEnumMap-constant.html">groupChannelPushTriggerOptionEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelSuperFilterEnumMap-constant.html">groupChannelSuperFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></li>
+      <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
       <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
     
     
       <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
       <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
       <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-      <li><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></li>
       <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
       <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
       <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
@@ -146,6 +151,8 @@
       <li><a href="../sendbirdsdk/MetaArrayUpdateMode-class.html">MetaArrayUpdateMode</a></li>
       <li><a href="../sendbirdsdk/MetaCounterMode-class.html">MetaCounterMode</a></li>
       <li><a href="../sendbirdsdk/MuteState-class.html">MuteState</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></li>
       <li><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></li>
       <li><a href="../sendbirdsdk/PushTokenRegistrationStatus-class.html">PushTokenRegistrationStatus</a></li>
       <li><a href="../sendbirdsdk/PushTokenType-class.html">PushTokenType</a></li>
@@ -180,7 +187,7 @@
       <div><h1><span class="kind-class">MessageSearchQuery</span> class  </h1></div>
 
     <section class="desc markdown">
-      <p>TBD</p>
+      <p>A query object to search messages</p>
     </section>
     
 
@@ -201,12 +208,28 @@
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="afterIndex" class="property">
+          <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/afterIndex.html">afterIndex</a></span>
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
+        </dt>
+        <dd>
+           
+                  <div class="features">read / write</div>
+</dd>
+        <dt id="beforeIndex" class="property">
+          <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/beforeIndex.html">beforeIndex</a></span>
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
+        </dt>
+        <dd>
+           
+                  <div class="features">read / write</div>
+</dd>
         <dt id="channelCustomType" class="property">
           <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/channelCustomType.html">channelCustomType</a></span>
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
         </dt>
         <dd>
-           
+          Channel custom type to filter 
                   <div class="features">read / write</div>
 </dd>
         <dt id="channelUrl" class="property">
@@ -214,7 +237,7 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
         </dt>
         <dd>
-           
+          Channel url 
                   <div class="features">read / write</div>
 </dd>
         <dt id="exactMatch" class="property">
@@ -222,7 +245,7 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
         </dt>
         <dd>
-           
+          <code>true</code> to be exact match for keyword 
                   <div class="features">read / write</div>
 </dd>
         <dt id="hashCode" class="property inherited">
@@ -246,7 +269,7 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
         </dt>
         <dd>
-           
+          Keyword to search 
                   <div class="features">read / write</div>
 </dd>
         <dt id="limit" class="property inherited">
@@ -270,7 +293,7 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>         
         </dt>
         <dd>
-           
+          timestamp to begin search 
                   <div class="features">read / write</div>
 </dd>
         <dt id="messageTimestampTo" class="property">
@@ -278,7 +301,15 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>         
         </dt>
         <dd>
-           
+          timestamp to end search 
+                  <div class="features">read / write</div>
+</dd>
+        <dt id="order" class="property">
+          <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/order.html">order</a></span>
+          <span class="signature">&#8596; <a href="../sendbirdsdk/MessageSearchQueryOrder-class.html">MessageSearchQueryOrder</a></span>         
+        </dt>
+        <dd>
+          Message search result sort order 
                   <div class="features">read / write</div>
 </dd>
         <dt id="reverse" class="property">
@@ -286,7 +317,8 @@
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
         </dt>
         <dd>
-           
+          Determines whether to sort the retrieved messages in reverse
+order. <a href="../sendbirdsdk/MessageSearchQuery/reverse.html">[...]</a>
                   <div class="features">read / write</div>
 </dd>
         <dt id="runtimeType" class="property inherited">
@@ -296,6 +328,14 @@
         <dd class="inherited">
           A representation of the runtime type of the object. 
                   <div class="features">read-only, inherited</div>
+</dd>
+        <dt id="targetUserIds" class="property">
+          <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/targetUserIds.html">targetUserIds</a></span>
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>         
+        </dt>
+        <dd>
+           
+                  <div class="features">read / write</div>
 </dd>
         <dt id="token" class="property inherited">
           <span class="name"><a href="../sendbirdsdk/MessageSearchQuery/token.html">token</a></span>
@@ -370,6 +410,8 @@
       <li class="section-title">
         <a href="../sendbirdsdk/MessageSearchQuery-class.html#instance-properties">Properties</a>
       </li>
+      <li><a href="../sendbirdsdk/MessageSearchQuery/afterIndex.html">afterIndex</a></li>
+      <li><a href="../sendbirdsdk/MessageSearchQuery/beforeIndex.html">beforeIndex</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/channelCustomType.html">channelCustomType</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/channelUrl.html">channelUrl</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/exactMatch.html">exactMatch</a></li>
@@ -380,8 +422,10 @@
       <li class="inherited"><a href="../sendbirdsdk/MessageSearchQuery/loading.html">loading</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/messageTimestampFrom.html">messageTimestampFrom</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/messageTimestampTo.html">messageTimestampTo</a></li>
+      <li><a href="../sendbirdsdk/MessageSearchQuery/order.html">order</a></li>
       <li><a href="../sendbirdsdk/MessageSearchQuery/reverse.html">reverse</a></li>
       <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+      <li><a href="../sendbirdsdk/MessageSearchQuery/targetUserIds.html">targetUserIds</a></li>
       <li class="inherited"><a href="../sendbirdsdk/MessageSearchQuery/token.html">token</a></li>
     
       <li class="section-title"><a href="../sendbirdsdk/MessageSearchQuery-class.html#instance-methods">Methods</a></li>

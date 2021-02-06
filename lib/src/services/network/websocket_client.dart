@@ -43,7 +43,7 @@ class WebSocketClient {
     _functionError = onError;
   }
 
-  FutureOr<void> connect(String url) async {
+  Future<void> connect(String url) async {
     if (url == null) throw WebSocketError(message: 'Invalid URL supplied');
     if (url.length < 10) throw WebSocketError(message: 'Invalid URL supplied');
     // already conncted on same url

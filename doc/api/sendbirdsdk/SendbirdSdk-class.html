@@ -83,6 +83,9 @@
       <li><a href="../sendbirdsdk/OpenChannelListQuery-class.html">OpenChannelListQuery</a></li>
       <li><a href="../sendbirdsdk/OpenChannelParams-class.html">OpenChannelParams</a></li>
       <li><a href="../sendbirdsdk/OperatorListQuery-class.html">OperatorListQuery</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></li>
+      <li><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></li>
+      <li><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></li>
       <li><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk-class.html">SendbirdSdk</a></li>
       <li><a href="../sendbirdsdk/Sender-class.html">Sender</a></li>
@@ -109,13 +112,15 @@
       <li><a href="../sendbirdsdk/groupChannelPublicFilterEnumMap-constant.html">groupChannelPublicFilterEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelPushTriggerOptionEnumMap-constant.html">groupChannelPushTriggerOptionEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelSuperFilterEnumMap-constant.html">groupChannelSuperFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></li>
+      <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
       <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
     
     
       <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
       <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
       <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-      <li><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></li>
       <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
       <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
       <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
@@ -146,6 +151,8 @@
       <li><a href="../sendbirdsdk/MetaArrayUpdateMode-class.html">MetaArrayUpdateMode</a></li>
       <li><a href="../sendbirdsdk/MetaCounterMode-class.html">MetaCounterMode</a></li>
       <li><a href="../sendbirdsdk/MuteState-class.html">MuteState</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></li>
       <li><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></li>
       <li><a href="../sendbirdsdk/PushTokenRegistrationStatus-class.html">PushTokenRegistrationStatus</a></li>
       <li><a href="../sendbirdsdk/PushTokenType-class.html">PushTokenType</a></li>
@@ -231,7 +238,7 @@
           <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>         
         </dt>
         <dd>
-          total unread message count for subscribed custom types 
+          Returns total unread message count for subscribed custom types 
                   <div class="features">read-only</div>
 </dd>
         <dt id="subscribedTotalUnreadMessageCount" class="property">
@@ -239,7 +246,7 @@
           <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>         
         </dt>
         <dd>
-          total unread message count for subscribed 
+          Returns total unread message count for subscribed 
                   <div class="features">read-only</div>
 </dd>
         <dt id="totalUnreadMessageCountStream" class="property">
@@ -262,7 +269,7 @@
           </span>
                   </dt>
         <dd>
-           
+          Add <a href="../sendbirdsdk/ChannelEventHandler-class.html">ChannelEventHandler</a> with <code>identifier</code> to SDK. 
                   
 </dd>
         <dt id="addConnectionHandler" class="callable">
@@ -271,7 +278,7 @@
           </span>
                   </dt>
         <dd>
-           
+          Adds <a href="../sendbirdsdk/ConnectionEventHandler-class.html">ConnectionEventHandler</a> with <code>identifier</code> to SDK. 
                   
 </dd>
         <dt id="addSessionHandler" class="callable">
@@ -280,7 +287,7 @@
           </span>
                   </dt>
         <dd>
-           
+          Adds <a href="../sendbirdsdk/SessionEventHandler-class.html">SessionEventHandler</a> to SDK. 
                   
 </dd>
         <dt id="addUserEventHandler" class="callable">
@@ -289,7 +296,7 @@
           </span>
                   </dt>
         <dd>
-           
+          Adds <a href="../sendbirdsdk/UserEventHandler-class.html">UserEventHandler</a> with <code>identifier</code> to SDK. 
                   
 </dd>
         <dt id="blockUser" class="callable">
@@ -298,7 +305,7 @@
           </span>
                   </dt>
         <dd>
-           
+          Blocks a user with <code>userId</code>. 
                   
 </dd>
         <dt id="channelChangedStream" class="callable">
@@ -312,12 +319,11 @@
 </dd>
         <dt id="connect" class="callable">
           <span class="name"><a href="../sendbirdsdk/SendbirdSdk/connect.html">connect</a></span><span class="signature">(<wbr><span class="parameter" id="connect-param-userId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="connect-param-accessToken">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">accessToken</span>, </span><span class="parameter" id="connect-param-apiHost"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">apiHost</span>, </span><span class="parameter" id="connect-param-wsHost"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">wsHost</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/User-class.html">User</a></span>&gt;</span></span>
+            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/User-class.html">User</a></span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
-          public
-Connect to Sendbird server with given parameters. If previously connected
+          Connects to Sendbird server with given parameters. If previously connected
 and try to connect with different <code>userId</code> then everything will be reset
 before it attempts to connect. Provide <code>accessToken</code> can be used if you
 generated the token from platform api 
@@ -338,7 +344,7 @@ generated the token from platform api
           </span>
                   </dt>
         <dd>
-          Disconnect from Sendbird server 
+          Disconnects from Sendbird server 
                   
 </dd>
         <dt id="getAllEmojis" class="callable">
@@ -349,7 +355,7 @@ generated the token from platform api
         <dd>
           Friends
 TBD
-Get all emojis 
+Returns <a href="../sendbirdsdk/EmojiContainer-class.html">EmojiContainer</a> which contains all available <a href="../sendbirdsdk/Emoji-class.html">Emoji</a> 
                   
 </dd>
         <dt id="getAppInfo" class="callable">
@@ -358,7 +364,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current application information with <a href="../sendbirdsdk/AppInfo-class.html">AppInfo</a>. 
                   
 </dd>
         <dt id="getApplicationId" class="callable">
@@ -367,7 +373,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current application id as <code>String</code> if initialized. 
                   
 </dd>
         <dt id="getChannelHandler" class="callable">
@@ -376,7 +382,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/ChannelEventHandler-class.html">ChannelEventHandler</a> with given <code>identifier</code>. <a href="../sendbirdsdk/SendbirdSdk/getChannelHandler.html">[...]</a>
                   
 </dd>
         <dt id="getChannelInvitationPreference" class="callable">
@@ -385,7 +391,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <code>true</code> if channel invitation preference is set as auto accepted 
                   
 </dd>
         <dt id="getConnectionHandler" class="callable">
@@ -394,7 +400,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/ConnectionEventHandler-class.html">ConnectionEventHandler</a> with <code>identifier</code> from SDK. <a href="../sendbirdsdk/SendbirdSdk/getConnectionHandler.html">[...]</a>
                   
 </dd>
         <dt id="getConnectionState" class="callable">
@@ -403,7 +409,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/ConnectionState-class.html">ConnectionState</a>. 
                   
 </dd>
         <dt id="getCurrentUser" class="callable">
@@ -412,7 +418,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Returns current connected <a href="../sendbirdsdk/User-class.html">User</a> 
+          Returns current connected <a href="../sendbirdsdk/User-class.html">User</a>, nullable. 
                   
 </dd>
         <dt id="getDoNotDisturb" class="callable">
@@ -421,7 +427,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current do not disturb mode 
                   
 </dd>
         <dt id="getEmoji" class="callable">
@@ -430,7 +436,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Get an emoji with given <code>key</code> 
+          Returns an <a href="../sendbirdsdk/Emoji-class.html">Emoji</a> with given <code>key</code> 
                   
 </dd>
         <dt id="getEmojiCategory" class="callable">
@@ -439,7 +445,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Get a emoji category with given <code>categoryId</code> 
+          Return an <a href="../sendbirdsdk/EmojiCategory-class.html">EmojiCategory</a> with given <code>categoryId</code> 
                   
 </dd>
         <dt id="getGroupChannelCount" class="callable">
@@ -448,7 +454,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns number of group channel with given <code>filter</code>. 
                   
 </dd>
         <dt id="getInternal" class="callable">
@@ -457,7 +463,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          privates 
+           
                   
 </dd>
         <dt id="getLastConnectedAt" class="callable">
@@ -466,25 +472,17 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Returns current user's last connection timestamp as epoch milliseocnds 
+          Returns current user's last connection timestamp as epoch milliseocnds,
+nullable 
                   
 </dd>
-        <dt id="getMyGroupChannelChangeLogsWithTimestamp" class="callable">
-          <span class="name"><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithTimestamp.html">getMyGroupChannelChangeLogsWithTimestamp</a></span><span class="signature">(<wbr><span class="parameter" id="getMyGroupChannelChangeLogsWithTimestamp-param-params">{<span class="type-annotation"><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="getMyGroupChannelChangeLogsWithTimestamp-param-timestamp"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">timestamp</span>}</span>)
+        <dt id="getMyGroupChannelChangeLogs" class="callable">
+          <span class="name"><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogs.html">getMyGroupChannelChangeLogs</a></span><span class="signature">(<wbr><span class="parameter" id="getMyGroupChannelChangeLogs-param-params">{<span class="type-annotation"><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="getMyGroupChannelChangeLogs-param-token"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">token</span>, </span><span class="parameter" id="getMyGroupChannelChangeLogs-param-timestamp"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">timestamp</span>}</span>)
             <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">ChannelChangeLogsResponse</span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
-           
-                  
-</dd>
-        <dt id="getMyGroupChannelChangeLogsWithToken" class="callable">
-          <span class="name"><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithToken.html">getMyGroupChannelChangeLogsWithToken</a></span><span class="signature">(<wbr><span class="parameter" id="getMyGroupChannelChangeLogsWithToken-param-params">{<span class="type-annotation"><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="getMyGroupChannelChangeLogsWithToken-param-token"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">token</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">ChannelChangeLogsResponse</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Channels 
+          Get current user's group channel change logs with <code>params</code> <a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogs.html">[...]</a>
                   
 </dd>
         <dt id="getOptions" class="callable">
@@ -493,7 +491,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current configuration <code>Options</code> 
                   
 </dd>
         <dt id="getPendingToken" class="callable">
@@ -502,7 +500,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Push 
+          Returns pending push token 
                   
 </dd>
         <dt id="getPushSound" class="callable">
@@ -511,7 +509,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns push sound in <code>String</code> 
                   
 </dd>
         <dt id="getPushTemplate" class="callable">
@@ -520,7 +518,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Get push template 
                   
 </dd>
         <dt id="getPushTriggerOption" class="callable">
@@ -529,7 +527,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/PushTriggerOption-class.html">PushTriggerOption</a> of current user. 
                   
 </dd>
         <dt id="getSdkVersion" class="callable">
@@ -538,7 +536,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current SDK version as <code>String</code>. 
                   
 </dd>
         <dt id="getSessionHandler" class="callable">
@@ -547,7 +545,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/SessionEventHandler-class.html">SessionEventHandler</a> if registered 
                   
 </dd>
         <dt id="getSnoozePeriod" class="callable">
@@ -556,7 +554,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns current snooze period. 
                   
 </dd>
         <dt id="getTotalUnreadChannelCount" class="callable">
@@ -565,7 +563,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns total number of group channels that contains unread messages. 
                   
 </dd>
         <dt id="getTotalUnreadMessageCount" class="callable">
@@ -574,7 +572,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns total number of unrad messages. 
                   
 </dd>
         <dt id="getTotalUnreadMessageCountWithParams" class="callable">
@@ -583,7 +581,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns total number of unread messages with given <code>params</code>. 
                   
 </dd>
         <dt id="getUnreadItemCount" class="callable">
@@ -592,7 +590,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <code>UnreadItemCount</code> with given <code>keys</code>. <a href="../sendbirdsdk/SendbirdSdk/getUnreadItemCount.html">[...]</a>
                   
 </dd>
         <dt id="getUserEventHandler" class="callable">
@@ -601,7 +599,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Returns <a href="../sendbirdsdk/UserEventHandler-class.html">UserEventHandler</a> with <code>identifier</code> from SDK. 
                   
 </dd>
         <dt id="isInitialized" class="callable">
@@ -610,7 +608,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          True if SDK has been initialized. 
                   
 </dd>
         <dt id="markAsDelivered" class="callable">
@@ -619,7 +617,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Mark a message as delivered with given payload from push notification 
                   
 </dd>
         <dt id="markAsRead" class="callable">
@@ -628,7 +626,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Mark list of group channels with <code>channelUrls</code> as read. 
                   
 </dd>
         <dt id="markAsReadAll" class="callable">
@@ -637,7 +635,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-           
+          Mark current user's all group channels as read. 
                   
 </dd>
         <dt id="messageReceiveStream" class="callable">
@@ -682,7 +680,7 @@ Get all emojis
           </span>
                   </dt>
         <dd>
-          Reconnect if previously connected and disconnect due to any reasons.
+          Reconnects if previously connected and disconnect due to any reasons.
 It will return <code>false</code> if previous connection was not made. 
                   
 </dd>
@@ -692,7 +690,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Registers push <code>token</code> with <code>type</code>. <a href="../sendbirdsdk/SendbirdSdk/registerPushToken.html">[...]</a>
                   
 </dd>
         <dt id="removeChannelHandler" class="callable">
@@ -701,7 +699,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Removes <a href="../sendbirdsdk/ChannelEventHandler-class.html">ChannelEventHandler</a> with <code>identifier</code> from SDK. 
                   
 </dd>
         <dt id="removeConnectionHandler" class="callable">
@@ -710,7 +708,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Removes <a href="../sendbirdsdk/ConnectionEventHandler-class.html">ConnectionEventHandler</a> with <code>identifier</code> from SDK. 
                   
 </dd>
         <dt id="removeSessionHandler" class="callable">
@@ -719,7 +717,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Removes <a href="../sendbirdsdk/SessionEventHandler-class.html">SessionEventHandler</a> from SDK. 
                   
 </dd>
         <dt id="removeUserEventHandler" class="callable">
@@ -728,7 +726,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Removes <a href="../sendbirdsdk/UserEventHandler-class.html">UserEventHandler</a> with <code>identifier</code> from SDK. 
                   
 </dd>
         <dt id="setChannelInvitationPreference" class="callable">
@@ -737,7 +735,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets channel invitation preference with <code>autoAccept</code>. Default is <code>true</code> <a href="../sendbirdsdk/SendbirdSdk/setChannelInvitationPreference.html">[...]</a>
                   
 </dd>
         <dt id="setDoNotDisturb" class="callable">
@@ -746,7 +744,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-          repeat every day 
+          Sets do not disturb mode <code>enable</code> with given start and end time. 
                   
 </dd>
         <dt id="setOptions" class="callable">
@@ -755,7 +753,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets <code>Options</code> to configure SDK 
                   
 </dd>
         <dt id="setPushSound" class="callable">
@@ -764,7 +762,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets push <code>sound</code>. 
                   
 </dd>
         <dt id="setPushTemplate" class="callable">
@@ -773,7 +771,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets push template with <code>name</code> 
                   
 </dd>
         <dt id="setPushTriggerOption" class="callable">
@@ -782,7 +780,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets push trigger <code>option</code> for current user. 
                   
 </dd>
         <dt id="setSnoozePeriod" class="callable">
@@ -791,7 +789,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Sets snooze period <code>enable</code> with start and end date. 
                   
 </dd>
         <dt id="subscribedCustomTypeUnreadMessageCount" class="callable">
@@ -800,7 +798,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-          total unread messgea count for given custom type 
+          Returns total unread messgea count for given custom type 
                   
 </dd>
         <dt id="toString" class="callable inherited">
@@ -818,7 +816,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Unblocks a user with <code>userId</code>. 
                   
 </dd>
         <dt id="unregisterAllPushToken" class="callable">
@@ -827,7 +825,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Unregisters all push token with given <code>type</code>. 
                   
 </dd>
         <dt id="unregisterPushToken" class="callable">
@@ -836,7 +834,7 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Unregisters push <code>token</code> with <code>type</code>. <a href="../sendbirdsdk/SendbirdSdk/unregisterPushToken.html">[...]</a>
                   
 </dd>
         <dt id="updateCurrentUserInfo" class="callable">
@@ -845,7 +843,8 @@ It will return <code>false</code> if previous connection was not made.
           </span>
                   </dt>
         <dd>
-           
+          Updates current user information with <code>nickname</code>, <code>imageInfo</code>,
+<code>preferredLanguages</code>. 
                   
 </dd>
         <dt id="usersTypingStream" class="callable">
@@ -920,8 +919,7 @@ It will return <code>false</code> if previous connection was not made.
       <li><a href="../sendbirdsdk/SendbirdSdk/getGroupChannelCount.html">getGroupChannelCount</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk/getInternal.html">getInternal</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk/getLastConnectedAt.html">getLastConnectedAt</a></li>
-      <li><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithTimestamp.html">getMyGroupChannelChangeLogsWithTimestamp</a></li>
-      <li><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithToken.html">getMyGroupChannelChangeLogsWithToken</a></li>
+      <li><a href="../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogs.html">getMyGroupChannelChangeLogs</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk/getOptions.html">getOptions</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk/getPendingToken.html">getPendingToken</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk/getPushSound.html">getPushSound</a></li>

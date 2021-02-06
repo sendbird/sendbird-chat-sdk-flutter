@@ -91,8 +91,7 @@
         <li><a href="../../sendbirdsdk/SendbirdSdk/getGroupChannelCount.html">getGroupChannelCount</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getInternal.html">getInternal</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getLastConnectedAt.html">getLastConnectedAt</a></li>
-        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithTimestamp.html">getMyGroupChannelChangeLogsWithTimestamp</a></li>
-        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithToken.html">getMyGroupChannelChangeLogsWithToken</a></li>
+        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogs.html">getMyGroupChannelChangeLogs</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getOptions.html">getOptions</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getPendingToken.html">getPendingToken</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getPushSound.html">getPushSound</a></li>
@@ -157,12 +156,12 @@
     <section class="desc markdown">
       <p>Friends
 TBD
-Get all emojis</p>
+Returns <a href="../../sendbirdsdk/EmojiContainer-class.html">EmojiContainer</a> which contains all available <a href="../../sendbirdsdk/Emoji-class.html">Emoji</a></p>
     </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">&#47;&#47;&#47; Get all emojis
+      <pre class="language-dart"><code class="language-dart">&#47;&#47;&#47; Returns [EmojiContainer] which contains all available [Emoji]
 Future&lt;EmojiContainer&gt; getAllEmojis() {
   return _int.api.getAllEmojis();
 }</code></pre>

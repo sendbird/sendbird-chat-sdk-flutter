@@ -27,17 +27,17 @@ class SessionEventHandler implements EventHandler {
   @required
   void onRequireToken(Function(String) successCb, Function failCb) {}
 
-  /// Called when the SDK can't refresh the session.
+  /// Informs when the SDK can't refresh the session.
   /// App should force a user to a login page to connect again.
   @required
   void onCloseSession() {}
 
-  /// Called when session key is expired.
+  /// Informs when session key is expired.
   void onExpiredSession() {}
 
-  /// Called when SDK refreshed the session key.
+  /// Informs when SDK refreshed the session key.
   void onRefreshedSession() {}
 
-  /// Called when the SDK run into an error while refreshing the session key
+  /// Informs when the SDK run into an error while refreshing the session key
   void onErrorSession(SBError error) {}
 }

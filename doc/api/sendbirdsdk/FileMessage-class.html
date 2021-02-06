@@ -83,6 +83,9 @@
       <li><a href="../sendbirdsdk/OpenChannelListQuery-class.html">OpenChannelListQuery</a></li>
       <li><a href="../sendbirdsdk/OpenChannelParams-class.html">OpenChannelParams</a></li>
       <li><a href="../sendbirdsdk/OperatorListQuery-class.html">OperatorListQuery</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></li>
+      <li><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></li>
+      <li><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></li>
       <li><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk-class.html">SendbirdSdk</a></li>
       <li><a href="../sendbirdsdk/Sender-class.html">Sender</a></li>
@@ -109,13 +112,15 @@
       <li><a href="../sendbirdsdk/groupChannelPublicFilterEnumMap-constant.html">groupChannelPublicFilterEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelPushTriggerOptionEnumMap-constant.html">groupChannelPushTriggerOptionEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelSuperFilterEnumMap-constant.html">groupChannelSuperFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></li>
+      <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
       <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
     
     
       <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
       <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
       <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-      <li><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></li>
       <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
       <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
       <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
@@ -146,6 +151,8 @@
       <li><a href="../sendbirdsdk/MetaArrayUpdateMode-class.html">MetaArrayUpdateMode</a></li>
       <li><a href="../sendbirdsdk/MetaCounterMode-class.html">MetaCounterMode</a></li>
       <li><a href="../sendbirdsdk/MuteState-class.html">MuteState</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></li>
       <li><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></li>
       <li><a href="../sendbirdsdk/PushTokenRegistrationStatus-class.html">PushTokenRegistrationStatus</a></li>
       <li><a href="../sendbirdsdk/PushTokenType-class.html">PushTokenType</a></li>
@@ -387,11 +394,11 @@ to a parent message and the type of the parent message is <a href="../sendbirdsd
 </dd>
         <dt id="reactions" class="property inherited">
           <span class="name"><a href="../sendbirdsdk/BaseMessage/reactions.html">reactions</a></span>
-          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">Reaction</span>&gt;</span></span>         
+          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></span>&gt;</span></span>         
         </dt>
         <dd class="inherited">
           reactions for this message 
-                  <div class="features">read / write, inherited</div>
+                  <div class="features">@<a href="https://pub.dev/documentation/json_annotation/3.1.0/json_annotation/JsonKey-class.html">JsonKey</a>(defaultValue: []), read / write, inherited</div>
 </dd>
         <dt id="requestedMentionUserIds" class="property inherited">
           <span class="name"><a href="../sendbirdsdk/BaseMessage/requestedMentionUserIds.html">requestedMentionUserIds</a></span>
@@ -510,12 +517,12 @@ And if success to send the message, the value is <code>succeeded</code>.
       <h2>Methods</h2>
       <dl class="callables">
         <dt id="applyReactionEvent" class="callable inherited">
-          <span class="name"><a href="../sendbirdsdk/BaseMessage/applyReactionEvent.html">applyReactionEvent</a></span><span class="signature">(<wbr><span class="parameter" id="applyReactionEvent-param-event"><span class="type-annotation">ReactionEvent</span> <span class="parameter-name">event</span></span>)
+          <span class="name"><a href="../sendbirdsdk/BaseMessage/applyReactionEvent.html">applyReactionEvent</a></span><span class="signature">(<wbr><span class="parameter" id="applyReactionEvent-param-event"><span class="type-annotation"><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></span> <span class="parameter-name">event</span></span>)
             <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
           </span>
                   </dt>
         <dd class="inherited">
-          Applies <code>ReactionEvent</code> to this message. <a href="../sendbirdsdk/BaseMessage/applyReactionEvent.html">[...]</a>
+          Applies <a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a> to this message. <a href="../sendbirdsdk/BaseMessage/applyReactionEvent.html">[...]</a>
                   <div class="features">inherited</div>
 </dd>
         <dt id="applyThreadInfoUpdateEvent" class="callable inherited">
@@ -536,8 +543,8 @@ And if success to send the message, the value is <code>succeeded</code>.
           Retreives list of <a href="../sendbirdsdk/MessageMetaArray-class.html">MessageMetaArray</a> with given <code>keys</code> 
                   <div class="features">inherited</div>
 </dd>
-        <dt id="getThreadedMessages" class="callable inherited">
-          <span class="name"><a href="../sendbirdsdk/BaseMessage/getThreadedMessages.html">getThreadedMessages</a></span><span class="signature">(<wbr><span class="parameter" id="getThreadedMessages-param-timestamp">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">timestamp</span>, </span><span class="parameter" id="getThreadedMessages-param-params"><span class="type-annotation"><a href="../sendbirdsdk/ThreadedMessageListParams-class.html">ThreadedMessageListParams</a></span> <span class="parameter-name">params</span>}</span>)
+        <dt id="getThreadedMessageByTimestamp" class="callable inherited">
+          <span class="name"><a href="../sendbirdsdk/BaseMessage/getThreadedMessageByTimestamp.html">getThreadedMessageByTimestamp</a></span><span class="signature">(<wbr><span class="parameter" id="getThreadedMessageByTimestamp-param-timestamp"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">timestamp</span>, </span><span class="parameter" id="getThreadedMessageByTimestamp-param-params"><span class="type-annotation"><a href="../sendbirdsdk/ThreadedMessageListParams-class.html">ThreadedMessageListParams</a></span> <span class="parameter-name">params</span></span>)
             <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">ThreadedMessageResponse</span>&gt;</span></span>
           </span>
                   </dt>
@@ -653,7 +660,7 @@ and <code>params</code>.
       <li class="inherited"><a href="../sendbirdsdk/BaseMessage/applyReactionEvent.html">applyReactionEvent</a></li>
       <li class="inherited"><a href="../sendbirdsdk/BaseMessage/applyThreadInfoUpdateEvent.html">applyThreadInfoUpdateEvent</a></li>
       <li class="inherited"><a href="../sendbirdsdk/BaseMessage/getMetaArrays.html">getMetaArrays</a></li>
-      <li class="inherited"><a href="../sendbirdsdk/BaseMessage/getThreadedMessages.html">getThreadedMessages</a></li>
+      <li class="inherited"><a href="../sendbirdsdk/BaseMessage/getThreadedMessageByTimestamp.html">getThreadedMessageByTimestamp</a></li>
       <li class="inherited"><a href="../sendbirdsdk/BaseMessage/isResendable.html">isResendable</a></li>
       <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
       <li><a href="../sendbirdsdk/FileMessage/toJson.html">toJson</a></li>

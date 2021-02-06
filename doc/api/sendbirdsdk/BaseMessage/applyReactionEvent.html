@@ -92,7 +92,7 @@
         <li><a href="../../sendbirdsdk/BaseMessage/applyReactionEvent.html">applyReactionEvent</a></li>
         <li><a href="../../sendbirdsdk/BaseMessage/applyThreadInfoUpdateEvent.html">applyThreadInfoUpdateEvent</a></li>
         <li><a href="../../sendbirdsdk/BaseMessage/getMetaArrays.html">getMetaArrays</a></li>
-        <li><a href="../../sendbirdsdk/BaseMessage/getThreadedMessages.html">getThreadedMessages</a></li>
+        <li><a href="../../sendbirdsdk/BaseMessage/getThreadedMessageByTimestamp.html">getThreadedMessageByTimestamp</a></li>
         <li><a href="../../sendbirdsdk/BaseMessage/isResendable.html">isResendable</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
@@ -116,13 +116,13 @@
     <section class="multi-line-signature">
       <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
             <span class="name ">applyReactionEvent</span>
-(<wbr><ol class="parameter-list"><li><span class="parameter" id="applyReactionEvent-param-event"><span class="type-annotation">ReactionEvent</span> <span class="parameter-name">event</span></span></li>
+(<wbr><ol class="parameter-list"><li><span class="parameter" id="applyReactionEvent-param-event"><span class="type-annotation"><a href="../../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></span> <span class="parameter-name">event</span></span></li>
 </ol>)
       
     </section>
     <section class="desc markdown">
-      <p>Applies <code>ReactionEvent</code> to this message.</p>
-<p>Returns <code>true</code> if the given <code>ReactionEvent</code> applied to this message
+      <p>Applies <a href="../../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a> to this message.</p>
+<p>Returns <code>true</code> if the given <a href="../../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a> applied to this message
 successfully, otherwise <code>false</code>.</p>
     </section>
     
@@ -137,7 +137,7 @@ successfully, otherwise <code>false</code>.</p>
   if (existIndex != -1) {
     final reaction = reactions[existIndex];
     if (reaction.merge(event)) {
-      if (event.operation == ReactionEventAction.remove &amp;&amp;
+      if (event.operation == ReactionEventAction.delete &amp;&amp;
           reaction.userIds.isEmpty) {
         reactions.removeWhere((e) =&gt; e.key == event.key);
       }

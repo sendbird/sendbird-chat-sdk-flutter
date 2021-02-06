@@ -342,12 +342,16 @@ class BaseChannel implements Cacheable<BaseChannel> {
     String url;
 
     if (params.uploadFile.hasBinary) {
-      upload = await _sdk.api.uploadFile(
-        channelUrl: channelUrl,
-        requestId: null,
-        params: params,
-        progress: progress,
-      );
+      upload = await _sdk.api
+          .uploadFile(
+            channelUrl: channelUrl,
+            requestId: null,
+            params: params,
+            progress: progress,
+          )
+          .timeout(
+            Duration(seconds: _sdk.options.fileTransferTimeout),
+          );
       fileSize = upload.fileSize;
       url = upload.url;
     }

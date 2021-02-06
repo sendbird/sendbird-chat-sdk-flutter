@@ -80,6 +80,7 @@
         <li class="section-title"><a href="../../sendbirdsdk/BaseChannel-class.html#instance-methods">Methods</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/banUser.html">banUser</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/copyWith.html">copyWith</a></li>
@@ -92,10 +93,10 @@
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithTimestamp.html">getMessageChangeLogsWithTimestamp</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithToken.html">getMessageChangeLogsWithToken</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogs.html">getMessageChangeLogs</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMessagesById.html">getMessagesById</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMessagesByTimestamp.html">getMessagesByTimestamp</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></li>
@@ -113,7 +114,7 @@
         <li><a href="../../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithParams.html">sendUserMessageWithParams</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></li>
@@ -174,7 +175,7 @@ other members' end.</p>
 
   if (message is UserMessage) {
     final params = UserMessageParams.withMessage(message, deepCopy: false);
-    return targetChannel.sendUserMessageWithParams(
+    return targetChannel.sendUserMessage(
       params,
       onCompleted: onCompleted,
     );

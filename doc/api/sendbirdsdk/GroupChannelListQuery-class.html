@@ -83,6 +83,9 @@
       <li><a href="../sendbirdsdk/OpenChannelListQuery-class.html">OpenChannelListQuery</a></li>
       <li><a href="../sendbirdsdk/OpenChannelParams-class.html">OpenChannelParams</a></li>
       <li><a href="../sendbirdsdk/OperatorListQuery-class.html">OperatorListQuery</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></li>
+      <li><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></li>
+      <li><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></li>
       <li><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk-class.html">SendbirdSdk</a></li>
       <li><a href="../sendbirdsdk/Sender-class.html">Sender</a></li>
@@ -109,13 +112,15 @@
       <li><a href="../sendbirdsdk/groupChannelPublicFilterEnumMap-constant.html">groupChannelPublicFilterEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelPushTriggerOptionEnumMap-constant.html">groupChannelPushTriggerOptionEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelSuperFilterEnumMap-constant.html">groupChannelSuperFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></li>
+      <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
       <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
     
     
       <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
       <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
       <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-      <li><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></li>
       <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
       <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
       <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
@@ -146,6 +151,8 @@
       <li><a href="../sendbirdsdk/MetaArrayUpdateMode-class.html">MetaArrayUpdateMode</a></li>
       <li><a href="../sendbirdsdk/MetaCounterMode-class.html">MetaCounterMode</a></li>
       <li><a href="../sendbirdsdk/MuteState-class.html">MuteState</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></li>
       <li><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></li>
       <li><a href="../sendbirdsdk/PushTokenRegistrationStatus-class.html">PushTokenRegistrationStatus</a></li>
       <li><a href="../sendbirdsdk/PushTokenType-class.html">PushTokenType</a></li>
@@ -180,7 +187,7 @@
       <div><h1><span class="kind-class">GroupChannelListQuery</span> class  </h1></div>
 
     <section class="desc markdown">
-      <p>A query object to retrieve list of group channel.</p>
+      <p>A query object to retrieve list of my group channel.</p>
     </section>
     
 
@@ -224,8 +231,7 @@ specified group channel name
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>         
         </dt>
         <dd>
-          Sets filter channel urls. It will return a list containing only and exactly matched
-with given urls. This filter does not cooperate with other filters. 
+          Sets filter channel urls. <a href="../sendbirdsdk/GroupChannelListQuery/channelUrls.html">[...]</a>
                   <div class="features">read / write</div>
 </dd>
         <dt id="customTypesFilter" class="property">
@@ -265,7 +271,8 @@ with given urls. This filter does not cooperate with other filters.
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
         </dt>
         <dd>
-          True if query result includes empty (message) channel 
+          Query result includes empty (message) channel if <code>true</code>.
+default value is <code>true</code> 
                   <div class="features">read / write</div>
 </dd>
         <dt id="includeFrozenChannel" class="property">
@@ -273,7 +280,7 @@ with given urls. This filter does not cooperate with other filters.
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
         </dt>
         <dd>
-          True if query result includes frozen channels
+          Query result includes frozen channels if <code>true</code>.
 default value is <code>true</code> 
                   <div class="features">read / write</div>
 </dd>
@@ -282,7 +289,8 @@ default value is <code>true</code>
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
         </dt>
         <dd>
-          True if query result of channel object contains member list 
+          Query result of channel object contains member list if <code>true</code>.
+default value is <code>true</code> 
                   <div class="features">read / write</div>
 </dd>
         <dt id="limit" class="property inherited">
@@ -323,8 +331,7 @@ This is valid when the <code>order</code> is <code>channelMetaDataValueAlphabeti
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
         </dt>
         <dd>
-          Sets the filter with nickname. Query result will contains
-channels that any one of member contains given nickname 
+          Sets the filter with nickname. <a href="../sendbirdsdk/GroupChannelListQuery/nicknameContainsFilter.html">[...]</a>
                   <div class="features">read / write</div>
 </dd>
         <dt id="order" class="property">
@@ -405,8 +412,7 @@ The default value is <code>all</code>
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>         
         </dt>
         <dd>
-          Sets the filter with user IDs that query result will return
-only if channel's members are exactly matched with this property 
+          Sets the filter with user IDs <a href="../sendbirdsdk/GroupChannelListQuery/userIdsExactFilter.html">[...]</a>
                   <div class="features">read / write</div>
 </dd>
         <dt id="userIdsIncludeFilter" class="property">
@@ -414,8 +420,7 @@ only if channel's members are exactly matched with this property
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>         
         </dt>
         <dd>
-          Sets the filter with user IDs that query result will return
-if any one of user id matches with channel's members 
+          Sets the filter with user IDs <a href="../sendbirdsdk/GroupChannelListQuery/userIdsIncludeFilter.html">[...]</a>
                   <div class="features">read / write</div>
 </dd>
       </dl>
@@ -479,7 +484,7 @@ if any one of user id matches with channel's members
                   
 </dd>
         <dt id="setUserIdsIncludeFilter" class="callable">
-          <span class="name"><a href="../sendbirdsdk/GroupChannelListQuery/setUserIdsIncludeFilter.html">setUserIdsIncludeFilter</a></span><span class="signature">(<wbr><span class="parameter" id="setUserIdsIncludeFilter-param-userIds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIds</span>, </span><span class="parameter" id="setUserIdsIncludeFilter-param-queryType"><span class="type-annotation"><a href="../sendbirdsdk/GroupChannelListQueryType-class.html">GroupChannelListQueryType</a></span> <span class="parameter-name">queryType</span></span>)
+          <span class="name"><a href="../sendbirdsdk/GroupChannelListQuery/setUserIdsIncludeFilter.html">setUserIdsIncludeFilter</a></span><span class="signature">(<wbr><span class="parameter" id="setUserIdsIncludeFilter-param-userIds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIds</span>, </span><span class="parameter" id="setUserIdsIncludeFilter-param-type"><span class="type-annotation"><a href="../sendbirdsdk/GroupChannelListQueryType-class.html">GroupChannelListQueryType</a></span> <span class="parameter-name">type</span></span>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>

@@ -147,7 +147,7 @@
           <span class="name "><a href="../sendbirdsdk/FileMessageParams-class.html">FileMessageParams</a></span>         
         </dt>
         <dd>
-          Represents a set of parameters for file message. 
+          An object consists a set of parameters for file message. 
         </dd>
         <dt id="GroupChannel">
           <span class="name "><a href="../sendbirdsdk/GroupChannel-class.html">GroupChannel</a></span>         
@@ -165,7 +165,7 @@
           <span class="name "><a href="../sendbirdsdk/GroupChannelListQuery-class.html">GroupChannelListQuery</a></span>         
         </dt>
         <dd>
-          A query object to retrieve list of group channel. 
+          A query object to retrieve list of my group channel. 
         </dd>
         <dt id="GroupChannelParams">
           <span class="name "><a href="../sendbirdsdk/GroupChannelParams-class.html">GroupChannelParams</a></span>         
@@ -220,7 +220,7 @@ message count.
           <span class="name "><a href="../sendbirdsdk/MessageSearchQuery-class.html">MessageSearchQuery</a></span>         
         </dt>
         <dd>
-          TBD 
+          A query object to search messages 
         </dd>
         <dt id="NetworkEventHandler">
           <span class="name "><a href="../sendbirdsdk/NetworkEventHandler-class.html">NetworkEventHandler</a></span>         
@@ -251,6 +251,24 @@ message count.
         </dt>
         <dd>
           A query object to retrieve operators. 
+        </dd>
+        <dt id="PublicGroupChannelListQuery">
+          <span class="name "><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></span>         
+        </dt>
+        <dd>
+          A query object to retrieve list of public group channel. 
+        </dd>
+        <dt id="Reaction">
+          <span class="name "><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></span>         
+        </dt>
+        <dd>
+          Represents a reaction. 
+        </dd>
+        <dt id="ReactionEvent">
+          <span class="name "><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></span>         
+        </dt>
+        <dd>
+          Represents an reaction event that happens on <a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a>. <a href="../sendbirdsdk/ReactionEvent-class.html">[...]</a>
         </dd>
         <dt id="ScheduledUserMessageParams">
           <span class="name "><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></span>         
@@ -425,6 +443,39 @@ message count.
             <span class="signature"><code>&lt;GroupChannelSuperChannelFilter, String&gt;{GroupChannelSuperChannelFilter.all : &#39;all&#39;, GroupChannelSuperChannelFilter.superChannel : &#39;super&#39;, GroupChannelSuperChannelFilter.nonsupe…</code></span>
           </div>
         </dd>
+        <dt id="memberStateFilterEnumMap" class="constant">
+          <span class="name "><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/MemberStateFilter-class.html">MemberStateFilter</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>&lt;MemberStateFilter, String&gt;{MemberStateFilter.all : &#39;all&#39;, MemberStateFilter.invited : &#39;invited&#39;, MemberStateFilter.joined : &#39;joined&#39;, MemberStateFilter.invitedByFriend :…</code></span>
+          </div>
+        </dd>
+        <dt id="messageSearchQueryOrderEnumMap" class="constant">
+          <span class="name "><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/MessageSearchQueryOrder-class.html">MessageSearchQueryOrder</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>&lt;MessageSearchQueryOrder, String&gt;{MessageSearchQueryOrder.score : &#39;score&#39;, MessageSearchQueryOrder.timestamp : &#39;ts&#39;}</code></span>
+          </div>
+        </dd>
+        <dt id="publicGroupChannelListOrderEnumMap" class="constant">
+          <span class="name "><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>&lt;PublicGroupChannelListOrder, String&gt;{PublicGroupChannelListOrder.chronological : &#39;chronological&#39;, PublicGroupChannelListOrder.channelNameAlphabetical : &#39;channel_name_alphabetical&#3…</code></span>
+          </div>
+        </dd>
         <dt id="pushTriggerOptionEnumMap" class="constant">
           <span class="name "><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></span>
           <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/PushTriggerOption-class.html">PushTriggerOption</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
@@ -456,15 +507,6 @@ message count.
         <dt id="enumDecode" class="callable">
           <span class="name"><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="enumDecode-param-enumValues"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">enumValues</span>, </span><span class="parameter" id="enumDecode-param-source"><span class="type-annotation">dynamic</span> <span class="parameter-name">source</span>, </span><span class="parameter" id="enumDecode-param-unknownValue">{<span class="type-annotation">T</span> <span class="parameter-name">unknownValue</span>}</span>)
             <span class="returntype parameter">&#8594; T</span>
-          </span>
-                  </dt>
-        <dd>
-           
-                  
-</dd>
-        <dt id="memberStateFilterToString" class="callable">
-          <span class="name"><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></span><span class="signature">(<wbr><span class="parameter" id="memberStateFilterToString-param-filter"><span class="type-annotation"><a href="../sendbirdsdk/MemberStateFilter-class.html">MemberStateFilter</a></span> <span class="parameter-name">filter</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
           </span>
                   </dt>
         <dd>
@@ -584,7 +626,7 @@ message count.
           <span class="name "><a href="../sendbirdsdk/GroupChannelPublicChannelFilter-class.html">GroupChannelPublicChannelFilter</a></span>         
         </dt>
         <dd>
-           
+          Represents a filter for group channel visibilty 
         </dd>
         <dt id="GroupChannelPushTriggerOption">
           <span class="name "><a href="../sendbirdsdk/GroupChannelPushTriggerOption-class.html">GroupChannelPushTriggerOption</a></span>         
@@ -657,6 +699,18 @@ message count.
         </dt>
         <dd>
           Represents user's mute state in a channel 
+        </dd>
+        <dt id="PublicGroupChannelListOrder">
+          <span class="name "><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></span>         
+        </dt>
+        <dd>
+          Represents result order of public group channel query 
+        </dd>
+        <dt id="PublicGroupChannelMembershipFilter">
+          <span class="name "><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></span>         
+        </dt>
+        <dd>
+          Represents a filter for public group channel member state 
         </dd>
         <dt id="PushNotificationDeliveryOption">
           <span class="name "><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></span>         
@@ -850,6 +904,9 @@ message count.
       <li><a href="../sendbirdsdk/OpenChannelListQuery-class.html">OpenChannelListQuery</a></li>
       <li><a href="../sendbirdsdk/OpenChannelParams-class.html">OpenChannelParams</a></li>
       <li><a href="../sendbirdsdk/OperatorListQuery-class.html">OperatorListQuery</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListQuery-class.html">PublicGroupChannelListQuery</a></li>
+      <li><a href="../sendbirdsdk/Reaction-class.html">Reaction</a></li>
+      <li><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></li>
       <li><a href="../sendbirdsdk/ScheduledUserMessageParams-class.html">ScheduledUserMessageParams</a></li>
       <li><a href="../sendbirdsdk/SendbirdSdk-class.html">SendbirdSdk</a></li>
       <li><a href="../sendbirdsdk/Sender-class.html">Sender</a></li>
@@ -876,13 +933,15 @@ message count.
       <li><a href="../sendbirdsdk/groupChannelPublicFilterEnumMap-constant.html">groupChannelPublicFilterEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelPushTriggerOptionEnumMap-constant.html">groupChannelPushTriggerOptionEnumMap</a></li>
       <li><a href="../sendbirdsdk/groupChannelSuperFilterEnumMap-constant.html">groupChannelSuperFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/memberStateFilterEnumMap-constant.html">memberStateFilterEnumMap</a></li>
+      <li><a href="../sendbirdsdk/messageSearchQueryOrderEnumMap-constant.html">messageSearchQueryOrderEnumMap</a></li>
+      <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
       <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
     
     
       <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
       <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
       <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-      <li><a href="../sendbirdsdk/memberStateFilterToString.html">memberStateFilterToString</a></li>
       <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
       <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
       <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
@@ -913,6 +972,8 @@ message count.
       <li><a href="../sendbirdsdk/MetaArrayUpdateMode-class.html">MetaArrayUpdateMode</a></li>
       <li><a href="../sendbirdsdk/MetaCounterMode-class.html">MetaCounterMode</a></li>
       <li><a href="../sendbirdsdk/MuteState-class.html">MuteState</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelListOrder-class.html">PublicGroupChannelListOrder</a></li>
+      <li><a href="../sendbirdsdk/PublicGroupChannelMembershipFilter-class.html">PublicGroupChannelMembershipFilter</a></li>
       <li><a href="../sendbirdsdk/PushNotificationDeliveryOption-class.html">PushNotificationDeliveryOption</a></li>
       <li><a href="../sendbirdsdk/PushTokenRegistrationStatus-class.html">PushTokenRegistrationStatus</a></li>
       <li><a href="../sendbirdsdk/PushTokenType-class.html">PushTokenType</a></li>

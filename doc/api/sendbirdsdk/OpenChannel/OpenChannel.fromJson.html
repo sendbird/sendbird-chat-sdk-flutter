@@ -57,7 +57,6 @@
       <li class="section-title"><a href="../../sendbirdsdk/OpenChannel-class.html#constructors">Constructors</a></li>
       <li><a href="../../sendbirdsdk/OpenChannel/OpenChannel.html">OpenChannel</a></li>
       <li><a href="../../sendbirdsdk/OpenChannel/OpenChannel.fromJson.html">fromJson</a></li>
-      <li><a href="../../sendbirdsdk/OpenChannel/OpenChannel.fromJsonAndCached.html">fromJsonAndCached</a></li>
     
       <li class="section-title">
         <a href="../../sendbirdsdk/OpenChannel-class.html#instance-properties">Properties</a>
@@ -85,6 +84,7 @@
       <li class="section-title"><a href="../../sendbirdsdk/OpenChannel-class.html#instance-methods">Methods</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></li>
+      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/banUser.html">banUser</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></li>
       <li><a href="../../sendbirdsdk/OpenChannel/copyWith.html">copyWith</a></li>
@@ -98,12 +98,12 @@
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></li>
+      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></li>
       <li><a href="../../sendbirdsdk/OpenChannel/enter.html">enter</a></li>
       <li><a href="../../sendbirdsdk/OpenChannel/exit.html">exit</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></li>
-      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithTimestamp.html">getMessageChangeLogsWithTimestamp</a></li>
-      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithToken.html">getMessageChangeLogsWithToken</a></li>
+      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogs.html">getMessageChangeLogs</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessagesById.html">getMessagesById</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessagesByTimestamp.html">getMessagesByTimestamp</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></li>
@@ -122,7 +122,7 @@
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></li>
-      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithParams.html">sendUserMessageWithParams</a></li>
+      <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></li>
       <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></li>
       <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></li>
@@ -155,11 +155,27 @@
 </ol>)
     </section>
 
+    <section class="desc markdown">
+      <p>Builds a message object from serialized data
+Serializes message object</p>
+    </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">factory OpenChannel.fromJson(Map&lt;String, dynamic&gt; json) =&gt;
-    _$OpenChannelFromJson(json);</code></pre>
+      <pre class="language-dart"><code class="language-dart">&#47;&#47; static OpenChannel buildFromSeralizedData(ByteData data) {
+&#47;&#47;   return null;
+&#47;&#47; }
+
+&#47;&#47;&#47; Serializes message object
+&#47;&#47; ByteData serialize() {
+&#47;&#47;   return null;
+&#47;&#47; }
+
+factory OpenChannel.fromJson(Map&lt;String, dynamic&gt; json) {
+  final channel = _$OpenChannelFromJson(json);
+  channel.saveToCache();
+  return channel;
+}</code></pre>
     </section>
 
   </div> <!-- /.main-content -->

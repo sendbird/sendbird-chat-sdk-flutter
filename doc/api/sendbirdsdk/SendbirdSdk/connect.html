@@ -91,8 +91,7 @@
         <li><a href="../../sendbirdsdk/SendbirdSdk/getGroupChannelCount.html">getGroupChannelCount</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getInternal.html">getInternal</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getLastConnectedAt.html">getLastConnectedAt</a></li>
-        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithTimestamp.html">getMyGroupChannelChangeLogsWithTimestamp</a></li>
-        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogsWithToken.html">getMyGroupChannelChangeLogsWithToken</a></li>
+        <li><a href="../../sendbirdsdk/SendbirdSdk/getMyGroupChannelChangeLogs.html">getMyGroupChannelChangeLogs</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getOptions.html">getOptions</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getPendingToken.html">getPendingToken</a></li>
         <li><a href="../../sendbirdsdk/SendbirdSdk/getPushSound.html">getPushSound</a></li>
@@ -149,7 +148,7 @@
       <div><h1><span class="kind-method">connect</span> method </h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../sendbirdsdk/User-class.html">User</a></span>&gt;</span></span>
+      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../sendbirdsdk/User-class.html">User</a></span>&gt;</span></span>
             <span class="name ">connect</span>
 (<wbr><ol class="parameter-list"><li><span class="parameter" id="connect-param-userId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span></li>
 <li><span class="parameter" id="connect-param-accessToken">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">accessToken</span>, </span></li>
@@ -159,8 +158,7 @@
       
     </section>
     <section class="desc markdown">
-      <p>public
-Connect to Sendbird server with given parameters. If previously connected
+      <p>Connects to Sendbird server with given parameters. If previously connected
 and try to connect with different <code>userId</code> then everything will be reset
 before it attempts to connect. Provide <code>accessToken</code> can be used if you
 generated the token from platform api</p>
@@ -168,11 +166,7 @@ generated the token from platform api</p>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">&#47;&#47;&#47; Connect to Sendbird server with given parameters. If previously connected
-&#47;&#47;&#47; and try to connect with different [userId] then everything will be reset
-&#47;&#47;&#47; before it attempts to connect. Provide [accessToken] can be used if you
-&#47;&#47;&#47; generated the token from platform api
-FutureOr&lt;User&gt; connect(
+      <pre class="language-dart"><code class="language-dart">Future&lt;User&gt; connect(
   String userId, {
   String accessToken,
   String apiHost,

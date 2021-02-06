@@ -340,8 +340,7 @@ class ApiClient {
     queryParams.addAll(params.toJson());
     if (timestamp != null && timestamp > 0)
       queryParams['change_ts'] = timestamp;
-    else
-      queryParams['token'] = token;
+    else if (token != null) queryParams['token'] = token;
 
     final res = await client.get(url: url, queryParams: queryParams);
     return ChannelChangeLogsResponse.fromJson(res);

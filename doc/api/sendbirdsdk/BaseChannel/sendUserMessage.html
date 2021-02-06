@@ -80,6 +80,7 @@
         <li class="section-title"><a href="../../sendbirdsdk/BaseChannel-class.html#instance-methods">Methods</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/banUser.html">banUser</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/copyWith.html">copyWith</a></li>
@@ -92,10 +93,10 @@
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithTimestamp.html">getMessageChangeLogsWithTimestamp</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogsWithToken.html">getMessageChangeLogsWithToken</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogs.html">getMessageChangeLogs</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMessagesById.html">getMessagesById</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMessagesByTimestamp.html">getMessagesByTimestamp</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></li>
@@ -113,7 +114,7 @@
         <li><a href="../../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></li>
-        <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithParams.html">sendUserMessageWithParams</a></li>
+        <li><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></li>
         <li><a href="../../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></li>
@@ -142,13 +143,13 @@
     <section class="multi-line-signature">
       <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>&gt;</span></span>
             <span class="name ">sendUserMessage</span>
-(<wbr><ol class="parameter-list"><li><span class="parameter" id="sendUserMessage-param-text"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">text</span>, </span></li>
+(<wbr><ol class="parameter-list"><li><span class="parameter" id="sendUserMessage-param-params"><span class="type-annotation"><a href="../../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></span> <span class="parameter-name">params</span>, </span></li>
 <li><span class="parameter" id="sendUserMessage-param-onCompleted">{<span class="type-annotation">OnMessageCallback</span> <span class="parameter-name">onCompleted</span>}</span></li>
 </ol>)
       
     </section>
     <section class="desc markdown">
-      <p>Sends <a href="../../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>text</code>.</p>
+      <p>Sends <a href="../../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>params</code>.</p>
 <p>It returns <a href="../../sendbirdsdk/UserMessage-class.html">UserMessage</a> with <a href="../../sendbirdsdk/MessageSendingStatus-class.html">MessageSendingStatus.pending</a> and
 <code>onCompleted</code> will be invoked once the message has been sent completely.
 Channel event <a href="../../sendbirdsdk/ChannelEventHandler/onMessageReceived.html">ChannelEventHandler.onMessageReceived</a> will be invoked
@@ -158,14 +159,44 @@ on all other members' end.</p>
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Future&lt;UserMessage&gt; sendUserMessage(
-  String text, {
+  UserMessageParams params, {
   OnMessageCallback onCompleted,
 }) async {
-  final params = UserMessageParams()..message = text;
-  return sendUserMessageWithParams(
+  if (params.message == null || params.message.isEmpty) {
+    throw SBError(code: ErrorCode.invalidParameter);
+  }
+
+  final cmd = Command.buildUserMessage(
+    channelUrl,
     params,
-    onCompleted: onCompleted,
+    Uuid().v1(),
   );
+  final pending = BaseMessage.msgFromJson&lt;UserMessage&gt;(
+      cmd.payload); &#47;&#47;UserMessage.fromJson(cmd.payload);
+
+  if (!_sdk.state.hasActiveUser) {
+    final error = SBError(code: ErrorCode.connectionRequired);
+    pending
+      ..errorCode = error.code
+      ..sendingStatus = MessageSendingStatus.failed;
+    if (onCompleted != null) onCompleted(pending, error);
+    return pending;
+  }
+
+  pending.sendingStatus = MessageSendingStatus.pending;
+  pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
+
+  &#47;&#47; final res = await _sdk.cmdManager.sendCommand(cmd);
+  _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
+    final msg = BaseMessage.msgFromJson&lt;UserMessage&gt;(cmdResult.payload);
+    if (onCompleted != null) onCompleted(msg, null);
+  }).catchError((e) {
+    &#47;&#47; pending.errorCode = e?.code ?? ErrorCode.unknownError;
+    pending.sendingStatus = MessageSendingStatus.failed;
+    if (onCompleted != null) onCompleted(pending, e);
+  });
+
+  return pending;
 }</code></pre>
     </section>
 

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform; //at the top
+import 'dart:io';
 
+import 'package:yaml/yaml.dart';
 import 'package:flutter/widgets.dart';
 
 import '../channel/base_channel.dart';
@@ -137,16 +138,17 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     state.reconnecting = reconnect;
 
+    final version = await getCurrentSdkVersion();
     var params = {
       'p': Platform.operatingSystem,
       'pv': Platform.operatingSystemVersion, //device_info
-      'sv': '3.0.0', //this version is validated from server
+      'sv': version,
       'ai': state.appId,
       if (reconnect && sessionKey != null)
         'key': sessionKey
       else
         'user_id': userId,
-      'SB-User-Agent': 'iOS/c3.0.0', //platform/c{v}
+      'SB-User-Agent': 'flutter/c$version', //platform/c{v}
       'include_extra_data':
           'premium_feature_list,file_upload_size_limit,emoji_hash,application_attributes', //extra data
       'expiring_session': '0',
@@ -159,7 +161,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final fullWsHost = wsHost + '/?' + Uri(queryParameters: params).query;
 
     await webSocket.connect(fullWsHost);
-    final user = await loginCompleter.future.timeout(Duration(seconds: 5));
+    final user = await loginCompleter.future
+        .timeout(Duration(seconds: options.connectionTimeout));
 
     state
       ..wsHost = wsHost
@@ -256,5 +259,18 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
   String _getDefaultWsHost() {
     return 'wss://ws-' + state.appId + '.sendbird.com';
+  }
+
+  Future<String> getCurrentSdkVersion() async {
+    // Need to move up if current directory is in test
+    if (Directory.current.path.endsWith('/test')) {
+      Directory.current = Directory.current.parent;
+    }
+
+    final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
+    final file = File(pubspecPath);
+    String configText = file.readAsStringSync();
+    final configMap = loadYaml(configText);
+    return configMap['version'];
   }
 }

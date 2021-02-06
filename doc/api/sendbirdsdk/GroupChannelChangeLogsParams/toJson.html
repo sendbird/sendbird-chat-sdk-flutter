@@ -64,6 +64,7 @@
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
         <li><a href="../../sendbirdsdk/GroupChannelChangeLogsParams/includeEmptyChannel.html">includeEmptyChannel</a></li>
         <li><a href="../../sendbirdsdk/GroupChannelChangeLogsParams/includeFrozenChannel.html">includeFrozenChannel</a></li>
+        <li><a href="../../sendbirdsdk/GroupChannelChangeLogsParams/includeMemberList.html">includeMemberList</a></li>
         <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
     
         <li class="section-title"><a href="../../sendbirdsdk/GroupChannelChangeLogsParams-class.html#instance-methods">Methods</a></li>
@@ -96,6 +97,7 @@
       <pre class="language-dart"><code class="language-dart">Map&lt;String, dynamic&gt; toJson() {
   return {
     &#39;custom_type&#39;: customTypes,
+    &#39;show_member&#39;: includeMemberList,
     &#39;show_empty&#39;: includeEmptyChannel,
     &#39;show_frozen&#39;: includeFrozenChannel,
   };

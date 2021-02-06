@@ -140,22 +140,21 @@ Future&lt;List&lt;GroupChannel&gt;&gt; loadNext() async {
   if (includeEmptyChannel)
     options.add(ChannelQueryIncludeOption.emptyChannel);
   if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
+  &#47;&#47; if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
 
   final filter = GroupChannelFilter()
-    ..channelHiddenStateFilter = channelHiddenStateFilter
     ..customTypeStartswith = customTypeStartWithFilter
-    ..customTypesFilter = customTypesFilter
+    ..customTypes = customTypesFilter
     ..memberStateFilter = memberStateFilter
     ..membersExactlyIn = userIdsExactFilter
     ..membersIncludeIn = userIdsIncludeFilter
-    ..memberStateFilter = memberStateFilter
     ..membersNicknameContains = nicknameContainsFilter
     ..nameContains = channelNameContainsFilter
     ..superMode = superChannelFilter
     ..publicMode = publicChannelFilter
     ..unreadFilter = unreadChannelFilter
     ..metadataOrderKey = metaDataOrderKeyFilter
-    ..channelHiddenStateFilter = channelHiddenStateFilter;
+    ..hiddenMode = channelHiddenStateFilter;
 
   final sdk = SendbirdSdk().getInternal();
   final res = await sdk.api.getMyGroupChannels(
