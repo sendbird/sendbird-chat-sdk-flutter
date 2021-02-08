@@ -19,6 +19,7 @@ dependencies:
   device_info: ^1.0.0
   logger: ^0.9.4
   mime: ^0.9.7
+  yaml: ^2.2.1
 
 dev_dependencies:
   test: ^1.15.5

@@ -262,15 +262,16 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   Future<String> getCurrentSdkVersion() async {
+    return '3.0.0';
     // Need to move up if current directory is in test
-    if (Directory.current.path.endsWith('/test')) {
-      Directory.current = Directory.current.parent;
-    }
+    // if (Directory.current.path.endsWith('/test')) {
+    //   Directory.current = Directory.current.parent;
+    // }
 
-    final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
-    final file = File(pubspecPath);
-    String configText = file.readAsStringSync();
-    final configMap = loadYaml(configText);
-    return configMap['version'];
+    // final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
+    // final file = File(pubspecPath);
+    // String configText = file.readAsStringSync();
+    // final configMap = loadYaml(configText);
+    // return configMap['version'];
   }
 }
