@@ -9,6 +9,9 @@ import '../../models/image_info.dart';
 import '../../models/error.dart';
 import '../../utils/extensions.dart';
 
+import '../../utils/logger.dart';
+import 'package:logger/logger.dart';
+
 enum Method {
   get,
   post,
@@ -18,7 +21,7 @@ enum Method {
 }
 
 class HttpClient {
-  String userAgent;
+  Map<String, String> headers = {};
   String baseUrl;
   int port;
   String appId;
@@ -35,22 +38,20 @@ class HttpClient {
     this.appId,
     this.sessionKey,
     this.token,
+    this.headers,
   });
 
   void cleanUp() {
     sessionKey = null;
     token = null;
+    headers = {};
     // errorController.close();
+    Logger.level = Level.nothing;
   }
 
   //form commom headers
   Map<String, String> commonHeaders() {
-    //sdk version
-    //flutter version
-    //os version
-    //session key
-    //token if exist
-    return {
+    final commonHeaders = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       if (sessionKey != null)
@@ -58,6 +59,11 @@ class HttpClient {
       else if (token != null)
         'Api-Token': token,
     };
+    if (headers.isNotEmpty) {
+      commonHeaders.addAll(headers);
+    }
+
+    return commonHeaders;
   }
 
   Future<dynamic> get({
@@ -202,6 +208,7 @@ class HttpClient {
   dynamic _response(http.Response response) {
     //use compute
     final res = jsonDecode(response.body.toString());
+    logger.i('[Sendbird] HTTP response ' + res.toString());
     if (response.statusCode >= 400 && response.statusCode < 500) {
       // final err = SBError(message: res['message'], code: res['code']);
       // errorController.sink.addError(err);
@@ -211,14 +218,15 @@ class HttpClient {
       case 200:
         return res;
       case 400:
+        logger.e('[Sendbird] Bad request: ${res['message']}');
         throw BadRequestError(message: res['message'], code: res['code']);
       case 401:
       case 403:
+        logger.e('[Sendbird] Unauthorized request: ${res['message']}');
         throw UnauthorizeError(message: res['message'], code: res['code']);
       case 500:
       default:
-        final msg = res['message'];
-        print('internal server error $msg');
+        logger.e('[Sendbird] internal server error ${res['message']}');
         throw InternalServerError(
             message: 'internal server error :${response.statusCode}');
     }

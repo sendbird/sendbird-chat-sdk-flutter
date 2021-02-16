@@ -113,7 +113,7 @@ class SessionManager with SdkAccessor {
     final encryptedUserId = prefs.getString(_userIdKeyPath);
 
     if (encryptedUserId == null) {
-      logger.e("userid is not found in prefs");
+      logger.e('[Sendbird] userid is not found in prefs');
       return null;
     }
 
@@ -128,14 +128,14 @@ class SessionManager with SdkAccessor {
   Future<void> _encryptedSessionKey(String sessionKey) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionKey == null) {
-      logger.i("Session key is set to null, all paths will be removed");
+      logger.e("[Sendbird] Session key set to null, all paths will be removed");
       prefs.remove(_userIdKeyPath);
       prefs.remove(_sessionKeyPath);
       throw InvalidParameterError();
     }
 
     if (_userId == null) {
-      logger.e("Please set `userId` before you perform session key encryption");
+      logger.e("[Sendbird] userId is required to encrypt session");
       throw InvalidParameterError();
     }
 
@@ -157,7 +157,7 @@ class SessionManager with SdkAccessor {
     // sessionPath = encryptedData.base64;
     prefs.setString(_sessionKeyPath, encryptedData.base64);
 
-    logger.i("encryption completed userId: $base64UserId " +
+    logger.i("[Sendbird] encryption completed userId: $base64UserId " +
         "sessionKey: $encryptedData");
   }
 

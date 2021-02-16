@@ -9,8 +9,8 @@ part of 'threaded_message_list_params.dart';
 ThreadedMessageListParams _$ThreadedMessageListParamsFromJson(
     Map<String, dynamic> json) {
   return ThreadedMessageListParams()
-    ..previousResultSize = json['prev_lmit'] as int
-    ..nextResultSize = json['next_lmit'] as int
+    ..previousResultSize = json['prev_limit'] as int
+    ..nextResultSize = json['next_limit'] as int
     ..isInclusive = json['include'] as bool
     ..reverse = json['reverse'] as bool
     ..messageType =
@@ -26,8 +26,8 @@ ThreadedMessageListParams _$ThreadedMessageListParamsFromJson(
 Map<String, dynamic> _$ThreadedMessageListParamsToJson(
         ThreadedMessageListParams instance) =>
     <String, dynamic>{
-      'prev_lmit': instance.previousResultSize,
-      'next_lmit': instance.nextResultSize,
+      'prev_limit': instance.previousResultSize,
+      'next_limit': instance.nextResultSize,
       'include': instance.isInclusive,
       'reverse': instance.reverse,
       'message_type': _$MessageTypeFilterEnumMap[instance.messageType],

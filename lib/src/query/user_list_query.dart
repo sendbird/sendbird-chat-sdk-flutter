@@ -32,6 +32,7 @@ class UserListQuery extends QueryBase {
 
   @override
   Future<List<User>> loadNext() async {
+    if (queryType == null) throw InvalidParameterError();
     if (loading) throw QueryInProgressError();
     if (!hasNext) return [];
 
@@ -91,6 +92,7 @@ class UserListQuery extends QueryBase {
         );
         break;
     }
+
     loading = false;
     token = res.next;
     hasNext = res.next != '';

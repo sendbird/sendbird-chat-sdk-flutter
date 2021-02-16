@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
+import 'package:sendbirdsdk/src/utils/logger.dart';
 
 import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
@@ -29,25 +31,30 @@ import 'sendbird_sdk_internal.dart';
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {
   //Singleton Pattern
-  static SendbirdSdk _inst;
+  static SendbirdSdk _instance = SendbirdSdk._instanceFunction();
   SendbirdSdk._instanceFunction();
-
   SendbirdSdkInternal _int;
 
-  factory SendbirdSdk({String appId, String apiToken, Options options}) {
-    if (_inst != null && appId == null) {
-      return _inst;
+  factory SendbirdSdk({
+    String appId,
+    String apiToken,
+    Options options,
+  }) {
+    if (_instance != null &&
+        (appId == null || appId == _instance._int?.state?.appId)) {
+      return _instance;
     }
 
-    final sdb = SendbirdSdk._instanceFunction();
-    sdb._int = SendbirdSdkInternal(
+    // initialize with different app id, so logout and
+    // reinitialize internal obj
+    _instance._int?.logout();
+    _instance._int = SendbirdSdkInternal(
       appId: appId,
       apiToken: apiToken,
       options: options ?? Options(),
     );
 
-    _inst = sdb;
-    return sdb;
+    return _instance;
   }
 
   /// Sets [Options] to configure SDK
@@ -62,6 +69,10 @@ class SendbirdSdk {
 
   SendbirdSdkInternal getInternal() {
     return _int;
+  }
+
+  void setLogLevel(LogLevel level) {
+    Logger.level = convertLogLevel(level);
   }
 
   // public
@@ -179,7 +190,7 @@ class SendbirdSdk {
 
   /// Returns current SDK version as `String`.
   Future<String> getSdkVersion() async {
-    return _int.getCurrentSdkVersion();
+    return sdk_version;
   }
 
   /// True if SDK has been initialized.
@@ -485,65 +496,110 @@ class SendbirdSdk {
     return _int.state.unreadCountInfo.customTypes[customType];
   }
 
-  /// Convienence stream
-
+  /// Returns a stream to listen message count has been changed
   Stream<int> get totalUnreadMessageCountStream {
     if (getCurrentUser() == null) return null;
     return _int.totalUnreadCountController.stream;
   }
 
-  Stream<BaseMessage> messageUpdateStream(String channelUrl) async* {
+  /// Retruns a stream to listen message update event with given [channelUrl].
+  ///
+  /// It will be triggered every message update if [channelUrl] is not provided.
+  Stream<BaseMessage> messageUpdateStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.messageUpdateStreamController.stream) {
-      if (res.channel.channelUrl == channelUrl) yield res.message;
+      if (channelUrl != null) {
+        if (res.channel.channelUrl == channelUrl) yield res.message;
+      } else {
+        yield res.message;
+      }
     }
   }
 
-  Stream<BaseMessage> messageReceiveStream(String channelUrl) async* {
+  /// Returns a stream to listen new messsage event with given [channelUrl].
+  ///
+  /// It will be triggered every new message if [channelUrl] is not provided
+  Stream<BaseMessage> messageReceiveStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.messageReceiveStreamController.stream) {
-      if (res.channel.channelUrl == channelUrl) yield res.message;
+      if (channelUrl != null) {
+        if (res.channel.channelUrl == channelUrl) yield res.message;
+      } else {
+        yield res.message;
+      }
     }
   }
 
-  Stream<BaseChannel> channelChangedStream(String channelUrl) async* {
+  /// Returns a stream to listen channel change event with given [channelUrl]
+  ///
+  /// It will be triggered every channel chaange if [channelUrl] is not provided
+  Stream<BaseChannel> channelChangedStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.channelChangedStreamController.stream) {
-      if (res.channelUrl == channelUrl) yield res;
+      if (channelUrl != null) {
+        if (res.channelUrl == channelUrl) yield res;
+      } else {
+        yield res;
+      }
     }
   }
 
-  Stream<GroupChannel> readStream(String channelUrl) async* {
+  /// Returns a stream to listen read event with given [channelUrl]
+  ///
+  /// It will be triggered every read event if [channelUrl] is not provided
+  Stream<GroupChannel> readStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.readStreamController.stream) {
-      if (res.channelUrl == channelUrl) yield res;
+      if (channelUrl != null) {
+        if (res.channelUrl == channelUrl) yield res;
+      } else {
+        yield res;
+      }
     }
   }
 
-  Stream<Map<String, int>> deliveryStream(String channelUrl) async* {
+  /// Returns a stream to listen delivery event with given [channelUrl]
+  ///
+  /// It will be triggered every delivery event if [channelUrl] is not provided
+  Stream<Map<String, int>> deliveryStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.deliveryStreamController.stream) {
-      if (res.channelUrl == channelUrl) {
-        final status = _int.cache.find<DeliveryStatus>(channelKey: channelUrl);
+      if (channelUrl != null) {
+        if (res.channelUrl == channelUrl) {
+          final status =
+              _int.cache.find<DeliveryStatus>(channelKey: channelUrl);
+          yield status.updatedDeliveryReceipt;
+        }
+      } else {
+        final status =
+            _int.cache.find<DeliveryStatus>(channelKey: res.channelUrl);
         yield status.updatedDeliveryReceipt;
       }
     }
   }
 
-  Stream<List<User>> usersTypingStream(String channelUrl) async* {
+  /// Returns a stream to listen typing event with given [channelUrl]
+  ///
+  /// It will be triggered for every typing event if [channelUrl] is not provided
+  Stream<List<User>> usersTypingStream({String channelUrl}) async* {
     if (getCurrentUser() == null) yield null;
     await for (final res in _int.usersTypingStreamController.stream) {
-      if (res.channelUrl == channelUrl) yield res.getTypingUsers();
+      if (channelUrl != null) {
+        if (res.channelUrl == channelUrl) yield res.getTypingUsers();
+      } else {
+        yield res.getTypingUsers();
+      }
     }
   }
 
+  /// Returns a stream to listen connection events
   Stream<ConnectionEventType> get connectionStream {
     if (getCurrentUser() == null) return null;
     return _int.connectionStreamController.stream;
   }
 
-  /// Friends
-  /// TBD
+  // Friends
+  // TBD
 
   /// Returns [EmojiContainer] which contains all available [Emoji]
   Future<EmojiContainer> getAllEmojis() {
@@ -560,5 +616,11 @@ class SendbirdSdk {
   Future<EmojiCategory> getEmojiCategory(int categoryId) {
     if (categoryId == null || categoryId <= 0) throw InvalidParameterError();
     return _int.api.getEmojiCategory(categoryId);
+  }
+
+  // -- internal
+
+  void addVersionExtension(String key, String version) {
+    _int.addVersionExtension(key, version);
   }
 }

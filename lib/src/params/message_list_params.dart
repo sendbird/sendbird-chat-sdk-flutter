@@ -33,6 +33,7 @@ class MessageListParams {
   /// Restricts the search scope only to retrieve the messages with the
   /// specified custom message type.
   String customType;
+  List<String> customTypes;
 
   /// Restricts the search scope only to retrieve the messages sent by
   /// the users with the specified user IDs.

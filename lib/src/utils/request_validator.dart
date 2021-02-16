@@ -1,5 +1,7 @@
 // import '../services/session/session_manager.dart';
 
+import 'package:sendbirdsdk/sendbirdsdk.dart';
+
 class RequestValidator {
   static Future<bool> readyToExecuteApiRequest() async {
     // final sessionKey = await SessionManager().getSessionKey();
@@ -11,13 +13,13 @@ class RequestValidator {
     return true;
   }
 
-  static Future<bool> readyToExecuteWsRequest() async {
+  static Future<Error> readyToExecuteWsRequest() async {
     //check ws client connection
     if (true) {
       //if connetion is available
-      return true;
+      return null;
     }
 
-    return false;
+    return WebSocketError();
   }
 }

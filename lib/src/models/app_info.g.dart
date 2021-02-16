@@ -9,7 +9,7 @@ part of 'app_info.dart';
 AppInfo _$AppInfoFromJson(Map<String, dynamic> json) {
   return AppInfo(
     emojiHash: json['emoji_hash'] as String,
-    uploadSizeLimit: json['upload_size_limit'] as int,
+    uploadSizeLimit: json['upload_size_limit'] as int ?? 1048576,
     premiumFeatureList: (json['premium_feature_list'] as List)
         ?.map((e) => e as String)
         ?.toList(),

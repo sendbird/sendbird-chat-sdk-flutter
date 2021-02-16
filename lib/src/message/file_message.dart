@@ -1,12 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'base_message.dart';
+import 'og_image/og_meta_data.dart';
+
 import '../constant/enums.dart';
+import '../features/reaction/reaction.dart';
 import '../features/thread/thread_info.dart';
 import '../models/meta_array.dart';
 import '../models/sender.dart';
-import '../message/base_message.dart';
 import '../models/user.dart';
-import '../features/reaction/reaction.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
 part 'file_message.g.dart';
@@ -71,6 +73,7 @@ class FileMessage extends BaseMessage {
     int errorCode,
     bool isOperatorMessage,
     String data,
+    OGMetaData ogMetaData,
   }) : super(
           requestId: requestId,
           messageId: messageId,
@@ -95,6 +98,7 @@ class FileMessage extends BaseMessage {
           errorCode: errorCode,
           isOperatorMessage: isOperatorMessage,
           data: data,
+          ogMetaData: ogMetaData,
         );
 
   factory FileMessage.fromJson(Map<String, dynamic> json) =>

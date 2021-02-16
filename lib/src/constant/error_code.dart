@@ -54,6 +54,7 @@ class ErrorCode {
   static int fileUploadCancelFailed = 800230;
   static int fileUploadCanceled = 800240;
   static int fileUploadTimeout = 800250;
+  static int fileSizeLimitExceeded = 800260;
   static int timerWasExpired = 800301;
   static int timerWasAlreadyDone = 800302;
   static int pendingError = 800400;

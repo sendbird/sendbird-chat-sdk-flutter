@@ -9,12 +9,12 @@ part 'threaded_message_list_params.g.dart';
 class ThreadedMessageListParams {
   /// The number of messages to retrieve that were sent before the
   /// specified timestamp or message ID.
-  @JsonKey(name: 'prev_lmit')
+  @JsonKey(name: 'prev_limit')
   int previousResultSize = 10;
 
   /// The number of messages to retrieve that were sent after the
   /// specified timestamp or message ID.
-  @JsonKey(name: 'next_lmit')
+  @JsonKey(name: 'next_limit')
   int nextResultSize = 10;
 
   /// Determines whether to include the messages with the matching

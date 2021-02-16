@@ -66,10 +66,7 @@ SnoozeResponse _$SnoozeResponseFromJson(Map<String, dynamic> json) {
 UploadResponse _$UploadResponseFromJson(Map<String, dynamic> json) {
   return UploadResponse(
     url: json['url'] as String,
-    thumbnails: (json['thumbnails'] as List)
-        ?.map((e) =>
-            e == null ? null : Thumbnail.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    thumbnails: json['thumbnails'] as List,
     requireAuth: json['require_auth'] as bool,
     fileSize: json['file_size'] as int,
   );

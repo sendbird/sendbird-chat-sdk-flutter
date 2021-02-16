@@ -15,6 +15,8 @@ MessageListParams _$MessageListParamsFromJson(Map<String, dynamic> json) {
     ..messageType =
         _$enumDecodeNullable(_$MessageTypeFilterEnumMap, json['message_type'])
     ..customType = json['custom_type'] as String
+    ..customTypes =
+        (json['custom_types'] as List)?.map((e) => e as String)?.toList()
     ..senderIds =
         (json['sender_ids'] as List)?.map((e) => e as String)?.toList()
     ..includeMetaArray = json['with_sorted_meta_array'] as bool
@@ -34,6 +36,7 @@ Map<String, dynamic> _$MessageListParamsToJson(MessageListParams instance) =>
       'reverse': instance.reverse,
       'message_type': _$MessageTypeFilterEnumMap[instance.messageType],
       'custom_type': instance.customType,
+      'custom_types': instance.customTypes,
       'sender_ids': instance.senderIds,
       'with_sorted_meta_array': instance.includeMetaArray,
       'include_reactions': instance.includeReactions,

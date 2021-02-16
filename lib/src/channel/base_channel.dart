@@ -245,7 +245,6 @@ class BaseChannel implements Cacheable<BaseChannel> {
     pending.sendingStatus = MessageSendingStatus.pending;
     pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
 
-    // final res = await _sdk.cmdManager.sendCommand(cmd);
     _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
       final msg = BaseMessage.msgFromJson<UserMessage>(cmdResult.payload);
       if (onCompleted != null) onCompleted(msg, null);

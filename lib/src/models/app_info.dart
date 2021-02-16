@@ -9,6 +9,7 @@ class AppInfo {
   final String emojiHash;
 
   /// Uplodable file size limit (unit in bytes)
+  @JsonKey(defaultValue: 1024 * 1024)
   final int uploadSizeLimit;
 
   /// List of premium feature on current application id

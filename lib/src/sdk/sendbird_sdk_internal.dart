@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:yaml/yaml.dart';
 import 'package:flutter/widgets.dart';
 
 import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
+import '../constant/contants.dart' as Constants;
 import '../constant/enums.dart';
 import '../event/event_manager.dart';
 import '../models/command.dart';
@@ -20,18 +20,22 @@ import '../services/session/session_manager.dart';
 import '../services/db/memory_cache_service.dart';
 import '../services/network/api_client.dart';
 import '../services/network/websocket_client.dart';
-import '../utils/logger.dart';
 import '../utils/parsers.dart';
+
+const sdk_version = '3.0.1';
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {
   SendbirdState state = SendbirdState();
+
   SessionManager sessionManager = SessionManager();
   MemoryCacheStorage cache = MemoryCacheStorage();
   EventManager eventManager = EventManager();
   CommandManager cmdManager = CommandManager();
-  ApiClient api = ApiClient();
 
+  Map<String, String> _extensions = {};
+
+  ApiClient api = ApiClient();
   WebSocketClient webSocket;
   Completer<User> loginCompleter;
 
@@ -44,15 +48,13 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   StreamController<GroupChannel> usersTypingStreamController;
   StreamController<ConnectionEventType> connectionStreamController;
 
-  String appId;
-  String apiToken;
   Options options;
 
   Timer reconnectTimer;
 
   SendbirdSdkInternal({
-    this.appId,
-    this.apiToken,
+    String appId,
+    String apiToken,
     this.options,
   }) {
     api.initialize(appId: appId, token: apiToken);
@@ -95,7 +97,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     //but it is required to process api first if corresponding event
     //comes in from socket
     Command cmd = await parseCommand(stringCommand);
-    logger.d('Socket Receive:\n $stringCommand');
     cmdManager.processCommand(cmd);
   }
 
@@ -108,18 +109,27 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     String wsHost,
     bool reconnect = false,
   }) async {
-    if (state != null && state.connected) {
-      if (state.userId == userId) {
-        return state.currentUser;
-      }
-    }
-
     if (userId == null || userId.isEmpty) {
       throw InvalidParameterError();
     }
 
-    loginCompleter = Completer();
+    userId = userId.trim();
+
+    // already connected
+    if (state.connected && state.userId == userId) {
+      return state.currentUser;
+    }
+
+    // is already in progress to connect
+    if (state.connecting && state.userId == userId && loginCompleter != null) {
+      return loginCompleter.future;
+    }
+
+    state.userId = userId;
+    state.connecting = true;
+
     _resetControllers();
+    loginCompleter = Completer();
 
     webSocket?.close();
     webSocket = WebSocketClient(
@@ -136,39 +146,42 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       if (!state.reconnecting) eventManager.notifyReconnectionStarted();
     }
 
-    state.reconnecting = reconnect;
+    apiHost = reconnect ? state.apiHost : apiHost ?? _getDefaultApiHost();
+    wsHost = reconnect ? state.wsHost : wsHost ?? _getDefaultWsHost();
 
-    final version = await getCurrentSdkVersion();
+    state
+      ..reconnecting = reconnect
+      ..wsHost = wsHost
+      ..apiHost = apiHost;
+
+    api.initialize(baseUrl: apiHost, headers: {
+      'SB-User-Agent': await this._sbUserAgent,
+    });
+
+    final ua = await this._sbUserAgent;
     var params = {
       'p': Platform.operatingSystem,
       'pv': Platform.operatingSystemVersion, //device_info
-      'sv': version,
+      'sv': sdk_version,
       'ai': state.appId,
       if (reconnect && sessionKey != null)
         'key': sessionKey
       else
         'user_id': userId,
-      'SB-User-Agent': 'flutter/c$version', //platform/c{v}
+      'SB-User-Agent': ua,
       'include_extra_data':
           'premium_feature_list,file_upload_size_limit,emoji_hash,application_attributes', //extra data
       'expiring_session': '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
-    state.connecting = true;
-    apiHost = reconnect ? state.apiHost : apiHost ?? _getDefaultApiHost();
-    wsHost = reconnect ? state.wsHost : wsHost ?? _getDefaultWsHost();
     final fullWsHost = wsHost + '/?' + Uri(queryParameters: params).query;
 
     await webSocket.connect(fullWsHost);
     final user = await loginCompleter.future
         .timeout(Duration(seconds: options.connectionTimeout));
 
-    state
-      ..wsHost = wsHost
-      ..apiHost = apiHost;
-
-    api.initialize(baseUrl: apiHost);
+    loginCompleter = null;
     reconnectTimer = null;
     return user;
   }
@@ -261,17 +274,18 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     return 'wss://ws-' + state.appId + '.sendbird.com';
   }
 
-  Future<String> getCurrentSdkVersion() async {
-    return '3.0.0';
-    // Need to move up if current directory is in test
-    // if (Directory.current.path.endsWith('/test')) {
-    //   Directory.current = Directory.current.parent;
-    // }
+  Future<String> get _sbUserAgent async {
+    final uikitVersion = _extensions[Constants.SbExtensionKeyUIKit];
+    final core = '/c$sdk_version';
+    final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
+    return 'flutter$core$uikit';
+  }
 
-    // final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
-    // final file = File(pubspecPath);
-    // String configText = file.readAsStringSync();
-    // final configMap = loadYaml(configText);
-    // return configMap['version'];
+  void addVersionExtension(String key, String version) {
+    if (key != Constants.SbExtensionKeyUIKit ||
+        key != Constants.SbExtensionKeySyncManager) {
+      return;
+    }
+    _extensions[key] = version;
   }
 }

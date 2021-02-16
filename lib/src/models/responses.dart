@@ -122,7 +122,7 @@ class SnoozeResponse extends BaseResponse {
 @JsonSerializable(createToJson: false)
 class UploadResponse extends BaseResponse {
   final String url;
-  final List<Thumbnail> thumbnails;
+  final List thumbnails;
   final bool requireAuth;
   final int fileSize;
 

@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:sendbirdsdk/sendbirdsdk.dart';
 import 'package:sendbirdsdk/src/features/reaction/reaction_event.dart';
 
 import 'http_client.dart';
@@ -39,31 +40,28 @@ class ApiClient {
   String sessionKey;
   String token;
   String baseUrl;
+  int uploadSizeLimit;
 
   void initialize({
     String appId,
     String sessionKey,
     String token,
     String baseUrl,
+    int uploadSizeLimit,
+    Map<String, String> headers,
   }) {
-    if (appId != null) {
-      this.appId = appId;
-    }
-    if (sessionKey != null) {
-      this.sessionKey = sessionKey;
-    }
-    if (token != null) {
-      this.token = token;
-    }
-    if (baseUrl != null) {
-      this.baseUrl = baseUrl;
-    }
+    if (appId != null) this.appId = appId;
+    if (sessionKey != null) this.sessionKey = sessionKey;
+    if (token != null) this.token = token;
+    if (baseUrl != null) this.baseUrl = baseUrl;
+    if (uploadSizeLimit != null) this.uploadSizeLimit = uploadSizeLimit;
 
     client
       ..appId = appId ?? this.appId
       ..sessionKey = sessionKey ?? this.sessionKey
       ..token = token ?? this.token
-      ..baseUrl = baseUrl ?? this.baseUrl;
+      ..baseUrl = baseUrl ?? this.baseUrl
+      ..headers = headers ?? {};
   }
 
   void cleanUp() {
@@ -622,7 +620,16 @@ class ApiClient {
     OnUploadProgressCallback progress,
   }) async {
     if (!params.uploadFile.hasBinary) {
-      throw ArgumentError();
+      throw InvalidParameterError();
+    }
+
+    final fileSize = params.uploadFile.file?.lengthSync() ?? 0;
+    if (fileSize == 0) {
+      throw InvalidParameterError();
+    }
+
+    if (fileSize > this.uploadSizeLimit) {
+      throw SBError(code: ErrorCode.fileSizeLimitExceeded);
     }
 
     final url = endpoint.Misc.storage_upload_file;
@@ -632,9 +639,9 @@ class ApiClient {
       'file': params.uploadFile
     };
 
-    // params.thumbnailSizes
-    //    .asMap()
-    //    .forEach((index, value) => body['thumbnail${index + 1}'] = value);
+    params.thumbnailSizes?.asMap()?.forEach((index, value) =>
+        body['thumbnail${index + 1}'] =
+            "${value.width.round()},${value.height.round()}");
 
     final res = await client.multipartRequest(
       method: Method.post,
@@ -1577,10 +1584,11 @@ class ApiClient {
     @required String channelUrl,
     @required int messageId,
     @required String key,
+    String uid,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);
-    final body = {'user_id': userId, 'reaction': key};
+    final body = {'user_id': uid ?? userId, 'reaction': key};
     final res = await client.post(url: url, body: body);
     return ReactionEvent.fromJson(res);
   }
@@ -1590,10 +1598,11 @@ class ApiClient {
     @required String channelUrl,
     @required int messageId,
     @required String key,
+    String uid,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);
-    final body = {'user_id': userId, 'reaction': key};
+    final body = {'user_id': uid ?? userId, 'reaction': key};
     final res = await client.delete(url: url, body: body);
     return ReactionEvent.fromJson(res);
   }

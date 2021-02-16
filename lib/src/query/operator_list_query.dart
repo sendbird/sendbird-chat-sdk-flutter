@@ -18,6 +18,9 @@ class OperatorListQuery extends QueryBase {
 
   @override
   Future<List> loadNext() async {
+    if (channelUrl == null || channelType == null) {
+      throw InvalidParameterError();
+    }
     if (loading) throw QueryInProgressError();
     if (!hasNext) return [];
 

@@ -6,14 +6,6 @@ import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of open channel.
 class OpenChannelListQuery extends QueryBase {
-  /// Query result includes frozen channels if `true`
-  /// default value is `true`
-  bool includeFrozenChannel = true;
-
-  // Query result includes metaData for channel if `true`
-  // default value is `false`
-  // bool includeMetaData = false;
-
   /// Filter for channel url
   String channelUrl;
 
@@ -22,6 +14,14 @@ class OpenChannelListQuery extends QueryBase {
 
   /// Filter for channel custom type
   String customType;
+
+  /// Query result includes frozen channels if `true`
+  /// default value is `true`
+  bool includeFrozenChannel = true;
+
+  // Query result includes metaData for channel if `true`
+  // default value is `false`
+  // bool includeMetaData = false;
 
   OpenChannelListQuery();
 

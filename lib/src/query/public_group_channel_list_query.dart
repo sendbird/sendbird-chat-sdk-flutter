@@ -8,6 +8,35 @@ import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of public group channel.
 class PublicGroupChannelListQuery extends QueryBase {
+  /// Filter for channel urls.
+  ///
+  /// Result will return a list containing only and exactly matched
+  /// with given urls. This filter does not cooperate with other filters.
+  List<String> channelUrls;
+
+  /// Filter channels for super group channel. Default is `all`
+  GroupChannelSuperChannelFilter superChannelFilter;
+
+  /// Filter by current user's member state in public group channel
+  PublicGroupChannelMembershipFilter membershipFilter;
+
+  /// Order of query result
+  PublicGroupChannelListOrder order;
+
+  /// Filter by custom type that starts with
+  String customTypeStartWithFilter;
+
+  /// Filter by custom types.
+  List<String> customTypesFilter;
+
+  /// Filter by channel name contains certain text
+  String channelNameContainsFilter;
+
+  /// Sets metadata's key for ordering its value
+  ///
+  /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
+  String metaDataOrderKeyFilter;
+
   /// Query result includes empty (message) channel if `true`
   /// default value is `true`
   bool includeEmptyChannel = true;
@@ -23,35 +52,6 @@ class PublicGroupChannelListQuery extends QueryBase {
   // Query result of channel object contains meta data if `true`
   // deault value is `false`
   // bool includeMetaData = false;
-
-  /// Order of query result
-  PublicGroupChannelListOrder order;
-
-  /// Filter for channel urls.
-  ///
-  /// Result will return a list containing only and exactly matched
-  /// with given urls. This filter does not cooperate with other filters.
-  List<String> channelUrls;
-
-  /// Filter channels for super group channel. Default is `all`
-  GroupChannelSuperChannelFilter superChannelFilter;
-
-  /// Filter by current user's member state in public group channel
-  PublicGroupChannelMembershipFilter membershipFilter;
-
-  /// Filter by custom type that starts with
-  String customTypeStartWithFilter;
-
-  /// Filter by custom types.
-  List<String> customTypesFilter;
-
-  /// Filter by channel name contains certain text
-  String channelNameContainsFilter;
-
-  /// Sets metadata's key for ordering its value
-  ///
-  /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  String metaDataOrderKeyFilter;
 
   @override
   Future<List<GroupChannel>> loadNext() async {

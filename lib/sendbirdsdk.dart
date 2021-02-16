@@ -52,4 +52,5 @@ export 'src/query/user_list_query.dart';
 export 'src/query/group_channel_list_query.dart';
 export 'src/query/open_channel_list_query.dart';
 export 'src/query/operator_list_query.dart';
+export 'src/query/previous_message_list_query.dart';
 export 'src/query/public_group_channel_list_query.dart';

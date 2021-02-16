@@ -7,22 +7,6 @@ import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of my group channel.
 class GroupChannelListQuery extends QueryBase {
-  /// Query result includes empty (message) channel if `true`.
-  /// default value is `true`
-  bool includeEmptyChannel = true;
-
-  /// Query result includes frozen channels if `true`.
-  /// default value is `true`
-  bool includeFrozenChannel = true;
-
-  /// Query result of channel object contains member list if `true`.
-  /// default value is `true`
-  bool includeMemberList = true;
-
-  // Query result of channel object contains meta data if `true`.
-  // deault value is `false`
-  // bool includeMetaData = false;
-
   /// Order of the query result
   GroupChannelListOrder order;
 
@@ -85,6 +69,22 @@ class GroupChannelListQuery extends QueryBase {
 
   String searchQuery;
   List<GroupChannelListQuerySearchField> searchFields;
+
+  /// Query result includes empty (message) channel if `true`.
+  /// default value is `true`
+  bool includeEmptyChannel = true;
+
+  /// Query result includes frozen channels if `true`.
+  /// default value is `true`
+  bool includeFrozenChannel = true;
+
+  /// Query result of channel object contains member list if `true`.
+  /// default value is `true`
+  bool includeMemberList = true;
+
+  // Query result of channel object contains meta data if `true`.
+  // deault value is `false`
+  // bool includeMetaData = false;
 
   void setUserIdsExactFilter(List<String> userIds) {
     nicknameContainsFilter = null;

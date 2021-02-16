@@ -50,6 +50,9 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) {
     errorCode: json['error_code'] as int,
     isOperatorMessage: json['is_op_msg'] as bool,
     data: json['data'] as String,
+    ogMetaData: json['og_tag'] == null
+        ? null
+        : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
   )..reactions = (json['reactions'] as List)
           ?.map((e) =>
               e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))

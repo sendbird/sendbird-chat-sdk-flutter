@@ -5,6 +5,7 @@ import '../../constant/enums.dart';
 import '../../models/command.dart';
 import '../../models/error.dart';
 import '../../utils/logger.dart';
+import '../../utils/request_validator.dart';
 
 typedef void OnWSConnect();
 typedef void OnWSDisconnect();
@@ -44,8 +45,14 @@ class WebSocketClient {
   }
 
   Future<void> connect(String url) async {
-    if (url == null) throw WebSocketError(message: 'Invalid URL supplied');
-    if (url.length < 10) throw WebSocketError(message: 'Invalid URL supplied');
+    if (url == null) {
+      logger.e('[Sendbird] Socket url is null');
+      throw WebSocketError(message: 'Invalid URL supplied');
+    }
+    if (url.length < 10) {
+      logger.e('[Sendbird] Socket url is too short');
+      throw WebSocketError(message: 'Invalid URL supplied');
+    }
     // already conncted on same url
     if (_connected && url == _url) return;
 
@@ -64,6 +71,7 @@ class WebSocketClient {
         _functionConnect();
       }
     } catch (e) {
+      logger.e('[Sendbird] Websocket connection error: ' + e.toString());
       throw WebSocketError(message: e.toString());
     }
 
@@ -97,7 +105,7 @@ class WebSocketClient {
       _socket.close(code, reason);
       _subscription.cancel();
       _socket = null;
-      logger.d('Socket closed ' + reason);
+      logger.i('[Sendbird] Socket closed ' + reason);
       return true;
     } catch (e) {
       onReceiveError(e);
@@ -105,8 +113,11 @@ class WebSocketClient {
     }
   }
 
-  void send(String data) {
-    logger.d('Socket SEND\n' + data);
+  void send(String data) async {
+    final error = await RequestValidator.readyToExecuteWsRequest();
+    if (error != null) return;
+
+    logger.i('[Sendbird] Send command \n' + data);
     _socket.add(data);
   }
 
@@ -120,7 +131,7 @@ class WebSocketClient {
   }
 
   void onReceiveError(Object error) {
-    print('Websocket Error:' + error.toString());
+    logger.e('[Sendbird] Websocket Error:' + error.toString());
     if (_functionError == null) {
       return;
     }
@@ -167,6 +178,7 @@ class WebSocketClient {
   }
 
   void _startPing() {
+    logger.i('[Sendbird] Start socket ping');
     _pingTimer?.cancel();
     _pingTimer = Timer.periodic(Duration(seconds: _pingInterval), (timer) {
       var now = DateTime.now().millisecondsSinceEpoch;
@@ -180,11 +192,13 @@ class WebSocketClient {
   }
 
   void _stopPing() {
+    logger.i('[Sendbird] Stop socket ping');
     _pingTimer?.cancel();
     _pingTimer = null;
   }
 
   void _startWatchdog() {
+    logger.i('[Sendbird] Start watchdog');
     _watchdogTimer?.cancel();
     _watchdogTimer = Timer(
       Duration(seconds: _watchdogInterval),
@@ -195,6 +209,7 @@ class WebSocketClient {
   }
 
   void _stopWatchdog() {
+    logger.i('[Sendbird] Stop watchdog');
     _watchdogTimer?.cancel();
     _watchdogTimer = null;
   }

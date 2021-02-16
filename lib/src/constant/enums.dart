@@ -322,7 +322,15 @@ const messageSearchQueryOrderEnumMap = <MessageSearchQueryOrder, String>{
 };
 
 /// Defines levels of logging level
-enum LogLevel { none, debug, info, warning, error }
+enum LogLevel {
+  verbose,
+  debug,
+  info,
+  warning,
+  error,
+  wtf,
+  nothing,
+}
 
 /// Represents sdk's connection status
 enum ConnectionState { connecting, open, closed }
@@ -495,6 +503,14 @@ ChannelEventCategory channelEventValueOf(int value) {
     default:
       return ChannelEventCategory.none;
   }
+}
+
+enum MessageQueryIncludeOption {
+  metaArray,
+  reactions,
+  replies,
+  parentMessageText,
+  threadInfo,
 }
 
 /// Represents option to filter channel

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'og_image/og_meta_data.dart';
+
 import '../constant/enums.dart';
 import '../constant/command_type.dart';
 import '../constant/error_code.dart';
@@ -19,6 +21,7 @@ import '../models/sender.dart';
 import '../params/message_retrieval_params.dart';
 import '../params/threaded_message_list_params.dart';
 import '../sdk/sendbird_sdk_api.dart';
+import '../utils/logger.dart';
 
 part 'base_message.g.dart';
 
@@ -115,6 +118,10 @@ class BaseMessage {
   /// data for this message
   final String data;
 
+  /// Open graph information in this message. Nullable
+  @JsonKey(name: 'og_tag')
+  final OGMetaData ogMetaData;
+
   /// reactions for this message
   @JsonKey(defaultValue: [])
   List<Reaction> reactions;
@@ -144,6 +151,7 @@ class BaseMessage {
     this.errorCode,
     this.isOperatorMessage,
     this.data,
+    this.ogMetaData,
     this.reactions,
   }) {
     if (sendingStatus == null) {
@@ -181,6 +189,7 @@ class BaseMessage {
   /// Retreives list of [MessageMetaArray] with given [keys]
   List<MessageMetaArray> getMetaArrays(List<String> keys) {
     if (keys == null || keys.isEmpty) {
+      logger.e('[Sendbird] invalid keys');
       throw InvalidParameterError();
     }
 
@@ -194,8 +203,14 @@ class BaseMessage {
   /// Returns `true` if the given [ReactionEvent] applied to this message
   /// successfully, otherwise `false`.
   bool applyReactionEvent(ReactionEvent event) {
-    if (event == null) return false;
-    if (event.messageId != messageId) return false;
+    if (event == null) {
+      logger.i('[Sendbird] event is null');
+      return false;
+    }
+    if (event.messageId != messageId) {
+      logger.i('[Sendbird] message id is mismatched');
+      return false;
+    }
 
     final keys = reactions.map((e) => e.key).toList();
     final existIndex = keys.indexWhere((e) => e == event.key);

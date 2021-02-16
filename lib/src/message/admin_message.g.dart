@@ -47,6 +47,9 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
     errorCode: json['error_code'] as int,
     isOperatorMessage: json['is_op_msg'] as bool,
     data: json['data'] as String,
+    ogMetaData: json['og_tag'] == null
+        ? null
+        : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
   )..reactions = (json['reactions'] as List)
           ?.map((e) =>
               e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))
@@ -79,6 +82,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'error_code': instance.errorCode,
       'is_op_msg': instance.isOperatorMessage,
       'data': instance.data,
+      'og_tag': instance.ogMetaData,
       'reactions': instance.reactions,
     };
 
