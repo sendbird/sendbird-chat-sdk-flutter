@@ -1,15 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'og_image/og_meta_data.dart';
 
 import '../constant/enums.dart';
 import '../constant/command_type.dart';
 import '../constant/error_code.dart';
+import '../events/reaction_event.dart';
+import '../events/thread_info_update_event.dart';
+import '../features/og_image/og_meta_data.dart';
 import '../features/reaction/reaction.dart';
-import '../features/reaction/reaction_event.dart';
 import '../features/thread/thread_info.dart';
-import '../features/thread/thread_info_update_event.dart';
 import '../message/admin_message.dart';
 import '../message/file_message.dart';
 import '../message/user_message.dart';

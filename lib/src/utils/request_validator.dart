@@ -20,6 +20,6 @@ class RequestValidator {
       return null;
     }
 
-    return WebSocketError();
+    // return WebSocketError();
   }
 }

@@ -3,13 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 import '../channel/base_channel.dart';
 import '../constant/enums.dart';
 import '../constant/types.dart';
+import '../models/command.dart';
 import '../features/delivery/delivery_status.dart';
 import '../features/read/read_status.dart';
 import '../features/typing/typing_status.dart';
 import '../message/admin_message.dart';
 import '../message/base_message.dart';
 import '../message/scheduled_user_message.dart';
-import '../models/command.dart';
 import '../models/error.dart';
 import '../models/member.dart';
 import '../models/user.dart';
@@ -84,17 +84,17 @@ class GroupChannel extends BaseChannel {
   /// Note: Number of member for SuperGroupChannel is limited to 10
   List<Member> members;
 
-  /// number of members
+  /// Number of members
   int memberCount;
 
-  /// number of joined member
+  /// Number of joined member
   int joinedMemberCount;
 
   /// Push notification option for the current user to receive in the group channel
   @JsonKey(name: 'push_trigger_option')
   GroupChannelPushTriggerOption myPushTriggerOption;
 
-  /// member state of current user in this channel
+  /// Member state of current user in this channel
   MemberState myMemberState;
 
   /// Role of current user in this channel
@@ -193,7 +193,7 @@ class GroupChannel extends BaseChannel {
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();
 
-  /// Get an [GroupChannel] with given [channelUrl]
+  /// Gets an [GroupChannel] with given [channelUrl]
   static Future<GroupChannel> getChannel(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     var channel = sdk.cache.find<GroupChannel>(channelKey: channelUrl);
@@ -205,7 +205,7 @@ class GroupChannel extends BaseChannel {
     return GroupChannel.refreshChannel(channelUrl);
   }
 
-  /// Refresh an [GroupChannel] with given [channelUrl]
+  /// Refreshes an [GroupChannel] with given [channelUrl]
   static Future<GroupChannel> refreshChannel(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     final result = await sdk.api.getChannel(
@@ -221,7 +221,7 @@ class GroupChannel extends BaseChannel {
     return result;
   }
 
-  /// Create a channel with given [params].
+  /// Creates a channel with given [params].
   ///
   /// After this method completes successfully, channel event such as
   /// [ChannelEventHandler.onUserJoined],
@@ -241,7 +241,7 @@ class GroupChannel extends BaseChannel {
     return sdk.api.createGroupChannel(params, progress: progress);
   }
 
-  /// Update this channel with given [params] and optional [progress].
+  /// Updates this channel with given [params] and optional [progress].
   ///
   /// After this method completes successfully, channel event such as
   /// [ChannelEventHandler.onChannelOperatorsUpdated] and
@@ -269,7 +269,7 @@ class GroupChannel extends BaseChannel {
     );
   }
 
-  /// Delete this channel.
+  /// Deletes this channel.
   ///
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onChannelDeleted] will be invoked
@@ -281,7 +281,7 @@ class GroupChannel extends BaseChannel {
     if (!isPublic) removeFromCache();
   }
 
-  /// Hide this channel.
+  /// Hides this channel.
   ///
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onChannelHidden] will be invoked.
@@ -304,14 +304,14 @@ class GroupChannel extends BaseChannel {
         : GroupChannelHiddenState.preventAutoUnhide;
   }
 
-  /// Unhide this channel
+  /// Unhides this channel
   Future<void> unhideChannel() async {
     await _sdk.api.unhideGroupChannel(channelUrl: channelUrl);
     isHidden = false;
     hiddenState = GroupChannelHiddenState.unhidden;
   }
 
-  /// Reset (clear) any previous messages on this channel.
+  /// Resets (clear) any previous messages on this channel.
   Future<void> resetMyHistory() async {
     final offset =
         await _sdk.api.resetGroupChannelHistory(channelUrl: channelUrl);
@@ -619,7 +619,7 @@ class GroupChannel extends BaseChannel {
     );
   }
 
-  /// Notify screenshot was taken on this channel.
+  /// Notifies screenshot was taken on this channel.
   Future<void> notifyScreenshotWasTaken() async {
     return _sdk.api.notifyScreenshotWasTaken(channelUrl);
   }

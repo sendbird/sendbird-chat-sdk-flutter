@@ -3,24 +3,30 @@ library sendbirdsdk;
 
 export 'src/sdk/sendbird_sdk_api.dart';
 
-export 'src/constant/enums.dart';
-export 'src/constant/error_code.dart';
-
 export 'src/channel/base_channel.dart';
 export 'src/channel/open_channel.dart';
 export 'src/channel/group_channel.dart';
 
+export 'src/constant/enums.dart';
+export 'src/constant/error_code.dart';
+
+export 'src/events/reaction_event.dart';
+export 'src/events/thread_info_update_event.dart';
+
 export 'src/features/emoji/emoji.dart';
 export 'src/features/reaction/reaction.dart';
-export 'src/features/reaction/reaction_event.dart';
 export 'src/features/thread/thread_info.dart';
-export 'src/features/thread/thread_info_update_event.dart';
 
-export 'src/event/authenticate_event_handler.dart';
-export 'src/event/channel_event_handler.dart';
-export 'src/event/connection_event_handler.dart';
-export 'src/event/session_event_handler.dart';
-export 'src/event/user_event_handler.dart';
+export 'src/handlers/authenticate_event_handler.dart';
+export 'src/handlers/channel_event_handler.dart';
+export 'src/handlers/connection_event_handler.dart';
+export 'src/handlers/session_event_handler.dart';
+export 'src/handlers/user_event_handler.dart';
+
+export 'src/message/base_message.dart';
+export 'src/message/user_message.dart';
+export 'src/message/file_message.dart';
+export 'src/message/admin_message.dart';
 
 export 'src/models/user.dart';
 export 'src/models/member.dart';
@@ -29,11 +35,6 @@ export 'src/models/sender.dart';
 export 'src/models/app_info.dart';
 export 'src/models/error.dart';
 export 'src/models/image_info.dart';
-
-export 'src/message/base_message.dart';
-export 'src/message/user_message.dart';
-export 'src/message/file_message.dart';
-export 'src/message/admin_message.dart';
 
 export 'src/params/file_message_params.dart';
 export 'src/params/group_channel_params.dart';

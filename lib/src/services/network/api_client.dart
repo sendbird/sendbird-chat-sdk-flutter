@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
 import 'package:sendbirdsdk/sendbirdsdk.dart';
-import 'package:sendbirdsdk/src/features/reaction/reaction_event.dart';
 
 import 'http_client.dart';
 import 'api_endpoints.dart' as endpoint;
@@ -11,6 +10,7 @@ import '../../channel/group_channel.dart';
 import '../../constant/command_type.dart';
 import '../../constant/enums.dart';
 import '../../constant/types.dart';
+import '../../events/reaction_event.dart';
 import '../../features/emoji/emoji.dart';
 import '../../message/base_message.dart';
 import '../../message/file_message.dart';

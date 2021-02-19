@@ -7,17 +7,13 @@ import 'package:uuid/uuid.dart';
 import '../channel/base_channel.dart';
 import '../constant/enums.dart';
 import '../constant/command_type.dart';
-import '../event/event_manager.dart';
+import '../handlers/event_manager.dart';
 import '../message/base_message.dart';
 import '../message/file_message.dart';
 import '../message/user_message.dart';
-import '../models/app_info.dart';
 import '../models/error.dart';
 import '../models/unread_count_info.dart';
-import '../models/user.dart';
-import '../models/reconnect_configuration.dart';
 import '../models/meta_array.dart';
-import '../models/sender.dart';
 import '../params/file_message_params.dart';
 import '../params/user_message_params.dart';
 import '../sdk/sendbird_sdk_api.dart';
@@ -27,58 +23,10 @@ part 'command.g.dart';
 
 @JsonSerializable(nullable: true)
 class Command {
-  //final String cmd;
   String cmd;
 
-  /// Request ID for ACK
-  @JsonKey(name: 'req_id')
-  String requestId;
-
-  /// Message id if this command contains message
-  @JsonKey(name: 'msg_id')
-  final int messageId;
-
-  /// Timestamp that this command was processed
   @JsonKey(name: 'ts')
   final int timestamp;
-
-  final bool forceUpdateLastMessage;
-
-  final bool silent;
-
-  final String channelUrl;
-
-  @JsonKey(unknownEnumValue: ChannelType.group)
-  final ChannelType channelType;
-
-  @JsonKey(unknownEnumValue: MentionType.users)
-  final MentionType mentionType;
-
-  final List<User> mentionedUsers;
-
-  final List<Thumbnail> thumbnails;
-
-  /// Login timestamp for first connection
-  @JsonKey(name: 'login_ts')
-  final int loginTimestamp;
-
-  final String newKey;
-  final String key;
-  String get sessionKey => key ?? newKey ?? null;
-
-  final String ekey;
-
-  final int expiresIn;
-
-  @JsonKey(name: 'user')
-  final Sender sender;
-
-  @JsonKey(name: 'unread_cnt')
-  UnreadCountInfo unreadCountInfo;
-
-  final int maxUnreadCountOnSuperGroup;
-
-  final bool requireAuth;
 
   @JsonKey(name: 'code')
   final int errorCode;
@@ -86,22 +34,10 @@ class Command {
   @JsonKey(name: 'message')
   final String errorMessage;
 
-  @JsonKey(name: 'reconnect')
-  final ReconnectConfiguration reconnectConfiguration;
+  final bool requireAuth;
 
-  /// Websocket ping interval
-  final int pingInterval;
-
-  /// Websocket watchdog interval
-  @JsonKey(name: 'pong_timeout')
-  final int watchdogInterval;
-
-  final Map<String, dynamic> oldValues;
-
-  @JsonKey(name: 'ts_message_offset')
-  final int messageOffset;
-
-  final int participantCount;
+  @JsonKey(name: 'req_id')
+  String requestId;
 
   @JsonKey(ignore: true)
   Map<String, dynamic> payload = {};
@@ -109,33 +45,11 @@ class Command {
   Command({
     this.cmd,
     this.requestId,
-    this.messageId,
     this.timestamp,
-    this.forceUpdateLastMessage,
-    this.silent,
-    this.loginTimestamp,
-    this.pingInterval,
-    this.watchdogInterval,
-    this.channelUrl,
-    this.channelType,
-    this.thumbnails,
-    this.key,
-    this.newKey,
-    this.ekey,
-    this.expiresIn,
-    this.sender,
-    this.unreadCountInfo,
-    this.maxUnreadCountOnSuperGroup,
     this.requireAuth,
     this.errorCode,
     this.errorMessage,
-    this.reconnectConfiguration,
-    this.mentionType,
-    this.mentionedUsers,
-    this.oldValues,
     this.payload,
-    this.messageOffset,
-    this.participantCount,
   }) {
     if (payload != null) {
       this.requestId = requestId != null ? requestId : Uuid().v1();
@@ -159,17 +73,12 @@ class Command {
       cmd == CommandType.exit ||
       cmd == CommandType.read;
 
-  bool hasRequestId() {
-    return requestId != null;
-  }
-
-  // getters
-  AppInfo get appInfo => AppInfo.fromJson(payload);
-  User get user => User.fromJson(payload);
-
   bool get hasError => payload != null && payload['error'] != null;
+
   bool get isSessionExpired => cmd == CommandType.sessionExpired;
+
   bool get isLogin => cmd == CommandType.login;
+
   bool get isNewMessage =>
       cmd == CommandType.userMessage ||
       cmd == CommandType.fileMessage ||
@@ -181,40 +90,25 @@ class Command {
       cmd == CommandType.fileMessageUpdate ||
       cmd == CommandType.adminMessageUpdate;
 
+  bool get isMemberCountChange => cmd == CommandType.memberCountChange;
+
   bool get isDeletedMessage => cmd == CommandType.deleteMessage;
+
   bool get isRead => cmd == CommandType.read;
+
   bool get isDelivery => cmd == CommandType.delivery;
+
   bool get isThread => cmd == CommandType.thread;
+
   bool get isReaction => cmd == CommandType.reaction;
+
   bool get isSystemEvent => cmd == CommandType.systemEvent;
+
   bool get isUserEvent => cmd == CommandType.userEvent;
+
   bool get isError => cmd == CommandType.error;
 
-  /// helpers
-
-  MentionType hasChangedMentionType() {
-    if (oldValues == null || oldValues['mention_type'] == null) {
-      return null;
-    }
-    final oldMentionType =
-        MentionType.values.enumFromString(oldValues['mention_type']);
-
-    return oldMentionType != mentionType ? mentionType : null;
-  }
-
-  bool previousMentionedContains(User user) {
-    if (oldValues == null || oldValues['mentioned_user_ids'] == null) {
-      return null;
-    }
-    List<String> previous = oldValues['mentioned_user_ids'];
-    return previous.contains(user.userId);
-  }
-
-  bool mentionedContains(User user) {
-    return mentionedUsers.firstWhere((e) => e.userId == user.userId) != null;
-  }
-
-  /// builders
+  // builders
 
   static Command buildEnterChannel(BaseChannel channel) {
     return Command(

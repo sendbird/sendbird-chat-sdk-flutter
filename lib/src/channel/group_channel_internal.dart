@@ -1,11 +1,11 @@
 import '../channel/group_channel.dart';
 import '../constant/enums.dart';
+import '../events/channel_event.dart';
 import '../features/delivery/delivery_status.dart';
 import '../features/read/read_status.dart';
 import '../features/typing/typing_status.dart';
 import '../message/base_message.dart';
 import '../message/base_message_internal.dart';
-import '../models/channel_event.dart';
 import '../models/member.dart';
 import '../models/user.dart';
 import '../models/sender.dart';

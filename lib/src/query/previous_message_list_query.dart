@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import '../constant/enums.dart';
 import '../message/base_message.dart';
 import '../models/error.dart';

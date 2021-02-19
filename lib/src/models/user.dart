@@ -112,31 +112,6 @@ class User {
 
   bool get isCurrentUser => userId == SendbirdSdk().getCurrentUser()?.userId;
 
-  // @override
-  // bool operator ==(other) {
-  //   Function mapEq = MapEquality().equals;
-  //   Function lstEq = ListEquality().equals;
-
-  //   if (identical(other, this)) return true;
-  //   if (userId != other.userId) return false;
-  //   if (nickname != other.nickname) return false;
-  //   if (profileUrl != other.profileUrl) return false;
-  //   if (isOnline != other.isOnline) return false;
-  //   if (lastSeenAt != other.lastSeenAt) return false;
-  //   if (isActive != other.isActive) return false;
-  //   if (!lstEq(preferredLanguages, other.preferredLanguages)) return false;
-  //   if (requireAuth != other.requireAuth) return false;
-  //   if (friendDiscoveryKey != other.friendDiscoveryKey) return false;
-  //   if (friendName != other.friendName) return false;
-  //   if (!lstEq(discoveryKeys, other.discoveryKeys)) return false;
-  //   if (!mapEq(metaData, other.metaData)) return false;
-
-  //   return true;
-  // }
-
-  // @override
-  // int get hashCode => super.hashCode;
-
   /// json serialization
   factory User.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];

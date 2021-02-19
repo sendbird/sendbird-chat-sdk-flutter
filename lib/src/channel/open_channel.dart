@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbirdsdk/src/events/channel_event.dart';
 
 import '../channel/base_channel.dart';
+import '../models/command.dart';
 import '../constant/enums.dart';
 import '../constant/types.dart';
-import '../models/command.dart';
 import '../models/error.dart';
 import '../models/user.dart';
 import '../params/open_channel_params.dart';
@@ -38,10 +39,10 @@ part 'open_channel.g.dart';
 ///
 @JsonSerializable()
 class OpenChannel extends BaseChannel {
-  /// The number of participants in this channel
+  /// Number of participants in this channel
   int participantCount;
 
-  /// The operators of this channel
+  /// Operators of this channel
   List<User> operators;
 
   @JsonKey(ignore: true)
@@ -75,8 +76,7 @@ class OpenChannel extends BaseChannel {
           dirty: false,
         );
 
-  /// Get an [OpenChannel] with given [channelUrl].
-  /// Return [OpenChannel] if succeeded
+  /// Gets an [OpenChannel] with given [channelUrl].
   static Future<OpenChannel> getChannel(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     var channel = sdk.cache.find<OpenChannel>(channelKey: channelUrl);
@@ -88,7 +88,7 @@ class OpenChannel extends BaseChannel {
     return OpenChannel.refreshChannel(channelUrl);
   }
 
-  /// Refresh an [OpenChannel] with given [channelUrl]
+  /// Refreshes an [OpenChannel] with given [channelUrl]
   static Future<OpenChannel> refreshChannel(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     final channel = await sdk.api.getChannel(
@@ -99,7 +99,7 @@ class OpenChannel extends BaseChannel {
     return channel;
   }
 
-  /// Create an [OpenChannel] with given [params] and optional [progress].
+  /// Creates an [OpenChannel] with given [params] and optional [progress].
   static Future<OpenChannel> createChannel(
     OpenChannelParams params, {
     OnUploadProgressCallback progress,
@@ -116,7 +116,7 @@ class OpenChannel extends BaseChannel {
     );
   }
 
-  /// Update an [OpenChannel] with given [params] and optional [progress].
+  /// Updates an [OpenChannel] with given [params] and optional [progress].
   ///
   /// [ChannelEventHandler.onChannelChanged] event can be invoked based on
   /// the given [params]
@@ -142,7 +142,7 @@ class OpenChannel extends BaseChannel {
     );
   }
 
-  /// Delete this channel
+  /// Deletes this channel
   Future<void> deleteChannel() async {
     await _sdk.api.deleteChannel(
       channelType: channelType,
@@ -151,27 +151,27 @@ class OpenChannel extends BaseChannel {
     removeFromCache();
   }
 
-  /// Enter to this channel
+  /// Enters to this channel
   Future<void> enter() async {
     final cmd = Command.buildEnterChannel(this);
     final result = await _sdk.cmdManager.sendCommand(cmd);
     if (result == null) {
       throw WebSocketError();
     }
-    participantCount = result.participantCount;
+    participantCount = result.payload['participant_count'];
     entered = true;
   }
 
-  /// Exit from this channel
+  /// Exits from this channel
   Future<void> exit() async {
     final cmd = Command.buildExitChannel(this);
     final result = await _sdk.cmdManager.sendCommand(cmd);
-    participantCount = result.participantCount;
+    participantCount = result.payload['participant_count'];
     entered = false;
     removeFromCache();
   }
 
-  /// Return `true` if a given user with [userId] is operator
+  /// Returns `true` if a given user with [userId] is operator
   bool isOperator(String userId) {
     return operators.where((e) => e.userId == userId).isNotEmpty;
   }

@@ -4,7 +4,6 @@ import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
 import '../channel/open_channel.dart';
 import '../models/user.dart';
-import '../message/file_message.dart';
 import '../message/base_message.dart';
 
 part 'responses.g.dart';

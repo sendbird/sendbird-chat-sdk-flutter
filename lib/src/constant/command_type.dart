@@ -9,6 +9,7 @@ class CommandType {
   static const String deleteMessage = "DELM";
   static const String delivery = "DLVR";
   static const String read = "READ";
+  static const String memberCountChange = "MCNT";
   static const String reaction = "MRCT";
   static const String thread = "MTHD";
   static const String userEvent = "USEV";

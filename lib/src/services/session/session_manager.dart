@@ -15,8 +15,8 @@ class SessionManager with SdkAccessor {
   String _sessionKey;
   String _eKey;
   String _userId;
-  String _sessionKeyPath = "com.sendbird.sdk.messaging.sessionkey";
-  String _userIdKeyPath = "com.sendbird.sdk.messaging.userid";
+  String _sessionKeyPath = 'com.sendbird.sdk.messaging.sessionkey';
+  String _userIdKeyPath = 'com.sendbird.sdk.messaging.userid';
   int _sessionExpiresIn;
   bool isOpened;
 
@@ -128,14 +128,14 @@ class SessionManager with SdkAccessor {
   Future<void> _encryptedSessionKey(String sessionKey) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionKey == null) {
-      logger.e("[Sendbird] Session key set to null, all paths will be removed");
+      logger.e('[Sendbird] Session key set to null, all paths will be removed');
       prefs.remove(_userIdKeyPath);
       prefs.remove(_sessionKeyPath);
       throw InvalidParameterError();
     }
 
     if (_userId == null) {
-      logger.e("[Sendbird] userId is required to encrypt session");
+      logger.e('[Sendbird] userId is required to encrypt session');
       throw InvalidParameterError();
     }
 
@@ -157,8 +157,8 @@ class SessionManager with SdkAccessor {
     // sessionPath = encryptedData.base64;
     prefs.setString(_sessionKeyPath, encryptedData.base64);
 
-    logger.i("[Sendbird] encryption completed userId: $base64UserId " +
-        "sessionKey: $encryptedData");
+    logger.i('[Sendbird] encryption completed userId: $base64UserId ' +
+        'sessionKey: $encryptedData');
   }
 
   //WIP

@@ -1,4 +1,4 @@
-import '../../event/authenticate_event_handler.dart';
+import '../../handlers/authenticate_event_handler.dart';
 
 class ConnectionManager {
   Map<String, NetworkEventHandler> _networkHandlers = {};

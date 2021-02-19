@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'base_message.dart';
-import 'og_image/og_meta_data.dart';
+import '../features/og_image/og_meta_data.dart';
 
 import '../constant/enums.dart';
 import '../features/reaction/reaction.dart';

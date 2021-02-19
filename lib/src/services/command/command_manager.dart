@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:sendbirdsdk/src/events/mcnt_event.dart';
 
 import '../network/websocket_client.dart';
 import '../../message/base_message_internal.dart';
@@ -6,22 +9,25 @@ import '../../channel/base_channel.dart';
 import '../../channel/group_channel.dart';
 import '../../channel/group_channel_internal.dart';
 import '../../channel/open_channel.dart';
+import '../../models/command.dart';
+import '../../events/channel_event.dart';
+import '../../events/login_event.dart';
+import '../../events/message_event.dart';
+import '../../events/reaction_event.dart';
+import '../../events/session_event.dart';
+import '../../events/thread_info_update_event.dart';
+import '../../events/user_event.dart';
 import '../../constant/enums.dart';
 import '../../core/async/async_operation.dart';
 import '../../core/async/async_queue.dart';
-import '../../event/event_manager.dart';
+import '../../handlers/event_manager.dart';
 import '../../features/delivery/delivery_status.dart';
 import '../../features/read/read_status.dart';
-import '../../features/reaction/reaction_event.dart';
-import '../../features/thread/thread_info_update_event.dart';
 import '../../features/typing/typing_status.dart';
-import '../../models/channel_event.dart';
-import '../../models/command.dart';
 import '../../models/error.dart';
 import '../../models/reconnect_task.dart';
 import '../../models/state.dart';
 import '../../models/unread_count_info.dart';
-import '../../models/user_event.dart';
 import '../../models/member.dart';
 import '../../models/user.dart';
 import '../../sdk/sendbird_sdk_api.dart';
@@ -29,7 +35,7 @@ import '../../sdk/sendbird_sdk_internal.dart';
 import '../../services/db/cache_service.dart';
 import '../../utils/logger.dart';
 import '../../utils/parsers.dart';
-import '../../utils/request_validator.dart';
+// import '../../utils/request_validator.dart';
 
 class SdkAccessor {
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();
@@ -65,21 +71,21 @@ class CommandManager with SdkAccessor {
       //NOTE: some test cases execute async socket data
       //even after test case was finished
       // print('[E] ${this.hashCode}');
-      logger.e("[Sendbird] sendCommand: connection is requred");
+      logger.e('[Sendbird] sendCommand: connection is requred');
       throw ConnectionRequiredError();
     }
     if (cmd == null) {
-      logger.e("[Sendbird] sendCommand: command parameter is null");
+      logger.e('[Sendbird] sendCommand: command parameter is null');
       throw InvalidParameterError();
     }
     if (!webSocket.isConnected()) {
-      logger.e("[Sendbird] sendCommand: Websocket connection is closed");
+      logger.e('[Sendbird] sendCommand: Websocket connection is closed');
       throw ConnectionClosedError();
     }
 
     if (cmd.isAckRequired) {
       final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
-        logger.e("[Sendbird] sendCommand: did not receive ack in time");
+        logger.e('[Sendbird] sendCommand: did not receive ack in time');
         throw WebSocketTimeoutError();
       });
       ackTimers[cmd.requestId] = timer;
@@ -87,11 +93,7 @@ class CommandManager with SdkAccessor {
 
     //store callback
     // if (await RequestValidator.readyToExecuteWsRequest()) {
-    try {
-      webSocket.send(cmd.encode());
-    } catch (e) {
-      throw WebSocketError();
-    }
+    webSocket.send(cmd.encode());
     // } else {
     //   ackTimers[cmd.requestId].cancel();
     //   ackTimers.removeWhere((key, value) => key == cmd.requestId);
@@ -108,19 +110,27 @@ class CommandManager with SdkAccessor {
   }
 
   void processCommand(Command cmd) {
-    _updateSubscribedUnreadCountInfo(cmd.unreadCountInfo);
-    if (cmd.hasRequestId()) {
+    final unreadCountPayload = cmd.payload['unread_cnt'];
+    if (unreadCountPayload != null) {
+      final info = UnreadCountInfo.fromJson(unreadCountPayload);
+      _updateSubscribedUnreadCountInfo(info);
+    }
+
+    if (cmd.requestId != null) {
       ackTimers.remove(cmd.requestId)?.cancel();
       final completer = completers.remove(cmd.requestId);
       completer.complete(cmd);
     }
 
-    logger.i("[Sendbird] Processing ${cmd.cmd} ");
+    final cmdString = '-- Command: ${cmd.cmd}';
+    final encoder = JsonEncoder.withIndent('  ');
+    final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
+    logger.i('[Sendbird] Processing Socket event\n$cmdString\n$payloadString');
 
     Function(Command) fnc;
     if (cmd.isError)
-      throw SBError(code: cmd.errorCode, message: cmd.errorMessage);
-    else if (cmd.hasRequestId() && cmd.isLogin)
+      fnc = _processError;
+    else if (cmd.isLogin && cmd.requestId != null)
       fnc = _processSessionRefresh;
     else if (cmd.isLogin)
       fnc = _processLogin;
@@ -132,6 +142,8 @@ class CommandManager with SdkAccessor {
       fnc = _processUpdateMessage;
     else if (cmd.isDeletedMessage)
       fnc = _processDeleteMessage;
+    else if (cmd.isMemberCountChange)
+      fnc = _processMemberCountChange;
     else if (cmd.isRead)
       fnc = _processRead;
     else if (cmd.isDelivery)
@@ -171,41 +183,36 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processLogin(Command cmd) async {
-    final sdk = SendbirdSdk().getInternal();
+    final event = LoginEvent.fromJson(cmd.payload);
 
-    if (cmd.hasError) {
-      logger.e("[Sendbird] Login error ${cmd.errorCode} " + cmd.errorMessage);
-      throw SBError(code: cmd.errorCode, message: cmd.errorMessage);
-    }
+    sdk.webSocket.setInterval(event.pingInterval);
+    sdk.webSocket.setWatchdogInterval(event.watchdogInterval);
 
-    sdk.webSocket.setInterval(cmd.pingInterval);
-    sdk.webSocket.setWatchdogInterval(cmd.watchdogInterval);
-
-    final user = cmd.user;
+    final user = event.user;
 
     //Update AppInfo in state
     sdk.state
-      ..appInfo = cmd.appInfo
-      ..maxUnreadCountOnSuperGroup = cmd.maxUnreadCountOnSuperGroup
-      ..reconnectConfig = cmd.reconnectConfiguration
-      ..reconnectTask = ReconnectTask(cmd.reconnectConfiguration)
+      ..appInfo = event.appInfo
+      ..maxUnreadCountOnSuperGroup = event.maxUnreadCountOnSuperGroup
+      ..reconnectConfig = event.reconnectConfiguration
+      ..reconnectTask = ReconnectTask(event.reconnectConfiguration)
       ..currentUser = user
       ..userId = user.userId
       ..connected = true
       ..connecting = false
-      ..lastConnectedAt = cmd.loginTimestamp;
+      ..lastConnectedAt = event.loginTimestamp;
 
     sdk.sessionManager
       ..setUserId(user.userId)
-      ..setEKey(cmd.ekey)
-      ..setSessionKey(cmd.sessionKey)
-      ..setSessionExpiresIn(cmd.expiresIn)
+      ..setEKey(event.ekey)
+      ..setSessionKey(event.sessionKey)
+      ..setSessionExpiresIn(event.expiresIn)
       ..isOpened = true;
 
     sdk.api.userId = user.userId;
     sdk.api.initialize(
-      sessionKey: cmd.sessionKey,
-      uploadSizeLimit: cmd.appInfo.uploadSizeLimit,
+      sessionKey: event.sessionKey,
+      uploadSizeLimit: event.appInfo.uploadSizeLimit,
     );
 
     if (sdk.state.reconnecting) {
@@ -236,9 +243,11 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processNewMessage(Command cmd) async {
+    final event = MessageEvent.fromJson(cmd.payload);
+
     try {
       final message = await parseMessage(cmd);
-      if (cmd.hasRequestId()) {
+      if (event.requestId != null) {
         //if sent by api then added id to cache -> done
         if (message.channelType == ChannelType.group) {
           sendCommand(Command.buildMessageMACK(
@@ -253,7 +262,7 @@ class CommandManager with SdkAccessor {
         message.channelUrl,
       );
 
-      if (!cmd.hasRequestId()) {
+      if (event.requestId == null) {
         eventManager.notifyMessageReceived(channel, message);
       }
 
@@ -263,10 +272,10 @@ class CommandManager with SdkAccessor {
           channel.hiddenState = GroupChannelHiddenState.unhidden;
         }
 
-        channel.updateMember(cmd.sender);
+        channel.updateMember(event.sender);
 
         var shouldCallChannelChanged = false;
-        if (channel.shouldUpdateLastMessage(message, cmd.sender)) {
+        if (channel.shouldUpdateLastMessage(message, message.sender)) {
           shouldCallChannelChanged = true;
           channel.lastMessage = message;
         }
@@ -285,11 +294,13 @@ class CommandManager with SdkAccessor {
         eventManager.notifyMentionReceived(channel, message);
       }
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
   Future<void> _processUpdateMessage(Command cmd) async {
+    final event = MessageEvent.fromJson(cmd.payload);
+
     try {
       final message = await parseMessage(cmd);
       final currentUser = appState.currentUser;
@@ -303,7 +314,7 @@ class CommandManager with SdkAccessor {
         var shouldCallChannelChanged = false;
         var shouldCallMentionReceived = false;
 
-        if (channel.shouldUpdateLastMessage(message, cmd.sender)) {
+        if (channel.shouldUpdateLastMessage(message, message.sender)) {
           shouldCallChannelChanged = true;
           channel.lastMessage = message;
         }
@@ -311,16 +322,16 @@ class CommandManager with SdkAccessor {
         final timestamp = channel.myReadReceipt();
 
         if (message.hasUpdatedLaterThan(timestamp) &&
-            !cmd.sender.isCurrentUser &&
+            !event.sender.isCurrentUser &&
             !message.isSilent) {
-          if (cmd.hasChangedMentionType() == MentionType.channel &&
-              cmd.previousMentionedContains(currentUser)) {
+          if (event.hasChangedMentionType() == MentionType.channel &&
+              event.previousMentionedContains(currentUser)) {
             if (channel.fromCache) channel.increaseUnreadMentionCount();
             shouldCallChannelChanged = true;
             shouldCallMentionReceived = true;
-          } else if (cmd.hasChangedMentionType() == MentionType.users &&
-              !cmd.previousMentionedContains(currentUser) &&
-              cmd.mentionedContains(currentUser)) {
+          } else if (event.hasChangedMentionType() == MentionType.users &&
+              !event.previousMentionedContains(currentUser) &&
+              event.mentionedContains(currentUser)) {
             if (channel.fromCache) channel.increaseUnreadMentionCount();
             shouldCallChannelChanged = true;
             shouldCallMentionReceived = true;
@@ -335,26 +346,52 @@ class CommandManager with SdkAccessor {
           eventManager.notifyMentionReceived(channel, message);
       }
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
   Future<void> _processDeleteMessage(Command cmd) async {
+    final event = MessageEvent.fromJson(cmd.payload);
+
     try {
       final channel = await BaseChannel.getBaseChannel(
-        cmd.channelType,
-        cmd.channelUrl,
+        event.channelType,
+        event.channelUrl,
       );
-      eventManager.notifyMessageDeleted(channel, cmd.messageId);
+      eventManager.notifyMessageDeleted(channel, event.messageId);
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
+  }
+
+  //only for open channel and broadcast channel
+  Future<void> _processMemberCountChange(Command cmd) async {
+    final event = MCNTEvent.fromJson(cmd.payload);
+
+    event.groupChannels.forEach((e) {
+      final channel = sdk.cache.find<GroupChannel>(channelKey: e.channelUrl);
+      if (channel != null) {
+        channel.joinedMemberCount = e.joinedMemberCount;
+        channel.memberCount = e.memberCount;
+      }
+    });
+
+    event.openChannels.forEach((e) {
+      final channel = sdk.cache.find<OpenChannel>(channelKey: e.channelUrl);
+      if (channel != null) {
+        channel.participantCount = e.participantCount;
+      }
+    });
+
+    List<BaseChannel> channels = event.groupChannels;
+    channels.addAll(event.openChannels);
+    eventManager.notifyChannelMemberCountChange(channels);
   }
 
   Future<void> _processRead(Command cmd) async {
     try {
       ReadStatus status = ReadStatus.fromJson(cmd.payload);
-      final channel = await GroupChannel.getChannel(cmd.channelUrl);
+      final channel = await GroupChannel.getChannel(status.channelUrl);
 
       final isCurrentUser = status.userId == sdk.state.userId;
       if (isCurrentUser) {
@@ -374,7 +411,7 @@ class CommandManager with SdkAccessor {
 
       status.saveToCache();
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -382,7 +419,7 @@ class CommandManager with SdkAccessor {
     try {
       DeliveryStatus status = DeliveryStatus.fromJson(cmd.payload);
 
-      final channel = await GroupChannel.getChannel(cmd.channelUrl);
+      final channel = await GroupChannel.getChannel(status.channelUrl);
       final currUserId = appState.currentUser.userId;
       bool shouldCallDelivery = true;
       if (status.updatedDeliveryReceipt.length == 1 &&
@@ -397,17 +434,17 @@ class CommandManager with SdkAccessor {
 
       status.saveToCache();
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
   Future<void> _processThread(Command cmd) async {
     try {
       ThreadInfoUpdateEvent event = ThreadInfoUpdateEvent.fromJson(cmd.payload);
-      final channel = await GroupChannel.getChannel(cmd.channelUrl);
+      final channel = await GroupChannel.getChannel(event.channelUrl);
       eventManager.notifyChannelThreadUpdated(channel, event);
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -415,22 +452,24 @@ class CommandManager with SdkAccessor {
     try {
       ReactionEvent event = ReactionEvent.fromJson(cmd.payload);
       final channel = await BaseChannel.getBaseChannel(
-        cmd.channelType,
-        cmd.channelUrl,
+        event.channelType,
+        event.channelUrl,
       );
       eventManager.notifyReactionUpdated(channel, event);
     } catch (e) {
-      logger.e("[Sendbird] Aborted ${cmd.cmd} " + e.toString());
+      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
   Future<void> _processSessionRefresh(Command cmd) async {
-    sdk.sessionManager.setSessionKey(cmd.sessionKey);
-    sdk.sessionManager.setSessionExpiresIn(cmd.expiresIn);
+    final event = SessionEvent.fromJson(cmd.payload);
+    sdk.sessionManager.setSessionKey(event.sessionKey);
+    sdk.sessionManager.setSessionExpiresIn(event.expiresIn);
   }
 
   Future<void> _processError(Command cmd) async {
-    logger.e("[Sendbird] Error ${cmd.cmd} " + cmd.errorMessage);
+    logger.e('[Sendbird] Error ${cmd.cmd} ' + cmd.errorMessage);
+    throw SBError(code: cmd.errorCode, message: cmd.errorMessage);
   }
 
   // System
@@ -481,7 +520,7 @@ class CommandManager with SdkAccessor {
         await _processChannelEnter(event, false);
         break;
       case ChannelEventCategory.hidden:
-        await _processChannelHidden(event, cmd.messageOffset, true);
+        await _processChannelHidden(event, event.messageOffset, true);
         break;
       case ChannelEventCategory.unhidden:
         await _processChannelHidden(event, 0, false);
@@ -527,7 +566,7 @@ class CommandManager with SdkAccessor {
       status.saveToCache();
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -563,7 +602,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyUserUnbanned(channel, user);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -590,7 +629,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyUserUnmuted(channel, user);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -632,7 +671,7 @@ class CommandManager with SdkAccessor {
       }
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -671,7 +710,7 @@ class CommandManager with SdkAccessor {
       );
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -700,7 +739,7 @@ class CommandManager with SdkAccessor {
       );
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -715,7 +754,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyUserExited(channel, event.user);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -733,7 +772,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyChannelUnfrozen(channel);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -761,7 +800,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyChannelChanged(channel);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -774,7 +813,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyChannelMetaDataChanged(channel, event.data);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -787,7 +826,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyChannelMetaCountersChanged(channel, event.data);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -813,7 +852,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyChannelOperatorsUpdated(channel);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -833,7 +872,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyChannelChanged(channel);
     } catch (e) {
       logger
-          .e("[Sendbird] Aborted ${event.category.toString()} " + e.toString());
+          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 

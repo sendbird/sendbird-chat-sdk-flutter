@@ -6,10 +6,10 @@ import 'package:flutter/widgets.dart';
 
 import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
+import '../models/command.dart';
 import '../constant/contants.dart' as Constants;
 import '../constant/enums.dart';
-import '../event/event_manager.dart';
-import '../models/command.dart';
+import '../handlers/event_manager.dart';
 import '../models/options.dart';
 import '../models/responses.dart';
 import '../models/state.dart';
@@ -100,7 +100,13 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     cmdManager.processCommand(cmd);
   }
 
-  void onWebSocketError(Object error) {}
+  void onWebSocketError(Object error) {
+    if (state.currentUser != null) {
+      reconnect();
+    } else {
+      throw WebSocketError();
+    }
+  }
 
   Future<User> connect({
     String userId,

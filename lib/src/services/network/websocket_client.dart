@@ -118,7 +118,11 @@ class WebSocketClient {
     if (error != null) return;
 
     logger.i('[Sendbird] Send command \n' + data);
-    _socket.add(data);
+    try {
+      _socket.add(data);
+    } catch (e) {
+      throw WebSocketError(message: e.toString());
+    }
   }
 
   void onReceiveData(dynamic evt) {
@@ -139,6 +143,7 @@ class WebSocketClient {
   }
 
   void onReceiveDone() async {
+    _stopPing();
     _connected = false;
     _socket = null;
 
