@@ -16,7 +16,10 @@ class MemoryCacheStorage implements CacheStorage {
   List<T> findAll<T extends Cacheable>({String channelKey}) {
     //find channels only support atm
     if (T == OpenChannel || T == GroupChannel) {
-      return _cacheMap.values.map((e) => e.channel as T).toList();
+      return _cacheMap.values
+          .where((e) => e.channel is T)
+          .map((e) => e.channel as T)
+          .toList();
     } else if (T == ReadStatus) {
       return _cacheMap[channelKey].readStatus.values.toList() as List<T>;
     } else if (T == TypingStatus) {

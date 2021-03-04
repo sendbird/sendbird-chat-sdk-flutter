@@ -49,6 +49,8 @@ class User {
   @JsonKey(name: "require_auth_for_profile_image")
   bool requireAuth;
 
+  String sessionToken;
+
   User({
     this.userId,
     this.nickname,
@@ -62,6 +64,7 @@ class User {
     this.discoveryKeys,
     this.metaData,
     this.requireAuth,
+    this.sessionToken,
   });
 
   Future<Map<String, String>> createMetaData(
@@ -115,6 +118,11 @@ class User {
   /// json serialization
   factory User.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];
+    if (json['session_tokens'] != null &&
+        (json['session_tokens'] as List).length > 0) {
+      final tokens = List<Map>.from(json['session_tokens'] as List);
+      json['session_token'] = tokens?.first['session_token'];
+    }
     return _$UserFromJson(json);
   }
 

@@ -12,8 +12,8 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) {
         ? null
         : BaseMessage.fromJson(json['last_message'] as Map<String, dynamic>),
     isSuper: json['is_super'] as bool,
-    isStrict: json['is_strict'] as bool,
-    isBoradcast: json['is_boradcast'] as bool,
+    isStrict: json['is_strict'] as bool ?? false,
+    isBroadcast: json['is_broadcast'] as bool,
     isPublic: json['is_public'] as bool,
     isDistinct: json['is_distinct'] as bool,
     isDiscoverable: json['is_discoverable'] as bool,
@@ -29,7 +29,7 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) {
     myPushTriggerOption: _$enumDecodeNullable(
         _$GroupChannelPushTriggerOptionEnumMap, json['push_trigger_option']),
     myMemberState:
-        _$enumDecodeNullable(_$MemberStateEnumMap, json['my_member_state']),
+        _$enumDecodeNullable(_$MemberStateEnumMap, json['member_state']),
     myRole: _$enumDecodeNullable(_$RoleEnumMap, json['my_role'],
         unknownValue: Role.none),
     myMutedState: booltoMuteState(json['is_muted'] as bool),
@@ -37,6 +37,8 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) {
         _$CountPreferenceEnumMap, json['count_preference']),
     invitedAt: json['invited_at'] as int,
     isHidden: json['is_hidden'] as bool,
+    hiddenState: _$enumDecodeNullable(
+        _$GroupChannelHiddenStateEnumMap, json['hidden_state']),
     myLastRead: json['user_last_read'] as int,
     messageOffsetTimestamp: json['ts_message_offset'] as int,
     messageSurvivalSeconds: json['message_survival_seconds'] as int,
@@ -49,7 +51,7 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) {
     createdAt: json['created_at'] as int,
     data: json['data'] as String,
     customType: json['custom_type'] as String,
-    isFrozen: json['is_frozen'] as bool,
+    isFrozen: json['freeze'] as bool,
     isEphemeral: json['is_ephemeral'] as bool,
   )..inviter = json['inviter'] == null
       ? null
@@ -65,12 +67,12 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'created_at': instance.createdAt,
       'data': instance.data,
       'custom_type': instance.customType,
-      'is_frozen': instance.isFrozen,
+      'freeze': instance.isFrozen,
       'is_ephemeral': instance.isEphemeral,
       'last_message': instance.lastMessage,
       'is_super': instance.isSuper,
       'is_strict': instance.isStrict,
-      'is_boradcast': instance.isBoradcast,
+      'is_broadcast': instance.isBroadcast,
       'is_public': instance.isPublic,
       'is_distinct': instance.isDistinct,
       'is_discoverable': instance.isDiscoverable,
@@ -82,13 +84,14 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'joined_member_count': instance.joinedMemberCount,
       'push_trigger_option':
           _$GroupChannelPushTriggerOptionEnumMap[instance.myPushTriggerOption],
-      'my_member_state': _$MemberStateEnumMap[instance.myMemberState],
+      'member_state': _$MemberStateEnumMap[instance.myMemberState],
       'my_role': _$RoleEnumMap[instance.myRole],
       'is_muted': _$MuteStateEnumMap[instance.myMutedState],
       'count_preference': _$CountPreferenceEnumMap[instance.myCountPreference],
       'inviter': instance.inviter,
       'invited_at': instance.invitedAt,
       'is_hidden': instance.isHidden,
+      'hidden_state': _$GroupChannelHiddenStateEnumMap[instance.hiddenState],
       'user_last_read': instance.myLastRead,
       'ts_message_offset': instance.messageOffsetTimestamp,
       'message_survival_seconds': instance.messageSurvivalSeconds,
@@ -149,6 +152,12 @@ const _$CountPreferenceEnumMap = {
   CountPreference.messageOnly: 'unread_message_count_only',
   CountPreference.mentionOnly: 'unread_mention_count_only',
   CountPreference.off: 'off',
+};
+
+const _$GroupChannelHiddenStateEnumMap = {
+  GroupChannelHiddenState.unhidden: 'unhidden',
+  GroupChannelHiddenState.allowAutoUnhide: 'allow_auto_unhide',
+  GroupChannelHiddenState.preventAutoUnhide: 'prevent_auto_unhide',
 };
 
 const _$MuteStateEnumMap = {

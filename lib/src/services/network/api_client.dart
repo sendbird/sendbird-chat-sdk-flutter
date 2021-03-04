@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:sendbirdsdk/sendbirdsdk.dart';
 
 import 'http_client.dart';
 import 'api_endpoints.dart' as endpoint;
@@ -9,6 +8,7 @@ import '../../channel/open_channel.dart';
 import '../../channel/group_channel.dart';
 import '../../constant/command_type.dart';
 import '../../constant/enums.dart';
+import '../../constant/error_code.dart';
 import '../../constant/types.dart';
 import '../../events/reaction_event.dart';
 import '../../features/emoji/emoji.dart';
@@ -34,7 +34,7 @@ import '../../utils/extensions.dart';
 
 class ApiClient {
   HttpClient client = HttpClient();
-  String userId; //inject userid whenever current user status changes
+  String currentUserId; //inject userid whenever current user status changes
 
   String appId;
   String sessionKey;
@@ -70,6 +70,10 @@ class ApiClient {
     client.cleanUp();
   }
 
+  Stream get errorStream {
+    return client.errorController.stream;
+  }
+
   // channels
 
   Future<OpenChannel> createOpenChannel(
@@ -93,12 +97,13 @@ class ApiClient {
         body: body,
         progress: progress,
       );
-      return OpenChannel.fromJson(res);
+      return OpenChannel.fromJsonAndCached(res);
     } else {
       body['cover_url'] = params.coverImage?.url;
       body.removeWhere((key, value) => value == null);
       final res = await client.post(url: url, body: body);
-      return OpenChannel.fromJson(res);
+      final channel = OpenChannel.fromJsonAndCached(res);
+      return channel;
     }
   }
 
@@ -125,12 +130,12 @@ class ApiClient {
         body: body,
         progress: progress,
       );
-      return OpenChannel.fromJson(res);
+      return OpenChannel.fromJsonAndCached(res);
     } else {
       body['cover_url'] = params.coverImage?.url;
       body.removeWhere((key, value) => value == null);
       final res = await client.put(url: url, body: body);
-      return OpenChannel.fromJson(res);
+      return OpenChannel.fromJsonAndCached(res);
     }
   }
 
@@ -165,12 +170,12 @@ class ApiClient {
         body: body,
         progress: progress,
       );
-      return GroupChannel.fromJson(res);
+      return GroupChannel.fromJsonAndCached(res);
     } else {
       body['cover_url'] = params.coverImage?.url;
       body.removeWhere((key, value) => value == null);
       final res = await client.post(url: url, body: body);
-      return GroupChannel.fromJson(res);
+      return GroupChannel.fromJsonAndCached(res);
     }
   }
 
@@ -202,12 +207,12 @@ class ApiClient {
         body: body,
         progress: progress,
       );
-      return GroupChannel.fromJson(res);
+      return GroupChannel.fromJsonAndCached(res);
     } else {
       body['cover_url'] = params.coverImage?.url;
       body.removeWhere((key, value) => value == null);
       final res = await client.put(url: url, body: body);
-      return GroupChannel.fromJson(res);
+      return GroupChannel.fromJsonAndCached(res);
     }
   }
 
@@ -225,8 +230,8 @@ class ApiClient {
         options == null ? {} : paramsFromChannelIncludeOption(options);
     final res = await client.get(url: url, queryParams: params);
     return channelType == ChannelType.group
-        ? GroupChannel.fromJson(res)
-        : OpenChannel.fromJson(res);
+        ? GroupChannel.fromJsonAndCached(res)
+        : OpenChannel.fromJsonAndCached(res);
   }
 
   Future<void> deleteChannel({
@@ -247,7 +252,7 @@ class ApiClient {
   }) async {
     final url = endpoint.GroupChannels.channelurl_hide.format([channelUrl]);
     final body = {
-      'user_id': userId,
+      'user_id': currentUserId,
       'hide_previous_messages': hidePreviousMessages,
       'allow_auto_unhide': allowAutoUnhide,
     };
@@ -267,7 +272,7 @@ class ApiClient {
   }) async {
     final url =
         endpoint.GroupChannels.channelurl_reset_history.format([channelUrl]);
-    final body = {'user_id': userId, 'reset_all': resetAll};
+    final body = {'user_id': currentUserId, 'reset_all': resetAll};
     final res = await client.put(url: url, body: body);
     return res['ts_message_offset'];
   }
@@ -275,19 +280,23 @@ class ApiClient {
   Future<GroupChannel> joinGroupChannel({
     @required String channelUrl,
     String accessCode,
+    String userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_join.format([channelUrl]);
     final body = {
-      'user_id': userId,
+      'user_id': userId ?? currentUserId,
       if (accessCode != null) 'access_code': accessCode,
     };
     final res = await client.put(url: url, body: body);
-    return GroupChannel.fromJson(res);
+    return GroupChannel.fromJsonAndCached(res);
   }
 
-  Future<void> leaveGroupChannel({@required String channelUrl}) async {
+  Future<void> leaveGroupChannel({
+    @required String channelUrl,
+    String userId,
+  }) async {
     final url = endpoint.GroupChannels.channelurl_leave.format([channelUrl]);
-    await client.put(url: url, body: {'user_id': userId});
+    await client.put(url: url, body: {'user_id': userId ?? currentUserId});
   }
 
   Future<ScheduledUserMessage> registerScheduleUserMessage({
@@ -352,26 +361,28 @@ class ApiClient {
     final url = endpoint.GroupChannels.channelurl_invite.format([channelUrl]);
     final body = {'user_ids': userIds, 'inviter_id': inviterId};
     final res = await client.post(url: url, body: body);
-    return GroupChannel.fromJson(res);
+    return GroupChannel.fromJsonAndCached(res);
   }
 
   Future<void> acceptInvitation({
     @required String channelUrl,
     String accessCode,
+    String userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_accept.format([channelUrl]);
     final body = {
       if (accessCode != null) 'access_code': accessCode,
-      'user_id': userId,
+      'user_id': userId ?? currentUserId,
     };
     await client.put(url: url, body: body);
   }
 
   Future<void> declineInvitation({
     @required String channelUrl,
+    String userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_decline.format([channelUrl]);
-    await client.put(url: url, body: {'user_id': userId});
+    await client.put(url: url, body: {'user_id': userId ?? currentUserId});
   }
 
   Future<void> markAsRead({
@@ -525,7 +536,7 @@ class ApiClient {
       channelUrl,
     ]);
     final body = {
-      'reporting_user_id': userId,
+      'reporting_user_id': currentUserId,
       'report_category': category.asString(),
       if (description != null) 'report_description': description
     };
@@ -546,7 +557,7 @@ class ApiClient {
       messageId,
     ]);
     final body = {
-      'reporting_user_id': userId,
+      'reporting_user_id': currentUserId,
       'offending_user_id': senderId,
       'report_category': category.asString(),
       if (description != null) 'report_description': description
@@ -685,7 +696,7 @@ class ApiClient {
     final queryParams = params.toJson();
 
     final res = await client.get(url: url, queryParams: queryParams);
-    return BaseMessage.fromJson(res);
+    return BaseMessage.msgFromJson(res);
   }
 
   Future<List<BaseMessage>> getMessages({
@@ -713,7 +724,7 @@ class ApiClient {
 
     final res = await client.get(url: url, queryParams: queryParams);
     return (res['messages'] as List)
-        .map((e) => BaseMessage.msgFromJson(e))
+        .map((e) => BaseMessage.msgFromJson(e, channelType: channelType))
         .toList();
   }
 
@@ -739,7 +750,7 @@ class ApiClient {
 
   Future<Map<String, dynamic>> createUserMetaData(
       {Map<String, String> metaData}) async {
-    final url = endpoint.Users.userid_metadata.format([userId]);
+    final url = endpoint.Users.userid_metadata.format([currentUserId]);
     final body = {'metadata': metaData, 'upsert': true};
     final res = await client.post(url: url, body: body);
     return res;
@@ -749,19 +760,19 @@ class ApiClient {
     @required Map<String, String> metaData,
     bool upsert = true,
   }) async {
-    final url = endpoint.Users.userid_metadata.format([userId]);
+    final url = endpoint.Users.userid_metadata.format([currentUserId]);
     final body = {'metadata': metaData, 'upsert': upsert};
     final res = await client.put(url: url, body: body);
     return res;
   }
 
   Future<void> deleteUserMetaData(String key) async {
-    final url = endpoint.Users.userid_metadata_key.format([userId, key]);
+    final url = endpoint.Users.userid_metadata_key.format([currentUserId, key]);
     await client.delete(url: url);
   }
 
   Future<void> deleteAllUserMetaData() async {
-    final url = endpoint.Users.userid_metadata.format([userId]);
+    final url = endpoint.Users.userid_metadata.format([currentUserId]);
     await client.delete(url: url);
   }
 
@@ -925,19 +936,19 @@ class ApiClient {
 
   // configurations
 
-  Future<void> setAutoAcceptInvitation(bool autoAccept) async {
+  Future<void> setAutoAcceptInvitation(bool autoAccept, {String userId}) async {
     if (autoAccept == null) {
       throw InvalidParameterError();
     }
 
-    final url =
-        endpoint.Users.userid_channel_invitation_preference.format([userId]);
+    final url = endpoint.Users.userid_channel_invitation_preference
+        .format([userId ?? currentUserId]);
     await client.put(url: url, body: {'auto_accept': autoAccept});
   }
 
   Future<bool> getAutoAcceptInvitation() async {
-    final url =
-        endpoint.Users.userid_channel_invitation_preference.format([userId]);
+    final url = endpoint.Users.userid_channel_invitation_preference
+        .format([currentUserId]);
     final res = await client.get(url: url);
     return res['auto_accept'] as bool;
   }
@@ -964,7 +975,7 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {
       'do_not_disturb': enable,
       'start_hour': startHour,
@@ -978,7 +989,7 @@ class ApiClient {
   }
 
   Future<DoNotDisturbResponse> getDoNotDisturb() async {
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final res = await client.get(url: url);
     return DoNotDisturbResponse.fromJson(res);
   }
@@ -998,7 +1009,7 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {
       'snooze_enabled': enable,
       'snooze_start_ts': startDate.millisecondsSinceEpoch,
@@ -1008,7 +1019,7 @@ class ApiClient {
   }
 
   Future<SnoozeResponse> getSnoozePeriod() async {
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final res = await client.get(url: url);
     return SnoozeResponse.fromJson(res);
   }
@@ -1020,7 +1031,7 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {'push_trigger_option': pushTriggerOptionEnumMap[option]};
     final res = await client.put(url: url, body: body);
     return enumDecode(
@@ -1031,7 +1042,7 @@ class ApiClient {
   }
 
   Future<PushTriggerOption> getPushTriggerOption() async {
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final res = await client.get(url: url);
     return enumDecode(
       pushTriggerOptionEnumMap,
@@ -1045,7 +1056,7 @@ class ApiClient {
     @required GroupChannelPushTriggerOption option,
   }) async {
     final url = endpoint.Users.userid_push_preference_channelurl.format([
-      userId,
+      currentUserId,
       channelUrl,
     ]);
     final body = {
@@ -1063,7 +1074,7 @@ class ApiClient {
     String channelUrl,
   ) async {
     final url = endpoint.Users.userid_push_preference_channelurl.format([
-      userId,
+      currentUserId,
       channelUrl,
     ]);
     final res = await client.get(url: url);
@@ -1079,7 +1090,7 @@ class ApiClient {
     CountPreference prefs,
   }) async {
     final url = endpoint.Users.userid_count_preference_channelurl.format([
-      userId,
+      currentUserId,
       channelUrl,
     ]);
     final body = {'count_preference': countPreferenceEnumMap[prefs]};
@@ -1096,13 +1107,13 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {'push_sound': sound};
     await client.put(url: url, body: body);
   }
 
   Future<String> getPushSound() async {
-    final url = endpoint.Users.userid_push_preference.format([userId]);
+    final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final res = await client.get(url: url);
     return res['push_sound'];
   }
@@ -1112,13 +1123,13 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_push_template.format([userId]);
+    final url = endpoint.Users.userid_push_template.format([currentUserId]);
     final body = {'name': name};
     await client.put(url: url, body: body);
   }
 
   Future<String> getPushTemplate() async {
-    final url = endpoint.Users.userid_push_template.format([userId]);
+    final url = endpoint.Users.userid_push_template.format([currentUserId]);
     final res = await client.get(url: url);
     return res['name'];
   }
@@ -1131,7 +1142,7 @@ class ApiClient {
     bool unique = true,
   }) async {
     final url = endpoint.Users.userid_push_tokentype.format([
-      userId,
+      currentUserId,
       type.asString(),
     ]);
 
@@ -1147,7 +1158,7 @@ class ApiClient {
 
   Future<void> unregisterPushToken({PushTokenType type, String token}) async {
     final url = endpoint.Users.userid_push_tokentype_token.format([
-      userId,
+      currentUserId,
       type.asString(),
       token,
     ]);
@@ -1155,7 +1166,7 @@ class ApiClient {
   }
 
   Future<void> unregisterAllPushToken(PushTokenType type) async {
-    final url = endpoint.Users.userid_push.format([userId]);
+    final url = endpoint.Users.userid_push.format([currentUserId]);
     await client.delete(url: url);
   }
 
@@ -1165,7 +1176,7 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_block.format([userId]);
+    final url = endpoint.Users.userid_block.format([currentUserId]);
     final body = {'target_id': targetId};
     final res = await client.post(url: url, body: body);
     return User.fromJson(res);
@@ -1176,7 +1187,8 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    final url = endpoint.Users.userid_block_targetid.format([userId, targetId]);
+    final url =
+        endpoint.Users.userid_block_targetid.format([currentUserId, targetId]);
     await client.delete(url: url);
   }
 
@@ -1184,7 +1196,8 @@ class ApiClient {
     List<String> customTypes,
     GroupChannelSuperChannelFilter filter = GroupChannelSuperChannelFilter.all,
   }) async {
-    final url = endpoint.Users.userid_unread_message_count.format([userId]);
+    final url =
+        endpoint.Users.userid_unread_message_count.format([currentUserId]);
     final params = {
       'custom_types': customTypes,
       'super_mode': groupChannelSuperFilterEnumMap[filter],
@@ -1290,16 +1303,18 @@ class ApiClient {
 
   Future<Map<String, dynamic>> updateSessionKey({
     String appId,
-    String sessionKey,
+    String accessToken,
     bool expiringSession,
   }) async {
-    final url = endpoint.Users.userid_session_key.format([userId]);
+    final url = endpoint.Users.userid_session_key.format([currentUserId]);
     final body = {'expiring_session': expiringSession};
     var headers = {'App-Id': appId};
-    if (sessionKey != null) {
-      headers['Access-Token'] = sessionKey;
+    if (accessToken != null) {
+      headers['Access-Token'] = accessToken;
     }
-    return client.post(url: url, body: body, headers: headers);
+
+    final res = await client.post(url: url, body: body, headers: headers);
+    return Map.from(res);
   }
 
   //fetch list
@@ -1339,7 +1354,7 @@ class ApiClient {
   }) async {
     final url = endpoint.GroupChannels.origin;
     final params = {
-      'user_id': userId,
+      'user_id': currentUserId,
       'token': token,
       'limit': limit,
       'channelUrls': channelUrls,
@@ -1438,7 +1453,7 @@ class ApiClient {
     String token,
     int limit = 30,
   }) async {
-    final url = endpoint.Users.userid_block.format([userId]);
+    final url = endpoint.Users.userid_block.format([currentUserId]);
     final params = {
       'limit': limit,
       if (token != null) 'token': token,
@@ -1574,7 +1589,6 @@ class ApiClient {
     }
 
     params.removeWhere((key, value) => value == null);
-    print(params);
     final res = await client.get(url: url, queryParams: params);
     return MessageSearchQueryResponse.fromJson(res);
   }
@@ -1584,11 +1598,11 @@ class ApiClient {
     @required String channelUrl,
     @required int messageId,
     @required String key,
-    String uid,
+    String userId,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);
-    final body = {'user_id': uid ?? userId, 'reaction': key};
+    final body = {'user_id': userId ?? currentUserId, 'reaction': key};
     final res = await client.post(url: url, body: body);
     return ReactionEvent.fromJson(res);
   }
@@ -1598,11 +1612,11 @@ class ApiClient {
     @required String channelUrl,
     @required int messageId,
     @required String key,
-    String uid,
+    String userId,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);
-    final body = {'user_id': uid ?? userId, 'reaction': key};
+    final body = {'user_id': userId ?? currentUserId, 'reaction': key};
     final res = await client.delete(url: url, body: body);
     return ReactionEvent.fromJson(res);
   }

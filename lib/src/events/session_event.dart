@@ -6,6 +6,7 @@ part 'session_event.g.dart';
 
 @JsonSerializable()
 class SessionEvent extends BaseEvent {
+  @JsonKey(defaultValue: 0)
   final int expiresIn;
 
   final String newKey;

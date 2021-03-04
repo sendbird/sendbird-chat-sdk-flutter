@@ -1,3 +1,13 @@
+## [3.0.2] 
+* Added member count events for ChannelEventHandler
+* Added session refresh / expiration
+* Changed method signatures for send / update / resend user and file message
+* Handled file message sending asynchronously
+* Added network awarness to reconnect
+* Updated internal logic while reconnecting
+* Refactored socket events
+* Improved stability
+
 ## [3.0.1] Add missing features
 * Added reactions
 * Added file size limit

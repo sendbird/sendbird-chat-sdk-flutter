@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbirdsdk/sendbirdsdk.dart';
 
 import '../constant/enums.dart';
 import '../constant/command_type.dart';
@@ -50,7 +51,7 @@ class BaseMessage {
   final String channelUrl;
 
   /// Channel type of this message
-  final ChannelType channelType;
+  ChannelType channelType;
 
   /// The list of users who was mentioned together with this message.
   final List<User> mentionedUsers;
@@ -100,21 +101,22 @@ class BaseMessage {
   final int messageSurvivalSeconds;
 
   /// True if this message should update last message of its channel
+  @JsonKey(defaultValue: false)
   final bool forceUpdateLastMessage;
 
   /// True if this message won't affect unread message count / mention count
-  @JsonKey(name: 'silent')
+  @JsonKey(name: 'silent', defaultValue: false)
   final bool isSilent;
 
   /// The error code of this message. This value generated only when message send fails.
   int errorCode;
 
   /// True if this message was created by an operator.
-  @JsonKey(name: 'is_op_msg')
+  @JsonKey(name: 'is_op_msg', defaultValue: false)
   final bool isOperatorMessage;
 
   /// data for this message
-  final String data;
+  String data;
 
   /// Open graph information in this message. Nullable
   @JsonKey(name: 'og_tag')
@@ -293,13 +295,15 @@ class BaseMessage {
     return true;
   }
 
-  static T msgFromJson<T extends BaseMessage>(Map<String, dynamic> json) {
+  static T msgFromJson<T extends BaseMessage>(Map<String, dynamic> json,
+      {ChannelType channelType}) {
     String cmd = json["type"] as String;
     T msg;
     //basemessage backward compatibility -
     if (json['custom'] != null) json['data'] = json['custom'];
     if (json['ts'] != null) json['created_at'] = json['ts'];
     if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
+    if (json['req_id'] != null) json['request_id'] = json['req_id'];
 
     if (T == UserMessage || CommandType.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json) as T;
@@ -328,6 +332,11 @@ class BaseMessage {
         final value = List<String>.from(metaArray[e]);
         return MessageMetaArray(key: e, value: value);
       }).toList();
+    }
+
+    //manually insert type if channel is provided
+    if (channelType != null) {
+      msg.channelType = channelType;
     }
 
     return msg;

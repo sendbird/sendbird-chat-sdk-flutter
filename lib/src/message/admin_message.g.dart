@@ -42,10 +42,10 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
         ?.toList(),
     customType: json['custom_type'] as String,
     messageSurvivalSeconds: json['message_survival_seconds'] as int ?? -1,
-    forceUpdateLastMessage: json['force_update_last_message'] as bool,
-    isSilent: json['silent'] as bool,
+    forceUpdateLastMessage: json['force_update_last_message'] as bool ?? false,
+    isSilent: json['silent'] as bool ?? false,
     errorCode: json['error_code'] as int,
-    isOperatorMessage: json['is_op_msg'] as bool,
+    isOperatorMessage: json['is_op_msg'] as bool ?? false,
     data: json['data'] as String,
     ogMetaData: json['og_tag'] == null
         ? null

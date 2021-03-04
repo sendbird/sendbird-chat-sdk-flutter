@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:sendbirdsdk/src/events/mcnt_event.dart';
+import 'package:flutter/foundation.dart';
 
 import '../network/websocket_client.dart';
 import '../../message/base_message_internal.dart';
@@ -12,6 +12,7 @@ import '../../channel/open_channel.dart';
 import '../../models/command.dart';
 import '../../events/channel_event.dart';
 import '../../events/login_event.dart';
+import '../../events/mcnt_event.dart';
 import '../../events/message_event.dart';
 import '../../events/reaction_event.dart';
 import '../../events/session_event.dart';
@@ -32,10 +33,10 @@ import '../../models/member.dart';
 import '../../models/user.dart';
 import '../../sdk/sendbird_sdk_api.dart';
 import '../../sdk/sendbird_sdk_internal.dart';
+import '../../services/connection/connection_manager.dart';
 import '../../services/db/cache_service.dart';
 import '../../utils/logger.dart';
 import '../../utils/parsers.dart';
-// import '../../utils/request_validator.dart';
 
 class SdkAccessor {
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();
@@ -83,17 +84,19 @@ class CommandManager with SdkAccessor {
       throw ConnectionClosedError();
     }
 
-    if (cmd.isAckRequired) {
-      final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
-        logger.e('[Sendbird] sendCommand: did not receive ack in time');
-        throw WebSocketTimeoutError();
-      });
-      ackTimers[cmd.requestId] = timer;
+    try {
+      await ConnectionManager.readyToExecuteWSRequest();
+    } catch (e) {
+      ackTimers.remove(cmd.requestId)?.cancel();
+      throw e;
     }
 
-    //store callback
-    // if (await RequestValidator.readyToExecuteWsRequest()) {
-    webSocket.send(cmd.encode());
+    try {
+      webSocket.send(cmd.encode());
+    } catch (e) {
+      ackTimers.remove(cmd.requestId)?.cancel();
+      throw e;
+    }
     // } else {
     //   ackTimers[cmd.requestId].cancel();
     //   ackTimers.removeWhere((key, value) => key == cmd.requestId);
@@ -101,6 +104,12 @@ class CommandManager with SdkAccessor {
     // }
 
     if (cmd.isAckRequired) {
+      final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
+        logger.e('[Sendbird] sendCommand: did not receive ack in time');
+        throw WebSocketTimeoutError();
+      });
+      ackTimers[cmd.requestId] = timer;
+
       final completer = new Completer<Command>();
       completers[cmd.requestId] = completer;
       return completer.future;
@@ -119,16 +128,27 @@ class CommandManager with SdkAccessor {
     if (cmd.requestId != null) {
       ackTimers.remove(cmd.requestId)?.cancel();
       final completer = completers.remove(cmd.requestId);
-      completer.complete(cmd);
+      if (cmd.isError || cmd.hasError) {
+        completer.completeError(SBError(
+          code: cmd.errorCode,
+          message: cmd.errorMessage,
+        ));
+        return;
+      } else {
+        completer.complete(cmd);
+      }
     }
 
-    final cmdString = '-- Command: ${cmd.cmd}';
-    final encoder = JsonEncoder.withIndent('  ');
-    final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
-    logger.i('[Sendbird] Processing Socket event\n$cmdString\n$payloadString');
+    if (!kReleaseMode) {
+      final cmdString = '-- Command: ${cmd.cmd}';
+      final encoder = JsonEncoder.withIndent('  ');
+      final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
+      logger
+          .i('[Sendbird] Processing Socket event\n$cmdString\n$payloadString');
+    }
 
     Function(Command) fnc;
-    if (cmd.isError)
+    if (cmd.isError || cmd.hasError)
       fnc = _processError;
     else if (cmd.isLogin && cmd.requestId != null)
       fnc = _processSessionRefresh;
@@ -159,7 +179,7 @@ class CommandManager with SdkAccessor {
     else {/*not handle command*/}
 
     if (fnc != null) {
-      final op = AsyncOperation<Command>(fnc: fnc, arg: cmd);
+      final op = AsyncTask<Command>(func: fnc, arg: cmd);
       queue.enqueue(op);
     }
   }
@@ -189,6 +209,7 @@ class CommandManager with SdkAccessor {
     sdk.webSocket.setWatchdogInterval(event.watchdogInterval);
 
     final user = event.user;
+    final wasReconnecting = sdk.state.reconnecting;
 
     //Update AppInfo in state
     sdk.state
@@ -198,24 +219,25 @@ class CommandManager with SdkAccessor {
       ..reconnectTask = ReconnectTask(event.reconnectConfiguration)
       ..currentUser = user
       ..userId = user.userId
+      ..sessionKey = event.sessionKey
+      ..lastConnectedAt = event.loginTimestamp
       ..connected = true
       ..connecting = false
-      ..lastConnectedAt = event.loginTimestamp;
+      ..reconnecting = false;
 
     sdk.sessionManager
       ..setUserId(user.userId)
       ..setEKey(event.ekey)
       ..setSessionKey(event.sessionKey)
-      ..setSessionExpiresIn(event.expiresIn)
-      ..isOpened = true;
+      ..setSessionExpiresIn(event.expiresIn);
 
-    sdk.api.userId = user.userId;
+    sdk.api.currentUserId = user.userId;
     sdk.api.initialize(
       sessionKey: event.sessionKey,
       uploadSizeLimit: event.appInfo.uploadSizeLimit,
     );
 
-    if (sdk.state.reconnecting) {
+    if (wasReconnecting) {
       eventManager.notifyReconnectionSucceeded();
 
       //if reconnecting on error
@@ -239,6 +261,7 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processSessionExpired(Command cmd) async {
+    eventManager.notifySessionExpired();
     await sdk.sessionManager.updateSession();
   }
 
@@ -368,11 +391,15 @@ class CommandManager with SdkAccessor {
   Future<void> _processMemberCountChange(Command cmd) async {
     final event = MCNTEvent.fromJson(cmd.payload);
 
+    final groupChannels = <GroupChannel>[];
+    final openChannels = <OpenChannel>[];
+
     event.groupChannels.forEach((e) {
       final channel = sdk.cache.find<GroupChannel>(channelKey: e.channelUrl);
       if (channel != null) {
         channel.joinedMemberCount = e.joinedMemberCount;
         channel.memberCount = e.memberCount;
+        groupChannels.add(channel);
       }
     });
 
@@ -380,12 +407,16 @@ class CommandManager with SdkAccessor {
       final channel = sdk.cache.find<OpenChannel>(channelKey: e.channelUrl);
       if (channel != null) {
         channel.participantCount = e.participantCount;
+        openChannels.add(channel);
       }
     });
 
-    List<BaseChannel> channels = event.groupChannels;
-    channels.addAll(event.openChannels);
-    eventManager.notifyChannelMemberCountChange(channels);
+    if (groupChannels.isNotEmpty) {
+      eventManager.notifyChannelMemberCountChange(groupChannels);
+    }
+    if (openChannels.isNotEmpty) {
+      eventManager.notifyChannelParticiapntCountChanged(openChannels);
+    }
   }
 
   Future<void> _processRead(Command cmd) async {
@@ -469,6 +500,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processError(Command cmd) async {
     logger.e('[Sendbird] Error ${cmd.cmd} ' + cmd.errorMessage);
+    sdk.state.reconnecting = false;
     throw SBError(code: cmd.errorCode, message: cmd.errorMessage);
   }
 
@@ -650,6 +682,7 @@ class CommandManager with SdkAccessor {
             channel.myMemberState = MemberState.joined;
           }
           eventManager.notifyUserJoined(channel, member);
+          eventManager.notifyChannelMemberCountChange([channel]);
         }
       } else {
         Member member = Member.fromJson(event.data);
@@ -668,6 +701,7 @@ class CommandManager with SdkAccessor {
           }
         }
         eventManager.notifyUserLeaved(channel, member);
+        eventManager.notifyChannelMemberCountChange([channel]);
       }
     } catch (e) {
       logger
@@ -748,10 +782,13 @@ class CommandManager with SdkAccessor {
       final channel = await OpenChannel.getChannel(event.channelUrl);
       channel.participantCount = event.participantCount;
 
-      if (entered)
+      if (entered) {
         eventManager.notifyUserEntered(channel, event.user);
-      else
+        eventManager.notifyChannelParticiapntCountChanged([channel]);
+      } else {
         eventManager.notifyUserExited(channel, event.user);
+        eventManager.notifyChannelParticiapntCountChanged([channel]);
+      }
     } catch (e) {
       logger
           .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());

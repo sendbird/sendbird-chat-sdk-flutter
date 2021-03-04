@@ -9,7 +9,7 @@ part of 'login_event.dart';
 LoginEvent _$LoginEventFromJson(Map<String, dynamic> json) {
   return LoginEvent(
     ekey: json['ekey'] as String,
-    expiresIn: json['expires_in'] as int,
+    expiresIn: json['expires_in'] as int ?? 0,
     newKey: json['new_key'] as String,
     key: json['key'] as String,
     loginTimestamp: json['login_ts'] as int,

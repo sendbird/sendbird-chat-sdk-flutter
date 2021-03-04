@@ -5,7 +5,6 @@ import '../../constant/enums.dart';
 import '../../models/command.dart';
 import '../../models/error.dart';
 import '../../utils/logger.dart';
-import '../../utils/request_validator.dart';
 
 typedef void OnWSConnect();
 typedef void OnWSDisconnect();
@@ -113,10 +112,7 @@ class WebSocketClient {
     }
   }
 
-  void send(String data) async {
-    final error = await RequestValidator.readyToExecuteWsRequest();
-    if (error != null) return;
-
+  void send(String data) {
     logger.i('[Sendbird] Send command \n' + data);
     try {
       _socket.add(data);
@@ -209,6 +205,7 @@ class WebSocketClient {
       Duration(seconds: _watchdogInterval),
       () {
         close(code: WebSocketStatus.goingAway, reason: 'Watchdog timeout');
+        onReceiveError(SBError(message: 'Watchdog timeout'));
       },
     );
   }

@@ -186,11 +186,14 @@ class OpenChannel extends BaseChannel {
   //   return null;
   // }
 
-  factory OpenChannel.fromJson(Map<String, dynamic> json) {
+  factory OpenChannel.fromJsonAndCached(Map<String, dynamic> json) {
     final channel = _$OpenChannelFromJson(json);
     channel.saveToCache();
     return channel;
   }
+
+  factory OpenChannel.fromJson(Map<String, dynamic> json) =>
+      _$OpenChannelFromJson(json);
 
   @override
   void copyWith(dynamic others) {

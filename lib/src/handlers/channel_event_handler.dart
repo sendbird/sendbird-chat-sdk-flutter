@@ -87,8 +87,11 @@ class ChannelEventHandler implements EventHandler {
   /// Informs when a [channel] has been changed
   void onChannelChanged(BaseChannel channel) {}
 
-  /// Informs when channel's member count has been updated
-  void onChannelMemberCountChanged(List<BaseChannel> channels) {}
+  /// Informs when broadcast channel's member count has been updated
+  void onChannelMemberCountChanged(List<GroupChannel> channels) {}
+
+  /// Informs when open channel's member count has been updated
+  void onChannelParticipantCountChanged(List<OpenChannel> channels) {}
 
   /// Informs when a [channel] has been hidden
   void onChannelHidden(BaseChannel channel) {}

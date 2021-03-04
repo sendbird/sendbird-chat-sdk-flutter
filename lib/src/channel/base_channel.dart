@@ -10,6 +10,8 @@ import 'group_channel.dart';
 import '../constant/enums.dart';
 import '../constant/error_code.dart';
 import '../constant/types.dart';
+import '../core/async/async_operation.dart';
+import '../core/async/async_queue.dart';
 import '../models/command.dart';
 import '../events/reaction_event.dart';
 import '../message/base_message.dart';
@@ -27,6 +29,7 @@ import '../params/user_message_params.dart';
 import '../sdk/sendbird_sdk_api.dart';
 import '../sdk/sendbird_sdk_internal.dart';
 import '../services/db/cache_service.dart';
+import '../utils/logger.dart';
 
 /// Represents base channel
 ///
@@ -57,6 +60,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
   String customType;
 
   /// Ture if this channel is frozen
+  @JsonKey(name: 'freeze')
   bool isFrozen;
 
   /// True if this channel is ephemeral
@@ -68,6 +72,8 @@ class BaseChannel implements Cacheable<BaseChannel> {
 
   @JsonKey(ignore: true)
   bool dirty = false;
+
+  AsyncQueue _messageQueue;
 
   /// **WARNING:** Do not use default constructor to initialize manually
   BaseChannel({
@@ -82,7 +88,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
     this.isEphemeral,
     this.fromCache,
     this.dirty,
-  });
+  }) : _messageQueue = AsyncQueue();
 
   SendbirdSdkInternal get _sdk => SendbirdSdk().getInternal();
 
@@ -200,10 +206,10 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<UserMessage> sendUserMessageWithText(
+  UserMessage sendUserMessageWithText(
     String text, {
     OnMessageCallback onCompleted,
-  }) async {
+  }) {
     final params = UserMessageParams()..message = text;
     return sendUserMessage(
       params,
@@ -217,10 +223,10 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<UserMessage> sendUserMessage(
+  UserMessage sendUserMessage(
     UserMessageParams params, {
     OnMessageCallback onCompleted,
-  }) async {
+  }) {
     if (params.message == null || params.message.isEmpty) {
       throw SBError(code: ErrorCode.invalidParameter);
     }
@@ -231,10 +237,12 @@ class BaseChannel implements Cacheable<BaseChannel> {
       Uuid().v1(),
     );
     final pending = BaseMessage.msgFromJson<UserMessage>(
-        cmd.payload); //UserMessage.fromJson(cmd.payload);
+      cmd.payload,
+      channelType: channelType,
+    ); //UserMessage.fromJson(cmd.payload);
 
     if (!_sdk.state.hasActiveUser) {
-      final error = SBError(code: ErrorCode.connectionRequired);
+      final error = ConnectionRequiredError();
       pending
         ..errorCode = error.code
         ..sendingStatus = MessageSendingStatus.failed;
@@ -250,7 +258,9 @@ class BaseChannel implements Cacheable<BaseChannel> {
       if (onCompleted != null) onCompleted(msg, null);
     }).catchError((e) {
       // pending.errorCode = e?.code ?? ErrorCode.unknownError;
-      pending.sendingStatus = MessageSendingStatus.failed;
+      pending
+        ..errorCode = e.code
+        ..sendingStatus = MessageSendingStatus.failed;
       if (onCompleted != null) onCompleted(pending, e);
     });
 
@@ -263,10 +273,10 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<UserMessage> resendUserMessage(
+  UserMessage resendUserMessage(
     UserMessage message, {
     OnMessageCallback onCompleted,
-  }) async {
+  }) {
     if (message == null ||
         message.sendingStatus != MessageSendingStatus.failed) {
       throw InvalidParameterError();
@@ -290,11 +300,8 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been updated
   /// completely. Channel event [ChannelEventHandler.onMessageUpdated] will be
   /// invoked on all other members' end.
-  Future<void> updateUserMessage(
-    int messageId,
-    UserMessageParams params, {
-    OnMessageCallback onCompleted,
-  }) async {
+  Future<UserMessage> updateUserMessage(
+      int messageId, UserMessageParams params) async {
     if (messageId == null || messageId <= 0) {
       throw InvalidParameterError();
     }
@@ -308,12 +315,13 @@ class BaseChannel implements Cacheable<BaseChannel> {
       params,
     );
 
-    await _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-      final msg = BaseMessage.msgFromJson<UserMessage>(cmdResult.payload);
-      if (onCompleted != null) onCompleted(msg, null);
-    }).catchError((error) {
-      if (onCompleted != null) onCompleted(null, error);
-    });
+    try {
+      final res = await _sdk.cmdManager.sendCommand(cmd);
+      final msg = BaseMessage.msgFromJson<UserMessage>(res.payload);
+      return msg;
+    } catch (e) {
+      throw e;
+    }
   }
 
   /// Sends [FileMessage] on this channel with [params].
@@ -322,11 +330,11 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<FileMessage> sendFileMessage(
+  FileMessage sendFileMessage(
     FileMessageParams params, {
     OnFileMessageCallback onCompleted,
     OnUploadProgressCallback progress,
-  }) async {
+  }) {
     if (params == null) {
       throw InvalidParameterError();
     }
@@ -335,58 +343,79 @@ class BaseChannel implements Cacheable<BaseChannel> {
       throw InvalidParameterError();
     }
 
-    Command cmd;
     UploadResponse upload;
     int fileSize;
     String url;
 
-    if (params.uploadFile.hasBinary) {
-      upload = await _sdk.api
-          .uploadFile(
-            channelUrl: channelUrl,
-            requestId: null,
-            params: params,
-            progress: progress,
-          )
-          .timeout(
-            Duration(seconds: _sdk.options.fileTransferTimeout),
-          );
-      fileSize = upload.fileSize;
-      url = upload.url;
-    }
-
-    if (fileSize != null) params.uploadFile.fileSize = fileSize;
-    if (url != null) params.uploadFile.url = url;
-
-    cmd = Command.buildFileMessage(
-      channelUrl: channelUrl,
-      params: params,
-      requestId: Uuid().v1(),
-      requireAuth: upload?.requireAuth,
-      thumbnails: upload?.thumbnails,
-    );
-
-    final pending = BaseMessage.msgFromJson<FileMessage>(cmd.payload);
-
-    if (!_sdk.state.hasActiveUser) {
-      final error = SBError(code: ErrorCode.connectionRequired);
-      pending
-        ..errorCode = error.code
-        ..sendingStatus = MessageSendingStatus.failed;
-      if (onCompleted != null) onCompleted(pending, error);
-      return pending;
-    }
-
+    final pending = FileMessage.fromParams(params: params, channel: this);
     pending.sendingStatus = MessageSendingStatus.pending;
     pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
 
-    _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-      final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
-      if (onCompleted != null) onCompleted(msg, null);
-    }).catchError((e) {
-      pending.sendingStatus = MessageSendingStatus.failed;
-      if (onCompleted != null) onCompleted(pending, e);
-    });
+    final queue = _sdk.messageQueues[channelUrl] ?? AsyncQueue();
+    queue.enqueue(AsyncSimpleTask(() async {
+      if (params.uploadFile.hasBinary) {
+        upload = await _sdk.api
+            .uploadFile(
+                channelUrl: channelUrl,
+                requestId: pending.requestId,
+                params: params,
+                progress: progress)
+            .timeout(
+          Duration(seconds: _sdk.options.fileTransferTimeout),
+          onTimeout: () {
+            logger.e('[Sendbird] upload timeout');
+            if (onCompleted != null)
+              onCompleted(
+                pending..sendingStatus = MessageSendingStatus.failed,
+                SBError(
+                  message: 'upload timeout',
+                  code: ErrorCode.fileUploadTimeout,
+                ),
+              );
+            return;
+          },
+        );
+        fileSize = upload.fileSize;
+        url = upload.url;
+      }
+
+      if (fileSize != null) params.uploadFile.fileSize = fileSize;
+      if (url != null) params.uploadFile.url = url;
+
+      final cmd = Command.buildFileMessage(
+        channelUrl: channelUrl,
+        params: params,
+        requestId: Uuid().v1(),
+        requireAuth: upload?.requireAuth,
+        thumbnails: upload?.thumbnails,
+      );
+
+      final msgFromPayload = BaseMessage.msgFromJson<FileMessage>(
+        cmd.payload,
+        channelType: channelType,
+      );
+
+      if (!_sdk.state.hasActiveUser) {
+        final error = ConnectionRequiredError();
+        msgFromPayload
+          ..errorCode = error.code
+          ..sendingStatus = MessageSendingStatus.failed;
+        if (onCompleted != null) onCompleted(msgFromPayload, error);
+        return msgFromPayload;
+      }
+
+      try {
+        final result = await _sdk.cmdManager.sendCommand(cmd);
+        final msg = BaseMessage.msgFromJson<FileMessage>(result.payload);
+        if (onCompleted != null) onCompleted(msg, null);
+      } catch (e) {
+        pending.sendingStatus = MessageSendingStatus.failed;
+        if (onCompleted != null) onCompleted(pending, e);
+      }
+    }));
+
+    if (_sdk.messageQueues[channelUrl] == null)
+      _sdk.messageQueues[channelUrl] = queue;
 
     return pending;
   }
@@ -397,12 +426,12 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
-  Future<FileMessage> resendFileMessage(
+  FileMessage resendFileMessage(
     FileMessage message, {
     @required FileMessageParams params,
     OnFileMessageCallback onCompleted,
     OnUploadProgressCallback progress,
-  }) async {
+  }) {
     if (message == null ||
         message.sendingStatus != MessageSendingStatus.failed) {
       throw InvalidParameterError();
@@ -426,12 +455,8 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// [onCompleted] will be invoked once the message has been updated
   /// completely. Channel event [ChannelEventHandler.onMessageUpdated] will be
   /// invoked on all other members' end.
-  Future<void> updateFileMessage(
-    int messageId,
-    FileMessageParams params, {
-    OnUploadProgressCallback progress,
-    OnMessageCallback onCompleted,
-  }) async {
+  Future<FileMessage> updateFileMessage(
+      int messageId, FileMessageParams params) async {
     if (messageId == null || messageId <= 0) {
       throw InvalidParameterError();
     }
@@ -445,12 +470,13 @@ class BaseChannel implements Cacheable<BaseChannel> {
       params,
     );
 
-    await _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-      final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
-      onCompleted(msg, null);
-    }).catchError((error) {
-      onCompleted(null, error);
-    });
+    try {
+      final res = await _sdk.cmdManager.sendCommand(cmd);
+      final msg = BaseMessage.msgFromJson<FileMessage>(res.payload);
+      return msg;
+    } catch (e) {
+      throw e;
+    }
   }
 
   /// Deletes message with given [messageId].
@@ -499,7 +525,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
   /// message has been sent completely. Channel event
   /// [ChannelEventHandler.onMessageReceived] will be invoked on all
   /// other members' end.
-  Future<BaseMessage> copyMessage(
+  BaseMessage copyMessage(
     BaseMessage message,
     BaseChannel targetChannel, {
     OnMessageCallback onCompleted,
@@ -802,7 +828,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
 
     final result = await _sdk.cmdManager.sendCommand(cmd);
     result.payload['type'] = result.cmd;
-    return BaseMessage.fromJson(result.payload);
+    return BaseMessage.msgFromJson(result.payload);
   }
 
   /// Deletes [keys] from [MessageMetaArray] given [message].
@@ -825,7 +851,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
 
     final result = await _sdk.cmdManager.sendCommand(cmd);
     result.payload['type'] = result.cmd;
-    return BaseMessage.fromJson(result.payload);
+    return BaseMessage.msgFromJson(result.payload);
   }
 
   /// Removes list of [metaArrays] with given [message]
@@ -846,7 +872,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
 
     final result = await _sdk.cmdManager.sendCommand(cmd);
     result.payload['type'] = result.cmd;
-    return BaseMessage.fromJson(result.payload);
+    return BaseMessage.msgFromJson(result.payload);
   }
 
   /// Adds reaction [key] to given [message]

@@ -5,6 +5,7 @@ import '../channel/group_channel.dart';
 import '../channel/open_channel.dart';
 import '../models/user.dart';
 import '../message/base_message.dart';
+import '../services/db/cache_service.dart';
 
 part 'responses.g.dart';
 
@@ -31,8 +32,11 @@ class ChannelChangeLogsResponse extends BaseResponse {
     this.next,
   });
 
-  static ChannelChangeLogsResponse fromJson(Map<String, dynamic> json) =>
-      _$ChannelChangeLogsResponseFromJson(json);
+  static ChannelChangeLogsResponse fromJson(Map<String, dynamic> json) {
+    final res = _$ChannelChangeLogsResponseFromJson(json);
+    res.updatedChannels.forEach((element) => element.saveToCache());
+    return res;
+  }
 }
 
 @JsonSerializable(createToJson: false)
@@ -177,9 +181,9 @@ class ChannelConverter<T> implements JsonConverter<T, Object> {
   @override
   T fromJson(Object json) {
     if (json is Map<String, dynamic> && json.containsKey('participant_count')) {
-      return OpenChannel.fromJson(json) as T;
+      return OpenChannel.fromJsonAndCached(json) as T;
     }
-    return GroupChannel.fromJson(json) as T;
+    return GroupChannel.fromJsonAndCached(json) as T;
   }
 
   @override

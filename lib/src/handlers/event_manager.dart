@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'channel_event_handler.dart';
 import 'connection_event_handler.dart';
 import 'session_event_handler.dart';
@@ -15,6 +17,7 @@ import '../models/error.dart';
 import '../models/user.dart';
 import '../sdk/sendbird_sdk_api.dart';
 import '../sdk/sendbird_sdk_internal.dart';
+import '../utils/logger.dart';
 
 abstract class EventHandler {}
 
@@ -79,7 +82,10 @@ class EventManager {
     }
   }
 
-  EventHandler getHandler(String identifier, EventType type) {
+  EventHandler getHandler({
+    String identifier,
+    @required EventType type,
+  }) {
     switch (type) {
       case EventType.channel:
         return _channelHandlers[identifier];
@@ -268,9 +274,15 @@ class EventManager {
     });
   }
 
-  void notifyChannelMemberCountChange(List<BaseChannel> channels) {
+  void notifyChannelMemberCountChange(List<GroupChannel> channels) {
     _channelHandlers.values.forEach((element) {
       element.onChannelMemberCountChanged(channels);
+    });
+  }
+
+  void notifyChannelParticiapntCountChanged(List<OpenChannel> channels) {
+    _channelHandlers.values.forEach((element) {
+      element.onChannelParticipantCountChanged(channels);
     });
   }
 
@@ -328,29 +340,36 @@ class EventManager {
     });
   }
 
-  /// Session
-  ///
+  // session
   void notifySessionExpired() {
-    _sessionHandler?.onExpiredSession();
+    logger.i('[Sendbird] Notifying session expired');
+    _sessionHandler?.onSessionExpired();
   }
 
   void notifySessionTokenRequired() {
-    _sessionHandler?.onRequireToken((String token) => {}, () {});
+    logger.i('[Sendbird] Notifying session token required');
+    _sessionHandler?.onSessionTokenRequired(
+      sdk.sessionManager.successFunc,
+      sdk.sessionManager.errorFunc,
+    );
   }
 
   void notifySessionRefreshed() {
-    _sessionHandler?.onRefreshedSession();
+    logger.i('[Sendbird] Notifying session refreshed $_sessionHandler');
+    _sessionHandler?.onSessionRefreshed();
   }
 
   void notifySessionError(SBError error) {
-    _sessionHandler?.onErrorSession(error);
+    logger.i('[Sendbird] Notifying session error ${error.code}');
+    _sessionHandler?.onSessionError(error);
   }
 
   void notifySessionClosed() {
-    _sessionHandler.onCloseSession();
+    logger.i('[Sendbird] Notifying session closed');
+    _sessionHandler.onSessionClosed();
   }
 
-  /// UserEvent
+  // UserEvent
   void notifyDiscoveredFriend(List<User> friends) {
     _userHandlers.values.forEach((element) {
       element.onDiscoverFriends(friends);
@@ -364,7 +383,7 @@ class EventManager {
     });
   }
 
-  /// Connection
+  // Connection
   void notifyReconnectionStarted() {
     _connectionHandlers.values.forEach((element) {
       element.onReconnectionStarted();

@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbirdsdk/sendbirdsdk.dart';
+import 'package:uuid/uuid.dart';
 
 import 'base_message.dart';
 
@@ -23,6 +27,8 @@ class FileMessage extends BaseMessage {
   String get secureUrl {
     final sdk = SendbirdSdk().getInternal();
     if (requireAuth && sdk.sessionManager.getEKey() != null && url != null) {
+      //https://github.com/flutter/flutter/issues/25107
+      //final urlString = url.replaceAll('https://', 'http://');
       return '$url?auth=${sdk.sessionManager.getEKey()}';
     }
     return null;
@@ -43,6 +49,9 @@ class FileMessage extends BaseMessage {
   /// True if this requires auth to access this media, otherwise false.
   final bool requireAuth;
 
+  @JsonKey(ignore: true)
+  File localFile;
+
   FileMessage({
     this.url,
     this.name,
@@ -50,6 +59,7 @@ class FileMessage extends BaseMessage {
     this.type,
     this.thumbnails,
     this.requireAuth,
+    this.localFile,
     String requestId,
     int messageId,
     String message,
@@ -101,8 +111,34 @@ class FileMessage extends BaseMessage {
           ogMetaData: ogMetaData,
         );
 
-  factory FileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+  factory FileMessage.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> file = json['file'];
+    if (file != null) {
+      json['url'] = file['url'];
+      json['type'] = file['type'];
+      json['size'] = file['size'];
+      json['name'] = file['name'];
+      json['data'] = file['data'];
+    }
+    return _$FileMessageFromJson(json);
+  }
+
+  factory FileMessage.fromParams(
+      {FileMessageParams params, BaseChannel channel}) {
+    final msg = FileMessage(
+      requestId: Uuid().v1(),
+      url: params.uploadFile.url,
+      name: params.uploadFile.name,
+      localFile: params.uploadFile.file,
+      size: params.uploadFile.fileSize,
+      channelType: channel.channelType,
+      channelUrl: channel.channelUrl,
+      mentionType: params.mentionType,
+      requireAuth: false,
+    );
+    return msg;
+  }
+
   Map<String, dynamic> toJson() => _$FileMessageToJson(this);
 }
 

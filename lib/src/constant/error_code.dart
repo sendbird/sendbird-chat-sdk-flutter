@@ -58,6 +58,9 @@ class ErrorCode {
   static int timerWasExpired = 800301;
   static int timerWasAlreadyDone = 800302;
   static int pendingError = 800400;
+  static int passedInvalidAccessToken = 800500;
+  static int sessionKeyRefreshSucceeded = 800501;
+  static int sessionKeyRefreshFailed = 800502;
 
   // WS Error
   static int socketLoginRequired = 900010;

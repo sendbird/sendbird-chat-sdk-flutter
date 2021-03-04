@@ -28,7 +28,9 @@ Sender _$SenderFromJson(Map<String, dynamic> json) {
         ) ??
         {},
     requireAuth: json['require_auth_for_profile_image'] as bool,
-  )..isActive = json['is_active'] as bool;
+  )
+    ..isActive = json['is_active'] as bool
+    ..sessionToken = json['session_token'] as String;
 }
 
 Map<String, dynamic> _$SenderToJson(Sender instance) => <String, dynamic>{
@@ -44,6 +46,7 @@ Map<String, dynamic> _$SenderToJson(Sender instance) => <String, dynamic>{
       'discovery_keys': instance.discoveryKeys,
       'meta_data': instance.metaData,
       'require_auth_for_profile_image': instance.requireAuth,
+      'session_token': instance.sessionToken,
       'is_blocked_by_me': instance.isBlockedByMe,
       'role': _$RoleEnumMap[instance.role],
     };

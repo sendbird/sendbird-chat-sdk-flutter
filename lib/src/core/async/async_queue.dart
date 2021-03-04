@@ -6,10 +6,10 @@ import 'async_operation.dart';
 class AsyncQueue<T> {
   bool _scheduled = false;
 
-  Queue<AsyncOperation<T>> _queue = Queue<AsyncOperation<T>>();
+  Queue<Operation> _queue = Queue<Operation>();
   Map<int, Completer> _completers = {};
 
-  Future enqueue(AsyncOperation<T> operation) {
+  Future enqueue(Operation operation) {
     _queue.add(operation);
     final completer = Completer();
     _completers[operation.hashCode] = completer;
@@ -30,8 +30,13 @@ class AsyncQueue<T> {
       }
 
       var first = _queue.removeFirst();
-      await first.fnc(first.arg);
-      _completers.remove(first.hashCode)?.complete();
+      if (first is AsyncTask<T>) {
+        final res = await first.func(first.arg);
+        _completers.remove(first.hashCode)?.complete(res);
+      } else if (first is AsyncSimpleTask) {
+        await first.func();
+        _completers.remove(first.hashCode)?.complete();
+      }
     }
   }
 

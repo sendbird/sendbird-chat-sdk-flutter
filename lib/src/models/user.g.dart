@@ -26,6 +26,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
         ) ??
         {},
     requireAuth: json['require_auth_for_profile_image'] as bool,
+    sessionToken: json['session_token'] as String,
   );
 }
 
@@ -42,4 +43,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'discovery_keys': instance.discoveryKeys,
       'meta_data': instance.metaData,
       'require_auth_for_profile_image': instance.requireAuth,
+      'session_token': instance.sessionToken,
     };

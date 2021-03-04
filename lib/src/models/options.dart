@@ -32,6 +32,6 @@ class Options {
     this.fileTransferTimeout = 30,
     this.typingIndicatorThrottle = 5,
     this.useMemeberAsMessageSender = true,
-    this.websocketTimeout = 10,
+    this.websocketTimeout = 30,
   });
 }

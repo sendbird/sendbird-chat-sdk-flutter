@@ -6,48 +6,51 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart';
 
 import '../../constant/error_code.dart';
+import '../../handlers/event_manager.dart';
 import '../../models/error.dart';
 import '../../services/command/command_manager.dart';
 import '../../utils/logger.dart';
 import '../../utils/utils.dart';
 
+//NOTE: refactor for single source of truth
 class SessionManager with SdkAccessor {
   String _sessionKey;
   String _eKey;
   String _userId;
-  String _sessionKeyPath = 'com.sendbird.sdk.messaging.sessionkey';
-  String _userIdKeyPath = 'com.sendbird.sdk.messaging.userid';
+  String _accessToken;
+  String _sessionKeyPath;
+  String _userIdKeyPath;
   int _sessionExpiresIn;
-  bool isOpened;
 
   bool isRefreshingKey = false;
 
-  //temporary
-  // String encryptedUserId;
-  // String sessionPath;
+  Future Function(String) successFunc;
+  Function errorFunc;
 
-  // SendbirdSdkInternal sdk;
+  SessionManager() {
+    _userIdKeyPath = 'com.sendbird.sdk.messaging.userid';
+    _sessionKeyPath = 'com.sendbird.sdk.messaging.sessionkey';
+    successFunc = _sessionSuccessHandler;
+    errorFunc = _sessionErrorHandler;
+  }
 
-  // SessionManager(this.sdk);
-  // Isolate isolate;
-
-  // static final SessionManager _instance = SessionManager._internal();
-
-  // factory SessionManager() {
-  //   return _instance;
+  // void addHttpListener(Stream stream) {
+  //   stream.listen(
+  //     (event) {},
+  //     onError: (error, s) async {
+  //       if (error.code == ErrorCode.sessionKeyExpired) {
+  //         await updateSession();
+  //       }
+  //     },
+  //   );
   // }
 
-  // SessionManager._internal() {
-  //   //TODO: grap http instance or singleton
-  //   // HttpClient().errorController.stream.listen(
-  //   //   (event) {},
-  //   //   onError: (SendbirdError error) {
-  //   //     if (error.code == ErrorCode.sessionKeyExpired) {
-  //   //       updateSession();
-  //   //     }
-  //   //   },
-  //   // );
-  // }
+  String get accessToken => _accessToken;
+
+  void setAccessToken(String accessToken) {
+    logger.i('[Sendbird] Setting access token $accessToken');
+    _accessToken = accessToken;
+  }
 
   /// Set a `path` to store session key.
   /// Recommend to set your own path to store this path for security purpose
@@ -77,6 +80,7 @@ class SessionManager with SdkAccessor {
 
   /// Get current `sessionKey` from prefs
   Future<String> getSessionKey() async {
+    if (_sessionKey != null) return _sessionKey;
     String decryptedKey = await _decryptedSessionKey();
     if (_sessionKey == null) {
       _sessionKey = decryptedKey;
@@ -161,34 +165,39 @@ class SessionManager with SdkAccessor {
         'sessionKey: $encryptedData');
   }
 
-  //WIP
-  Future<void> updateSession() async {
+  Future<bool> updateSession() async {
     if (isRefreshingKey) {
-      return;
-      // throw Error(); //doing refresh atm throw error or do nothing
+      return false;
     }
 
-    final hasCallback =
-        false; //CallbackProcessor.shared().sessionHandler != null;
+    final hasSessionHandler =
+        sdk.eventManager.getHandler(type: EventType.session) != null;
+
     isRefreshingKey = true;
 
+    logger.i('[Sendbird] Updating session with $_accessToken');
     try {
       final res = await sdk.api.updateSessionKey(
-        appId: '', //get from state
-        sessionKey: '', //get from state
-        expiringSession: hasCallback,
+        appId: sdk.state.appId,
+        accessToken: _accessToken,
+        expiringSession: hasSessionHandler,
       );
       isRefreshingKey = false;
+      logger.i('[Sendbird] Updated session $res');
       _applyRefreshedSessionKey(res);
+      return true;
     } on SBError catch (err) {
-      if (err.code == ErrorCode.accessTokenNotValid) {
-        // CallbackProcessor.shared().notifySessionTokenRequired();
-      } else {
-        // CallbackProcessor.shared().notifySessionError(err);
-      }
+      logger.e('[Sendbird] Failed to update session $err');
       isRefreshingKey = false;
+      if (err.code == ErrorCode.accessTokenNotValid) {
+        sdk.eventManager.notifySessionTokenRequired();
+      } else {
+        sdk.eventManager.notifySessionError(
+          SBError(code: ErrorCode.sessionKeyRefreshFailed),
+        );
+      }
+      return false;
     }
-    return;
   }
 
   void _applyRefreshedSessionKey(Map<String, dynamic> payload) {
@@ -198,16 +207,30 @@ class SessionManager with SdkAccessor {
       setSessionKey(payload['new_key']);
     }
 
+    final reconnect = sessionExpiresIn <= 0;
+
     if (payload['expires_in'] != null) {
       setSessionExpiresIn(payload['expires_in']);
     }
 
-    //flush waiting items in queue?
-    // CallbackProcessor.shared().notifySessionRefreshed();
+    eventManager.notifySessionRefreshed();
+    if (reconnect) sdk.reconnect(reset: true);
+  }
 
-    if (_sessionExpiresIn <= 0) {
-      //reconnect
+  Future<void> _sessionSuccessHandler(String token) async {
+    setAccessToken(token);
+
+    if (token != null || token != '') {
+      await updateSession();
+    } else {
+      final error = SBError(code: ErrorCode.passedInvalidAccessToken);
+      sdk.eventManager.notifySessionError(error);
     }
+  }
+
+  void _sessionErrorHandler() {
+    final error = SBError(code: ErrorCode.passedInvalidAccessToken);
+    sdk.eventManager.notifySessionError(error);
   }
 
   void cleanUp() {

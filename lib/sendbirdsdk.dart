@@ -1,8 +1,6 @@
 /// Sendbird SDK for flutter
 library sendbirdsdk;
 
-export 'src/sdk/sendbird_sdk_api.dart';
-
 export 'src/channel/base_channel.dart';
 export 'src/channel/open_channel.dart';
 export 'src/channel/group_channel.dart';
@@ -28,13 +26,14 @@ export 'src/message/user_message.dart';
 export 'src/message/file_message.dart';
 export 'src/message/admin_message.dart';
 
-export 'src/models/user.dart';
-export 'src/models/member.dart';
-export 'src/models/meta_array.dart';
-export 'src/models/sender.dart';
 export 'src/models/app_info.dart';
 export 'src/models/error.dart';
+export 'src/models/member.dart';
+export 'src/models/meta_array.dart';
 export 'src/models/image_info.dart';
+export 'src/models/options.dart';
+export 'src/models/sender.dart';
+export 'src/models/user.dart';
 
 export 'src/params/file_message_params.dart';
 export 'src/params/group_channel_params.dart';
@@ -55,3 +54,5 @@ export 'src/query/open_channel_list_query.dart';
 export 'src/query/operator_list_query.dart';
 export 'src/query/previous_message_list_query.dart';
 export 'src/query/public_group_channel_list_query.dart';
+
+export 'src/sdk/sendbird_sdk_api.dart';

@@ -1,16 +1,22 @@
 abstract class Operation {}
 
-class AsyncOperation<T> implements Operation {
-  Future Function(T) fnc;
-  T arg;
+class AsyncSimpleTask implements Operation {
+  Future Function() func;
 
-  AsyncOperation({this.fnc, this.arg});
+  AsyncSimpleTask(this.func);
 }
 
-class AsyncOperation2<T, D> implements Operation {
-  Future Function(T, D) fnc;
+class AsyncTask<T> implements Operation {
+  Future Function(T) func;
+  T arg;
+
+  AsyncTask({this.func, this.arg});
+}
+
+class AsyncTask2<T, D> implements Operation {
+  Future Function(T, D) func;
   T arg;
   D arg2;
 
-  AsyncOperation2(this.fnc, this.arg, this.arg2);
+  AsyncTask2(this.func, this.arg, this.arg2);
 }

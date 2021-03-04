@@ -56,10 +56,11 @@ class GroupChannel extends BaseChannel {
   final bool isSuper;
 
   /// True if this channel is strict
+  @JsonKey(defaultValue: false)
   final bool isStrict;
 
   /// True if this channel is broadcast
-  final bool isBoradcast;
+  final bool isBroadcast;
 
   /// True if this channel is public
   bool isPublic;
@@ -95,6 +96,7 @@ class GroupChannel extends BaseChannel {
   GroupChannelPushTriggerOption myPushTriggerOption;
 
   /// Member state of current user in this channel
+  @JsonKey(name: 'member_state')
   MemberState myMemberState;
 
   /// Role of current user in this channel
@@ -121,7 +123,6 @@ class GroupChannel extends BaseChannel {
   bool isHidden;
 
   /// Hidden state of this channel
-  @JsonKey(ignore: true)
   GroupChannelHiddenState hiddenState;
 
   /// A last read information for the current user
@@ -147,7 +148,7 @@ class GroupChannel extends BaseChannel {
     this.lastMessage,
     this.isSuper,
     this.isStrict,
-    this.isBoradcast,
+    this.isBroadcast,
     this.isPublic,
     this.isDistinct,
     this.isDiscoverable,
@@ -627,6 +628,35 @@ class GroupChannel extends BaseChannel {
   /// json serialization
   factory GroupChannel.fromJson(Map<String, dynamic> json) {
     final channel = _$GroupChannelFromJson(json);
+    // channel.saveToCache();
+
+    if (json['read_receipt'] != null) {
+      final data = Map<String, int>.from(json['read_receipt']);
+      data.forEach((key, value) {
+        final read = ReadStatus(
+          channelType: channel.channelType,
+          channelUrl: channel.channelUrl,
+          userId: key,
+          timestamp: value,
+        );
+        read.saveToCache();
+      });
+    }
+
+    if (json['delivery_receipt'] != null) {
+      final delivery = DeliveryStatus(
+        channelUrl: channel.channelUrl,
+        updatedDeliveryReceipt: Map<String, int>.from(json['delivery_receipt']),
+      );
+      delivery.saveToCache();
+    }
+
+    return channel;
+  }
+  // Map<String, dynamic> toJson() => _$GroupChannelToJson(this);
+
+  factory GroupChannel.fromJsonAndCached(Map<String, dynamic> json) {
+    final channel = _$GroupChannelFromJson(json);
     channel.saveToCache();
 
     if (json['read_receipt'] != null) {
@@ -652,35 +682,6 @@ class GroupChannel extends BaseChannel {
 
     return channel;
   }
-  // Map<String, dynamic> toJson() => _$GroupChannelToJson(this);
-
-  // factory GroupChannel.fromJsonAndCached(Map<String, dynamic> json) {
-  //   final channel = _$GroupChannelFromJson(json);
-  //   channel.saveToCache();
-
-  //   if (json['read_receipt'] != null) {
-  //     final data = Map<String, int>.from(json['read_receipt']);
-  //     data.forEach((key, value) {
-  //       final status = ReadStatus(
-  //         channelType: channel.channelType,
-  //         channelUrl: channel.channelUrl,
-  //         userId: key,
-  //         timestamp: value,
-  //       );
-  //       status.saveToCache();
-  //     });
-  //   }
-
-  //   if (json['delivery_receipt'] != null) {
-  //     final status = DeliveryStatus(
-  //       channelUrl: channel.channelUrl,
-  //       updatedDeliveryReceipt: Map<String, int>.from(json['delivery_receipt']),
-  //     );
-  //     status.saveToCache();
-  //   }
-
-  //   return channel;
-  // }
 
   @override
   void copyWith(dynamic other) {

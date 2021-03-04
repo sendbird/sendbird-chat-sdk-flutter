@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../constant/error_code.dart';
 
 part 'error.g.dart';
 
@@ -7,7 +8,7 @@ class SBError extends Error {
   String message;
   int code;
 
-  SBError({this.message, this.code});
+  SBError({this.message, this.code = 1});
 
   void byaction(String erraction) {
     message = erraction;
@@ -18,7 +19,9 @@ class SBError extends Error {
   Map<String, dynamic> toJson() => _$SBErrorToJson(this);
 }
 
-class ConnectionRequiredError extends SBError {}
+class ConnectionRequiredError extends SBError {
+  ConnectionRequiredError() : super(code: ErrorCode.connectionRequired);
+}
 
 class ConnectionClosedError extends SBError {}
 

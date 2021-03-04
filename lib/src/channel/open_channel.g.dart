@@ -22,7 +22,7 @@ OpenChannel _$OpenChannelFromJson(Map<String, dynamic> json) {
     createdAt: json['created_at'] as int,
     data: json['data'] as String,
     customType: json['custom_type'] as String,
-    isFrozen: json['is_frozen'] as bool,
+    isFrozen: json['freeze'] as bool,
     isEphemeral: json['is_ephemeral'] as bool,
   );
 }
@@ -36,7 +36,7 @@ Map<String, dynamic> _$OpenChannelToJson(OpenChannel instance) =>
       'created_at': instance.createdAt,
       'data': instance.data,
       'custom_type': instance.customType,
-      'is_frozen': instance.isFrozen,
+      'freeze': instance.isFrozen,
       'is_ephemeral': instance.isEphemeral,
       'participant_count': instance.participantCount,
       'operators': instance.operators,

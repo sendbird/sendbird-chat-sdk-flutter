@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
 
 import '../channel/base_channel.dart';
 import '../channel/group_channel.dart';
-import '../models/command.dart';
+import '../core/async/async_operation.dart';
+import '../core/async/async_queue.dart';
+import '../services/connection/connection_manager.dart';
 import '../constant/contants.dart' as Constants;
 import '../constant/enums.dart';
 import '../handlers/event_manager.dart';
@@ -20,6 +23,7 @@ import '../services/session/session_manager.dart';
 import '../services/db/memory_cache_service.dart';
 import '../services/network/api_client.dart';
 import '../services/network/websocket_client.dart';
+import '../utils/logger.dart';
 import '../utils/parsers.dart';
 
 const sdk_version = '3.0.1';
@@ -34,6 +38,12 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   CommandManager cmdManager = CommandManager();
 
   Map<String, String> _extensions = {};
+  List<String> extraDatas = [
+    Constants.SbExtraDataPremiumFeatureList,
+    Constants.SbExtraDataFileUploadSizeLimit,
+    Constants.SbExtraDataApplicationAttributes,
+    Constants.SbExtraDataEmojiHash,
+  ];
 
   ApiClient api = ApiClient();
   WebSocketClient webSocket;
@@ -49,9 +59,15 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   StreamController<ConnectionEventType> connectionStreamController;
 
   Options options;
-
   Timer reconnectTimer;
 
+  ConnectivityResult connectionResult;
+  StreamSubscription connectionSub;
+
+  AsyncQueue commandQueue = AsyncQueue<String>();
+  Map<String, AsyncQueue> messageQueues = {};
+
+  //should only keep one instance
   SendbirdSdkInternal({
     String appId,
     String apiToken,
@@ -59,15 +75,32 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }) {
     api.initialize(appId: appId, token: apiToken);
     state.appId = appId;
+
     WidgetsBinding.instance?.addObserver(this);
+    // sessionManager.addHttpListener(api.errorStream);
+
+    //do not run connectivity on test
+    bool isTest = Platform.environment['FLUTTER_TEST'] == 'true';
+    if (!isTest) {
+      connectionSub = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) {
+        switch (result) {
+          case ConnectivityResult.none:
+            logger.i('[Sendbird] connection has been lost');
+            break;
+          case ConnectivityResult.mobile:
+          case ConnectivityResult.wifi:
+            if (connectionResult == ConnectivityResult.none &&
+                state.sessionKey != null) {
+              reconnect(reset: true);
+            }
+        }
+      });
+    }
   }
 
-  void onWebSocketConnect() {
-    state
-      ..lastConnectedAt = DateTime.now().millisecondsSinceEpoch
-      ..connected = true
-      ..connecting = false;
-  }
+  void onWebSocketConnect() {}
 
   //the socket has closed - return true to re-connect?
   void onWebSocketDisconnect() {
@@ -93,21 +126,36 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       return;
     }
 
-    //NOTE: using isolate somewhat buggy on debug mode
-    //but it is required to process api first if corresponding event
-    //comes in from socket
-    Command cmd = await parseCommand(stringCommand);
-    cmdManager.processCommand(cmd);
+    //NOTE: compute does not gaurantee the order of commands
+    final op = AsyncTask<String>(func: parseCommand, arg: stringCommand);
+    final cmd = await commandQueue.enqueue(op);
+    // cmdManager.processCommand(cmd);
+    runZoned(() async {
+      try {
+        cmdManager.processCommand(cmd);
+      } catch (e) {
+        throw e;
+      }
+    }, onError: (e, s) {
+      //handle error how to toss this..?
+      //get waiting func and error?
+      if (loginCompleter != null)
+        loginCompleter?.completeError(e);
+      else
+        logger.e('[Sendbird] fatal error thrown ${e.toString()}');
+      // throw e;
+    });
   }
 
   void onWebSocketError(Object error) {
     if (state.currentUser != null) {
-      reconnect();
+      reconnect(reset: false);
     } else {
       throw WebSocketError();
     }
   }
 
+  //TODO: handle error and reset states
   Future<User> connect({
     String userId,
     String accessToken,
@@ -120,15 +168,28 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     }
 
     userId = userId.trim();
+    String sessionKey;
 
-    // already connected
-    if (state.connected && state.userId == userId) {
-      return state.currentUser;
-    }
+    if (!reconnect) {
+      // already connected
+      if (state.connected && state.userId == userId) {
+        return state.currentUser;
+      }
 
-    // is already in progress to connect
-    if (state.connecting && state.userId == userId && loginCompleter != null) {
-      return loginCompleter.future;
+      // is already in progress to connect
+      if (state.connecting &&
+          state.userId == userId &&
+          loginCompleter != null) {
+        return loginCompleter.future;
+      }
+    } else {
+      sessionKey = await sessionManager.getSessionKey();
+      if (sessionKey == '' || sessionKey == null) {
+        ConnectionManager.flushCompleters(error: ConnectionRequiredError());
+        eventManager.notifyReconnectionFailed();
+        return null;
+      }
+      if (!state.reconnecting) eventManager.notifyReconnectionStarted();
     }
 
     state.userId = userId;
@@ -145,15 +206,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       onWebSocketError,
     );
 
-    String sessionKey;
-
-    if (reconnect) {
-      sessionKey = await sessionManager.getSessionKey();
-      if (!state.reconnecting) eventManager.notifyReconnectionStarted();
-    }
-
     apiHost = reconnect ? state.apiHost : apiHost ?? _getDefaultApiHost();
     wsHost = reconnect ? state.wsHost : wsHost ?? _getDefaultWsHost();
+
+    sessionManager.setAccessToken(accessToken);
 
     state
       ..reconnecting = reconnect
@@ -161,10 +217,9 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       ..apiHost = apiHost;
 
     api.initialize(baseUrl: apiHost, headers: {
-      'SB-User-Agent': await this._sbUserAgent,
+      'SB-User-Agent': this._sbUserAgent,
     });
 
-    final ua = await this._sbUserAgent;
     var params = {
       'p': Platform.operatingSystem,
       'pv': Platform.operatingSystemVersion, //device_info
@@ -174,10 +229,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         'key': sessionKey
       else
         'user_id': userId,
-      'SB-User-Agent': ua,
-      'include_extra_data':
-          'premium_feature_list,file_upload_size_limit,emoji_hash,application_attributes', //extra data
-      'expiring_session': '0',
+      'SB-User-Agent': this._sbUserAgent,
+      'include_extra_data': extraDatas.join(','),
+      'expiring_session':
+          eventManager.getHandler(type: EventType.session) != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
@@ -185,7 +240,13 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     await webSocket.connect(fullWsHost);
     final user = await loginCompleter.future
-        .timeout(Duration(seconds: options.connectionTimeout));
+        .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
+      logout();
+      throw WebSocketTimeoutError();
+    });
+
+    ConnectionManager.flushCompleters(
+        error: reconnect ? null : ConnectionClosedError());
 
     loginCompleter = null;
     reconnectTimer = null;
@@ -216,21 +277,34 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void logout() {
-    state = SendbirdState()..appId = state.appId;
-    webSocket?.close();
-    webSocket = null;
     sessionManager = SessionManager();
     cache = MemoryCacheStorage();
     eventManager = EventManager();
     cmdManager = CommandManager();
     api = ApiClient();
     api.initialize(appId: state.appId);
+
+    state = SendbirdState()..appId = state.appId;
+    webSocket?.close();
+    webSocket = null;
+
+    WidgetsBinding.instance?.removeObserver(this);
+    connectionSub?.cancel();
+
     loginCompleter = null;
+
+    ConnectionManager.flushCompleters(error: ConnectionClosedError());
     _resetControllers();
   }
 
   //reset reconnection logic
-  void reconnect() {
+  void reconnect({bool reset = false}) {
+    if (reset) {
+      reconnectTimer?.cancel();
+      reconnectTimer = null;
+      state.resetReconnectTask();
+    }
+
     if (reconnectTimer != null) return;
 
     final task = state.reconnectTask;
@@ -243,14 +317,19 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     final backoffPeriod = task.backOffPeriod;
     task.increaseRetryCount();
+    state.reconnecting = true;
 
     reconnectTimer = Timer(Duration(seconds: backoffPeriod), () {
-      connect(reconnect: true, userId: state.userId);
+      connect(
+        reconnect: true,
+        userId: state.userId,
+        accessToken: sessionManager.accessToken,
+      );
     });
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.paused) _handleEnterBackground();
     if (state == AppLifecycleState.resumed) _handleEnterForeground();
   }
@@ -264,12 +343,12 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     webSocket.close();
   }
 
-  _handleEnterForeground() {
+  _handleEnterForeground() async {
     //need to connect with existing session key
     //if previously connected
     //reconnecting
     if (state.currentUser != null)
-      connect(userId: state.userId, reconnect: true);
+      await connect(userId: state.userId, reconnect: true);
   }
 
   String _getDefaultApiHost() {
@@ -280,7 +359,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     return 'wss://ws-' + state.appId + '.sendbird.com';
   }
 
-  Future<String> get _sbUserAgent async {
+  String get _sbUserAgent {
     final uikitVersion = _extensions[Constants.SbExtensionKeyUIKit];
     final core = '/c$sdk_version';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';

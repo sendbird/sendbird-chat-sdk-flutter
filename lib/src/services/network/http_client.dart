@@ -4,13 +4,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
 
+import '../../constant/error_code.dart';
 import '../../constant/types.dart';
 import '../../models/image_info.dart';
 import '../../models/error.dart';
+import '../../sdk/sendbird_sdk_api.dart';
+import '../../services/connection/connection_manager.dart';
 import '../../utils/extensions.dart';
-
 import '../../utils/logger.dart';
-import 'package:logger/logger.dart';
 
 enum Method {
   get,
@@ -29,8 +30,9 @@ class HttpClient {
   String token;
 
   bool isLocal = false;
-
-  // StreamController errorController = StreamController();
+  bool bypassAuth = false;
+  StreamController errorController =
+      StreamController<SBError>.broadcast(sync: true);
 
   HttpClient({
     this.baseUrl,
@@ -45,8 +47,7 @@ class HttpClient {
     sessionKey = null;
     token = null;
     headers = {};
-    // errorController.close();
-    Logger.level = Level.nothing;
+    errorController?.close();
   }
 
   //form commom headers
@@ -57,7 +58,7 @@ class HttpClient {
       if (sessionKey != null)
         'Session-Key': sessionKey
       else if (token != null)
-        'Api-Token': token,
+        'Api-Token': token
     };
     if (headers.isNotEmpty) {
       commonHeaders.addAll(headers);
@@ -71,6 +72,8 @@ class HttpClient {
     Map<String, dynamic> queryParams,
     Map<String, String> headers = const {},
   }) async {
+    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
@@ -94,6 +97,8 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
+    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
@@ -117,6 +122,8 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
+    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
@@ -140,6 +147,8 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
+    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
@@ -165,6 +174,8 @@ class HttpClient {
     Map<String, String> headers,
     OnUploadProgressCallback progress,
   }) async {
+    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+
     final request = MultipartRequest(
       method.asString().toUpperCase(),
       Uri(
@@ -205,13 +216,27 @@ class HttpClient {
     return _response(result);
   }
 
-  dynamic _response(http.Response response) {
+  Future<dynamic> _response(http.Response response) async {
     //use compute
     final res = jsonDecode(response.body.toString());
-    logger.i('[Sendbird] HTTP response ' + res.toString());
+    logger.i('[Sendbird] HTTP response ' +
+        res.toString() +
+        '\nHTTP request ' +
+        response.request.url.toString() +
+        '\nheaders: ${response.request.headers}');
     if (response.statusCode >= 400 && response.statusCode < 500) {
-      // final err = SBError(message: res['message'], code: res['code']);
-      // errorController.sink.addError(err);
+      final err = SBError(message: res['message'], code: res['code']);
+      errorController.sink.add(err);
+      //NOTE: is this best way to do?..
+      if (err.code == ErrorCode.sessionKeyExpired) {
+        sessionKey = null;
+        final result =
+            await SendbirdSdk().getInternal().sessionManager.updateSession();
+        if (result)
+          throw SBError(code: ErrorCode.sessionKeyRefreshSucceeded);
+        else
+          throw SBError(code: ErrorCode.sessionKeyRefreshFailed);
+      }
     }
 
     switch (response.statusCode) {

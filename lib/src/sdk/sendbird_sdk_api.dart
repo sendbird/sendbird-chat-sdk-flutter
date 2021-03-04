@@ -42,6 +42,7 @@ class SendbirdSdk {
   }) {
     if (_instance != null &&
         (appId == null || appId == _instance._int?.state?.appId)) {
+      _instance.setOptions(options);
       return _instance;
     }
 
@@ -103,13 +104,11 @@ class SendbirdSdk {
   /// Reconnects if previously connected and disconnect due to any reasons.
   /// It will return `false` if previous connection was not made.
   bool reconnect() {
-    if (getCurrentUser() == null || _int.state.sessionKey == null) {
+    if (getCurrentUser() == null && _int.state.sessionKey == null) {
       return false;
     }
 
-    _int.reconnectTimer?.cancel();
-    _int.state.resetReconnectTask();
-    _int.reconnect();
+    _int.reconnect(reset: true);
     return true;
   }
 
@@ -133,7 +132,10 @@ class SendbirdSdk {
   ///
   /// null if handler is not found with [identifier]
   ChannelEventHandler getChannelHandler(String identifier) {
-    return _int.eventManager.getHandler(identifier, EventType.channel);
+    return _int.eventManager.getHandler(
+      identifier: identifier,
+      type: EventType.channel,
+    );
   }
 
   /// Removes [ChannelEventHandler] with [identifier] from SDK.
@@ -150,7 +152,10 @@ class SendbirdSdk {
   ///
   /// null if the handler is not found with [identifier]
   ConnectionEventHandler getConnectionHandler(String identifier) {
-    return _int.eventManager.getHandler(identifier, EventType.connection);
+    return _int.eventManager.getHandler(
+      identifier: identifier,
+      type: EventType.connection,
+    );
   }
 
   /// Removes [ConnectionEventHandler] with [identifier] from SDK.
@@ -165,7 +170,7 @@ class SendbirdSdk {
 
   /// Returns [SessionEventHandler] if registered
   SessionEventHandler getSessionHandler() {
-    return _int.eventManager.getHandler('', EventType.session);
+    return _int.eventManager.getHandler(type: EventType.session);
   }
 
   /// Removes [SessionEventHandler] from SDK.
@@ -180,7 +185,10 @@ class SendbirdSdk {
 
   /// Returns [UserEventHandler] with [identifier] from SDK.
   UserEventHandler getUserEventHandler(String identifier) {
-    return _int.eventManager.getHandler(identifier, EventType.userEvent);
+    return _int.eventManager.getHandler(
+      identifier: identifier,
+      type: EventType.userEvent,
+    );
   }
 
   /// Removes [UserEventHandler] with [identifier] from SDK.

@@ -12,7 +12,6 @@ import '../message/base_message.dart';
 import '../message/file_message.dart';
 import '../message/user_message.dart';
 import '../models/error.dart';
-import '../models/unread_count_info.dart';
 import '../models/meta_array.dart';
 import '../params/file_message_params.dart';
 import '../params/user_message_params.dart';
@@ -265,7 +264,7 @@ class Command {
     else if (message is FileMessage)
       type = CommandType.fileMessageUpdate;
     else
-      throw Error();
+      throw InvalidParameterError();
 
     return Command(cmd: type, payload: {
       'channel_url': message.channelUrl,
