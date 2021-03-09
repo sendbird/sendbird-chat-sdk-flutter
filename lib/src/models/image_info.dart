@@ -25,9 +25,12 @@ class ImageInfo {
   })  : fileSize = file?.lengthSync(),
         url = null;
 
-  ImageInfo.fromUrl({this.name, this.url, this.fileSize})
-      : mimeType = 'image/jpeg',
-        file = null;
+  ImageInfo.fromUrl({
+    @required this.url,
+    @required this.mimeType,
+    this.fileSize,
+    this.name,
+  }) : file = null;
 
   bool get hasBinary => file != null;
   bool get hasSource => file != null || (url != null && url != '');

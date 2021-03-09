@@ -18,7 +18,10 @@ class FileMessageParams extends BaseMessageParams {
   /// NOTE: should use this constructor when updating message
   FileMessageParams.withMessage(FileMessage fileMessage, {bool deepCopy})
       : super.withMessage(fileMessage, deepCopy: deepCopy) {
-    uploadFile = ImageInfo.fromUrl(url: fileMessage?.url);
+    uploadFile = ImageInfo.fromUrl(
+      url: fileMessage?.url,
+      mimeType: fileMessage?.type,
+    );
   }
 
   FileMessageParams.withFile(
@@ -35,12 +38,14 @@ class FileMessageParams extends BaseMessageParams {
 
   FileMessageParams.withUrl(
     String fileUrl,
-    int size, {
+    String mimeType, {
+    int size,
     String name,
     FileMessage fileMessage,
   }) : super.withMessage(fileMessage, deepCopy: false) {
     uploadFile = ImageInfo.fromUrl(
       name: name ?? 'image',
+      mimeType: mimeType,
       url: fileUrl,
       fileSize: size,
     );

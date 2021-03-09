@@ -1,3 +1,8 @@
+## [3.0.3]
+* Changed return type of update messages (remove completion and use future)
+* Accepted mimetype on `ImageInfo` 
+* Improved stability
+
 ## [3.0.2] 
 * Added member count events for ChannelEventHandler
 * Added session refresh / expiration

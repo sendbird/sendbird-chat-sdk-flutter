@@ -26,7 +26,7 @@ import '../services/network/websocket_client.dart';
 import '../utils/logger.dart';
 import '../utils/parsers.dart';
 
-const sdk_version = '3.0.1';
+const sdk_version = '3.0.3';
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {

@@ -60,7 +60,7 @@ class SendbirdSdk {
 
   /// Sets [Options] to configure SDK
   void setOptions(Options options) {
-    _int.options = options ?? Options();
+    _int?.options = options ?? Options();
   }
 
   /// Returns current configuration [Options]
@@ -197,7 +197,7 @@ class SendbirdSdk {
   }
 
   /// Returns current SDK version as `String`.
-  Future<String> getSdkVersion() async {
+  String getSdkVersion() {
     return sdk_version;
   }
 
