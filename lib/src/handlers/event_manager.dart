@@ -124,7 +124,7 @@ class EventManager {
 
   void notifyMessageReceived(BaseChannel channel, BaseMessage message) {
     sdk.messageReceiveStreamController
-        .add(ChannelMessageResponse(channel, message));
+        .add(ChannelMessageResponse(channel, message: message));
 
     _channelHandlers.values.forEach((element) {
       element.onMessageReceived(channel, message);
@@ -133,7 +133,7 @@ class EventManager {
 
   void notifyMessageUpdate(BaseChannel channel, BaseMessage message) {
     sdk.messageUpdateStreamController
-        .add(ChannelMessageResponse(channel, message));
+        .add(ChannelMessageResponse(channel, message: message));
 
     _channelHandlers.values.forEach((element) {
       element.onMessageUpdated(channel, message);
@@ -141,7 +141,9 @@ class EventManager {
   }
 
   void notifyMessageDeleted(BaseChannel channel, int messageId) {
-    //delete controller
+    sdk.messageDeleteStreamController
+        .add(ChannelMessageResponse(channel, deletedId: messageId));
+
     _channelHandlers.values.forEach((element) {
       element.onMessageDeleted(channel, messageId);
     });

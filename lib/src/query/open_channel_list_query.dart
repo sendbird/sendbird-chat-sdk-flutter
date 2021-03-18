@@ -6,13 +6,13 @@ import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of open channel.
 class OpenChannelListQuery extends QueryBase {
-  /// Filter for channel url
+  /// Channel url
   String channelUrl;
 
-  /// Filter for channel name
+  /// Channel name
   String channelName;
 
-  /// Filter for channel custom type
+  /// Filters channel custom type
   String customType;
 
   /// Query result includes frozen channels if `true`

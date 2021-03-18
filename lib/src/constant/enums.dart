@@ -558,3 +558,38 @@ enum ConnectionEventType {
   failed,
   cancelled,
 }
+
+enum OperatorFilter {
+  all,
+  operator,
+  nonOperator,
+}
+
+const operatorFilterEnumMap = <OperatorFilter, String>{
+  OperatorFilter.all: 'all',
+  OperatorFilter.operator: 'operator',
+  OperatorFilter.nonOperator: 'nonoperator',
+};
+
+enum MutedMemberFilter {
+  all,
+  muted,
+  unmuted,
+}
+
+const mutedMemberFilterEnumMap = <MutedMemberFilter, String>{
+  MutedMemberFilter.all: 'all',
+  MutedMemberFilter.muted: 'muted',
+  MutedMemberFilter.unmuted: 'unmuted',
+};
+
+enum MemberListOrder {
+  nicknameAlphabetical,
+  operatorThenMemberNicknameAlphabetical,
+}
+
+const memberListOrderEnumMap = <MemberListOrder, String>{
+  MemberListOrder.nicknameAlphabetical: 'member_nickname_alphabetical',
+  MemberListOrder.operatorThenMemberNicknameAlphabetical:
+      'operator_then_member_alphabetical',
+};

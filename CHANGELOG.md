@@ -1,3 +1,12 @@
+## [3.0.4]
+* Added `GroupChannelMemberListQuery`
+* Changed `refreshChannel` to `refresh` for channel
+* Changed parameter type from `User` to `String` for `reportUser` on channel
+* Fixed bugs on mapping sender
+* Fixed bugs on sending file message
+* Fixed bugs on caching 
+* Improved stability
+
 ## [3.0.3]
 * Changed return type of update messages (remove completion and use future)
 * Accepted mimetype on `ImageInfo` 

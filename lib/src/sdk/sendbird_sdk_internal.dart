@@ -26,7 +26,7 @@ import '../services/network/websocket_client.dart';
 import '../utils/logger.dart';
 import '../utils/parsers.dart';
 
-const sdk_version = '3.0.3';
+const sdk_version = '3.0.4';
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {
@@ -52,6 +52,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   StreamController<int> totalUnreadCountController;
   StreamController<ChannelMessageResponse> messageUpdateStreamController;
   StreamController<ChannelMessageResponse> messageReceiveStreamController;
+  StreamController<ChannelMessageResponse> messageDeleteStreamController;
   StreamController<BaseChannel> channelChangedStreamController;
   StreamController<GroupChannel> readStreamController;
   StreamController<GroupChannel> deliveryStreamController;
@@ -218,6 +219,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     api.initialize(baseUrl: apiHost, headers: {
       'SB-User-Agent': this._sbUserAgent,
+      'User-Agent': 'flutter/$sdk_version',
     });
 
     var params = {
@@ -257,6 +259,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     totalUnreadCountController?.close();
     messageReceiveStreamController?.close();
     messageUpdateStreamController?.close();
+    messageDeleteStreamController?.close();
     readStreamController?.close();
     deliveryStreamController?.close();
     channelChangedStreamController?.close();
@@ -268,6 +271,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         StreamController<ChannelMessageResponse>.broadcast();
     messageReceiveStreamController =
         StreamController<ChannelMessageResponse>.broadcast();
+    messageDeleteStreamController =
+        StreamController<ChannelMessageResponse>.broadcast();
     channelChangedStreamController = StreamController<BaseChannel>.broadcast();
     readStreamController = StreamController<GroupChannel>.broadcast();
     deliveryStreamController = StreamController<GroupChannel>.broadcast();
@@ -277,6 +282,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void logout() {
+    logger.i('[Sendbird] logout');
+
     sessionManager = SessionManager();
     cache = MemoryCacheStorage();
     eventManager = EventManager();
@@ -291,6 +298,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     WidgetsBinding.instance?.removeObserver(this);
     connectionSub?.cancel();
 
+    commandQueue.cleanUp();
+    messageQueues = {};
     loginCompleter = null;
 
     ConnectionManager.flushCompleters(error: ConnectionClosedError());

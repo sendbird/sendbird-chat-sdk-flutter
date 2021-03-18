@@ -102,9 +102,9 @@ class BaseChannel implements Cacheable<BaseChannel> {
     String channelUrl,
   ) async {
     if (channelType == ChannelType.group) {
-      return GroupChannel.refreshChannel(channelUrl);
+      return GroupChannel.refresh(channelUrl);
     } else {
-      return OpenChannel.refreshChannel(channelUrl);
+      return OpenChannel.refresh(channelUrl);
     }
   }
 
@@ -253,6 +253,8 @@ class BaseChannel implements Cacheable<BaseChannel> {
     pending.sendingStatus = MessageSendingStatus.pending;
     pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
 
+    // final queue = _sdk.messageQueues[channelUrl] ?? AsyncQueue();
+    // queue.enqueue(AsyncSimpleTask(() async {
     _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
       final msg = BaseMessage.msgFromJson<UserMessage>(cmdResult.payload);
       if (onCompleted != null) onCompleted(msg, null);
@@ -263,6 +265,10 @@ class BaseChannel implements Cacheable<BaseChannel> {
         ..sendingStatus = MessageSendingStatus.failed;
       if (onCompleted != null) onCompleted(pending, e);
     });
+    // }));
+
+    // if (_sdk.messageQueues[channelUrl] == null)
+    // _sdk.messageQueues[channelUrl] = queue;
 
     return pending;
   }
@@ -296,10 +302,6 @@ class BaseChannel implements Cacheable<BaseChannel> {
   }
 
   /// Updates [UserMessage] on this channel with [messageId] and [params].
-  ///
-  /// [onCompleted] will be invoked once the message has been updated
-  /// completely. Channel event [ChannelEventHandler.onMessageUpdated] will be
-  /// invoked on all other members' end.
   Future<UserMessage> updateUserMessage(
       int messageId, UserMessageParams params) async {
     if (messageId == null || messageId <= 0) {
@@ -375,6 +377,8 @@ class BaseChannel implements Cacheable<BaseChannel> {
             return;
           },
         );
+        if (upload == null) throw SBError(code: ErrorCode.fileUploadTimeout);
+
         fileSize = upload.fileSize;
         url = upload.url;
       }
@@ -385,7 +389,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
       final cmd = Command.buildFileMessage(
         channelUrl: channelUrl,
         params: params,
-        requestId: Uuid().v1(),
+        requestId: pending.requestId,
         requireAuth: upload?.requireAuth,
         thumbnails: upload?.thumbnails,
       );
@@ -404,18 +408,20 @@ class BaseChannel implements Cacheable<BaseChannel> {
         return msgFromPayload;
       }
 
-      try {
-        final result = await _sdk.cmdManager.sendCommand(cmd);
-        final msg = BaseMessage.msgFromJson<FileMessage>(result.payload);
+      _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
+        final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
         if (onCompleted != null) onCompleted(msg, null);
-      } catch (e) {
-        pending.sendingStatus = MessageSendingStatus.failed;
+      }).catchError((e) {
+        // pending.errorCode = e?.code ?? ErrorCode.unknownError;
+        pending
+          ..errorCode = e.code
+          ..sendingStatus = MessageSendingStatus.failed;
         if (onCompleted != null) onCompleted(pending, e);
-      }
+      });
     }));
 
-    if (_sdk.messageQueues[channelUrl] == null)
-      _sdk.messageQueues[channelUrl] = queue;
+    // if (_sdk.messageQueues[channelUrl] == null)
+    _sdk.messageQueues[channelUrl] = queue;
 
     return pending;
   }
@@ -451,10 +457,6 @@ class BaseChannel implements Cacheable<BaseChannel> {
   }
 
   /// Updates [FileMessage] on this channel with [messageId] and [params].
-  ///
-  /// [onCompleted] will be invoked once the message has been updated
-  /// completely. Channel event [ChannelEventHandler.onMessageUpdated] will be
-  /// invoked on all other members' end.
   Future<FileMessage> updateFileMessage(
       int messageId, FileMessageParams params) async {
     if (messageId == null || messageId <= 0) {
@@ -925,13 +927,13 @@ class BaseChannel implements Cacheable<BaseChannel> {
     return res;
   }
 
-  /// Reports a [user] with [category] and [description] (optional)
+  /// Reports a [User] with [category] and [description] (optional)
   Future<void> reportUser({
-    @required User user,
+    @required String userId,
     @required ReportCategory category,
     String description,
   }) async {
-    if (user == null) {
+    if (userId == null) {
       throw InvalidParameterError();
     }
 
@@ -940,7 +942,7 @@ class BaseChannel implements Cacheable<BaseChannel> {
     }
 
     await _sdk.api.reportUser(
-      userId: user.userId,
+      userId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,

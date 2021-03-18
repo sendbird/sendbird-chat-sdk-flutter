@@ -8,7 +8,10 @@ import 'base_query.dart';
 
 /// A query object to retrieve operators.
 class OperatorListQuery extends QueryBase {
+  /// Channel type
   ChannelType channelType;
+
+  /// Channel url
   String channelUrl;
 
   OperatorListQuery({

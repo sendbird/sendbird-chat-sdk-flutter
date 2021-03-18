@@ -203,11 +203,11 @@ class GroupChannel extends BaseChannel {
       return channel;
     }
 
-    return GroupChannel.refreshChannel(channelUrl);
+    return GroupChannel.refresh(channelUrl);
   }
 
   /// Refreshes an [GroupChannel] with given [channelUrl]
-  static Future<GroupChannel> refreshChannel(String channelUrl) async {
+  static Future<GroupChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     final result = await sdk.api.getChannel(
       channelType: ChannelType.group,
@@ -395,9 +395,6 @@ class GroupChannel extends BaseChannel {
   /// [ChannelEventHandler.onUserLeaved] will be invoked.
   Future<void> leave() async {
     await _sdk.api.leaveGroupChannel(channelUrl: channelUrl);
-    if (!isPublic) {
-      removeFromCache();
-    }
   }
 
   /// Returns [Member] with given [userId]. It will return `null` if [userId]
@@ -419,8 +416,6 @@ class GroupChannel extends BaseChannel {
       _sdk.cmdManager.sendCommand(cmd);
       _lastStartTypingTimestamp = now;
       _lastEndTypingTimestamp = 0;
-
-      //should trigger endTyping after 15 secs ?
     }
   }
 
@@ -431,10 +426,10 @@ class GroupChannel extends BaseChannel {
   void endTyping() {
     final now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastEndTypingTimestamp > _sdk.options.typingIndicatorThrottle) {
-      final cmd = Command.buildStartTyping(channelUrl, now);
+      final cmd = Command.buildEndTyping(channelUrl, now);
       _sdk.cmdManager.sendCommand(cmd);
-      _lastStartTypingTimestamp = now;
-      _lastEndTypingTimestamp = 0;
+      _lastStartTypingTimestamp = 0;
+      _lastEndTypingTimestamp = now;
     }
   }
 
@@ -551,6 +546,9 @@ class GroupChannel extends BaseChannel {
 
     final deliveryStatus =
         _sdk.cache.find<DeliveryStatus>(channelKey: channelUrl);
+
+    // delivery receipt feature is not on, throw?
+    if (deliveryStatus == null) return [];
 
     return members.where((m) {
       if (m.isCurrentUser) return false;

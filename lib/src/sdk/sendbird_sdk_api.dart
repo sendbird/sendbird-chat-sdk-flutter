@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 import 'package:sendbirdsdk/src/utils/logger.dart';
 
 import '../channel/base_channel.dart';
@@ -73,7 +72,7 @@ class SendbirdSdk {
   }
 
   void setLogLevel(LogLevel level) {
-    Logger.level = convertLogLevel(level);
+    initLogger(level);
   }
 
   // public
@@ -534,6 +533,20 @@ class SendbirdSdk {
         if (res.channel.channelUrl == channelUrl) yield res.message;
       } else {
         yield res.message;
+      }
+    }
+  }
+
+  /// Returns a stream to listen messsage delete event with given [channelUrl].
+  ///
+  /// It will be triggered every message deletion if [channelUrl] is not provided
+  Stream<int> messageDeleteStream({String channelUrl}) async* {
+    if (getCurrentUser() == null) yield null;
+    await for (final res in _int.messageDeleteStreamController.stream) {
+      if (channelUrl != null) {
+        if (res.channel.channelUrl == channelUrl) yield res.deletedId;
+      } else {
+        yield res.deletedId;
       }
     }
   }

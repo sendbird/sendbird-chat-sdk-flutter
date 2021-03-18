@@ -134,6 +134,7 @@ class FileMessage extends BaseMessage {
       channelType: channel.channelType,
       channelUrl: channel.channelUrl,
       mentionType: params.mentionType,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
     );
     return msg;

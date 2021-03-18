@@ -1515,6 +1515,35 @@ class ApiClient {
     return OperatorListQueryResponse.fromJson(res);
   }
 
+  Future<UserListQueryResponse> getGroupChannelMembers({
+    @required channelUrl,
+    String token,
+    int limit,
+    OperatorFilter operatorFilter,
+    MutedMemberFilter mutedMemberFilter,
+    MemberStateFilter memberStateFilter,
+    String nicknameStartsWith,
+    MemberListOrder order,
+  }) async {
+    final url = endpoint.GroupChannels.channelurl_members.format([channelUrl]);
+    final params = {
+      'limit': limit,
+      if (token != null) 'token': token,
+      'operator_filter': operatorFilterEnumMap[operatorFilter],
+      'muted_member_filter': mutedMemberFilterEnumMap[mutedMemberFilter],
+      'order': memberListOrderEnumMap[order],
+      'member_state_filter': memberStateFilterEnumMap[memberStateFilter],
+      'nickname_startswith': nicknameStartsWith,
+      //
+      'show_read_receipt': 'true',
+      'show_delivery_receipt': 'true',
+      'show_member_is_muted': 'true',
+    };
+    final res = await client.get(url: url, queryParams: params);
+    final output = {'users': res["members"], 'next': res['next']};
+    return UserListQueryResponse.fromJson(output);
+  }
+
   Future<UserListQueryResponse> getOpenChannelParticipants({
     @required channelUrl,
     String token,

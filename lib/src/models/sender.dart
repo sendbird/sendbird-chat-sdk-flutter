@@ -73,6 +73,8 @@ class Sender extends User {
   /// json serialization
   factory Sender.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];
+    if (json['name'] != null) json['nickname'] = json['name'];
+    if (json['image'] != null) json['profile_url'] = json['image'];
     return _$SenderFromJson(json);
   }
 

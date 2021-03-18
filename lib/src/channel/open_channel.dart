@@ -85,11 +85,11 @@ class OpenChannel extends BaseChannel {
       return channel;
     }
 
-    return OpenChannel.refreshChannel(channelUrl);
+    return OpenChannel.refresh(channelUrl);
   }
 
   /// Refreshes an [OpenChannel] with given [channelUrl]
-  static Future<OpenChannel> refreshChannel(String channelUrl) async {
+  static Future<OpenChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
     final channel = await sdk.api.getChannel(
       channelType: ChannelType.open,

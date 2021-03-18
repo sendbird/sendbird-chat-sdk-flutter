@@ -159,9 +159,9 @@ class WebSocketClient {
   }
 
   ConnectionState get connectionState {
-    if (_socket.readyState == WebSocket.open) {
+    if (_socket?.readyState == WebSocket.open) {
       return ConnectionState.open;
-    } else if (_socket.readyState == WebSocket.connecting) {
+    } else if (_socket?.readyState == WebSocket.connecting) {
       return ConnectionState.connecting;
     } else {
       return ConnectionState.closed;

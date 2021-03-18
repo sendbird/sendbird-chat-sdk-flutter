@@ -80,6 +80,7 @@ class CommandManager with SdkAccessor {
       throw InvalidParameterError();
     }
     if (!webSocket.isConnected()) {
+      //TODO: what to do when connection is not there?
       logger.e('[Sendbird] sendCommand: Websocket connection is closed');
       throw ConnectionClosedError();
     }
@@ -422,6 +423,8 @@ class CommandManager with SdkAccessor {
   Future<void> _processRead(Command cmd) async {
     try {
       ReadStatus status = ReadStatus.fromJson(cmd.payload);
+      status.saveToCache();
+
       final channel = await GroupChannel.getChannel(status.channelUrl);
 
       final isCurrentUser = status.userId == sdk.state.userId;
@@ -439,8 +442,6 @@ class CommandManager with SdkAccessor {
           (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0)) {
         eventManager.notifyChannelChanged(channel);
       }
-
-      status.saveToCache();
     } catch (e) {
       logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
     }
@@ -595,7 +596,6 @@ class CommandManager with SdkAccessor {
       }
 
       eventManager.notifyChannelTypingStatusUpdated(channel);
-      status.saveToCache();
     } catch (e) {
       logger
           .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());

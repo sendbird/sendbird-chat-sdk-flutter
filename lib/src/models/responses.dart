@@ -247,6 +247,7 @@ class ThreadedMessageResponse extends BaseResponse {
 class ChannelMessageResponse extends BaseResponse {
   BaseChannel channel;
   BaseMessage message;
+  int deletedId;
 
-  ChannelMessageResponse(this.channel, this.message);
+  ChannelMessageResponse(this.channel, {this.message, this.deletedId});
 }

@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="generator" content="made with love by dartdoc 0.32.4">
+  <meta name="generator" content="made with love by dartdoc 0.39.0">
   <meta name="description" content="sendbirdsdk API docs, for the Dart programming language.">
   <title>sendbirdsdk - Dart API docs</title>
 
   
-  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
@@ -35,7 +36,7 @@
 
 <main>
 
-  <div id="dartdoc-sidebar-left" class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <header id="header-search-sidebar" class="hidden-l">
       <form class="search-sidebar" role="search">
         <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
@@ -53,30 +54,51 @@
     </ol>
   </div>
 
-  <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
+  <div id="dartdoc-main-content" class="main-content">
       <section class="desc markdown">
-        <h1 id="sendbirdsdk">sendbirdsdk</h1>
-<p>Sendbird Chat SDK for Dart/Flutter</p>
-<h2 id="getting-started">Getting Started</h2>
-<p>This package provides dart/flutter developers with interface support
-for the Sendbird Chat platform at <a href="https://www.sendbird.com">https://www.sendbird.com</a></p>
+        <h1 id="sendbird-chat-sdk-for-flutter">Sendbird Chat SDK for flutter</h1>
+<h2 id="getting-started">Getting started</h2>
+<h3 id="add-dependency">Add dependency</h3>
+<p>Add this to your package's pubspec.yaml file, use the latest version</p>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+  hosted:
+    name: sendbirdsdk
+    url: https://dl.cloudsmith.io/public/sendbird/sendbird-sdk-flutter/dart/
+    version: ^3.0.0
+</code></pre>
+<p>You should then run <code>flutter pub get</code></p>
+<h2 id="example-project">Example Project</h2>
+<p>There is a detailed <a href="https://github.com/sendbird/Sendbird-Flutter">Flutter example</a>. You can directly run and play on it.</p>
+<h2 id="setup-sdk">Setup SDK</h2>
+<p>You first need to initantiate sendbird class with your application id. SendbirdSdk class is singleton but create it once and re-use it across your application.</p>
+<pre class="language-dart"><code class="language-dart">import 'package:sendbirdsdk/sendbirdsdk.dart';
+final sdk = SendbirdSdk(appId: "app-id");
+</code></pre>
+<h2 id="connect-to-the-sendbird-server">Connect to the Sendbird Server</h2>
+<p>Once you initiated <code>SendbirdSdk</code> with application id, connect to the Sendbird server</p>
+<pre class="language-dart"><code class="language-dart">try {
+  final user = await sdk.connect(userId: 'john');
+}
+</code></pre>
+<h3 id="changelog">Changelog</h3>
+<p>Check out the <a href="https://raw.githubusercontent.com/sendbird/sendbird-sdk-flutter/master/CHANGELOG.md">changelog</a> to see the latest changes in the package.</p>
       </section>
       
-        <section class="summary">
-            <h2>Libraries</h2>
-          <dl>
-            <dt id="sendbirdsdk">
-              <span class="name"><a href="sendbirdsdk/sendbirdsdk-library.html">sendbirdsdk</a></span>             
-            </dt>
-            <dd>
-              Sendbird SDK for flutter 
-            </dd>
-          </dl>
-        </section>
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="sendbirdsdk">
+            <span class="name"><a href="sendbirdsdk/sendbirdsdk-library.html">sendbirdsdk</a></span>           
+          </dt>
+          <dd>
+            Sendbird SDK for flutter 
+          </dd>
+        </dl>
+      </section>
 
   </div> <!-- /.main-content -->
 
-  <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div>
 
 </main>
@@ -84,7 +106,7 @@ for the Sendbird Chat platform at <a href="https://www.sendbird.com">https://www
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.0
+      3.0.4
   </span>
 
 </footer>
@@ -92,7 +114,6 @@ for the Sendbird Chat platform at <a href="https://www.sendbird.com">https://www
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="static-assets/typeahead.bundle.min.js"></script>
 <script src="static-assets/highlight.pack.js"></script>
-<script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
 
 

@@ -43,10 +43,11 @@ class MemoryCacheStorage implements CacheStorage {
   }
 
   @override
-  void delete<T extends Cacheable>({@required String channelKey, String key}) {
+  void delete<T extends Cacheable>(
+      {@required String channelKey, String key, Cacheable data}) {
     final unit = _cacheMap[channelKey];
     if (key != null) {
-      unit.delete<T>(key: key);
+      unit.delete<T>(key: key, data: data);
     } else {
       _cacheMap.remove(channelKey);
     }
@@ -76,15 +77,15 @@ class ChannelCacheUnit implements CacheUnit {
   Map<String, ReadStatus> readStatus = {}; //userid key
 
   @override
-  void delete<T extends Cacheable>({String key}) {
-    if (T == DeliveryStatus) {
+  void delete<T extends Cacheable>({String key, Cacheable data}) {
+    if (T == DeliveryStatus || data is DeliveryStatus) {
       deliveryStatus = null;
-    } else if (T == TypingStatus) {
+    } else if (T == TypingStatus || data is TypingStatus) {
       if (key == null)
         typingStatus = null;
       else
         typingStatus?.remove(key);
-    } else if (T == ReadStatus) {
+    } else if (T == ReadStatus || data is ReadStatus) {
       if (key == null)
         readStatus = null;
       else
@@ -99,9 +100,8 @@ class ChannelCacheUnit implements CacheUnit {
         channel.copyWith(data);
       else
         channel = data;
-    } else if (data is ReadStatus || data is TypingStatus) {
-      final existData =
-          data is ReadStatus ? readStatus[data.key] : typingStatus[data.key];
+    } else if (data is ReadStatus) {
+      final existData = readStatus[data.key];
       if (existData != null) {
         existData.copyWith(data);
       } else {
@@ -112,6 +112,13 @@ class ChannelCacheUnit implements CacheUnit {
         deliveryStatus.copyWith(data);
       else
         deliveryStatus = data;
+    } else if (data is TypingStatus) {
+      final existData = typingStatus[data.key];
+      if (existData != null) {
+        existData.copyWith(data);
+      } else {
+        typingStatus[data.key] = data;
+      }
     }
   }
 

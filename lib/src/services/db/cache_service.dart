@@ -33,7 +33,7 @@ extension Operation on Cacheable {
   void removeFromCache() {
     final sdk = SendbirdSdk().getInternal();
     final cacheKey = this is BaseChannel ? null : key;
-    sdk.cache.delete(channelKey: primaryKey, key: cacheKey);
+    sdk.cache.delete(channelKey: primaryKey, key: cacheKey, data: this);
   }
 
   void saveToCache() {
