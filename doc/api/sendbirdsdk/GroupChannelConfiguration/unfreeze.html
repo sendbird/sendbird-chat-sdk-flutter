@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the unfreeze method from the GroupChannelConfiguration extension, for the Dart programming language.">
+  <title>unfreeze method - GroupChannelConfiguration extension - sendbirdsdk library - Dart API</title>
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../../static-assets/github.css">
+  <link rel="stylesheet" href="../../static-assets/styles.css">
+  <link rel="icon" href="../../static-assets/favicon.png">
+
+</head>
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">sendbirdsdk</a></li>
+    <li><a href="../../sendbirdsdk/sendbirdsdk-library.html">sendbirdsdk</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></li>
+    <li class="self-crumb">unfreeze method</li>
+  </ol>
+  <div class="self-name">unfreeze</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li><a href="../../index.html">sendbirdsdk</a></li>
+      <li><a href="../../sendbirdsdk/sendbirdsdk-library.html">sendbirdsdk</a></li>
+      <li><a href="../../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></li>
+      <li class="self-crumb">unfreeze method</li>
+    </ol>
+    
+    <h5>GroupChannelConfiguration extension</h5>
+    <ol>
+
+
+
+
+
+    <li class="section-title"><a href="../../sendbirdsdk/GroupChannelConfiguration.html#instance-methods">Methods</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/freeze.html">freeze</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/getMyPushTriggerOption.html">getMyPushTriggerOption</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/hideChannel.html">hideChannel</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/notifyScreenshotWasTaken.html">notifyScreenshotWasTaken</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/setMyCountPreference.html">setMyCountPreference</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/setMyPushTriggerOption.html">setMyPushTriggerOption</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/unfreeze.html">unfreeze</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelConfiguration/unhideChannel.html">unhideChannel</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div><h1><span class="kind-method">unfreeze</span> method </h1></div>
+
+    <section class="multi-line-signature">
+      <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+            <span class="name ">unfreeze</span>
+(<wbr>)
+      
+    </section>
+    <section class="desc markdown">
+      <p>Unfreezes this channel.</p>
+<p>After this method completes successfully, channel event
+<code>ChannelEventHandler.onChannelUnfrozen</code> will be invoked. Operator only</p>
+    </section>
+    
+    <section class="summary source-code" id="source">
+      <h2><span>Implementation</span></h2>
+      <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; unfreeze() async {
+  return _sdk.api.freezeChannel(
+    channelType: channelType,
+    channelUrl: channelUrl,
+    freeze: false,
+  );
+}</code></pre>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    sendbirdsdk
+      3.0.5
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="../../static-assets/typeahead.bundle.min.js"></script>
+<script src="../../static-assets/highlight.pack.js"></script>
+<script src="../../static-assets/script.js"></script>
+
+
+</body>
+
+</html>

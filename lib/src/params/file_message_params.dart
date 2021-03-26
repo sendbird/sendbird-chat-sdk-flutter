@@ -3,8 +3,8 @@ import 'dart:ui';
 
 import 'package:mime/mime.dart';
 
-import '../message/file_message.dart';
-import '../models/image_info.dart';
+import '../core/message/file_message.dart';
+import '../core/models/image_info.dart';
 import '../params/base_message_params.dart';
 
 /// An object consists a set of parameters for file message.

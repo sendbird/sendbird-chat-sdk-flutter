@@ -1,6 +1,6 @@
-import '../channel/open_channel.dart';
 import '../constant/enums.dart';
-import '../models/error.dart';
+import '../core/channel/open/open_channel.dart';
+import '../core/models/error.dart';
 import '../query/base_query.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
@@ -21,7 +21,7 @@ class OpenChannelListQuery extends QueryBase {
 
   // Query result includes metaData for channel if `true`
   // default value is `false`
-  // bool includeMetaData = false;
+  bool includeMetaData = true;
 
   OpenChannelListQuery();
 
@@ -32,10 +32,10 @@ class OpenChannelListQuery extends QueryBase {
 
     loading = true;
 
-    List<ChannelQueryIncludeOption> options = [];
-    if (includeFrozenChannel)
-      options.add(ChannelQueryIncludeOption.frozenChannel);
-    // if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
+    List<ChannelQueryIncludeOption> options = [
+      if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
+      if (includeMetaData) ChannelQueryIncludeOption.metaData
+    ];
 
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.getOpenChannels(

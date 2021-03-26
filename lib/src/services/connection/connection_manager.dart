@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../../constant/enums.dart';
-import '../../models/error.dart';
+import '../../core/models/error.dart';
 import '../../sdk/sendbird_sdk_api.dart';
 
 import '../../handlers/authenticate_event_handler.dart';

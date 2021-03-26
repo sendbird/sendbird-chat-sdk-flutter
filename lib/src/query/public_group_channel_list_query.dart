@@ -1,9 +1,9 @@
 import 'base_query.dart';
 
-import '../channel/group_channel.dart';
 import '../constant/enums.dart';
-import '../models/error.dart';
-import '../models/group_channel_filters.dart';
+import '../core/channel/group/group_channel.dart';
+import '../core/models/error.dart';
+import '../core/models/group_channel_filters.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
 /// A query object to retrieve list of public group channel.
@@ -49,9 +49,9 @@ class PublicGroupChannelListQuery extends QueryBase {
   /// default value is `true`
   bool includeMemberList = true;
 
-  // Query result of channel object contains meta data if `true`
-  // deault value is `false`
-  // bool includeMetaData = false;
+  /// Query result of channel object contains meta data if `true`
+  /// deault value is `true`
+  bool includeMetaData = true;
 
   @override
   Future<List<GroupChannel>> loadNext() async {
@@ -60,13 +60,12 @@ class PublicGroupChannelListQuery extends QueryBase {
 
     loading = true;
 
-    List<ChannelQueryIncludeOption> options = [];
-    if (includeFrozenChannel)
-      options.add(ChannelQueryIncludeOption.frozenChannel);
-    if (includeEmptyChannel)
-      options.add(ChannelQueryIncludeOption.emptyChannel);
-    if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
-    // if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
+    List<ChannelQueryIncludeOption> options = [
+      if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
+      if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
+      if (includeMemberList) ChannelQueryIncludeOption.memberList,
+      if (includeMetaData) ChannelQueryIncludeOption.metaData,
+    ];
 
     final filter = GroupChannelFilter()
       ..customTypeStartswith = customTypeStartWithFilter

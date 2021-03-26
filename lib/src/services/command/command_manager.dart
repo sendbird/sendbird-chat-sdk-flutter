@@ -4,12 +4,21 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../network/websocket_client.dart';
-import '../../message/base_message_internal.dart';
-import '../../channel/base_channel.dart';
-import '../../channel/group_channel.dart';
-import '../../channel/group_channel_internal.dart';
-import '../../channel/open_channel.dart';
-import '../../models/command.dart';
+import '../../core/channel/base/base_channel.dart';
+import '../../core/channel/group/group_channel.dart';
+import '../../core/channel/group/group_channel_internal.dart';
+import '../../core/channel/group/features/delivery_status.dart';
+import '../../core/channel/group/features/read_status.dart';
+import '../../core/channel/group/features/typing_status.dart';
+import '../../core/channel/open/open_channel.dart';
+import '../../core/message/base_message_internal.dart';
+import '../../core/models/command.dart';
+import '../../core/models/error.dart';
+import '../../core/models/reconnect_task.dart';
+import '../../core/models/state.dart';
+import '../../core/models/unread_count_info.dart';
+import '../../core/models/member.dart';
+import '../../core/models/user.dart';
 import '../../events/channel_event.dart';
 import '../../events/login_event.dart';
 import '../../events/mcnt_event.dart';
@@ -19,22 +28,14 @@ import '../../events/session_event.dart';
 import '../../events/thread_info_update_event.dart';
 import '../../events/user_event.dart';
 import '../../constant/enums.dart';
-import '../../core/async/async_operation.dart';
-import '../../core/async/async_queue.dart';
 import '../../handlers/event_manager.dart';
-import '../../features/delivery/delivery_status.dart';
-import '../../features/read/read_status.dart';
-import '../../features/typing/typing_status.dart';
-import '../../models/error.dart';
-import '../../models/reconnect_task.dart';
-import '../../models/state.dart';
-import '../../models/unread_count_info.dart';
-import '../../models/member.dart';
-import '../../models/user.dart';
 import '../../sdk/sendbird_sdk_api.dart';
 import '../../sdk/sendbird_sdk_internal.dart';
 import '../../services/connection/connection_manager.dart';
 import '../../services/db/cache_service.dart';
+import '../../services/db/cached_meta_data/cached_data_map.dart';
+import '../../utils/async/async_operation.dart';
+import '../../utils/async/async_queue.dart';
 import '../../utils/logger.dart';
 import '../../utils/parsers.dart';
 
@@ -847,6 +848,24 @@ class CommandManager with SdkAccessor {
         event.channelType,
         event.channelUrl,
       );
+
+      final cachedMetaData =
+          sdk.cache.find<CachedDataMap<String>>(channelKey: event.channelUrl) ??
+              CachedDataMap(
+                channelType: event.channelType,
+                channelUrl: event.channelUrl,
+                timestamp: event.ts,
+              );
+
+      final created = Map<String, String>.from(event.data["created"] ?? {});
+      final updated = Map<String, String>.from(event.data["updated"] ?? {});
+      final deleted = List<String>.from(event.data["deleted"] ?? []);
+
+      cachedMetaData.addMap(created, event.ts);
+      cachedMetaData.addMap(updated, event.ts);
+      cachedMetaData.removeWithKeys(deleted, event.ts);
+      cachedMetaData.saveToCache();
+
       eventManager.notifyChannelMetaDataChanged(channel, event.data);
     } catch (e) {
       logger

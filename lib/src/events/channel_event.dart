@@ -1,13 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../constant/enums.dart';
-import '../models/member.dart';
-import '../models/user.dart';
+import '../core/models/member.dart';
+import '../core/models/user.dart';
+import '../events/base_event.dart';
 
 part 'channel_event.g.dart';
 
+/// Represents channel related event
 @JsonSerializable(createToJson: false)
-class ChannelEvent {
+class ChannelEvent implements BaseEvent {
   final String channelUrl;
 
   final ChannelType channelType;

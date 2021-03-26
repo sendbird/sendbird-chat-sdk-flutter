@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-import '../models/error.dart';
+import '../core/models/error.dart';
 import 'event_manager.dart';
 
 /// Represents a class to notify user session event.

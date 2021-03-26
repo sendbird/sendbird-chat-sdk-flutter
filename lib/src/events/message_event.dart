@@ -3,12 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 import 'base_event.dart';
 
 import '../constant/enums.dart';
-import '../message/file_message.dart';
-import '../models/sender.dart';
-import '../models/user.dart';
+import '../core/message/file_message.dart';
+import '../core/models/sender.dart';
+import '../core/models/user.dart';
 
 part 'message_event.g.dart';
 
+/// Represents message event
 @JsonSerializable()
 class MessageEvent extends BaseEvent {
   @JsonKey(name: 'req_id')

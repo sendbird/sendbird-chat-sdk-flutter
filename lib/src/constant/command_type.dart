@@ -3,7 +3,7 @@ class CommandType {
   static const String userMessageUpdate = "MEDI";
   static const String fileMessage = "FILE";
   static const String fileMessageUpdate = "FEDI";
-  static const String adminMessage = "ADMN";
+  static const String adminMessage = "ADMM";
   static const String adminMessageUpdate = "AEDI";
   static const String broadcastMessage = "BRDM";
   static const String deleteMessage = "DELM";

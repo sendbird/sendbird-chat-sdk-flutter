@@ -70,7 +70,7 @@
           <span class="name "><a href="../sendbirdsdk/AdminMessage-class.html">AdminMessage</a></span>         
         </dt>
         <dd>
-          Represents admin message that can be sent from dashboard 
+          Represents an admin message that can be sent from dashboard 
         </dd>
         <dt id="AppInfo">
           <span class="name "><a href="../sendbirdsdk/AppInfo-class.html">AppInfo</a></span>         
@@ -167,6 +167,12 @@
         </dt>
         <dd>
           A query object to retrieve list of my group channel. 
+        </dd>
+        <dt id="GroupChannelMemberListListQuery">
+          <span class="name "><a href="../sendbirdsdk/GroupChannelMemberListListQuery-class.html">GroupChannelMemberListListQuery</a></span>         
+        </dt>
+        <dd>
+          A query object to retrieve list of members from my group channel. 
         </dd>
         <dt id="GroupChannelParams">
           <span class="name "><a href="../sendbirdsdk/GroupChannelParams-class.html">GroupChannelParams</a></span>         
@@ -369,6 +375,13 @@ message count.
       <h2>Extensions</h2>
 
       <dl>
+        <dt id="BaseChannelConfiguration">
+            <span class="name "><a href="../sendbirdsdk/BaseChannelConfiguration.html">BaseChannelConfiguration</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
         <dt id="ChannelTypeExtension">
             <span class="name "><a href="../sendbirdsdk/ChannelTypeExtension.html">ChannelTypeExtension</a></span>         
         </dt>
@@ -378,6 +391,76 @@ message count.
         
         <dt id="EnumTransform">
             <span class="name "><a href="../sendbirdsdk/EnumTransform.html">EnumTransform</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="GroupChannelConfiguration">
+            <span class="name "><a href="../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="GroupChannelOperations">
+            <span class="name "><a href="../sendbirdsdk/GroupChannelOperations.html">GroupChannelOperations</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="GroupChannelRead">
+            <span class="name "><a href="../sendbirdsdk/GroupChannelRead.html">GroupChannelRead</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="GroupChannelTyping">
+            <span class="name "><a href="../sendbirdsdk/GroupChannelTyping.html">GroupChannelTyping</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="IncludeOptionList">
+            <span class="name "><a href="../sendbirdsdk/IncludeOptionList.html">IncludeOptionList</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="Messages">
+            <span class="name "><a href="../sendbirdsdk/Messages.html">Messages</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="Meta">
+            <span class="name "><a href="../sendbirdsdk/Meta.html">Meta</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="Moderations">
+            <span class="name "><a href="../sendbirdsdk/Moderations.html">Moderations</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="OpenChannelOperations">
+            <span class="name "><a href="../sendbirdsdk/OpenChannelOperations.html">OpenChannelOperations</a></span>         
+        </dt>
+        <dd>
+             
+        </dd>
+        
+        <dt id="Reactions">
+            <span class="name "><a href="../sendbirdsdk/Reactions.html">Reactions</a></span>         
         </dt>
         <dd>
              
@@ -533,6 +616,17 @@ message count.
             <span class="signature"><code>&lt;PushTriggerOption, String&gt;{PushTriggerOption.all : &#39;all&#39;, PushTriggerOption.off : &#39;off&#39;, PushTriggerOption.mentionOnly : &#39;mention_only&#39;}</code></span>
           </div>
         </dd>
+        <dt id="unreadItemKeyEnumMap" class="constant">
+          <span class="name "><a href="../sendbirdsdk/unreadItemKeyEnumMap-constant.html">unreadItemKeyEnumMap</a></span>
+          <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/UnreadItemKey-class.html">UnreadItemKey</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+                  </dt>
+        <dd>
+           
+                  
+  <div>
+            <span class="signature"><code>&lt;UnreadItemKey, String&gt;{UnreadItemKey.nonSuperGroupChannelUnreadMessageCount : &#39;non_super_group_channel_unread_message_count&#39;, UnreadItemKey.superGroupChannelUnreadMessageCount : &#39;su…</code></span>
+          </div>
+        </dd>
       </dl>
     </section>
 
@@ -559,27 +653,9 @@ message count.
            
                   
 </dd>
-        <dt id="paramsFromChannelIncludeOption" class="callable">
-          <span class="name"><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></span><span class="signature">(<wbr><span class="parameter" id="paramsFromChannelIncludeOption-param-options"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/ChannelQueryIncludeOption-class.html">ChannelQueryIncludeOption</a></span>&gt;</span></span> <span class="parameter-name">options</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-           
-                  
-</dd>
         <dt id="stringFromSearchFields" class="callable">
           <span class="name"><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></span><span class="signature">(<wbr><span class="parameter" id="stringFromSearchFields-param-fields"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/GroupChannelListQuerySearchField-class.html">GroupChannelListQuerySearchField</a></span>&gt;</span></span> <span class="parameter-name">fields</span></span>)
             <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-           
-                  
-</dd>
-        <dt id="stringFromUnreadItemKey" class="callable">
-          <span class="name"><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></span><span class="signature">(<wbr><span class="parameter" id="stringFromUnreadItemKey-param-key"><span class="type-annotation"><a href="../sendbirdsdk/UnreadItemKey-class.html">UnreadItemKey</a></span> <span class="parameter-name">key</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
           </span>
                   </dt>
         <dd>
@@ -842,6 +918,12 @@ message count.
         <dd>
           Represents unread item key filter 
         </dd>
+        <dt id="UserConnectionStatus">
+          <span class="name "><a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></span>         
+        </dt>
+        <dd>
+           
+        </dd>
         <dt id="UserEventCategory">
           <span class="name "><a href="../sendbirdsdk/UserEventCategory-class.html">UserEventCategory</a></span>         
         </dt>
@@ -960,6 +1042,7 @@ message count.
   <li><a href="../sendbirdsdk/GroupChannel-class.html">GroupChannel</a></li>
   <li><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelListQuery-class.html">GroupChannelListQuery</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelMemberListListQuery-class.html">GroupChannelMemberListListQuery</a></li>
   <li><a href="../sendbirdsdk/GroupChannelParams-class.html">GroupChannelParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelTotalUnreadMessageCountParams-class.html">GroupChannelTotalUnreadMessageCountParams</a></li>
   <li><a href="../sendbirdsdk/ImageInfo-class.html">ImageInfo</a></li>
@@ -994,8 +1077,19 @@ message count.
   <li><a href="../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#extension">Extensions</a></li>
+  <li><a href="../sendbirdsdk/BaseChannelConfiguration.html">BaseChannelConfiguration</a></li>
   <li><a href="../sendbirdsdk/ChannelTypeExtension.html">ChannelTypeExtension</a></li>
   <li><a href="../sendbirdsdk/EnumTransform.html">EnumTransform</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelOperations.html">GroupChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelRead.html">GroupChannelRead</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelTyping.html">GroupChannelTyping</a></li>
+  <li><a href="../sendbirdsdk/IncludeOptionList.html">IncludeOptionList</a></li>
+  <li><a href="../sendbirdsdk/Messages.html">Messages</a></li>
+  <li><a href="../sendbirdsdk/Meta.html">Meta</a></li>
+  <li><a href="../sendbirdsdk/Moderations.html">Moderations</a></li>
+  <li><a href="../sendbirdsdk/OpenChannelOperations.html">OpenChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/Reactions.html">Reactions</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#constants">Constants</a></li>
@@ -1012,14 +1106,13 @@ message count.
   <li><a href="../sendbirdsdk/operatorFilterEnumMap-constant.html">operatorFilterEnumMap</a></li>
   <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
   <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
+  <li><a href="../sendbirdsdk/unreadItemKeyEnumMap-constant.html">unreadItemKeyEnumMap</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
   <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
   <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-  <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
   <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
-  <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
   <li><a href="../sendbirdsdk/userEventValueOf.html">userEventValueOf</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#enums">Enums</a></li>
@@ -1063,6 +1156,7 @@ message count.
   <li><a href="../sendbirdsdk/ScheduledUserMessageStatus-class.html">ScheduledUserMessageStatus</a></li>
   <li><a href="../sendbirdsdk/UnreadChannelFilter-class.html">UnreadChannelFilter</a></li>
   <li><a href="../sendbirdsdk/UnreadItemKey-class.html">UnreadItemKey</a></li>
+  <li><a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></li>
   <li><a href="../sendbirdsdk/UserEventCategory-class.html">UserEventCategory</a></li>
   <li><a href="../sendbirdsdk/UserListQueryType-class.html">UserListQueryType</a></li>
 
@@ -1089,7 +1183,7 @@ message count.
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.4
+      3.0.5
   </span>
 
 </footer>

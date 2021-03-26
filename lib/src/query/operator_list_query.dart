@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../constant/enums.dart';
-import '../models/error.dart';
+import '../core/models/error.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
 import 'base_query.dart';

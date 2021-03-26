@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'base_event.dart';
+
 import '../constant/enums.dart';
 
 part 'reaction_event.g.dart';
@@ -9,7 +11,7 @@ part 'reaction_event.g.dart';
 /// This object is needed to apply to the [BaseMessage] based on [messageId]
 /// when this is acquired from [ChannelEventHandler.onReactionUpdated]
 @JsonSerializable(createToJson: false)
-class ReactionEvent {
+class ReactionEvent implements BaseEvent {
   final String channelUrl;
 
   @JsonKey(unknownEnumValue: ChannelType.group)

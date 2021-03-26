@@ -1,10 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:sendbirdsdk/src/utils/logger.dart';
 
-import '../channel/base_channel.dart';
-import '../channel/group_channel.dart';
+import 'sendbird_sdk_internal.dart';
+
+import '../core/channel/base/base_channel.dart';
+import '../core/channel/group/group_channel.dart';
+import '../core/channel/group/features/delivery_status.dart';
+import '../core/message/base_message.dart';
+import '../core/models/app_info.dart';
+import '../core/models/emoji.dart';
+import '../core/models/user.dart';
+import '../core/models/error.dart';
+import '../core/models/image_info.dart';
+import '../core/models/options.dart';
+import '../core/models/responses.dart';
+import '../core/models/unread_item_count.dart';
 import '../constant/enums.dart';
 import '../constant/types.dart';
 import '../handlers/event_manager.dart';
@@ -12,20 +23,9 @@ import '../handlers/channel_event_handler.dart';
 import '../handlers/connection_event_handler.dart';
 import '../handlers/session_event_handler.dart';
 import '../handlers/user_event_handler.dart';
-import '../features/delivery/delivery_status.dart';
-import '../features/emoji/emoji.dart';
-import '../message/base_message.dart';
-import '../models/app_info.dart';
-import '../models/user.dart';
-import '../models/error.dart';
-import '../models/image_info.dart';
-import '../models/options.dart';
-import '../models/responses.dart';
-import '../models/unread_item_count.dart';
 import '../params/group_channel_change_logs_params.dart';
 import '../params/group_channel_total_unread_message_count_params.dart';
-
-import 'sendbird_sdk_internal.dart';
+import '../utils/logger.dart';
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {

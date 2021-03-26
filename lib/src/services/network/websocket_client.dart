@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:async';
 
 import '../../constant/enums.dart';
-import '../../models/command.dart';
-import '../../models/error.dart';
+import '../../core/models/command.dart';
+import '../../core/models/error.dart';
 import '../../utils/logger.dart';
 
 typedef void OnWSConnect();

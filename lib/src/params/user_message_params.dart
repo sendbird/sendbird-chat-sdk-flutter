@@ -1,6 +1,6 @@
 import '../constant/enums.dart';
-import '../message/user_message.dart';
-import '../models/meta_array.dart';
+import '../core/message/user_message.dart';
+import '../core/models/meta_array.dart';
 import '../params/base_message_params.dart';
 
 /// An object consists a set of parameters to create/update user message.

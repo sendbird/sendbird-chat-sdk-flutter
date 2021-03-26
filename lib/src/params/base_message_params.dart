@@ -1,6 +1,6 @@
 import '../constant/enums.dart';
-import '../message/base_message.dart';
-import '../models/meta_array.dart';
+import '../core/message/base_message.dart';
+import '../core/models/meta_array.dart';
 import '../utils/extensions.dart';
 
 /// Represents base class for message parameters.

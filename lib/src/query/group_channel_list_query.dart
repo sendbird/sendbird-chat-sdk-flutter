@@ -1,7 +1,7 @@
-import '../channel/group_channel.dart';
 import '../constant/enums.dart';
-import '../models/error.dart';
-import '../models/group_channel_filters.dart';
+import '../core/channel/group/group_channel.dart';
+import '../core/models/error.dart';
+import '../core/models/group_channel_filters.dart';
 import '../query/base_query.dart';
 import '../sdk/sendbird_sdk_api.dart';
 
@@ -84,7 +84,7 @@ class GroupChannelListQuery extends QueryBase {
 
   // Query result of channel object contains meta data if `true`.
   // deault value is `false`
-  // bool includeMetaData = false;
+  bool includeMetaData = true;
 
   void setUserIdsExactFilter(List<String> userIds) {
     nicknameContainsFilter = null;
@@ -128,13 +128,12 @@ class GroupChannelListQuery extends QueryBase {
 
     loading = true;
 
-    List<ChannelQueryIncludeOption> options = [];
-    if (includeFrozenChannel)
-      options.add(ChannelQueryIncludeOption.frozenChannel);
-    if (includeEmptyChannel)
-      options.add(ChannelQueryIncludeOption.emptyChannel);
-    if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
-    // if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
+    List<ChannelQueryIncludeOption> options = [
+      if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
+      if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
+      if (includeMemberList) ChannelQueryIncludeOption.memberList,
+      if (includeMetaData) ChannelQueryIncludeOption.metaData
+    ];
 
     final filter = GroupChannelFilter()
       ..customTypeStartswith = customTypeStartWithFilter

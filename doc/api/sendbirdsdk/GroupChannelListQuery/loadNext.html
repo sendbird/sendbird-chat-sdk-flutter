@@ -72,6 +72,7 @@
     <li><a href="../../sendbirdsdk/GroupChannelListQuery/includeEmptyChannel.html">includeEmptyChannel</a></li>
     <li><a href="../../sendbirdsdk/GroupChannelListQuery/includeFrozenChannel.html">includeFrozenChannel</a></li>
     <li><a href="../../sendbirdsdk/GroupChannelListQuery/includeMemberList.html">includeMemberList</a></li>
+    <li><a href="../../sendbirdsdk/GroupChannelListQuery/includeMetaData.html">includeMetaData</a></li>
     <li class="inherited"><a href="../../sendbirdsdk/GroupChannelListQuery/limit.html">limit</a></li>
     <li class="inherited"><a href="../../sendbirdsdk/GroupChannelListQuery/loading.html">loading</a></li>
     <li><a href="../../sendbirdsdk/GroupChannelListQuery/memberStateFilter.html">memberStateFilter</a></li>
@@ -136,13 +137,12 @@ Future&lt;List&lt;GroupChannel&gt;&gt; loadNext() async {
 
   loading = true;
 
-  List&lt;ChannelQueryIncludeOption&gt; options = [];
-  if (includeFrozenChannel)
-    options.add(ChannelQueryIncludeOption.frozenChannel);
-  if (includeEmptyChannel)
-    options.add(ChannelQueryIncludeOption.emptyChannel);
-  if (includeMemberList) options.add(ChannelQueryIncludeOption.memberList);
-  &#47;&#47; if (includeMetaData) options.add(ChannelQueryIncludeOption.metaData);
+  List&lt;ChannelQueryIncludeOption&gt; options = [
+    if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
+    if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
+    if (includeMemberList) ChannelQueryIncludeOption.memberList,
+    if (includeMetaData) ChannelQueryIncludeOption.metaData
+  ];
 
   final filter = GroupChannelFilter()
     ..customTypeStartswith = customTypeStartWithFilter
@@ -189,7 +189,7 @@ Future&lt;List&lt;GroupChannel&gt;&gt; loadNext() async {
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.4
+      3.0.5
   </span>
 
 </footer>

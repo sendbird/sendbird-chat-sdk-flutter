@@ -1,13 +1,13 @@
 import 'event_manager.dart';
 
 import '../constant/enums.dart';
-import '../channel/base_channel.dart';
-import '../channel/group_channel.dart';
-import '../channel/open_channel.dart';
+import '../core/channel/base/base_channel.dart';
+import '../core/channel/group/group_channel.dart';
+import '../core/channel/open/open_channel.dart';
 import '../events/reaction_event.dart';
 import '../events/thread_info_update_event.dart';
-import '../message/base_message.dart';
-import '../models/user.dart';
+import '../core/message/base_message.dart';
+import '../core/models/user.dart';
 
 /// Represents a class to notify various channel event.
 ///

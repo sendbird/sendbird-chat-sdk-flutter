@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-import '../message/base_message.dart';
-import '../models/command.dart';
+import '../core/message/base_message.dart';
+import '../core/models/command.dart';
 
 Future<Command> parseCommand(String data) async {
   return compute(parseCommandData, data);

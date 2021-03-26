@@ -70,6 +70,7 @@
   <li><a href="../sendbirdsdk/GroupChannel-class.html">GroupChannel</a></li>
   <li><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelListQuery-class.html">GroupChannelListQuery</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelMemberListListQuery-class.html">GroupChannelMemberListListQuery</a></li>
   <li><a href="../sendbirdsdk/GroupChannelParams-class.html">GroupChannelParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelTotalUnreadMessageCountParams-class.html">GroupChannelTotalUnreadMessageCountParams</a></li>
   <li><a href="../sendbirdsdk/ImageInfo-class.html">ImageInfo</a></li>
@@ -104,8 +105,19 @@
   <li><a href="../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#extension">Extensions</a></li>
+  <li><a href="../sendbirdsdk/BaseChannelConfiguration.html">BaseChannelConfiguration</a></li>
   <li><a href="../sendbirdsdk/ChannelTypeExtension.html">ChannelTypeExtension</a></li>
   <li><a href="../sendbirdsdk/EnumTransform.html">EnumTransform</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelOperations.html">GroupChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelRead.html">GroupChannelRead</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelTyping.html">GroupChannelTyping</a></li>
+  <li><a href="../sendbirdsdk/IncludeOptionList.html">IncludeOptionList</a></li>
+  <li><a href="../sendbirdsdk/Messages.html">Messages</a></li>
+  <li><a href="../sendbirdsdk/Meta.html">Meta</a></li>
+  <li><a href="../sendbirdsdk/Moderations.html">Moderations</a></li>
+  <li><a href="../sendbirdsdk/OpenChannelOperations.html">OpenChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/Reactions.html">Reactions</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#constants">Constants</a></li>
@@ -122,14 +134,13 @@
   <li><a href="../sendbirdsdk/operatorFilterEnumMap-constant.html">operatorFilterEnumMap</a></li>
   <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
   <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
+  <li><a href="../sendbirdsdk/unreadItemKeyEnumMap-constant.html">unreadItemKeyEnumMap</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
   <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
   <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-  <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
   <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
-  <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
   <li><a href="../sendbirdsdk/userEventValueOf.html">userEventValueOf</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#enums">Enums</a></li>
@@ -173,6 +184,7 @@
   <li><a href="../sendbirdsdk/ScheduledUserMessageStatus-class.html">ScheduledUserMessageStatus</a></li>
   <li><a href="../sendbirdsdk/UnreadChannelFilter-class.html">UnreadChannelFilter</a></li>
   <li><a href="../sendbirdsdk/UnreadItemKey-class.html">UnreadItemKey</a></li>
+  <li><a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></li>
   <li><a href="../sendbirdsdk/UserEventCategory-class.html">UserEventCategory</a></li>
   <li><a href="../sendbirdsdk/UserListQueryType-class.html">UserListQueryType</a></li>
 
@@ -216,6 +228,14 @@ from this class.</p>
           <li><a href="../sendbirdsdk/OpenChannel-class.html">OpenChannel</a></li>
         </ul></dd>
 
+        <dt>Available Extensions</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../sendbirdsdk/BaseChannelConfiguration.html">BaseChannelConfiguration</a></li>
+          <li><a href="../sendbirdsdk/Messages.html">Messages</a></li>
+          <li><a href="../sendbirdsdk/Meta.html">Meta</a></li>
+          <li><a href="../sendbirdsdk/Moderations.html">Moderations</a></li>
+          <li><a href="../sendbirdsdk/Reactions.html">Reactions</a></li>
+        </ul></dd>
 
       </dl>
     </section>
@@ -338,7 +358,7 @@ from this class.</p>
           <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>         
         </dt>
         <dd>
-          Cacheable 
+           
                   <div class="features">read-only</div>
 </dd>
         <dt id="name" class="property">
@@ -371,166 +391,13 @@ from this class.</p>
     <section class="summary offset-anchor" id="instance-methods">
       <h2>Methods</h2>
       <dl class="callables">
-        <dt id="addMessageMetaArray" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></span><span class="signature">(<wbr><span class="parameter" id="addMessageMetaArray-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="addMessageMetaArray-param-metaArrays"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/MessageMetaArray-class.html">MessageMetaArray</a></span>&gt;</span></span> <span class="parameter-name">metaArrays</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Adds list of <code>metaArrays</code> with given <code>message</code>. 
-                  
-</dd>
-        <dt id="addOperators" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></span><span class="signature">(<wbr><span class="parameter" id="addOperators-param-userIds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIds</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Adds operators on this channel with given <code>userIds</code>. <a href="../sendbirdsdk/BaseChannel/addOperators.html">[...]</a>
-                  
-</dd>
-        <dt id="addReaction" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></span><span class="signature">(<wbr><span class="parameter" id="addReaction-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="addReaction-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Adds reaction <code>key</code> to given <code>message</code> <a href="../sendbirdsdk/BaseChannel/addReaction.html">[...]</a>
-                  
-</dd>
-        <dt id="banUser" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/banUser.html">banUser</a></span><span class="signature">(<wbr><span class="parameter" id="banUser-param-userId">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="banUser-param-seconds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">seconds</span> = <span class="default-value">-1</span>, </span><span class="parameter" id="banUser-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Bans a user from this channel. <a href="../sendbirdsdk/BaseChannel/banUser.html">[...]</a>
-                  
-</dd>
-        <dt id="copyMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></span><span class="signature">(<wbr><span class="parameter" id="copyMessage-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="copyMessage-param-targetChannel"><span class="type-annotation"><a href="../sendbirdsdk/BaseChannel-class.html">BaseChannel</a></span> <span class="parameter-name">targetChannel</span>, </span><span class="parameter" id="copyMessage-param-onCompleted">{<span class="type-annotation">OnMessageCallback</span> <span class="parameter-name">onCompleted</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Copies <code>message</code> to <code>targetChannel</code>. <a href="../sendbirdsdk/BaseChannel/copyMessage.html">[...]</a>
-                  
-</dd>
         <dt id="copyWith" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/copyWith.html">copyWith</a></span><span class="signature">(<wbr><span class="parameter" id="copyWith-param-others"><span class="type-annotation"><a href="../sendbirdsdk/BaseChannel-class.html">BaseChannel</a></span> <span class="parameter-name">others</span></span>)
+          <span class="name"><a href="../sendbirdsdk/BaseChannel/copyWith.html">copyWith</a></span><span class="signature">(<wbr><span class="parameter" id="copyWith-param-others"><span class="type-annotation">dynamic</span> <span class="parameter-name">others</span></span>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
         <dd>
            
-                  
-</dd>
-        <dt id="createMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/createMetaCounters.html">createMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="createMetaCounters-param-metaCounters"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">metaCounters</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Creates meta counters on this channel with <code>metaCounters</code>. <a href="../sendbirdsdk/BaseChannel/createMetaCounters.html">[...]</a>
-                  
-</dd>
-        <dt id="createMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/createMetaData.html">createMetaData</a></span><span class="signature">(<wbr><span class="parameter" id="createMetaData-param-metaData"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">metaData</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Creates meta data on this channel with <code>metaData</code>. <a href="../sendbirdsdk/BaseChannel/createMetaData.html">[...]</a>
-                  
-</dd>
-        <dt id="decreaseMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/decreaseMetaCounters.html">decreaseMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="decreaseMetaCounters-param-metaCounters"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">metaCounters</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Decreases meta counters on this channel with <code>metaCounters</code>. <a href="../sendbirdsdk/BaseChannel/decreaseMetaCounters.html">[...]</a>
-                  
-</dd>
-        <dt id="deleteAllMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteAllMetaCounters.html">deleteAllMetaCounters</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes all meta counters 
-                  
-</dd>
-        <dt id="deleteAllMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteAllMetaData.html">deleteAllMetaData</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes a meta data on this channel with <a href="../sendbirdsdk/BaseChannel/key.html">key</a>. <a href="../sendbirdsdk/BaseChannel/deleteAllMetaData.html">[...]</a>
-                  
-</dd>
-        <dt id="deleteMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteMessage.html">deleteMessage</a></span><span class="signature">(<wbr><span class="parameter" id="deleteMessage-param-messageId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">messageId</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes message with given <code>messageId</code>. <a href="../sendbirdsdk/BaseChannel/deleteMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="deleteMessageMetaArrayKeys" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></span><span class="signature">(<wbr><span class="parameter" id="deleteMessageMetaArrayKeys-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="deleteMessageMetaArrayKeys-param-keys"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">keys</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes <code>keys</code> from <a href="../sendbirdsdk/MessageMetaArray-class.html">MessageMetaArray</a> given <code>message</code>. 
-                  
-</dd>
-        <dt id="deleteMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="deleteMetaCounters-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes a meta counter with given <code>key</code> 
-                  
-</dd>
-        <dt id="deleteMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></span><span class="signature">(<wbr><span class="parameter" id="deleteMetaData-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes a meta data on this channel with <code>key</code>. <a href="../sendbirdsdk/BaseChannel/deleteMetaData.html">[...]</a>
-                  
-</dd>
-        <dt id="deleteReaction" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></span><span class="signature">(<wbr><span class="parameter" id="deleteReaction-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="deleteReaction-param-key"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">key</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/ReactionEvent-class.html">ReactionEvent</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Deletes reaction <code>key</code> from <code>message</code> <a href="../sendbirdsdk/BaseChannel/deleteReaction.html">[...]</a>
-                  
-</dd>
-        <dt id="getAllMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Retrieves all meta counters from this channel. 
-                  
-</dd>
-        <dt id="getAllMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Retrieves all metaData from this channel. 
                   
 </dd>
         <dt id="getMessageChangeLogs" class="callable">
@@ -560,42 +427,6 @@ from this class.</p>
           Retrieves a list of <a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a> with given <code>timestamp</code> and <code>params</code>. 
                   
 </dd>
-        <dt id="getMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="getMetaCounters-param-keys"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">keys</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Retrieves meta counters from this channel with <code>keys</code>. 
-                  
-</dd>
-        <dt id="getMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/getMetaData.html">getMetaData</a></span><span class="signature">(<wbr><span class="parameter" id="getMetaData-param-keys"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">keys</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Retrieves meta data from this channel with <code>keys</code>. 
-                  
-</dd>
-        <dt id="increaseMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/increaseMetaCounters.html">increaseMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="increaseMetaCounters-param-metaCounters"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">metaCounters</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Increases meta counters on this channel with <code>metaCounters</code>. <a href="../sendbirdsdk/BaseChannel/increaseMetaCounters.html">[...]</a>
-                  
-</dd>
-        <dt id="muteUser" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/muteUser.html">muteUser</a></span><span class="signature">(<wbr><span class="parameter" id="muteUser-param-userId">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="muteUser-param-seconds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">seconds</span> = <span class="default-value">-1</span>, </span><span class="parameter" id="muteUser-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Mutes a user from this channel. <a href="../sendbirdsdk/BaseChannel/muteUser.html">[...]</a>
-                  
-</dd>
         <dt id="noSuchMethod" class="callable inherited">
           <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
             <span class="returntype parameter">&#8594; dynamic</span>
@@ -605,105 +436,6 @@ from this class.</p>
           Invoked when a non-existent method or property is accessed. <a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">[...]</a>
                   <div class="features">inherited</div>
 </dd>
-        <dt id="removeAllOperators" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/removeAllOperators.html">removeAllOperators</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Removes all operators on this channel. <a href="../sendbirdsdk/BaseChannel/removeAllOperators.html">[...]</a>
-                  
-</dd>
-        <dt id="removeMessageMetaArray" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/removeMessageMetaArray.html">removeMessageMetaArray</a></span><span class="signature">(<wbr><span class="parameter" id="removeMessageMetaArray-param-message"><span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="removeMessageMetaArray-param-metaArrays"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/MessageMetaArray-class.html">MessageMetaArray</a></span>&gt;</span></span> <span class="parameter-name">metaArrays</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Removes list of <code>metaArrays</code> with given <code>message</code> 
-                  
-</dd>
-        <dt id="removeOperators" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/removeOperators.html">removeOperators</a></span><span class="signature">(<wbr><span class="parameter" id="removeOperators-param-userIds"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">userIds</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Removes operators on this channel with given <code>userIds</code>. <a href="../sendbirdsdk/BaseChannel/removeOperators.html">[...]</a>
-                  
-</dd>
-        <dt id="reportChannel" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/reportChannel.html">reportChannel</a></span><span class="signature">(<wbr><span class="parameter" id="reportChannel-param-category">{<span class="type-annotation"><a href="../sendbirdsdk/ReportCategory-class.html">ReportCategory</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="reportChannel-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Reports this channel with <code>category</code> and <code>description</code> (optional) 
-                  
-</dd>
-        <dt id="reportMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/reportMessage.html">reportMessage</a></span><span class="signature">(<wbr><span class="parameter" id="reportMessage-param-message">{<span class="type-annotation"><a href="../sendbirdsdk/BaseMessage-class.html">BaseMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="reportMessage-param-category"><span class="type-annotation"><a href="../sendbirdsdk/ReportCategory-class.html">ReportCategory</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="reportMessage-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Reports <code>message</code> with <code>category</code> and <code>description</code> (optional) 
-                  
-</dd>
-        <dt id="reportUser" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/reportUser.html">reportUser</a></span><span class="signature">(<wbr><span class="parameter" id="reportUser-param-userId">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="reportUser-param-category"><span class="type-annotation"><a href="../sendbirdsdk/ReportCategory-class.html">ReportCategory</a></span> <span class="parameter-name">category</span>, </span><span class="parameter" id="reportUser-param-description"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">description</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Reports a <a href="../sendbirdsdk/User-class.html">User</a> with <code>category</code> and <code>description</code> (optional) 
-                  
-</dd>
-        <dt id="resendFileMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/resendFileMessage.html">resendFileMessage</a></span><span class="signature">(<wbr><span class="parameter" id="resendFileMessage-param-message"><span class="type-annotation"><a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="resendFileMessage-param-params">{<span class="type-annotation"><a href="../sendbirdsdk/FileMessageParams-class.html">FileMessageParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="resendFileMessage-param-onCompleted"><span class="type-annotation">OnFileMessageCallback</span> <span class="parameter-name">onCompleted</span>, </span><span class="parameter" id="resendFileMessage-param-progress"><span class="type-annotation">OnUploadProgressCallback</span> <span class="parameter-name">progress</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Resends failed <a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a> on this channel with <code>message</code>. <a href="../sendbirdsdk/BaseChannel/resendFileMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="resendUserMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></span><span class="signature">(<wbr><span class="parameter" id="resendUserMessage-param-message"><span class="type-annotation"><a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="resendUserMessage-param-onCompleted">{<span class="type-annotation">OnMessageCallback</span> <span class="parameter-name">onCompleted</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Resends failed <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>message</code>. <a href="../sendbirdsdk/BaseChannel/resendUserMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="sendFileMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></span><span class="signature">(<wbr><span class="parameter" id="sendFileMessage-param-params"><span class="type-annotation"><a href="../sendbirdsdk/FileMessageParams-class.html">FileMessageParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="sendFileMessage-param-onCompleted">{<span class="type-annotation">OnFileMessageCallback</span> <span class="parameter-name">onCompleted</span>, </span><span class="parameter" id="sendFileMessage-param-progress"><span class="type-annotation">OnUploadProgressCallback</span> <span class="parameter-name">progress</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Sends <a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a> on this channel with <code>params</code>. <a href="../sendbirdsdk/BaseChannel/sendFileMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="sendUserMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></span><span class="signature">(<wbr><span class="parameter" id="sendUserMessage-param-params"><span class="type-annotation"><a href="../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></span> <span class="parameter-name">params</span>, </span><span class="parameter" id="sendUserMessage-param-onCompleted">{<span class="type-annotation">OnMessageCallback</span> <span class="parameter-name">onCompleted</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Sends <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>params</code>. <a href="../sendbirdsdk/BaseChannel/sendUserMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="sendUserMessageWithText" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></span><span class="signature">(<wbr><span class="parameter" id="sendUserMessageWithText-param-text"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">text</span>, </span><span class="parameter" id="sendUserMessageWithText-param-onCompleted">{<span class="type-annotation">OnMessageCallback</span> <span class="parameter-name">onCompleted</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Sends <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>text</code>. <a href="../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">[...]</a>
-                  
-</dd>
         <dt id="toString" class="callable inherited">
           <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
             <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
@@ -712,69 +444,6 @@ from this class.</p>
         <dd class="inherited">
           Returns a string representation of this object. 
                   <div class="features">inherited</div>
-</dd>
-        <dt id="translateUserMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></span><span class="signature">(<wbr><span class="parameter" id="translateUserMessage-param-message"><span class="type-annotation"><a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span> <span class="parameter-name">message</span>, </span><span class="parameter" id="translateUserMessage-param-targetLanguages"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">targetLanguages</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Translates a <code>message</code> with given list of <code>targetLanguages</code>. <a href="../sendbirdsdk/BaseChannel/translateUserMessage.html">[...]</a>
-                  
-</dd>
-        <dt id="unbanUser" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></span><span class="signature">(<wbr><span class="parameter" id="unbanUser-param-userId">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Unbans a user from this channel 
-                  
-</dd>
-        <dt id="unmuteUser" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/unmuteUser.html">unmuteUser</a></span><span class="signature">(<wbr><span class="parameter" id="unmuteUser-param-userId">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>}</span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Unmutes user from this channel. 
-                  
-</dd>
-        <dt id="updateFileMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/updateFileMessage.html">updateFileMessage</a></span><span class="signature">(<wbr><span class="parameter" id="updateFileMessage-param-messageId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">messageId</span>, </span><span class="parameter" id="updateFileMessage-param-params"><span class="type-annotation"><a href="../sendbirdsdk/FileMessageParams-class.html">FileMessageParams</a></span> <span class="parameter-name">params</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Updates <a href="../sendbirdsdk/FileMessage-class.html">FileMessage</a> on this channel with <code>messageId</code> and <code>params</code>. 
-                  
-</dd>
-        <dt id="updateMetaCounters" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/updateMetaCounters.html">updateMetaCounters</a></span><span class="signature">(<wbr><span class="parameter" id="updateMetaCounters-param-metaCounters"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">metaCounters</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Updates meta counters on this channel with <code>metaCounters</code>. <a href="../sendbirdsdk/BaseChannel/updateMetaCounters.html">[...]</a>
-                  
-</dd>
-        <dt id="updateMetaData" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/updateMetaData.html">updateMetaData</a></span><span class="signature">(<wbr><span class="parameter" id="updateMetaData-param-metaData"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">metaData</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Updates meta data on this channel with <code>metaData</code>. <a href="../sendbirdsdk/BaseChannel/updateMetaData.html">[...]</a>
-                  
-</dd>
-        <dt id="updateUserMessage" class="callable">
-          <span class="name"><a href="../sendbirdsdk/BaseChannel/updateUserMessage.html">updateUserMessage</a></span><span class="signature">(<wbr><span class="parameter" id="updateUserMessage-param-messageId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">messageId</span>, </span><span class="parameter" id="updateUserMessage-param-params"><span class="type-annotation"><a href="../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></span> <span class="parameter-name">params</span></span>)
-            <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a></span>&gt;</span></span>
-          </span>
-                  </dt>
-        <dd>
-          Updates <a href="../sendbirdsdk/UserMessage-class.html">UserMessage</a> on this channel with <code>messageId</code> and <code>params</code>. 
-                  
 </dd>
       </dl>
     </section>
@@ -850,51 +519,12 @@ from this class.</p>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../sendbirdsdk/BaseChannel-class.html#instance-methods">Methods</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/banUser.html">banUser</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></li>
     <li><a href="../sendbirdsdk/BaseChannel/copyWith.html">copyWith</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/createMetaCounters.html">createMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/createMetaData.html">createMetaData</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/decreaseMetaCounters.html">decreaseMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteAllMetaCounters.html">deleteAllMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteAllMetaData.html">deleteAllMetaData</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteMessage.html">deleteMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></li>
     <li><a href="../sendbirdsdk/BaseChannel/getMessageChangeLogs.html">getMessageChangeLogs</a></li>
     <li><a href="../sendbirdsdk/BaseChannel/getMessagesById.html">getMessagesById</a></li>
     <li><a href="../sendbirdsdk/BaseChannel/getMessagesByTimestamp.html">getMessagesByTimestamp</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/getMetaData.html">getMetaData</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/increaseMetaCounters.html">increaseMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/muteUser.html">muteUser</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/removeAllOperators.html">removeAllOperators</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/removeMessageMetaArray.html">removeMessageMetaArray</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/removeOperators.html">removeOperators</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/reportChannel.html">reportChannel</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/reportMessage.html">reportMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/reportUser.html">reportUser</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/resendFileMessage.html">resendFileMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/unmuteUser.html">unmuteUser</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/updateFileMessage.html">updateFileMessage</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/updateMetaCounters.html">updateMetaCounters</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/updateMetaData.html">updateMetaData</a></li>
-    <li><a href="../sendbirdsdk/BaseChannel/updateUserMessage.html">updateUserMessage</a></li>
 
     <li class="section-title inherited"><a href="../sendbirdsdk/BaseChannel-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
@@ -914,7 +544,7 @@ from this class.</p>
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.4
+      3.0.5
   </span>
 
 </footer>

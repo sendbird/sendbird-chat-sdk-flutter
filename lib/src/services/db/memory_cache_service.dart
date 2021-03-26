@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 
-import '../../channel/base_channel.dart';
-import '../../channel/group_channel.dart';
-import '../../channel/open_channel.dart';
-import '../../features/delivery/delivery_status.dart';
-import '../../features/read/read_status.dart';
-import '../../features/typing/typing_status.dart';
+import '../../core/channel/base/base_channel.dart';
+import '../../core/channel/group/group_channel.dart';
+import '../../core/channel/group/features/delivery_status.dart';
+import '../../core/channel/group/features/read_status.dart';
+import '../../core/channel/group/features/typing_status.dart';
+import '../../core/channel/open/open_channel.dart';
 
 import 'cache_service.dart';
+import 'cached_meta_data/cached_data_map.dart';
 
 class MemoryCacheStorage implements CacheStorage {
   Map<String, ChannelCacheUnit> _cacheMap = {};
@@ -75,22 +76,21 @@ class ChannelCacheUnit implements CacheUnit {
   DeliveryStatus deliveryStatus;
   Map<String, TypingStatus> typingStatus = {}; //userid key
   Map<String, ReadStatus> readStatus = {}; //userid key
+  CachedDataMap<String> cachedMetaData;
 
   @override
   void delete<T extends Cacheable>({String key, Cacheable data}) {
     if (T == DeliveryStatus || data is DeliveryStatus) {
       deliveryStatus = null;
     } else if (T == TypingStatus || data is TypingStatus) {
-      if (key == null)
-        typingStatus = null;
-      else
-        typingStatus?.remove(key);
+      typingStatus?.remove(key);
     } else if (T == ReadStatus || data is ReadStatus) {
-      if (key == null)
-        readStatus = null;
-      else
-        readStatus?.remove(key);
-    } //channel should be delete itself
+      readStatus?.remove(key);
+    } else if (T == CachedDataMap || data is CachedDataMap) {
+      cachedMetaData = null;
+    }
+
+    //channel should be delete itself
   }
 
   @override
@@ -119,6 +119,12 @@ class ChannelCacheUnit implements CacheUnit {
       } else {
         typingStatus[data.key] = data;
       }
+    } else if (data is CachedDataMap) {
+      if (cachedMetaData != null) {
+        cachedMetaData.merge(data);
+      } else {
+        cachedMetaData = data;
+      }
     }
   }
 
@@ -132,6 +138,8 @@ class ChannelCacheUnit implements CacheUnit {
       return typingStatus != null ? typingStatus[key] : null;
     } else if (T == DeliveryStatus) {
       return deliveryStatus;
+    } else if (T == CachedDataMap) {
+      return cachedMetaData;
     }
     return null;
   }

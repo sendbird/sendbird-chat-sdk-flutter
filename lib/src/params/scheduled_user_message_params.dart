@@ -1,5 +1,5 @@
 import '../constant/enums.dart';
-import '../models/meta_array.dart';
+import '../core/models/meta_array.dart';
 import '../params/user_message_params.dart';
 
 /// An object consists a set of parameters to create scheduled user message.

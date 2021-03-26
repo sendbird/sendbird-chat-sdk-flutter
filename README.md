@@ -1,42 +1,193 @@
-# Sendbird Chat SDK for flutter
+# [Sendbird](https://sendbird.com) Chat SDK for Flutter
+
+[![Platform](https://img.shields.io/badge/platform-flutter-blue)](https://flutter.dev/)
+
+## Table of contents
+
+  1. [Introduction](#introduction)
+  1. [Before getting started](#before-getting-started)
+  1. [Getting started](#getting-started)
+  1. [Sending your first message](#sending-your-first-message)
+
+<br />
+
+## Introduction
+
+Through Chat SDK for flutter, you can efficiently integrate real-time chat into your client app. On the client-side implementation, you can initialize, configure and build the chat with minimal effort. On the server-side, Sendbird ensures reliable infra-management services for your chat within the app. This **read.me** provides the Chat SDK’s structure, supplementary features, and the installation steps. 
+
+### How it works
+
+It is simple to implement chat in your client app with the Chat SDK: a user logs in, sees a list of channels, selects or creates an [open channel](https://sendbird.com/docs/chat/v3/ios/guides/open-channel) or a [group channel](https://sendbird.com/docs/chat/v3/ios/guides/group-channel), and, through the use of the [channel event handler](https://sendbird.com/docs/chat/v3/ios/guides/event-delegate), sends messages to the channel, while also receiving them from other users within the channel. 
+
+### More about Sendbird Chat SDK for flutter
+
+Find out more about Sendbird Chat for iOS on [Chat SDK for iOS doc](https://sendbird.com/docs/chat/v3/ios/getting-started/about-chat-sdk). If you have any comments or questions regarding bugs and feature requests, visit [Sendbird community](https://community.sendbird.com). 
+
+<br />
+
+## Before getting started
+
+This section shows you the prerequisites you need to check for using Sendbird Chat SDK for Flutter.
+
+### Requirements
+
+The minimum requirements for Chat SDK for iOS are:
+
+- Xcode or Android studio 
+- Flutter 1.22.x (Flutter 2 is not compatible yet)
+- Dart 2.10.4
 
 ## Getting started
 
-### Add dependency
-Add this to your package's pubspec.yaml file, use the latest version
+This section gives you information you need to get started with Sendbird Chat SDK for Flutter. Follow the simple steps below to build the Chat SDK into your client app.
 
+### Try the sample app
+
+The fastest way to test Chat SDK is to build your chat app on top of our sample app. To create a project for the sample app, download the app from our GitHub repository. The link is down below. 
+
+- https://github.com/sendbird/Sendbird-Flutter
+
+### Step 1: Create a Sendbird application from your dashboard
+
+A Sendbird application comprises everything required in a chat service including users, message, and channels. To create an application:
+
+1. Go to the [Sendbird Dashboard](https://dashboard.sendbird.com/auth/signup) and enter your email and password, and create a new account. You can also sign up with a Google account.
+2. When prompted by the setup wizard, enter your organization information to manage Sendbird applications.
+3. Lastly, when your dashboard home appears after completing setup, click **Create +** at the top-right corner.
+
+Only one Sendbird application can be integrated per app for your service regardless of the platform. All users within your Sendbird application can communicate with each other across all platforms. This means that your iOS, Android, and web client app users can all send and receive messages with one another without any further setup.
+
+> Note: All data is limited to the scope of a single application, and users in different Sendbird applications can't chat with each other.
+
+### Step 2: Install packages
+
+Installing the Chat SDK is a simple process if you’re familiar with using external packages or SDK’s in your projects. You can install the Chat SDK by following steps via `pub`
+
+- add following dependency in pubspec.yaml
 ```yaml
 dependencies:
-  hosted:
-    name: sendbirdsdk
-    url: https://dl.cloudsmith.io/public/sendbird/sendbird-sdk-flutter/dart/
+  ...
+  sendbirdsdk:
+    hosted:
+      name: sendbirdsdk
+      url: https://dl.cloudsmith.io/public/sendbird/sendbird-sdk-flutter/dart/
     version: ^3.0.0
 ```
+- run `flutter pub get` command in your project directory
 
-You should then run `flutter pub get`
+### Step 3: Use the Chat SDK in Flutter
 
-## Example Project
-
-There is a detailed [Flutter example](https://github.com/sendbird/Sendbird-Flutter). You can directly run and play on it. 
-
-## Setup SDK
-
-You first need to initantiate sendbird class with your application id. SendbirdSdk class is singleton but create it once and re-use it across your application.
+You can use all classes and methods just with the following one import statement.
 
 ```dart
-import 'package:sendbirdsdk/sendbirdsdk.dart';
-final sdk = SendbirdSdk(appId: "app-id");
+import 'package:sendbirdsdk/sendbirdsdk.dart'
 ```
 
-## Connect to the Sendbird Server
+<br />
 
-Once you initiated `SendbirdSdk` with application id, connect to the Sendbird server
+## Sending your first message
+
+Follow the step-by-step instructions below to authenticate and send your first message.
+
+### Authentication
+
+In order to use the features of the Chat SDK, you should initiate the `Sendbirdsdk` instance through user authentication with Sendbird server. This instance communicates and interacts with the server based on an authenticated user account, and then the user’s client app can use the Chat SDK's features. 
+
+Here are the steps to sending your first message using Chat SDK:
+
+### Step 1: Initialize the Chat SDK
+
+Initializing the Chat SDK allows the Chat SDK to respond to the connection and state changes in your client app. Pass the `APP_ID` of your Sendbird application as an argument to `appId` parameter in the constructor of `SendbirdSdk`. The constructor of `SendbirdSdk` creates an instance, thus should be called a single time across your client app. It is recommended that the code for initialization be implemented in the user login view. 
+
+```dart
+final sendbird = SendbirdSdk(appId: APP_ID);
+```
+
+### Step 2: Connect to Sendbird server
+
+#### A. Using a unique user ID
+
+Connect a user to Sendbird server by using a unique user ID or with a user ID and an access token. To connect to the Sendbird server, a user is required to log in with a unique ID. A new user can authenticate with any untaken user ID, which gets automatically registered to the Sendbird system. An existing ID can log in directly. The ID must be unique within a Sendbird application to be distinguished from others, such as a hashed email address or phone number in your service.
 
 ```dart
 try {
-  final user = await sdk.connect(userId: 'john');
+  final user = await sendbird.connect(userId: USER_ID);
+} catch (e) {
+  // error
 }
 ```
-### Changelog
 
-Check out the [changelog](https://raw.githubusercontent.com/sendbird/sendbird-sdk-flutter/master/CHANGELOG.md) to see the latest changes in the package.
+#### B. Using a unique user ID and an access token
+
+By using Chat Platform API, you can [create a user](https://sendbird.com/docs/chat/v3/platform-api/guides/user#2-create-a-user) and issue a unique access token to each user, or [issue an access token](https://sendbird.com/docs/chat/v3/platform-api/guides/user#2-update-a-user) for an existing user. Once an access token is issued, a user is required to provide the access token to log in to the Sendbird application.
+
+1. Using the [Chat Platform API](https://sendbird.com/docs/chat/v3/platform-api/guides/user#2-create-a-user), create a Sendbird user account with the information submitted when a user signs up or signs in to your service.
+2. Save the user ID along with the issued access token to your securely managed persistent storage. 
+3. When a user attempts to log in to the application, load the user ID and access token from the storage, and then pass them to `connect()` method.
+4. Periodically replacing the user's access token is recommended for account security.
+
+```dart
+try {
+  final user = await sendbird.connect(userId: USER_ID, accessToken: ACCESS_TOKEN);
+} catch (e) {
+  // error
+}
+```
+
+#### - Tips for secure user login
+
+To manage who can access your Sendbird application, go to **Settings** > **Application** > **Security** > **Access token permission** setting on your dashboard. You can change settings to prevent users without an access token from logging in to your application or restrict their access to read and write messages.
+For security reasons, you can also use a session token when a user logs in to Sendbird server instead of an access token. Go to the [Access token vs. Session token](https://sendbird.com/docs/chat/v3/platform-api/guides/user#2-create-a-user-3-access-token-vs-session-token) section from the Chat Platform API guide to learn more.
+
+### Step 3: Create a new open channel
+
+Create an [open channel](https://sendbird.com/docs/chat/v3/ios/guides/open-channel#2-create-a-channel). Once created, all users in your Sendbird application can easily participate in the channel.
+
+```dart
+try {
+  final channel = await OpenChannel.createChannel();
+} catch (e) {
+  // error
+}
+```
+
+You can also create a [group channel](https://sendbird.com/docs/chat/v3/ios/guides/group-channel#2-create-a-channel) by [inviting users as new members](https://sendbird.com/docs/chat/v3/ios/guides/group-channel#2-invite-users-as-members) to the channel.
+
+> Note: The majority of the methods used in the following steps are all asynchronous. This means with asynchronous methods, your client app must receive result via `await` or `then()` callbacks from Sendbird server through completion handlers before moving on to the next step.  
+
+### Step 4: Enter the channel
+
+Enter the channel to send and receive messages.
+
+```dart
+try {
+  final channel = await OpenChannel.getChannel(CHANNEL_URL);
+  await channel.enter();
+} catch (e) {
+  // error
+}
+```
+
+### Step 5: Send a message to the channel 
+
+Finally, send a message to the channel. There are three types of [messages](https://sendbird.com/docs/chat/v3/platform-api/guides/messages#-3-resource-representation): a user message in a plain text, a file message in a binary file, such as an image or PDF, and an admin message in a plain text sent through the [dashboard](https://dashboard.sendbird.com/auth/signin) or [Chat Platform API](https://sendbird.com/docs/chat/v3/platform-api/guides/messages#2-send-a-message).
+
+```dart
+try {
+  final params = UserMessageParams()
+    ..message = MESSAGE
+    ..data = DATA
+    ..customType = CUSTOM_TYPE;
+  
+  final preMessage = openChannel.sendUserMessage(params, onCompleted:(message, error){
+      if (error != null) {
+        // error
+      } else {
+        // message is sent successfully
+      }
+  });
+  // use preMessage to populate your chat messages early
+} catch (e) {
+  // error
+}
+```

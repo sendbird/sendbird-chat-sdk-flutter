@@ -6,11 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart';
 
 import '../../constant/error_code.dart';
+import '../../core/models/error.dart';
 import '../../handlers/event_manager.dart';
-import '../../models/error.dart';
 import '../../services/command/command_manager.dart';
 import '../../utils/logger.dart';
-import '../../utils/utils.dart';
+import '../../utils/string_utils.dart';
 
 //NOTE: refactor for single source of truth
 class SessionManager with SdkAccessor {
@@ -33,17 +33,6 @@ class SessionManager with SdkAccessor {
     successFunc = _sessionSuccessHandler;
     errorFunc = _sessionErrorHandler;
   }
-
-  // void addHttpListener(Stream stream) {
-  //   stream.listen(
-  //     (event) {},
-  //     onError: (error, s) async {
-  //       if (error.code == ErrorCode.sessionKeyExpired) {
-  //         await updateSession();
-  //       }
-  //     },
-  //   );
-  // }
 
   String get accessToken => _accessToken;
 
@@ -112,6 +101,7 @@ class SessionManager with SdkAccessor {
     return _userId;
   }
 
+  // Decrypts session key
   Future<String> _decryptedSessionKey() async {
     final prefs = await SharedPreferences.getInstance();
     final encryptedUserId = prefs.getString(_userIdKeyPath);
@@ -129,6 +119,7 @@ class SessionManager with SdkAccessor {
     return encrypter.decrypt(Encrypted.fromBase64(encryptedSessionKey), iv: iv);
   }
 
+  // Encrypts session key
   Future<void> _encryptedSessionKey(String sessionKey) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionKey == null) {
@@ -165,6 +156,7 @@ class SessionManager with SdkAccessor {
         'sessionKey: $encryptedData');
   }
 
+  // Updates session and notify
   Future<bool> updateSession() async {
     if (isRefreshingKey) {
       return false;
@@ -200,6 +192,7 @@ class SessionManager with SdkAccessor {
     }
   }
 
+  // Applies refreshed session payload and reconnect if necessarry
   void _applyRefreshedSessionKey(Map<String, dynamic> payload) {
     if (payload['key'] != null) {
       setSessionKey(payload['key']);
@@ -217,6 +210,7 @@ class SessionManager with SdkAccessor {
     if (reconnect) sdk.reconnect(reset: true);
   }
 
+  // Handler for refresh session success case
   Future<void> _sessionSuccessHandler(String token) async {
     setAccessToken(token);
 
@@ -233,6 +227,7 @@ class SessionManager with SdkAccessor {
     sdk.eventManager.notifySessionError(error);
   }
 
+  // Resets session manager
   void cleanUp() {
     _sessionExpiresIn = 0;
     _eKey = null;

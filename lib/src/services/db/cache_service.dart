@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
-import '../../channel/base_channel.dart';
+import '../../core/channel/base/base_channel.dart';
 import '../../sdk/sendbird_sdk_api.dart';
 
 abstract class CacheStorage {
@@ -22,11 +24,11 @@ abstract class CacheUnit {
   void markAsDirty();
 }
 
-abstract class Cacheable<T> {
+abstract class Cacheable {
   String get key;
   String get primaryKey;
   bool dirty;
-  void copyWith(T others);
+  void copyWith(others);
 }
 
 extension Operation on Cacheable {

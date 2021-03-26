@@ -70,6 +70,7 @@
   <li><a href="../sendbirdsdk/GroupChannel-class.html">GroupChannel</a></li>
   <li><a href="../sendbirdsdk/GroupChannelChangeLogsParams-class.html">GroupChannelChangeLogsParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelListQuery-class.html">GroupChannelListQuery</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelMemberListListQuery-class.html">GroupChannelMemberListListQuery</a></li>
   <li><a href="../sendbirdsdk/GroupChannelParams-class.html">GroupChannelParams</a></li>
   <li><a href="../sendbirdsdk/GroupChannelTotalUnreadMessageCountParams-class.html">GroupChannelTotalUnreadMessageCountParams</a></li>
   <li><a href="../sendbirdsdk/ImageInfo-class.html">ImageInfo</a></li>
@@ -104,8 +105,19 @@
   <li><a href="../sendbirdsdk/UserMessageParams-class.html">UserMessageParams</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#extension">Extensions</a></li>
+  <li><a href="../sendbirdsdk/BaseChannelConfiguration.html">BaseChannelConfiguration</a></li>
   <li><a href="../sendbirdsdk/ChannelTypeExtension.html">ChannelTypeExtension</a></li>
   <li><a href="../sendbirdsdk/EnumTransform.html">EnumTransform</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelConfiguration.html">GroupChannelConfiguration</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelOperations.html">GroupChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelRead.html">GroupChannelRead</a></li>
+  <li><a href="../sendbirdsdk/GroupChannelTyping.html">GroupChannelTyping</a></li>
+  <li><a href="../sendbirdsdk/IncludeOptionList.html">IncludeOptionList</a></li>
+  <li><a href="../sendbirdsdk/Messages.html">Messages</a></li>
+  <li><a href="../sendbirdsdk/Meta.html">Meta</a></li>
+  <li><a href="../sendbirdsdk/Moderations.html">Moderations</a></li>
+  <li><a href="../sendbirdsdk/OpenChannelOperations.html">OpenChannelOperations</a></li>
+  <li><a href="../sendbirdsdk/Reactions.html">Reactions</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#constants">Constants</a></li>
@@ -122,14 +134,13 @@
   <li><a href="../sendbirdsdk/operatorFilterEnumMap-constant.html">operatorFilterEnumMap</a></li>
   <li><a href="../sendbirdsdk/publicGroupChannelListOrderEnumMap-constant.html">publicGroupChannelListOrderEnumMap</a></li>
   <li><a href="../sendbirdsdk/pushTriggerOptionEnumMap-constant.html">pushTriggerOptionEnumMap</a></li>
+  <li><a href="../sendbirdsdk/unreadItemKeyEnumMap-constant.html">unreadItemKeyEnumMap</a></li>
 
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#functions">Functions</a></li>
   <li><a href="../sendbirdsdk/channelEventValueOf.html">channelEventValueOf</a></li>
   <li><a href="../sendbirdsdk/enumDecode.html">enumDecode</a></li>
-  <li><a href="../sendbirdsdk/paramsFromChannelIncludeOption.html">paramsFromChannelIncludeOption</a></li>
   <li><a href="../sendbirdsdk/stringFromSearchFields.html">stringFromSearchFields</a></li>
-  <li><a href="../sendbirdsdk/stringFromUnreadItemKey.html">stringFromUnreadItemKey</a></li>
   <li><a href="../sendbirdsdk/userEventValueOf.html">userEventValueOf</a></li>
 
   <li class="section-title"><a href="../sendbirdsdk/sendbirdsdk-library.html#enums">Enums</a></li>
@@ -173,6 +184,7 @@
   <li><a href="../sendbirdsdk/ScheduledUserMessageStatus-class.html">ScheduledUserMessageStatus</a></li>
   <li><a href="../sendbirdsdk/UnreadChannelFilter-class.html">UnreadChannelFilter</a></li>
   <li><a href="../sendbirdsdk/UnreadItemKey-class.html">UnreadItemKey</a></li>
+  <li><a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></li>
   <li><a href="../sendbirdsdk/UserEventCategory-class.html">UserEventCategory</a></li>
   <li><a href="../sendbirdsdk/UserListQueryType-class.html">UserListQueryType</a></li>
 
@@ -226,7 +238,7 @@
 
       <dl class="constructor-summary-list">
         <dt id="Member" class="callable">
-          <span class="name"><a href="../sendbirdsdk/Member/Member.html">Member</a></span><span class="signature">(<span class="parameter" id="-param-state">{<span class="type-annotation"><a href="../sendbirdsdk/MemberState-class.html">MemberState</a></span> <span class="parameter-name">state</span>, </span><span class="parameter" id="-param-isBlockedByMe"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isBlockedByMe</span>, </span><span class="parameter" id="-param-isBlockingMe"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isBlockingMe</span>, </span><span class="parameter" id="-param-isMuted"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isMuted</span>, </span><span class="parameter" id="-param-role"><span class="type-annotation"><a href="../sendbirdsdk/Role-class.html">Role</a></span> <span class="parameter-name">role</span>, </span><span class="parameter" id="-param-userId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="-param-nickname"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">nickname</span>, </span><span class="parameter" id="-param-profileUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">profileUrl</span>, </span><span class="parameter" id="-param-isOnline"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isOnline</span>, </span><span class="parameter" id="-param-lastSeenAt"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">lastSeenAt</span>, </span><span class="parameter" id="-param-preferredLanguages"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">preferredLanguages</span>, </span><span class="parameter" id="-param-friendDiscoveryKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">friendDiscoveryKey</span>, </span><span class="parameter" id="-param-friendName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">friendName</span>, </span><span class="parameter" id="-param-discoveryKeys"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">discoveryKeys</span>, </span><span class="parameter" id="-param-metaData"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">metaData</span>, </span><span class="parameter" id="-param-requireAuth"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">requireAuth</span>}</span>)</span>
+          <span class="name"><a href="../sendbirdsdk/Member/Member.html">Member</a></span><span class="signature">(<span class="parameter" id="-param-state">{<span class="type-annotation"><a href="../sendbirdsdk/MemberState-class.html">MemberState</a></span> <span class="parameter-name">state</span>, </span><span class="parameter" id="-param-isBlockedByMe"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isBlockedByMe</span>, </span><span class="parameter" id="-param-isBlockingMe"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isBlockingMe</span>, </span><span class="parameter" id="-param-isMuted"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isMuted</span>, </span><span class="parameter" id="-param-role"><span class="type-annotation"><a href="../sendbirdsdk/Role-class.html">Role</a></span> <span class="parameter-name">role</span>, </span><span class="parameter" id="-param-userId"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">userId</span>, </span><span class="parameter" id="-param-nickname"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">nickname</span>, </span><span class="parameter" id="-param-profileUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">profileUrl</span>, </span><span class="parameter" id="-param-connectionStatus"><span class="type-annotation"><a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></span> <span class="parameter-name">connectionStatus</span>, </span><span class="parameter" id="-param-lastSeenAt"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">lastSeenAt</span>, </span><span class="parameter" id="-param-preferredLanguages"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">preferredLanguages</span>, </span><span class="parameter" id="-param-friendDiscoveryKey"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">friendDiscoveryKey</span>, </span><span class="parameter" id="-param-friendName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">friendName</span>, </span><span class="parameter" id="-param-discoveryKeys"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">discoveryKeys</span>, </span><span class="parameter" id="-param-metaData"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">metaData</span>, </span><span class="parameter" id="-param-requireAuth"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">requireAuth</span>}</span>)</span>
         </dt>
         <dd>
            
@@ -245,6 +257,14 @@
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="connectionStatus" class="property inherited">
+          <span class="name"><a href="../sendbirdsdk/User/connectionStatus.html">connectionStatus</a></span>
+          <span class="signature">&#8596; <a href="../sendbirdsdk/UserConnectionStatus-class.html">UserConnectionStatus</a></span>         
+        </dt>
+        <dd class="inherited">
+          This user's connection status 
+                  <div class="features">@<a href="https://pub.dev/documentation/json_annotation/3.1.0/json_annotation/JsonKey-class.html">JsonKey</a>(unknownEnumValue: UserConnectionStatus.notAvailable), read / write, inherited</div>
+</dd>
         <dt id="discoveryKeys" class="property inherited">
           <span class="name"><a href="../sendbirdsdk/User/discoveryKeys.html">discoveryKeys</a></span>
           <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>         
@@ -317,14 +337,6 @@
         <dd>
           Muted state of this member in the channel 
                   <div class="features">read / write</div>
-</dd>
-        <dt id="isOnline" class="property inherited">
-          <span class="name"><a href="../sendbirdsdk/User/isOnline.html">isOnline</a></span>
-          <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>         
-        </dt>
-        <dd class="inherited">
-          True if this user is online 
-                  <div class="features">read / write, inherited</div>
 </dd>
         <dt id="lastSeenAt" class="property inherited">
           <span class="name"><a href="../sendbirdsdk/User/lastSeenAt.html">lastSeenAt</a></span>
@@ -536,6 +548,7 @@ The <code>invited</code> means that the user doesn't accept the invitation yet a
     <li class="section-title">
       <a href="../sendbirdsdk/Member-class.html#instance-properties">Properties</a>
     </li>
+    <li class="inherited"><a href="../sendbirdsdk/User/connectionStatus.html">connectionStatus</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/discoveryKeys.html">discoveryKeys</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/friendDiscoveryKey.html">friendDiscoveryKey</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/friendName.html">friendName</a></li>
@@ -545,7 +558,6 @@ The <code>invited</code> means that the user doesn't accept the invitation yet a
     <li><a href="../sendbirdsdk/Member/isBlockingMe.html">isBlockingMe</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/isCurrentUser.html">isCurrentUser</a></li>
     <li><a href="../sendbirdsdk/Member/isMuted.html">isMuted</a></li>
-    <li class="inherited"><a href="../sendbirdsdk/User/isOnline.html">isOnline</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/lastSeenAt.html">lastSeenAt</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/metaData.html">metaData</a></li>
     <li class="inherited"><a href="../sendbirdsdk/User/nickname.html">nickname</a></li>
@@ -584,7 +596,7 @@ The <code>invited</code> means that the user doesn't accept the invitation yet a
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.4
+      3.0.5
   </span>
 
 </footer>

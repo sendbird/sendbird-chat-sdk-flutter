@@ -3,25 +3,25 @@ import 'package:meta/meta.dart';
 import 'http_client.dart';
 import 'api_endpoints.dart' as endpoint;
 
-import '../../channel/base_channel.dart';
-import '../../channel/open_channel.dart';
-import '../../channel/group_channel.dart';
+import '../../core/channel/base/base_channel.dart';
+import '../../core/channel/group/group_channel.dart';
+import '../../core/channel/open/open_channel.dart';
+import '../../core/message/base_message.dart';
+import '../../core/message/file_message.dart';
+import '../../core/message/user_message.dart';
+import '../../core/message/scheduled_user_message.dart';
+import '../../core/models/emoji.dart';
+import '../../core/models/error.dart';
+import '../../core/models/group_channel_filters.dart';
+import '../../core/models/unread_item_count.dart';
+import '../../core/models/responses.dart';
+import '../../core/models/image_info.dart';
+import '../../core/models/user.dart';
 import '../../constant/command_type.dart';
 import '../../constant/enums.dart';
 import '../../constant/error_code.dart';
 import '../../constant/types.dart';
 import '../../events/reaction_event.dart';
-import '../../features/emoji/emoji.dart';
-import '../../message/base_message.dart';
-import '../../message/file_message.dart';
-import '../../message/user_message.dart';
-import '../../message/scheduled_user_message.dart';
-import '../../models/error.dart';
-import '../../models/group_channel_filters.dart';
-import '../../models/unread_item_count.dart';
-import '../../models/responses.dart';
-import '../../models/image_info.dart';
-import '../../models/user.dart';
 import '../../params/group_channel_params.dart';
 import '../../params/scheduled_user_message_params.dart';
 import '../../params/user_message_params.dart';
@@ -226,12 +226,12 @@ class ApiClient {
         ? endpoint.Channels.channelurl_passively
         : endpoint.Channels.channelurl;
     url = url.format([channelType.urlString, channelUrl]);
-    Map<String, bool> params =
-        options == null ? {} : paramsFromChannelIncludeOption(options);
-    final res = await client.get(url: url, queryParams: params);
+
+    final res = await client.get(url: url, queryParams: options.toJson());
+    final ts = DateTime.now().millisecondsSinceEpoch;
     return channelType == ChannelType.group
-        ? GroupChannel.fromJsonAndCached(res)
-        : OpenChannel.fromJsonAndCached(res);
+        ? GroupChannel.fromJsonAndCached(res, ts: ts)
+        : OpenChannel.fromJsonAndCached(res, ts: ts);
   }
 
   Future<void> deleteChannel({
@@ -776,7 +776,7 @@ class ApiClient {
     await client.delete(url: url);
   }
 
-  Future<Map<String, String>> createChannelMetaData({
+  Future<MetaDataResponse> createChannelMetaData({
     @required ChannelType channelType,
     @required String channelUrl,
     @required Map<String, String> metaData,
@@ -791,11 +791,10 @@ class ApiClient {
       body: body,
       queryParams: {'include_ts': true},
     );
-    final data = MetaDataResponse.fromJson(res);
-    return data.metadata;
+    return MetaDataResponse.fromJson(res);
   }
 
-  Future<Map<String, String>> updateChannelMetaData({
+  Future<MetaDataResponse> updateChannelMetaData({
     @required ChannelType channelType,
     @required String channelUrl,
     @required Map<String, String> metaData,
@@ -811,11 +810,10 @@ class ApiClient {
       body: body,
       queryParams: {'include_ts': true},
     );
-    final data = MetaDataResponse.fromJson(res);
-    return data.metadata;
+    return MetaDataResponse.fromJson(res);
   }
 
-  Future<Map<String, String>> getChannelMetaData({
+  Future<MetaDataResponse> getChannelMetaData({
     @required ChannelType channelType,
     @required String channelUrl,
     List<String> keys,
@@ -829,11 +827,10 @@ class ApiClient {
       queryParams['keys'] = keys;
     }
     final res = await client.get(url: url, queryParams: queryParams);
-    final data = MetaDataResponse.fromJson(res);
-    return data.metadata;
+    return MetaDataResponse.fromJson(res);
   }
 
-  Future<void> deleteChannelMetaData({
+  Future<int> deleteChannelMetaData({
     @required ChannelType channelType,
     @required String channelUrl,
     @required String key,
@@ -843,10 +840,14 @@ class ApiClient {
       channelUrl,
       key,
     ]);
-    await client.delete(url: url, queryParams: {'include_ts': true});
+    final res = await client.delete(
+      url: url,
+      queryParams: {'include_ts': true},
+    );
+    return res['ts'] as int;
   }
 
-  Future<void> deleteAllChannelMetaData({
+  Future<int> deleteAllChannelMetaData({
     @required ChannelType channelType,
     @required String channelUrl,
   }) async {
@@ -854,7 +855,11 @@ class ApiClient {
       channelType.urlString,
       channelUrl,
     ]);
-    await client.delete(url: url, queryParams: {'include_ts': true});
+    final res = await client.delete(
+      url: url,
+      queryParams: {'include_ts': true},
+    );
+    return res['ts'] as int;
   }
 
   // MetaCounter
@@ -1218,7 +1223,7 @@ class ApiClient {
   }) async {
     final url = endpoint.Users.userid_unread_item_count.format([userId]);
     final params = {
-      'item_keys': keys.map((e) => stringFromUnreadItemKey(e)).toList()
+      'item_keys': keys.map((e) => unreadItemKeyEnumMap[e]).toList()
     };
     final res = await client.get(url: url, queryParams: params);
     return UnreadItemCount.fromJson(res);
@@ -1328,20 +1333,23 @@ class ApiClient {
     int limit = 30,
   }) async {
     final url = endpoint.OpenChannels.origin;
-    final params = {
+    final params = <String, dynamic>{
       'token': token,
       'limit': limit.toString(),
       'name_contains': channelName,
       'url_contains': channelUrl,
       'custom_type': customType,
-      'show_frozen':
-          options.contains(ChannelQueryIncludeOption.frozenChannel).toString(),
-      'show_metadata':
-          options.contains(ChannelQueryIncludeOption.metaData).toString(),
     };
+
+    params.addAll(options.toJson());
     params.removeWhere((key, value) => value == null);
+
     final res = await client.get(url: url, queryParams: params);
-    return ChannelListQueryResponse<OpenChannel>.fromJson(res);
+    return ChannelListQueryResponse()
+      ..channels = (res['channels'] as List)
+          .map((e) => OpenChannel.fromJsonAndCached(e, ts: res['ts']))
+          .toList()
+      ..next = res['next'] as String;
   }
 
   Future<ChannelListQueryResponse> getPublicGroupChannels({
@@ -1359,15 +1367,12 @@ class ApiClient {
       'limit': limit,
       'channelUrls': channelUrls,
       'order': publicGroupChannelListOrderEnumMap[order],
-      'show_empty': options.contains(ChannelQueryIncludeOption.emptyChannel),
-      'show_member': options.contains(ChannelQueryIncludeOption.memberList),
-      'show_frozen': options.contains(ChannelQueryIncludeOption.frozenChannel),
-      // 'show_metadata': options.contains(ChannelQueryIncludeOption.metaData),
-      'show_read_receipt': 'true',
-      'show_delivery_receipt': 'true',
+      'show_read_receipt': true,
+      'show_delivery_receipt': true,
       'distinct_mode': 'all',
     };
 
+    params.addAll(options.toJson());
     params.addAll(filter.toJson());
 
     if (order == PublicGroupChannelListOrder.channelMetaDataValueAlphabetical &&
@@ -1377,7 +1382,11 @@ class ApiClient {
 
     params.removeWhere((key, value) => value == null);
     final res = await client.get(url: url, queryParams: params);
-    return ChannelListQueryResponse<GroupChannel>.fromJson(res);
+    return ChannelListQueryResponse()
+      ..channels = (res['channels'] as List)
+          .map((e) => GroupChannel.fromJsonAndCached(e, ts: res['ts']))
+          .toList()
+      ..next = res['next'] as String;
   }
 
   Future<ChannelListQueryResponse> getMyGroupChannels({
@@ -1402,15 +1411,12 @@ class ApiClient {
       'order': groupChannelListOrderEnumMap[order],
       if (searchFieldStrings.isNotEmpty) 'search_field': searchFieldStrings,
       if (searchFieldStrings.isNotEmpty) 'search_query': searchQuery,
-      'show_empty': options.contains(ChannelQueryIncludeOption.emptyChannel),
-      'show_member': options.contains(ChannelQueryIncludeOption.memberList),
-      'show_frozen': options.contains(ChannelQueryIncludeOption.frozenChannel),
-      // 'show_metadata': options.contains(ChannelQueryIncludeOption.metaData),
       'show_read_receipt': 'true',
       'show_delivery_receipt': 'true',
       'distinct_mode': 'all',
     };
 
+    params.addAll(options.toJson());
     params.addAll(filter.toJson());
 
     if (filter.membersIncludeIn != null && filter.membersIncludeIn.isNotEmpty) {
@@ -1425,7 +1431,11 @@ class ApiClient {
 
     params.removeWhere((key, value) => value == null);
     final res = await client.get(url: url, queryParams: params);
-    return ChannelListQueryResponse<GroupChannel>.fromJson(res);
+    return ChannelListQueryResponse()
+      ..channels = (res['channels'] as List)
+          .map((e) => GroupChannel.fromJsonAndCached(e, ts: res['ts']))
+          .toList()
+      ..next = res['next'] as String;
   }
 
   Future<UserListQueryResponse> getUsers({

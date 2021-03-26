@@ -4,6 +4,7 @@ import 'base_event.dart';
 
 part 'session_event.g.dart';
 
+/// Represents session information
 @JsonSerializable()
 class SessionEvent extends BaseEvent {
   @JsonKey(defaultValue: 0)

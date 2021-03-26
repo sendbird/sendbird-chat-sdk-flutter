@@ -1,4 +1,4 @@
-import '../models/user.dart';
+import '../core/models/user.dart';
 
 import 'event_manager.dart';
 

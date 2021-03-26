@@ -139,6 +139,8 @@ enum ReportCategory { suspicious, harassing, spam, inappropriate }
 /// Represents user's mute state in a channel
 enum MuteState { unmuted, muted }
 
+enum UserConnectionStatus { online, offline, notAvailable }
+
 /// Represents global push trigger option
 enum PushTriggerOption {
   all,
@@ -363,27 +365,25 @@ enum UnreadItemKey {
   groupChannelInvitationCount
 }
 
-String stringFromUnreadItemKey(UnreadItemKey key) {
-  if (key == UnreadItemKey.nonSuperGroupChannelUnreadMessageCount)
-    return 'non_super_group_channel_unread_message_count';
-  if (key == UnreadItemKey.superGroupChannelUnreadMessageCount)
-    return 'super_group_channel_unread_message_count';
-  if (key == UnreadItemKey.groupChannelUnreadMessageCount)
-    return 'group_channel_unread_message_count';
-  if (key == UnreadItemKey.nonSuperGroupChannelUnreadMentionCount)
-    return 'non_super_group_channel_unread_mention_count';
-  if (key == UnreadItemKey.superGroupChannelUnreadMentionCount)
-    return 'super_group_channel_unread_mention_count';
-  if (key == UnreadItemKey.groupChannelUnreadMentionCount)
-    return 'group_channel_unread_mention_count';
-  if (key == UnreadItemKey.nonSuperGroupChannelInvitationCount)
-    return 'non_super_group_channel_invitation_count';
-  if (key == UnreadItemKey.superGroupChannelInvitationCount)
-    return 'super_group_channel_invitation_count';
-  if (key == UnreadItemKey.groupChannelInvitationCount)
-    return 'group_channel_invitation_count';
-  return '';
-}
+const unreadItemKeyEnumMap = <UnreadItemKey, String>{
+  UnreadItemKey.nonSuperGroupChannelUnreadMessageCount:
+      'non_super_group_channel_unread_message_count',
+  UnreadItemKey.superGroupChannelUnreadMessageCount:
+      'super_group_channel_unread_message_count',
+  UnreadItemKey.groupChannelUnreadMessageCount:
+      'group_channel_unread_message_count',
+  UnreadItemKey.nonSuperGroupChannelUnreadMentionCount:
+      'non_super_group_channel_unread_mention_count',
+  UnreadItemKey.superGroupChannelUnreadMentionCount:
+      'super_group_channel_unread_mention_count',
+  UnreadItemKey.groupChannelUnreadMentionCount:
+      'group_channel_unread_mention_count',
+  UnreadItemKey.nonSuperGroupChannelInvitationCount:
+      'non_super_group_channel_invitation_count',
+  UnreadItemKey.superGroupChannelInvitationCount:
+      'super_group_channel_invitation_count',
+  UnreadItemKey.groupChannelInvitationCount: 'group_channel_invitation_count',
+};
 
 /// Represents user event that comes from socket
 enum UserEventCategory { none, unblock, block, friendDiscoveryReady }
@@ -523,24 +523,18 @@ enum ChannelQueryIncludeOption {
   metaData,
 }
 
-Map<String, bool> paramsFromChannelIncludeOption(
-    List<ChannelQueryIncludeOption> options) {
-  final params = Map<String, bool>();
-  options.forEach((element) {
-    if (element == ChannelQueryIncludeOption.emptyChannel)
-      params['show_empty'] = true;
-    else if (element == ChannelQueryIncludeOption.memberList)
-      params['show_member'] = true;
-    else if (element == ChannelQueryIncludeOption.frozenChannel)
-      params['show_frozen'] = true;
-    else if (element == ChannelQueryIncludeOption.readReceipt)
-      params['show_read_receipt'] = true;
-    else if (element == ChannelQueryIncludeOption.deliveryReceipt)
-      params['show_delivery_receipt'] = true;
-    else if (element == ChannelQueryIncludeOption.metaData)
-      params['show_metadata'] = true;
-  });
-  return params;
+extension IncludeOptionList on List<ChannelQueryIncludeOption> {
+  Map<String, bool> toJson() {
+    return {
+      'show_empty': this.contains(ChannelQueryIncludeOption.emptyChannel),
+      'show_member': this.contains(ChannelQueryIncludeOption.memberList),
+      'show_frozen': this.contains(ChannelQueryIncludeOption.frozenChannel),
+      'show_read_receipt': this.contains(ChannelQueryIncludeOption.readReceipt),
+      'show_delivery_receipt':
+          this.contains(ChannelQueryIncludeOption.deliveryReceipt),
+      'show_metadata': this.contains(ChannelQueryIncludeOption.metaData),
+    };
+  }
 }
 
 /// Represents reaction's operation event

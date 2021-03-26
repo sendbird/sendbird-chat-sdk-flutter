@@ -6,8 +6,8 @@ import 'package:http_parser/http_parser.dart' show MediaType;
 
 import '../../constant/error_code.dart';
 import '../../constant/types.dart';
-import '../../models/image_info.dart';
-import '../../models/error.dart';
+import '../../core/models/image_info.dart';
+import '../../core/models/error.dart';
 import '../../sdk/sendbird_sdk_api.dart';
 import '../../services/connection/connection_manager.dart';
 import '../../utils/extensions.dart';

@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 
 import '../../sendbirdsdk.dart';
 import '../constant/enums.dart';
-import '../models/error.dart';
-import '../models/responses.dart';
-import '../models/user.dart';
+import '../core/models/error.dart';
+import '../core/models/responses.dart';
+import '../core/models/user.dart';
 import '../query/base_query.dart';
 
 part 'application_user_list_query.dart';

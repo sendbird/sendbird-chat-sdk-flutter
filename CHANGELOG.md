@@ -1,3 +1,10 @@
+## [3.0.5]
+* Fixed Admin message mapping
+* Changed user property `isOnline` to `connectionStatus`
+* Added `getCachedMetaData` method in `BaseChannel`
+* Updated docs
+* Improved stability
+
 ## [3.0.4]
 * Added `GroupChannelMemberListQuery`
 * Changed `refreshChannel` to `refresh` for channel

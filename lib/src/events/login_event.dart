@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'session_event.dart';
-import '../models/app_info.dart';
-import '../models/reconnect_configuration.dart';
-import '../models/user.dart';
+import '../core/models/app_info.dart';
+import '../core/models/reconnect_configuration.dart';
+import '../core/models/user.dart';
 
 part 'login_event.g.dart';
 
+/// Represents login event
 @JsonSerializable()
 class LoginEvent extends SessionEvent {
   @JsonKey(name: 'login_ts')

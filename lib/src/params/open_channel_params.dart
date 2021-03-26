@@ -1,4 +1,4 @@
-import '../models/image_info.dart';
+import '../core/models/image_info.dart';
 
 /// An object consists a set of parameters to create/update open channel.
 class OpenChannelParams {

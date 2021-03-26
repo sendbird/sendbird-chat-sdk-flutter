@@ -1,6 +1,6 @@
 import '../constant/enums.dart';
-import '../message/base_message.dart';
-import '../models/error.dart';
+import '../core/message/base_message.dart';
+import '../core/models/error.dart';
 import '../query/base_query.dart';
 import '../sdk/sendbird_sdk_api.dart';
 

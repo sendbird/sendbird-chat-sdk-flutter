@@ -85,56 +85,15 @@
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
     <li class="section-title"><a href="../../sendbirdsdk/OpenChannel-class.html#instance-methods">Methods</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addMessageMetaArray.html">addMessageMetaArray</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addOperators.html">addOperators</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/addReaction.html">addReaction</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/banUser.html">banUser</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/copyMessage.html">copyMessage</a></li>
     <li><a href="../../sendbirdsdk/OpenChannel/copyWith.html">copyWith</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/createMetaCounters.html">createMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/createMetaData.html">createMetaData</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/decreaseMetaCounters.html">decreaseMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteAllMetaCounters.html">deleteAllMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteAllMetaData.html">deleteAllMetaData</a></li>
     <li><a href="../../sendbirdsdk/OpenChannel/deleteChannel.html">deleteChannel</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMessage.html">deleteMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMessageMetaArrayKeys.html">deleteMessageMetaArrayKeys</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMetaCounters.html">deleteMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteMetaData.html">deleteMetaData</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/deleteReaction.html">deleteReaction</a></li>
-    <li><a href="../../sendbirdsdk/OpenChannel/enter.html">enter</a></li>
-    <li><a href="../../sendbirdsdk/OpenChannel/exit.html">exit</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getAllMetaCounters.html">getAllMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getAllMetaData.html">getAllMetaData</a></li>
     <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessageChangeLogs.html">getMessageChangeLogs</a></li>
     <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessagesById.html">getMessagesById</a></li>
     <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMessagesByTimestamp.html">getMessagesByTimestamp</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMetaCounters.html">getMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/getMetaData.html">getMetaData</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/increaseMetaCounters.html">increaseMetaCounters</a></li>
     <li><a href="../../sendbirdsdk/OpenChannel/isOperator.html">isOperator</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/muteUser.html">muteUser</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/removeAllOperators.html">removeAllOperators</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/removeMessageMetaArray.html">removeMessageMetaArray</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/removeOperators.html">removeOperators</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/reportChannel.html">reportChannel</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/reportMessage.html">reportMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/reportUser.html">reportUser</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/resendFileMessage.html">resendFileMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/resendUserMessage.html">resendUserMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendFileMessage.html">sendFileMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendUserMessage.html">sendUserMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/sendUserMessageWithText.html">sendUserMessageWithText</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/translateUserMessage.html">translateUserMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/unbanUser.html">unbanUser</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/unmuteUser.html">unmuteUser</a></li>
     <li><a href="../../sendbirdsdk/OpenChannel/updateChannel.html">updateChannel</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/updateFileMessage.html">updateFileMessage</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/updateMetaCounters.html">updateMetaCounters</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/updateMetaData.html">updateMetaData</a></li>
-    <li class="inherited"><a href="../../sendbirdsdk/BaseChannel/updateUserMessage.html">updateUserMessage</a></li>
 
     <li class="section-title inherited"><a href="../../sendbirdsdk/OpenChannel-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
@@ -172,6 +131,7 @@
     channelType: ChannelType.open,
     channelUrl: channelUrl,
     passive: false,
+    options: [ChannelQueryIncludeOption.metaData],
   );
   return channel;
 }</code></pre>
@@ -187,7 +147,7 @@
 <footer>
   <span class="no-break">
     sendbirdsdk
-      3.0.4
+      3.0.5
   </span>
 
 </footer>

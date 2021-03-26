@@ -1,6 +1,6 @@
 import 'event_manager.dart';
 
-import '../models/user.dart';
+import '../core/models/user.dart';
 
 /// Represents a class to get notify authentication events
 class AuthenticateEventHandler implements EventHandler {

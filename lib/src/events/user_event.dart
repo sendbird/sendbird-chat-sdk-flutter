@@ -1,12 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'base_event.dart';
+
 import '../constant/enums.dart';
-import '../models/user.dart';
+import '../core/models/user.dart';
 
 part 'user_event.g.dart';
 
+/// Represents user event
 @JsonSerializable(createToJson: false)
-class UserEvent {
+class UserEvent implements BaseEvent {
   @JsonKey(fromJson: userEventValueOf, name: 'cat')
   UserEventCategory category;
 

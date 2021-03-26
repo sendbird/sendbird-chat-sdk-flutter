@@ -1,7 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'base_event.dart';
+
 import '../constant/enums.dart';
-import '../features/thread/thread_info.dart';
+import '../core/channel/group/features/thread_info.dart';
 
 part 'thread_info_update_event.g.dart';
 
@@ -11,7 +13,7 @@ part 'thread_info_update_event.g.dart';
 /// a threaded reply is added or deleted. This object is needed to
 /// be applied to the parent message.
 @JsonSerializable(createToJson: false)
-class ThreadInfoUpdateEvent {
+class ThreadInfoUpdateEvent implements BaseEvent {
   /// Information about threaded message
   final ThreadInfo threadInfo;
 
