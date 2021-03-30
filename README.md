@@ -67,11 +67,11 @@ Installing the Chat SDK is a simple process if you’re familiar with using exte
 ```yaml
 dependencies:
   ...
-  sendbirdsdk:
+  sendbird_sdk:
     hosted:
-      name: sendbirdsdk
-      url: https://dl.cloudsmith.io/public/sendbird/sendbird-sdk-flutter/dart/
-    version: ^3.0.0
+      name: sendbird_sdk
+      url: https://repo.sendbird.com/public/release
+    version: ^3.0.6
 ```
 - run `flutter pub get` command in your project directory
 
@@ -80,7 +80,7 @@ dependencies:
 You can use all classes and methods just with the following one import statement.
 
 ```dart
-import 'package:sendbirdsdk/sendbirdsdk.dart'
+import 'package:sendbird_sdk/sendbird_sdk.dart'
 ```
 
 <br />

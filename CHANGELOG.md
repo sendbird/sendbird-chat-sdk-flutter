@@ -1,3 +1,8 @@
+## [3.0.6]
+* Renamed package `sendbirdsdk` to `sendbird_sdk`
+* Cleaned up unused codes
+* Improved stability
+
 ## [3.0.5]
 * Fixed Admin message mapping
 * Changed user property `isOnline` to `connectionStatus`
