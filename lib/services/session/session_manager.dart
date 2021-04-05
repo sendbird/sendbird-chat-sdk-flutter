@@ -2,15 +2,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
+import 'package:sendbird_sdk/utils/string_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart';
-
-import '../../constant/error_code.dart';
-import '../../core/models/error.dart';
-import '../../handlers/event_manager.dart';
-import '../../sdk/internal/sendbird_sdk_accessor.dart';
-import '../../utils/logger.dart';
-import '../../utils/string_utils.dart';
 
 /// Represents a object that responsible to handle session
 class SessionManager with SdkAccessor {

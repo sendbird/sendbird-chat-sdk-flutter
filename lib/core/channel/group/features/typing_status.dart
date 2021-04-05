@@ -1,6 +1,6 @@
-import '../../../models/user.dart';
-import '../../../../constant/enums.dart';
-import '../../../../services/db/cache_service.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 /// Represents typing status of a [User]
 class TypingStatus implements Cacheable {

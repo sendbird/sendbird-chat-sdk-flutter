@@ -2,33 +2,32 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
+import 'package:sendbird_sdk/params/file_message_params.dart';
+import 'package:sendbird_sdk/params/message_change_logs_params.dart';
+import 'package:sendbird_sdk/params/message_list_params.dart';
+import 'package:sendbird_sdk/params/user_message_params.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
+import 'package:sendbird_sdk/utils/async/async_operation.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:uuid/uuid.dart';
-
-import '../open/open_channel.dart';
-import '../group/group_channel.dart';
-import '../../message/base_message.dart';
-import '../../message/file_message.dart';
-import '../../message/user_message.dart';
-import '../../models/command.dart';
-import '../../models/error.dart';
-import '../../models/sender.dart';
-import '../../models/meta_array.dart';
-import '../../models/responses.dart';
-import '../../models/user.dart';
-import '../../../constant/enums.dart';
-import '../../../constant/error_code.dart';
-import '../../../constant/types.dart';
-import '../../../events/reaction_event.dart';
-import '../../../params/file_message_params.dart';
-import '../../../params/message_change_logs_params.dart';
-import '../../../params/message_list_params.dart';
-import '../../../params/user_message_params.dart';
-import '../../../sdk/sendbird_sdk_api.dart';
-import '../../../sdk/internal/sendbird_sdk_internal.dart';
-import '../../../services/db/cache_service.dart';
-import '../../../services/db/cached_meta_data/cached_data_map.dart';
-import '../../../utils/async/async_operation.dart';
-import '../../../utils/logger.dart';
 
 part 'base_channel_configuration.dart';
 part 'base_channel_messages.dart';
@@ -192,6 +191,7 @@ class BaseChannel implements Cacheable {
   }
 
   // Cacheable
+
   @override
   String get key => 'channel/' + channelType.toString() + channelUrl;
 

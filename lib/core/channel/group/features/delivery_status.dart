@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../../../services/db/cache_service.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 part 'delivery_status.g.dart';
 

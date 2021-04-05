@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 import 'base_event.dart';
-
-import '../constant/enums.dart';
-import '../core/message/file_message.dart';
-import '../core/models/sender.dart';
-import '../core/models/user.dart';
 
 part 'message_event.g.dart';
 

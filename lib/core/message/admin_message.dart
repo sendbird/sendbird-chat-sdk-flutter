@@ -1,14 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'base_message.dart';
-
-import '../channel/group/features/thread_info.dart';
-import '../models/meta_array.dart';
-import '../models/og_meta_data.dart';
-import '../models/reaction.dart';
-import '../models/sender.dart';
-import '../models/user.dart';
-import '../../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/core/models/og_meta_data.dart';
+import 'package:sendbird_sdk/core/models/reaction.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 part 'admin_message.g.dart';
 
@@ -40,6 +38,7 @@ class AdminMessage extends BaseMessage {
     bool isOperatorMessage,
     String data,
     OGMetaData ogMetaData,
+    List<Reaction> reactions,
   }) : super(
           requestId: requestId,
           messageId: messageId,
@@ -65,9 +64,11 @@ class AdminMessage extends BaseMessage {
           isOperatorMessage: isOperatorMessage,
           data: data,
           ogMetaData: ogMetaData,
+          reactions: reactions,
         );
 
   factory AdminMessage.fromJson(Map<String, dynamic> json) =>
       _$AdminMessageFromJson(json);
+
   Map<String, dynamic> toJson() => _$AdminMessageToJson(this);
 }

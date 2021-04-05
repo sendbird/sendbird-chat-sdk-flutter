@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
 
 part 'message_retrieval_params.g.dart';
 

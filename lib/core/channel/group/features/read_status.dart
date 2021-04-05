@@ -1,8 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../../../constant/enums.dart';
-import '../../../../services/db/cache_service.dart';
-import '../../../../utils/json_from_parser.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'read_status.g.dart';
 

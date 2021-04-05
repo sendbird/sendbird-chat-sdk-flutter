@@ -4,27 +4,27 @@ import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sendbird_sdk/constant/contants.dart' as Constants;
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/options.dart';
+import 'package:sendbird_sdk/core/models/state.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_streams.dart';
+import 'package:sendbird_sdk/services/command/command_manager.dart';
+import 'package:sendbird_sdk/services/connection/connection_manager.dart';
+import 'package:sendbird_sdk/services/db/memory_cache_service.dart';
+import 'package:sendbird_sdk/services/network/api_client.dart';
+import 'package:sendbird_sdk/services/network/websocket_client.dart';
+import 'package:sendbird_sdk/services/session/session_manager.dart';
+import 'package:sendbird_sdk/utils/async/async_operation.dart';
+import 'package:sendbird_sdk/utils/async/async_queue.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
+import 'package:sendbird_sdk/utils/parsers.dart';
 
-import 'sendbird_sdk_streams.dart';
-
-import '../../core/models/options.dart';
-import '../../core/models/state.dart';
-import '../../core/models/error.dart';
-import '../../core/models/user.dart';
-import '../../services/connection/connection_manager.dart';
-import '../../constant/contants.dart' as Constants;
-import '../../handlers/event_manager.dart';
-import '../../services/command/command_manager.dart';
-import '../../services/session/session_manager.dart';
-import '../../services/db/memory_cache_service.dart';
-import '../../services/network/api_client.dart';
-import '../../services/network/websocket_client.dart';
-import '../../utils/logger.dart';
-import '../../utils/parsers.dart';
-import '../../utils/async/async_operation.dart';
-import '../../utils/async/async_queue.dart';
-
-const sdk_version = '3.0.6';
+const sdk_version = '3.0.7';
+const platform = 'flatter';
+const platform_version = '1.22.5';
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {
@@ -150,6 +150,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   /// [apiHost] and [wsHost] are optional in case to connect own server
   Future<User> connect({
     String userId,
+    String nickname,
     String accessToken,
     String apiHost,
     String wsHost,
@@ -210,14 +211,18 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _api.initialize(baseUrl: apiHost, headers: {
       'SB-User-Agent': this._sbUserAgent,
-      'User-Agent': 'flutter/$sdk_version',
+      'User-Agent':
+          '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
     });
 
     var params = {
-      'p': Platform.operatingSystem,
-      'pv': Platform.operatingSystemVersion, //device_info
+      'p': platform,
+      'pv': platform_version,
+      'o': Platform.operatingSystem, // os
+      'ov': Platform.operatingSystemVersion, // os version
       'sv': sdk_version,
       'ai': _state.appId,
+      if (nickname != null && nickname != '') 'nickname': nickname,
       if (reconnect && sessionKey != null)
         'key': sessionKey
       else
@@ -319,15 +324,12 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   _handleEnterForeground() async {
-    //need to connect with existing session key
-    //if previously connected
-    //reconnecting
     if (_state.currentUser != null)
       await connect(userId: _state.userId, reconnect: true);
   }
 
   void _listenConnectionEvents() {
-    //do not run connectivity on test
+    //NOTE: do not run connectivity on test
     bool isTest = Platform.environment['FLUTTER_TEST'] == 'true';
     if (!isTest) {
       _connectionSub = Connectivity()
@@ -360,7 +362,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final uikitVersion = _extensions[Constants.SbExtensionKeyUIKit];
     final core = '/c$sdk_version';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
-    return 'flutter$core$uikit';
+    final os = '/o${Platform.operatingSystem.toLowerCase()}';
+    return '$platform$core$uikit$os';
   }
 
   void addVersionExtension(String key, String version) {

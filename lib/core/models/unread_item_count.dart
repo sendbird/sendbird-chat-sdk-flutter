@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
 
 part 'unread_item_count.g.dart';
 

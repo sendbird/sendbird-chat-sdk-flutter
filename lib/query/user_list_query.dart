@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import '../sdk/sendbird_sdk_api.dart';
-import '../constant/enums.dart';
-import '../core/models/error.dart';
-import '../core/models/responses.dart';
-import '../core/models/user.dart';
-import '../query/base_query.dart';
-
+part 'user_list_query.g.dart';
 part 'application_user_list_query.dart';
 
 /// A query object to retrieve user list
+@JsonSerializable()
 class UserListQuery extends QueryBase {
   /// Channel type related to this query
   ChannelType channelType;
@@ -98,4 +100,8 @@ class UserListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.users;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$UserListQueryToJson(this);
 }

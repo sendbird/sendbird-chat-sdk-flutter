@@ -2,10 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:mime/mime.dart';
-
-import '../core/message/file_message.dart';
-import '../core/models/image_info.dart';
-import '../params/base_message_params.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/params/base_message_params.dart';
 
 /// An object consists a set of parameters for file message.
 class FileMessageParams extends BaseMessageParams {

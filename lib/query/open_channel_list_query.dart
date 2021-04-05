@@ -1,10 +1,14 @@
-import '../constant/enums.dart';
-import '../core/channel/open/open_channel.dart';
-import '../core/models/error.dart';
-import '../query/base_query.dart';
-import '../sdk/sendbird_sdk_api.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+
+part 'open_channel_list_query.g.dart';
 
 /// A query object to retrieve list of open channel.
+@JsonSerializable()
 class OpenChannelListQuery extends QueryBase {
   /// Channel url
   String channelUrl;
@@ -52,4 +56,8 @@ class OpenChannelListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.channels;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$OpenChannelListQueryToJson(this);
 }

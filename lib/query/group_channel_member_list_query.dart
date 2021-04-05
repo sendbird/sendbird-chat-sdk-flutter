@@ -1,12 +1,15 @@
-import '../constant/enums.dart';
-import '../core/models/error.dart';
-import '../core/models/user.dart';
-import '../sdk/sendbird_sdk_api.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import 'base_query.dart';
+part 'group_channel_member_list_query.g.dart';
 
 /// A query object to retrieve list of members from my group channel.
-class GroupChannelMemberListListQuery extends QueryBase {
+@JsonSerializable()
+class GroupChannelMemberListQuery extends QueryBase {
   /// Channel url
   String channelUrl;
 
@@ -24,6 +27,8 @@ class GroupChannelMemberListListQuery extends QueryBase {
 
   /// Defines query result's order
   MemberListOrder order;
+
+  GroupChannelMemberListQuery();
 
   @override
   Future<List<User>> loadNext() async {
@@ -49,4 +54,8 @@ class GroupChannelMemberListListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.users;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$GroupChannelMemberListQueryToJson(this);
 }

@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../models/user.dart';
-import '../../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 part 'member.g.dart';
 
@@ -57,18 +56,23 @@ class Member extends User {
           requireAuth: requireAuth,
         );
 
-  // @override
-  // bool operator ==(other) {
-  //   if (identical(other, this)) return true;
-  //   if (!(super == (other))) return false;
+  // json serialization
 
-  //   return true;
-  // }
-
-  // @override
-  // int get hashCode => super.hashCode;
-
-  /// json serialization
   factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
+
   Map<String, dynamic> toJson() => _$MemberToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    return other is Member &&
+        other.role == role &&
+        other.isMuted == isMuted &&
+        other.state == state;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }

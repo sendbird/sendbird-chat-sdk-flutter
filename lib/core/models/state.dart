@@ -1,9 +1,9 @@
-import 'app_info.dart';
-import 'reconnect_configuration.dart';
-import 'reconnect_task.dart';
-import 'unread_count_info.dart';
-import 'user.dart';
-import '../../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/app_info.dart';
+import 'package:sendbird_sdk/core/models/reconnect_configuration.dart';
+import 'package:sendbird_sdk/core/models/reconnect_task.dart';
+import 'package:sendbird_sdk/core/models/unread_count_info.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 class SendbirdState {
   String appId;

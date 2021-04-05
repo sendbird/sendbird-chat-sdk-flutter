@@ -1,9 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'base_event.dart';
-
-import '../core/channel/open/open_channel.dart';
-import '../core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/events/base_event.dart';
 
 part 'mcnt_event.g.dart';
 

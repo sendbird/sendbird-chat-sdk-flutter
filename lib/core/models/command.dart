@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:uuid/uuid.dart';
+import 'package:sendbird_sdk/constant/command_type.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/params/file_message_params.dart';
+import 'package:sendbird_sdk/params/user_message_params.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
-import '../channel/base/base_channel.dart';
-import '../message/base_message.dart';
-import '../message/file_message.dart';
-import '../message/user_message.dart';
-import '../models/error.dart';
-import '../models/meta_array.dart';
-import '../../constant/enums.dart';
-import '../../constant/command_type.dart';
-import '../../handlers/event_manager.dart';
-import '../../params/file_message_params.dart';
-import '../../params/user_message_params.dart';
-import '../../sdk/sendbird_sdk_api.dart';
-import '../../utils/extensions.dart';
+import 'package:uuid/uuid.dart';
 
 part 'command.g.dart';
 

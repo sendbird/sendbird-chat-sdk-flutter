@@ -1,6 +1,7 @@
 part of 'user_list_query.dart';
 
 /// A query object to retrieve list of user on current application.
+@JsonSerializable()
 class ApplicationUserListQuery extends UserListQuery {
   /// The meta data key filter. This query will return users
   /// that has the meta data key and values
@@ -35,4 +36,7 @@ class ApplicationUserListQuery extends UserListQuery {
     hasNext = res.next != '';
     return res.users;
   }
+
+  // Json Serialization
+  Map<String, dynamic> toJson() => _$ApplicationUserListQueryToJson(this);
 }

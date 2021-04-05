@@ -1,6 +1,5 @@
-import '../core/models/user.dart';
-
-import 'event_manager.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
 
 /// Represents a class to notify user event.
 ///

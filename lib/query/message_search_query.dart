@@ -1,10 +1,14 @@
-import '../constant/enums.dart';
-import '../core/message/base_message.dart';
-import '../core/models/error.dart';
-import '../query/base_query.dart';
-import '../sdk/sendbird_sdk_api.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+
+part 'message_search_query.g.dart';
 
 /// A query object to search messages
+@JsonSerializable()
 class MessageSearchQuery extends QueryBase {
   ///Keyword to search
   String keyword;
@@ -38,6 +42,8 @@ class MessageSearchQuery extends QueryBase {
   /// Message search result sort order
   MessageSearchQueryOrder order = MessageSearchQueryOrder.timestamp;
 
+  MessageSearchQuery();
+
   @override
   Future<List<BaseMessage>> loadNext() async {
     if (loading) throw QueryInProgressError();
@@ -67,4 +73,8 @@ class MessageSearchQuery extends QueryBase {
     hasNext = res.hasNext;
     return res.results;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$MessageSearchQueryToJson(this);
 }

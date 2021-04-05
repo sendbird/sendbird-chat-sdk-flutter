@@ -1,18 +1,16 @@
-import 'group_channel.dart';
-
-import 'features/delivery_status.dart';
-import 'features/read_status.dart';
-import 'features/typing_status.dart';
-
-import '../../message/base_message.dart';
-import '../../message/base_message_internal.dart';
-import '../../models/member.dart';
-import '../../models/user.dart';
-import '../../models/sender.dart';
-import '../../../constant/enums.dart';
-import '../../../events/channel_event.dart';
-import '../../../sdk/sendbird_sdk_api.dart';
-import '../../../services/db/cache_service.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/message/base_message_internal.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/channel_event.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 extension GroupChannelInternal on GroupChannel {
   bool shouldUpdateLastMessage(BaseMessage message, Sender sender) {

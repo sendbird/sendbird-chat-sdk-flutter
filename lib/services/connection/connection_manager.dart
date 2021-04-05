@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import '../../constant/enums.dart';
-import '../../core/models/error.dart';
-import '../../sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 class ConnectionManager {
   // Map<String, NetworkEventHandler> _networkHandlers = {};

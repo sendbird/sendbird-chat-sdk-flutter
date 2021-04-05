@@ -27,8 +27,7 @@ MessageChangeLogsResponse _$MessageChangeLogsResponseFromJson(
         ?.map((e) =>
             e == null ? null : BaseMessage.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    deletedMessageIds:
-        (json['deleted'] as List)?.map((e) => e as String)?.toList(),
+    deletedMessageIds: _deletedIds(json['deleted'] as List),
     hasMore: json['has_more'] as bool,
     next: json['next'] as String,
   );

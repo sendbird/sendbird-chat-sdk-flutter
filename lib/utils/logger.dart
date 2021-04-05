@@ -1,6 +1,5 @@
 import 'package:logger/logger.dart';
-
-import '../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
 
 var logger = Logger(
   level: Level.nothing,

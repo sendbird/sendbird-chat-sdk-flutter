@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import '../models/reconnect_configuration.dart';
+import 'package:sendbird_sdk/core/models/reconnect_configuration.dart';
 
 class ReconnectTask {
   int _backOffPeriod = 0;

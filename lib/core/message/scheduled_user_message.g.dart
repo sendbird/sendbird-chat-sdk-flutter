@@ -64,12 +64,51 @@ ScheduledUserMessage _$ScheduledUserMessageFromJson(Map<String, dynamic> json) {
     ogMetaData: json['og_tag'] == null
         ? null
         : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
-  )..reactions = (json['reactions'] as List)
-          ?.map((e) =>
-              e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))
-          ?.toList() ??
-      [];
+    reactions: (json['reactions'] as List)
+            ?.map((e) =>
+                e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))
+            ?.toList() ??
+        [],
+  );
 }
+
+Map<String, dynamic> _$ScheduledUserMessageToJson(
+        ScheduledUserMessage instance) =>
+    <String, dynamic>{
+      'request_id': instance.requestId,
+      'message_id': instance.messageId,
+      'message': instance.message,
+      'sending_status': _$MessageSendingStatusEnumMap[instance.sendingStatus],
+      'user': instance.sender,
+      'channel_url': instance.channelUrl,
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'mentioned_users': instance.mentionedUsers,
+      'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'requested_mention_user_ids': instance.requestedMentionUserIds,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'parent_message_id': instance.parentMessageId,
+      'parent_message_text': instance.parentMessageText,
+      'thread_info': instance.threadInfo,
+      'sorted_metaarray': instance.metaArrays,
+      'custom_type': instance.customType,
+      'message_survival_seconds': instance.messageSurvivalSeconds,
+      'force_update_last_message': instance.forceUpdateLastMessage,
+      'silent': instance.isSilent,
+      'error_code': instance.errorCode,
+      'is_op_msg': instance.isOperatorMessage,
+      'data': instance.data,
+      'og_tag': instance.ogMetaData,
+      'reactions': instance.reactions,
+      'scheduled_id': instance.scheduledId,
+      'scheduled_dt': instance.scheduledDateTimeString,
+      'scheduled_timezone': instance.scheduledTimezone,
+      'status': _$ScheduledUserMessageStatusEnumMap[instance.status],
+      'push_option':
+          _$PushNotificationDeliveryOptionEnumMap[instance.pushOption],
+      'error': instance.error,
+      'translation_target_langs': instance.targetLanguages,
+    };
 
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,

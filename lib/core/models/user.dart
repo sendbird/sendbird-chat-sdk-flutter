@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:json_annotation/json_annotation.dart';
-
-import '../models/error.dart';
-import '../../constant/enums.dart';
-import '../../sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 part 'user.g.dart';
 
@@ -124,7 +124,8 @@ class User {
 
   bool get isCurrentUser => userId == SendbirdSdk().getCurrentUser()?.userId;
 
-  /// json serialization
+  // json serialization
+
   factory User.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];
     if (json['session_tokens'] != null &&
@@ -140,6 +141,31 @@ class User {
   }
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+
+    return other is User &&
+        other.userId == userId &&
+        other.nickname == nickname &&
+        other.profileUrl == profileUrl &&
+        other.connectionStatus == connectionStatus &&
+        other.lastSeenAt == lastSeenAt &&
+        other.preferredLanguages == preferredLanguages &&
+        other.isActive == isActive &&
+        other.metaData == metaData &&
+        other.requireAuth == requireAuth;
+  }
+
+  @override
+  int get hashCode => hashValues(
+        userId,
+        nickname,
+        profileUrl,
+        connectionStatus,
+        metaData,
+      );
 
   void copyWith(User other) {
     nickname = other.nickname;

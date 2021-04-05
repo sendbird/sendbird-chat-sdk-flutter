@@ -1,12 +1,15 @@
-import 'base_query.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import '../constant/enums.dart';
-import '../core/channel/group/group_channel.dart';
-import '../core/models/error.dart';
-import '../core/models/group_channel_filters.dart';
-import '../sdk/sendbird_sdk_api.dart';
+part 'public_group_channel_list_query.g.dart';
 
 /// A query object to retrieve list of public group channel.
+@JsonSerializable()
 class PublicGroupChannelListQuery extends QueryBase {
   /// Filters for channel urls.
   ///
@@ -53,6 +56,8 @@ class PublicGroupChannelListQuery extends QueryBase {
   /// deault value is `true`
   bool includeMetaData = true;
 
+  PublicGroupChannelListQuery();
+
   @override
   Future<List<GroupChannel>> loadNext() async {
     if (loading) throw QueryInProgressError();
@@ -65,6 +70,8 @@ class PublicGroupChannelListQuery extends QueryBase {
       if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
       if (includeMemberList) ChannelQueryIncludeOption.memberList,
       if (includeMetaData) ChannelQueryIncludeOption.metaData,
+      ChannelQueryIncludeOption.readReceipt,
+      ChannelQueryIncludeOption.deliveryReceipt,
     ];
 
     final filter = GroupChannelFilter()
@@ -91,4 +98,8 @@ class PublicGroupChannelListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.channels;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$PublicGroupChannelListQueryToJson(this);
 }

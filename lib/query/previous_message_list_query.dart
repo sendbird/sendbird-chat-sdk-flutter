@@ -1,11 +1,15 @@
-import '../constant/enums.dart';
-import '../core/message/base_message.dart';
-import '../core/models/error.dart';
-import '../params/message_list_params.dart';
-import '../sdk/sendbird_sdk_api.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/params/message_list_params.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import 'base_query.dart';
+part 'previous_message_list_query.g.dart';
 
+/// A query object to retrieve previous messages
+@JsonSerializable()
 class PreviousMessageListQuery extends QueryBase {
   /// Channel type
   ChannelType channelType;
@@ -97,4 +101,8 @@ class PreviousMessageListQuery extends QueryBase {
     hasNext = res.length == limit;
     return res;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$PreviousMessageListQueryToJson(this);
 }

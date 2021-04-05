@@ -1,4 +1,4 @@
-import '../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
 
 /// An object consists a set of parameters for group channel total unread
 ///  message count.

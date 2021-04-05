@@ -3,15 +3,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
-
-import '../../constant/error_code.dart';
-import '../../constant/types.dart';
-import '../../core/models/image_info.dart';
-import '../../core/models/error.dart';
-import '../../sdk/sendbird_sdk_api.dart';
-import '../../services/connection/connection_manager.dart';
-import '../../utils/extensions.dart';
-import '../../utils/logger.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/connection/connection_manager.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
 enum Method {
   get,

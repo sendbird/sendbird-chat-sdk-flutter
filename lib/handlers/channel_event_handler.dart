@@ -1,13 +1,12 @@
-import 'event_manager.dart';
-
-import '../constant/enums.dart';
-import '../core/channel/base/base_channel.dart';
-import '../core/channel/group/group_channel.dart';
-import '../core/channel/open/open_channel.dart';
-import '../events/reaction_event.dart';
-import '../events/thread_info_update_event.dart';
-import '../core/message/base_message.dart';
-import '../core/models/user.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
+import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
 
 /// Represents a class to notify various channel event.
 ///

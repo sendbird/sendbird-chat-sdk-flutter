@@ -50,11 +50,12 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
     ogMetaData: json['og_tag'] == null
         ? null
         : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
-  )..reactions = (json['reactions'] as List)
-          ?.map((e) =>
-              e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))
-          ?.toList() ??
-      [];
+    reactions: (json['reactions'] as List)
+            ?.map((e) =>
+                e == null ? null : Reaction.fromJson(e as Map<String, dynamic>))
+            ?.toList() ??
+        [],
+  );
 }
 
 Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>

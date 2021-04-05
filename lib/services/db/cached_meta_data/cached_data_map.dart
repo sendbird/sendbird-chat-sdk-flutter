@@ -1,8 +1,7 @@
-import 'cached_data.dart';
-
-import '../policy.dart';
-import '../cache_service.dart';
-import '../../../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data.dart';
+import 'package:sendbird_sdk/services/db/policy.dart';
 
 class CachedDataMap<T> implements Cacheable, Evictable {
   ChannelType _channelType;

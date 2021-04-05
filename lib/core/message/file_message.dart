@@ -1,20 +1,18 @@
 import 'dart:io';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/core/models/og_meta_data.dart';
+import 'package:sendbird_sdk/core/models/reaction.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/params/file_message_params.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:uuid/uuid.dart';
-
-import 'base_message.dart';
-
-import '../channel/base/base_channel.dart';
-import '../channel/group/features/thread_info.dart';
-import '../models/meta_array.dart';
-import '../models/og_meta_data.dart';
-import '../models/reaction.dart';
-import '../models/sender.dart';
-import '../models/user.dart';
-import '../../constant/enums.dart';
-import '../../params/file_message_params.dart';
-import '../../sdk/sendbird_sdk_api.dart';
 
 part 'file_message.g.dart';
 
@@ -85,6 +83,7 @@ class FileMessage extends BaseMessage {
     bool isOperatorMessage,
     String data,
     OGMetaData ogMetaData,
+    List<Reaction> reactions,
   }) : super(
           requestId: requestId,
           messageId: messageId,
@@ -110,6 +109,7 @@ class FileMessage extends BaseMessage {
           isOperatorMessage: isOperatorMessage,
           data: data,
           ogMetaData: ogMetaData,
+          reactions: reactions,
         );
 
   factory FileMessage.fromJson(Map<String, dynamic> json) {

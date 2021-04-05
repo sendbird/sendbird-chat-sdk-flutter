@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:async';
 
-import '../../constant/enums.dart';
-import '../../core/models/command.dart';
-import '../../core/models/error.dart';
-import '../../utils/logger.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 
 typedef void OnWSConnect();
 typedef void OnWSDisconnect();

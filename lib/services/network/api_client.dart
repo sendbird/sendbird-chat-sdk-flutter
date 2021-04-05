@@ -1,36 +1,34 @@
 import 'package:meta/meta.dart';
-
-import 'http_client.dart';
-import 'api_endpoints.dart' as endpoint;
-
-import '../../core/channel/base/base_channel.dart';
-import '../../core/channel/group/group_channel.dart';
-import '../../core/channel/open/open_channel.dart';
-import '../../core/message/base_message.dart';
-import '../../core/message/file_message.dart';
-import '../../core/message/user_message.dart';
-import '../../core/message/scheduled_user_message.dart';
-import '../../core/models/emoji.dart';
-import '../../core/models/error.dart';
-import '../../core/models/group_channel_filters.dart';
-import '../../core/models/unread_item_count.dart';
-import '../../core/models/responses.dart';
-import '../../core/models/image_info.dart';
-import '../../core/models/user.dart';
-import '../../constant/command_type.dart';
-import '../../constant/enums.dart';
-import '../../constant/error_code.dart';
-import '../../constant/types.dart';
-import '../../events/reaction_event.dart';
-import '../../params/group_channel_params.dart';
-import '../../params/scheduled_user_message_params.dart';
-import '../../params/user_message_params.dart';
-import '../../params/file_message_params.dart';
-import '../../params/message_retrieval_params.dart';
-import '../../params/group_channel_change_logs_params.dart';
-import '../../params/message_change_logs_params.dart';
-import '../../params/open_channel_params.dart';
-import '../../utils/extensions.dart';
+import 'package:sendbird_sdk/constant/command_type.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
+import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/core/models/emoji.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
+import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/unread_item_count.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
+import 'package:sendbird_sdk/params/file_message_params.dart';
+import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
+import 'package:sendbird_sdk/params/group_channel_params.dart';
+import 'package:sendbird_sdk/params/message_change_logs_params.dart';
+import 'package:sendbird_sdk/params/message_retrieval_params.dart';
+import 'package:sendbird_sdk/params/open_channel_params.dart';
+import 'package:sendbird_sdk/params/scheduled_user_message_params.dart';
+import 'package:sendbird_sdk/params/user_message_params.dart';
+import 'package:sendbird_sdk/services/network/api_endpoints.dart' as endpoint;
+import 'package:sendbird_sdk/services/network/http_client.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
 class ApiClient {
   HttpClient client = HttpClient();
@@ -594,6 +592,34 @@ class ApiClient {
     return BaseMessage.msgFromJson<UserMessage>(res);
   }
 
+  Future<UserMessage> updateUserMessage({
+    @required ChannelType channelType,
+    @required String channelUrl,
+    @required int messageId,
+    @required UserMessageParams params,
+    @required String senderId,
+    List<String> additionalMentionedUserIds,
+  }) async {
+    final url = endpoint.Channels.channelurl_messages_messageid.format([
+      channelType.urlString,
+      channelUrl,
+      messageId,
+    ]);
+
+    final body = {
+      'message_type': CommandType.userMessage,
+      'user_id': senderId,
+      if (additionalMentionedUserIds != null)
+        'mentioned_user_ids': additionalMentionedUserIds,
+    };
+
+    body.addAll(params.toJson());
+    body.removeWhere((key, value) => value == null);
+
+    final res = await client.put(url: url, body: body);
+    return BaseMessage.msgFromJson<UserMessage>(res);
+  }
+
   Future<FileMessage> sendFileMessage({
     @required ChannelType channelType,
     @required String channelUrl,
@@ -621,6 +647,34 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.post(url: url, body: body);
+    return BaseMessage.msgFromJson<FileMessage>(res);
+  }
+
+  Future<FileMessage> updateFileMessage({
+    @required ChannelType channelType,
+    @required String channelUrl,
+    @required int messageId,
+    @required FileMessageParams params,
+    @required String senderId,
+    List<String> additionalMentionedUserIds,
+  }) async {
+    final url = endpoint.Channels.channelurl_messages_messageid.format([
+      channelType.urlString,
+      channelUrl,
+      messageId,
+    ]);
+
+    final body = {
+      'message_type': CommandType.fileMessage,
+      'user_id': senderId,
+      if (additionalMentionedUserIds != null)
+        'mentioned_user_ids': additionalMentionedUserIds,
+    };
+
+    body.addAll(params.toJson());
+    body.removeWhere((key, value) => value == null);
+
+    final res = await client.put(url: url, body: body);
     return BaseMessage.msgFromJson<FileMessage>(res);
   }
 
@@ -725,7 +779,8 @@ class ApiClient {
     final res = await client.get(url: url, queryParams: queryParams);
     return (res['messages'] as List)
         .map((e) => BaseMessage.msgFromJson(e, channelType: channelType))
-        .toList();
+        .toList()
+          ..removeWhere((e) => e == null);
   }
 
   Future<MessageChangeLogsResponse> getMessageChangeLogs({
@@ -1367,8 +1422,6 @@ class ApiClient {
       'limit': limit,
       'channelUrls': channelUrls,
       'order': publicGroupChannelListOrderEnumMap[order],
-      'show_read_receipt': true,
-      'show_delivery_receipt': true,
       'distinct_mode': 'all',
     };
 

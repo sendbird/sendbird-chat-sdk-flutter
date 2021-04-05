@@ -1,5 +1,5 @@
-import '../core/channel/group/group_channel.dart';
-import '../core/models/image_info.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/models/image_info.dart';
 
 /// An object consists a set of parameters to create/update group channel.
 class GroupChannelParams {

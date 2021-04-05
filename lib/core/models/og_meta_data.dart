@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'og_image.dart';
+import 'package:sendbird_sdk/core/models/og_image.dart';
 
 part 'og_meta_data.g.dart';
 

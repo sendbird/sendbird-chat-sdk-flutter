@@ -1,3 +1,12 @@
+## [3.0.7]
+* Added `nickname` parameter in `connect` method
+* Implemented `==` operator for channels, users and messages
+* Implmeneted json serializations for queries
+* Fixed message change log bugs
+* Updated user agent
+* Updated README and fixed repo link
+* Cleaned up import pattern
+
 ## [3.0.6]
 * Renamed package `sendbirdsdk` to `sendbird_sdk`
 * Cleaned up unused codes

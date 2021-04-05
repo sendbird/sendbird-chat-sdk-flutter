@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
-
-import '../../core/channel/base/base_channel.dart';
-import '../../core/channel/group/group_channel.dart';
-import '../../core/channel/group/features/delivery_status.dart';
-import '../../core/channel/group/features/read_status.dart';
-import '../../core/channel/group/features/typing_status.dart';
-import '../../core/channel/open/open_channel.dart';
-
-import 'cache_service.dart';
-import 'cached_meta_data/cached_data_map.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
 
 class MemoryCacheStorage implements CacheStorage {
   Map<String, ChannelCacheUnit> _cacheMap = {};

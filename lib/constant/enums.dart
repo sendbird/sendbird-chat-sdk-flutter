@@ -525,14 +525,21 @@ enum ChannelQueryIncludeOption {
 
 extension IncludeOptionList on List<ChannelQueryIncludeOption> {
   Map<String, bool> toJson() {
+    final hasEmpty = this.contains(ChannelQueryIncludeOption.emptyChannel);
+    final hasMember = this.contains(ChannelQueryIncludeOption.memberList);
+    final hasFrozen = this.contains(ChannelQueryIncludeOption.frozenChannel);
+    final hasRead = this.contains(ChannelQueryIncludeOption.readReceipt);
+    final hasDelivery =
+        this.contains(ChannelQueryIncludeOption.deliveryReceipt);
+    final hasMeta = this.contains(ChannelQueryIncludeOption.metaData);
+
     return {
-      'show_empty': this.contains(ChannelQueryIncludeOption.emptyChannel),
-      'show_member': this.contains(ChannelQueryIncludeOption.memberList),
-      'show_frozen': this.contains(ChannelQueryIncludeOption.frozenChannel),
-      'show_read_receipt': this.contains(ChannelQueryIncludeOption.readReceipt),
-      'show_delivery_receipt':
-          this.contains(ChannelQueryIncludeOption.deliveryReceipt),
-      'show_metadata': this.contains(ChannelQueryIncludeOption.metaData),
+      if (hasEmpty) 'show_empty': true,
+      if (hasMember) 'show_member': true,
+      if (hasFrozen) 'show_frozen': true,
+      if (hasRead) 'show_read_receipt': true,
+      if (hasDelivery) 'show_delivery_receipt': true,
+      if (hasMeta) 'show_metadata': true,
     };
   }
 }

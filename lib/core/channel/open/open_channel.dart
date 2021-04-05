@@ -1,16 +1,17 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:ui';
 
-import '../base/base_channel.dart';
-import '../../models/command.dart';
-import '../../models/error.dart';
-import '../../models/user.dart';
-import '../../../constant/enums.dart';
-import '../../../constant/types.dart';
-import '../../../params/open_channel_params.dart';
-import '../../../sdk/sendbird_sdk_api.dart';
-import '../../../sdk/internal/sendbird_sdk_internal.dart';
-import '../../../services/db/cache_service.dart';
-import '../../../services/db/cache_utils.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/params/open_channel_params.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/services/db/cache_utils.dart';
 
 part 'open_channel.g.dart';
 part 'open_channel_operations.dart';
@@ -159,6 +160,24 @@ class OpenChannel extends BaseChannel {
       _$OpenChannelFromJson(json);
 
   Map<String, dynamic> toJson() => _$OpenChannelToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    return other is OpenChannel &&
+        other.participantCount == participantCount &&
+        other.operators == operators;
+  }
+
+  @override
+  int get hashCode => hashValues(
+        channelType,
+        channelUrl,
+        participantCount,
+        operators,
+      );
 
   @override
   void copyWith(dynamic others) {

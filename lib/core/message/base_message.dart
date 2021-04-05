@@ -1,30 +1,27 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../channel/group/features/thread_info.dart';
-import '../message/admin_message.dart';
-import '../message/file_message.dart';
-import '../message/user_message.dart';
-import '../models/error.dart';
-import '../models/og_meta_data.dart';
-import '../models/reaction.dart';
-import '../models/responses.dart';
-import '../models/meta_array.dart';
-import '../models/user.dart';
-import '../models/sender.dart';
-import '../../constant/enums.dart';
-import '../../constant/command_type.dart';
-import '../../constant/error_code.dart';
-import '../../events/reaction_event.dart';
-import '../../events/thread_info_update_event.dart';
-import '../../params/message_retrieval_params.dart';
-import '../../params/threaded_message_list_params.dart';
-import '../../sdk/sendbird_sdk_api.dart';
-import '../../utils/logger.dart';
-
-part 'base_message.g.dart';
+import 'package:sendbird_sdk/constant/command_type.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
+import 'package:sendbird_sdk/core/message/admin_message.dart';
+import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
+import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/core/models/og_meta_data.dart';
+import 'package:sendbird_sdk/core/models/reaction.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
+import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/params/message_retrieval_params.dart';
+import 'package:sendbird_sdk/params/threaded_message_list_params.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 
 /// Represents base class for messages.
-@JsonSerializable()
 class BaseMessage {
   /// Request ID for checking ACK.
   final String requestId;
@@ -311,7 +308,7 @@ class BaseMessage {
     } else if (T == AdminMessage || CommandType.isAdminMessage(cmd)) {
       msg = AdminMessage.fromJson(json) as T;
     } else {
-      msg = _$BaseMessageFromJson(json);
+      return null;
     }
 
     final metaArray = json['metaarray'];
@@ -357,7 +354,7 @@ class BaseMessage {
     } else if (CommandType.isAdminMessage(cmd)) {
       msg = AdminMessage.fromJson(json);
     } else {
-      msg = _$BaseMessageFromJson(json);
+      return null;
     }
 
     final metaArray = json['metaarray'];
@@ -382,13 +379,12 @@ class BaseMessage {
     return msg;
   }
 
-  // Builds a message object from [ByteData]
-  // static BaseMessage buildFromSeralizedData(ByteData data) {
-  //   return null;
-  // }
-
-  // Serializes message object and return [ByteData]
-  // ByteData serialize() {
-  //   return null;
-  // }
+  Map<String, dynamic> toJson() {
+    final object = this;
+    if (object is UserMessage ||
+        object is FileMessage ||
+        object is AdminMessage ||
+        object is ScheduledUserMessage) return object.toJson();
+    return null;
+  }
 }

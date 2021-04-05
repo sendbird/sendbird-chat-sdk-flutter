@@ -1,9 +1,8 @@
-import 'sendbird_sdk_internal.dart';
-
-import '../sendbird_sdk_api.dart';
-import '../../core/models/state.dart';
-import '../../handlers/event_manager.dart';
-import '../../services/network/websocket_client.dart';
+import 'package:sendbird_sdk/core/models/state.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/network/websocket_client.dart';
 
 abstract class SdkAccessor {
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();

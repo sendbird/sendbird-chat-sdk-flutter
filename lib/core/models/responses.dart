@@ -1,15 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../channel/base/base_channel.dart';
-import '../channel/group/group_channel.dart';
-import '../channel/open/open_channel.dart';
-import '../message/base_message.dart';
-import '../models/user.dart';
-import '../../services/db/cache_service.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 part 'responses.g.dart';
 
 DateTime _epochFromJson(int time) => DateTime.fromMillisecondsSinceEpoch(time);
+List<int> _deletedIds(List<dynamic> json) =>
+    json.map((e) => e['deleted_id'] as int).toList();
 
 class BaseResponse {}
 
@@ -44,8 +45,8 @@ class MessageChangeLogsResponse extends BaseResponse {
   @JsonKey(name: 'updated')
   final List<BaseMessage> updatedMessages;
 
-  @JsonKey(name: 'deleted')
-  final List<String> deletedMessageIds;
+  @JsonKey(fromJson: _deletedIds, name: 'deleted')
+  final List<int> deletedMessageIds;
 
   final bool hasMore;
 

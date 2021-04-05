@@ -1,11 +1,15 @@
-import '../constant/enums.dart';
-import '../core/channel/group/group_channel.dart';
-import '../core/models/error.dart';
-import '../core/models/group_channel_filters.dart';
-import '../query/base_query.dart';
-import '../sdk/sendbird_sdk_api.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+
+part 'group_channel_list_query.g.dart';
 
 /// A query object to retrieve list of my group channel.
+@JsonSerializable()
 class GroupChannelListQuery extends QueryBase {
   /// Order of the query result
   GroupChannelListOrder order;
@@ -86,6 +90,8 @@ class GroupChannelListQuery extends QueryBase {
   // deault value is `false`
   bool includeMetaData = true;
 
+  GroupChannelListQuery();
+
   void setUserIdsExactFilter(List<String> userIds) {
     nicknameContainsFilter = null;
     userIdsIncludeFilter = null;
@@ -132,7 +138,9 @@ class GroupChannelListQuery extends QueryBase {
       if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
       if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
       if (includeMemberList) ChannelQueryIncludeOption.memberList,
-      if (includeMetaData) ChannelQueryIncludeOption.metaData
+      if (includeMetaData) ChannelQueryIncludeOption.metaData,
+      ChannelQueryIncludeOption.readReceipt,
+      ChannelQueryIncludeOption.deliveryReceipt,
     ];
 
     final filter = GroupChannelFilter()
@@ -168,4 +176,8 @@ class GroupChannelListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.channels;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$GroupChannelListQueryToJson(this);
 }

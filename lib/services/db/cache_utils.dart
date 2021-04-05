@@ -1,9 +1,8 @@
-import 'cached_meta_data/cached_data_map.dart';
-
-import '../../core/channel/base/base_channel.dart';
-import '../../core/channel/group/features/delivery_status.dart';
-import '../../core/channel/group/features/read_status.dart';
-import '../../services/db/cache_service.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
+import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 extension JsonCacheUtils on Map<String, dynamic> {
   void cacheMetaData({BaseChannel channel, int ts}) {

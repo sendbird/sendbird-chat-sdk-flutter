@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../constant/enums.dart';
-import '../../events/reaction_event.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
 
 part 'reaction.g.dart';
 

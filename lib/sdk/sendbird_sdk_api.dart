@@ -1,31 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-
-import 'internal/sendbird_sdk_internal.dart';
-
-import '../core/channel/base/base_channel.dart';
-import '../core/channel/group/group_channel.dart';
-import '../core/channel/group/features/delivery_status.dart';
-import '../core/message/base_message.dart';
-import '../core/models/app_info.dart';
-import '../core/models/emoji.dart';
-import '../core/models/user.dart';
-import '../core/models/error.dart';
-import '../core/models/image_info.dart';
-import '../core/models/options.dart';
-import '../core/models/responses.dart';
-import '../core/models/unread_item_count.dart';
-import '../constant/enums.dart';
-import '../constant/types.dart';
-import '../handlers/event_manager.dart';
-import '../handlers/channel_event_handler.dart';
-import '../handlers/connection_event_handler.dart';
-import '../handlers/session_event_handler.dart';
-import '../handlers/user_event_handler.dart';
-import '../params/group_channel_change_logs_params.dart';
-import '../params/group_channel_total_unread_message_count_params.dart';
-import '../utils/logger.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/app_info.dart';
+import 'package:sendbird_sdk/core/models/emoji.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/options.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/unread_item_count.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
+import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
+import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/handlers/session_event_handler.dart';
+import 'package:sendbird_sdk/handlers/user_event_handler.dart';
+import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
+import 'package:sendbird_sdk/params/group_channel_total_unread_message_count_params.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {
@@ -83,12 +81,14 @@ class SendbirdSdk {
   /// generated the token from platform api
   Future<User> connect(
     String userId, {
+    String nickname,
     String accessToken,
     String apiHost,
     String wsHost,
   }) async {
     return _int.connect(
       userId: userId,
+      nickname: nickname,
       accessToken: accessToken,
       apiHost: apiHost,
       wsHost: wsHost,

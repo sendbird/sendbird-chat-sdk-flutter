@@ -1,10 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../channel/base/base_channel.dart';
-import '../channel/group/group_channel.dart';
-import '../channel/open/open_channel.dart';
-import '../../constant/enums.dart';
-import '../models/user.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 part 'sender.g.dart';
 
@@ -57,20 +56,8 @@ class Sender extends User {
     return sender;
   }
 
-  // @override
-  // bool operator ==(other) {
-  //   if (identical(other, this)) return true;
-  //   if (isBlockedByMe != other.isBlockedByMe) return false;
-  //   if (role != other.role) return false;
-  //   if (!(super == (other))) return false;
+  //json serialization
 
-  //   return true;
-  // }
-
-  // @override
-  // int get hashCode => super.hashCode;
-
-  /// json serialization
   factory Sender.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];
     if (json['name'] != null) json['nickname'] = json['name'];
@@ -79,4 +66,15 @@ class Sender extends User {
   }
 
   Map<String, dynamic> toJson() => _$SenderToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    return other is Sender && other.role == role;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }

@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../../models/user.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
 part 'thread_info.g.dart';
 

@@ -1,23 +1,21 @@
 import 'package:flutter/foundation.dart';
-
-import 'channel_event_handler.dart';
-import 'connection_event_handler.dart';
-import 'session_event_handler.dart';
-import 'user_event_handler.dart';
-
-import '../core/channel/base/base_channel.dart';
-import '../core/channel/group/group_channel.dart';
-import '../core/channel/open/open_channel.dart';
-import '../core/message/base_message.dart';
-import '../core/models/responses.dart';
-import '../core/models/error.dart';
-import '../core/models/user.dart';
-import '../constant/enums.dart';
-import '../events/reaction_event.dart';
-import '../events/thread_info_update_event.dart';
-import '../sdk/sendbird_sdk_api.dart';
-import '../sdk/internal/sendbird_sdk_internal.dart';
-import '../utils/logger.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/reaction_event.dart';
+import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
+import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
+import 'package:sendbird_sdk/handlers/session_event_handler.dart';
+import 'package:sendbird_sdk/handlers/user_event_handler.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 
 abstract class EventHandler {}
 

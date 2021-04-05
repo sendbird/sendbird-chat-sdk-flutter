@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
-import '../core/message/base_message.dart';
-import '../core/models/command.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
 
 Future<Command> parseCommand(String data) async {
   return compute(parseCommandData, data);

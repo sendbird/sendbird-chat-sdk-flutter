@@ -1,4 +1,4 @@
-import '../constant/enums.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
 
 MuteState booltoMuteState(bool isMuted) =>
     isMuted != null && isMuted ? MuteState.muted : MuteState.unmuted;

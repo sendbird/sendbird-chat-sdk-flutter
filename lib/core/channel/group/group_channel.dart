@@ -1,28 +1,28 @@
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 
-import 'group_channel_internal.dart';
-
-import 'features/delivery_status.dart';
-import 'features/read_status.dart';
-import 'features/typing_status.dart';
-
-import '../base/base_channel.dart';
-import '../../message/admin_message.dart';
-import '../../message/base_message.dart';
-import '../../message/scheduled_user_message.dart';
-import '../../models/command.dart';
-import '../../models/error.dart';
-import '../../models/member.dart';
-import '../../models/user.dart';
-import '../../../constant/enums.dart';
-import '../../../constant/types.dart';
-import '../../../params/group_channel_params.dart';
-import '../../../params/scheduled_user_message_params.dart';
-import '../../../sdk/sendbird_sdk_api.dart';
-import '../../../sdk/internal/sendbird_sdk_internal.dart';
-import '../../../services/db/cache_service.dart';
-import '../../../services/db/cache_utils.dart';
-import '../../../utils/json_from_parser.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/types.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
+import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
+import 'package:sendbird_sdk/core/message/admin_message.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/params/group_channel_params.dart';
+import 'package:sendbird_sdk/params/scheduled_user_message_params.dart';
+import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/services/db/cache_utils.dart';
+import 'package:sendbird_sdk/services/db/cache_service.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'group_channel.g.dart';
 part 'group_channel_operations.dart';
@@ -306,7 +306,7 @@ class GroupChannel extends BaseChannel {
         orElse: () => null);
   }
 
-  /// json serialization
+  // json serialization
 
   factory GroupChannel.fromJson(Map<String, dynamic> json) {
     final channel = _$GroupChannelFromJson(json);
@@ -326,6 +326,56 @@ class GroupChannel extends BaseChannel {
   }
 
   Map<String, dynamic> toJson() => _$GroupChannelToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    return other is GroupChannel &&
+        other.lastMessage == lastMessage &&
+        other.isSuper == isSuper &&
+        other.isStrict == isStrict &&
+        other.isBroadcast == isBroadcast &&
+        other.isPublic == isPublic &&
+        other.isDistinct == isDistinct &&
+        other.isDiscoverable == isDiscoverable &&
+        other.accessCodeRequired == accessCodeRequired &&
+        other.unreadMentionCount == unreadMentionCount &&
+        other.unreadMessageCount == unreadMessageCount &&
+        other.members == members &&
+        other.memberCount == memberCount &&
+        other.joinedMemberCount == joinedMemberCount &&
+        other.myPushTriggerOption == myPushTriggerOption &&
+        other.myMemberState == myMemberState &&
+        other.myRole == myRole &&
+        other.myMutedState == myMutedState &&
+        other.myCountPreference == myCountPreference &&
+        other.inviter == inviter &&
+        other.hiddenState == hiddenState &&
+        other.isHidden == isHidden &&
+        other.myLastRead == myLastRead &&
+        other.messageOffsetTimestamp == messageOffsetTimestamp &&
+        other.messageSurvivalSeconds == messageSurvivalSeconds;
+  }
+
+  @override
+  int get hashCode => hashValues(
+        channelType,
+        channelUrl,
+        lastMessage,
+        myMutedState,
+        myLastRead,
+        messageSurvivalSeconds,
+        isHidden,
+        invitedAt,
+        inviter,
+        members,
+        memberCount,
+        unreadMessageCount,
+        unreadMentionCount,
+        myRole,
+      );
 
   @override
   void copyWith(dynamic other) {
@@ -353,15 +403,4 @@ class GroupChannel extends BaseChannel {
       messageSurvivalSeconds = other.messageSurvivalSeconds;
     }
   }
-
-  ///
-  /// Builds a message object from serialized data
-  // static GroupChannel buildFromSeralizedData(ByteData data) {
-  //   return null;
-  // }
-
-  // /// Serializes message object
-  // ByteData serialize() {
-  //   return null;
-  // }
 }

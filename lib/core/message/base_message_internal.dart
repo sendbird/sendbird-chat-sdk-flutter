@@ -1,7 +1,7 @@
-import 'base_message.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 
-import '../models/user.dart';
-import '../../constant/enums.dart';
+import 'base_message.dart';
 
 extension BaseMessageInternal on BaseMessage {
   bool containsMentionedUser(User user) {

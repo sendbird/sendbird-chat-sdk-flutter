@@ -1,7 +1,7 @@
-import '../constant/enums.dart';
-import '../core/message/base_message.dart';
-import '../core/models/meta_array.dart';
-import '../utils/extensions.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
 /// Represents base class for message parameters.
 class BaseMessageParams {

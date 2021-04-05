@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/query/base_query.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
-import '../constant/enums.dart';
-import '../core/models/error.dart';
-import '../sdk/sendbird_sdk_api.dart';
-
-import 'base_query.dart';
+part 'operator_list_query.g.dart';
 
 /// A query object to retrieve operators.
+@JsonSerializable()
 class OperatorListQuery extends QueryBase {
   /// Channel type
   ChannelType channelType;
@@ -42,4 +44,8 @@ class OperatorListQuery extends QueryBase {
     hasNext = res.next != '';
     return res.operators;
   }
+
+  // Json Serialization
+
+  Map<String, dynamic> toJson() => _$OperatorListQueryToJson(this);
 }

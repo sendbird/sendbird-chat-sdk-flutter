@@ -1,9 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'session_event.dart';
-import '../core/models/app_info.dart';
-import '../core/models/reconnect_configuration.dart';
-import '../core/models/user.dart';
+import 'package:sendbird_sdk/core/models/app_info.dart';
+import 'package:sendbird_sdk/core/models/reconnect_configuration.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/session_event.dart';
 
 part 'login_event.g.dart';
 

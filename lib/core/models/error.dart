@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../../constant/error_code.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
 
 part 'error.g.dart';
 

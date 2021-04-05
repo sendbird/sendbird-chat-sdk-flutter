@@ -1,6 +1,6 @@
 name: sendbird_sdk
 description: Sendbird Chat SDK Dart/Flutter package
-version: 3.0.6
+version: 3.0.7
 homepage: https://www.sendbird.com
 
 environment:

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
-
-import '../../core/channel/base/base_channel.dart';
-import '../../sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 abstract class CacheStorage {
   void insert({@required Cacheable data, @required String channelKey});

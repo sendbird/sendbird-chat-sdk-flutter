@@ -1,9 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../constant/enums.dart';
-import '../core/models/member.dart';
-import '../core/models/user.dart';
-import '../events/base_event.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/base_event.dart';
 
 part 'channel_event.g.dart';
 

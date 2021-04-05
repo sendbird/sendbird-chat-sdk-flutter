@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import '../../constant/enums.dart';
-import '../../core/channel/base/base_channel.dart';
-import '../../core/channel/group/group_channel.dart';
-import '../../core/models/responses.dart';
+import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
+import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
 
 class StreamManager {
   StreamController<int> _totalUnreadCountController;
