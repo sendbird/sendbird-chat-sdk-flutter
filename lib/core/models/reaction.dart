@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/events/reaction_event.dart';
@@ -48,4 +50,18 @@ class Reaction {
       _$ReactionFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReactionToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+
+    final eq = ListEquality().equals;
+    return other is Reaction &&
+        other.key == key &&
+        eq(other.userIds, userIds) &&
+        other.updatedAt == updatedAt;
+  }
+
+  @override
+  int get hashCode => hashValues(key, userIds, updatedAt);
 }

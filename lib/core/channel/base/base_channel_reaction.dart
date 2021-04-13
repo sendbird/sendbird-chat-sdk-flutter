@@ -1,5 +1,6 @@
 part of 'base_channel.dart';
 
+/// Set of functionality related to reaction feature
 extension Reactions on BaseChannel {
   /// Adds reaction [key] to given [message]
   ///

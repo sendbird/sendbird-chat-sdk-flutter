@@ -22,9 +22,9 @@ GroupChannelListQuery _$GroupChannelListQueryFromJson(
     ..memberStateFilter = _$enumDecodeNullable(
         _$MemberStateFilterEnumMap, json['member_state_filter'])
     ..superChannelFilter = _$enumDecodeNullable(
-        _$GroupChannelSuperChannelFilterEnumMap, json['super_channel_filter'])
+        _$SuperChannelFilterEnumMap, json['super_channel_filter'])
     ..publicChannelFilter = _$enumDecodeNullable(
-        _$GroupChannelPublicChannelFilterEnumMap, json['public_channel_filter'])
+        _$PublicChannelFilterEnumMap, json['public_channel_filter'])
     ..customTypeStartWithFilter =
         json['custom_type_start_with_filter'] as String
     ..customTypesFilter =
@@ -66,9 +66,9 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
       'member_state_filter':
           _$MemberStateFilterEnumMap[instance.memberStateFilter],
       'super_channel_filter':
-          _$GroupChannelSuperChannelFilterEnumMap[instance.superChannelFilter],
-      'public_channel_filter': _$GroupChannelPublicChannelFilterEnumMap[
-          instance.publicChannelFilter],
+          _$SuperChannelFilterEnumMap[instance.superChannelFilter],
+      'public_channel_filter':
+          _$PublicChannelFilterEnumMap[instance.publicChannelFilter],
       'custom_type_start_with_filter': instance.customTypeStartWithFilter,
       'custom_types_filter': instance.customTypesFilter,
       'nickname_contains_filter': instance.nicknameContainsFilter,
@@ -143,16 +143,16 @@ const _$MemberStateFilterEnumMap = {
   MemberStateFilter.invitedByNonFriend: 'invited_by_non_friend',
 };
 
-const _$GroupChannelSuperChannelFilterEnumMap = {
-  GroupChannelSuperChannelFilter.all: 'all',
-  GroupChannelSuperChannelFilter.superChannel: 'super',
-  GroupChannelSuperChannelFilter.nonsuperChannel: 'nonsuper',
+const _$SuperChannelFilterEnumMap = {
+  SuperChannelFilter.all: 'all',
+  SuperChannelFilter.superChannel: 'super',
+  SuperChannelFilter.nonsuperChannel: 'nonsuper',
 };
 
-const _$GroupChannelPublicChannelFilterEnumMap = {
-  GroupChannelPublicChannelFilter.all: 'all',
-  GroupChannelPublicChannelFilter.public: 'public',
-  GroupChannelPublicChannelFilter.private: 'private',
+const _$PublicChannelFilterEnumMap = {
+  PublicChannelFilter.all: 'all',
+  PublicChannelFilter.public: 'public',
+  PublicChannelFilter.private: 'private',
 };
 
 const _$UnreadChannelFilterEnumMap = {

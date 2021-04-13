@@ -492,6 +492,20 @@ class ApiClient {
     await client.delete(url: url);
   }
 
+  Future<MuteInfoResponse> getMuteInfo({
+    @required ChannelType channelType,
+    @required String channelUrl,
+    String userId,
+  }) async {
+    final url = endpoint.Channels.channelurl_mute_muted_userid.format([
+      channelType.urlString,
+      channelUrl,
+      userId ?? currentUserId,
+    ]);
+    final res = await client.get(url: url);
+    return MuteInfoResponse.fromJson(res);
+  }
+
   Future<void> freezeChannel({
     @required ChannelType channelType,
     @required String channelUrl,
@@ -694,7 +708,7 @@ class ApiClient {
     }
 
     if (fileSize > this.uploadSizeLimit) {
-      throw SBError(code: ErrorCode.fileSizeLimitExceeded);
+      throw FileSizeLimitExceededError();
     }
 
     final url = endpoint.Misc.storage_upload_file;
@@ -746,7 +760,7 @@ class ApiClient {
     @required MessageRetrievalParams params,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid
-        .format([channelType.asString(), channelUrl, messageId]);
+        .format([channelType.urlString, channelUrl, messageId]);
     final queryParams = params.toJson();
 
     final res = await client.get(url: url, queryParams: queryParams);
@@ -1254,7 +1268,7 @@ class ApiClient {
 
   Future<int> getTotalUnreadMessageCount({
     List<String> customTypes,
-    GroupChannelSuperChannelFilter filter = GroupChannelSuperChannelFilter.all,
+    SuperChannelFilter filter = SuperChannelFilter.all,
   }) async {
     final url =
         endpoint.Users.userid_unread_message_count.format([currentUserId]);
@@ -1297,13 +1311,14 @@ class ApiClient {
     }
 
     final url = endpoint.Users.userid.format([userId]);
-    if (imageInfo.hasBinary) {
+    if (imageInfo?.hasBinary ?? false) {
       final body = {
         'nickname': nickname,
         'profile_file': uploadFile,
         'discovery_keys': discoveryKeys,
         'preferred_languages': preferredLanguages,
       };
+      body.removeWhere((key, value) => value == null);
       final res = await client.multipartRequest(
         method: Method.put,
         url: url,
@@ -1314,10 +1329,11 @@ class ApiClient {
     } else {
       final body = {
         'nickname': nickname,
-        'profile_url': imageInfo.url,
+        'profile_url': imageInfo?.url,
         'discovery_keys': discoveryKeys,
         'preferred_languages': preferredLanguages,
       };
+      body.removeWhere((key, value) => value == null);
       final res = await client.put(url: url, body: body);
       return User.fromJson(res);
     }
@@ -1464,8 +1480,6 @@ class ApiClient {
       'order': groupChannelListOrderEnumMap[order],
       if (searchFieldStrings.isNotEmpty) 'search_field': searchFieldStrings,
       if (searchFieldStrings.isNotEmpty) 'search_query': searchQuery,
-      'show_read_receipt': 'true',
-      'show_delivery_receipt': 'true',
       'distinct_mode': 'all',
     };
 
@@ -1654,6 +1668,8 @@ class ApiClient {
     int limit,
     bool reverse,
     bool exactMatch,
+    bool advanced,
+    List<String> targetFields,
   }) async {
     final url = endpoint.Misc.search_messages;
     final params = {
@@ -1670,15 +1686,11 @@ class ApiClient {
       'sort_field': sortField,
       'reverse': reverse,
       'exact_match': exactMatch,
+      'advanced_query': advanced,
+      'target_fields': targetFields,
+      if (startAt != 0) 'message_ts_from': startAt,
+      if (endAt != 0) 'message_ts_to': endAt,
     };
-
-    if (startAt != null && startAt != 0) {
-      params['message_ts_from'] = startAt;
-    }
-
-    if (endAt != null && endAt != 0) {
-      params['message_ts_to'] = endAt;
-    }
 
     params.removeWhere((key, value) => value == null);
     final res = await client.get(url: url, queryParams: params);

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
@@ -12,8 +14,6 @@ import 'package:sendbird_sdk/core/models/user.dart';
 part 'scheduled_user_message.g.dart';
 
 /// Represents scheduled user message
-///
-/// This class is same as [UserMessage] except for the future.
 @JsonSerializable()
 class ScheduledUserMessage extends BaseMessage {
   /// Scheduled message ID
@@ -107,4 +107,28 @@ class ScheduledUserMessage extends BaseMessage {
       _$ScheduledUserMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$ScheduledUserMessageToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    final eq = ListEquality().equals;
+    return other is ScheduledUserMessage &&
+        other.scheduledId == scheduledId &&
+        other.scheduledDateTimeString == scheduledDateTimeString &&
+        other.status == status &&
+        other.pushOption == pushOption &&
+        eq(other.targetLanguages, targetLanguages);
+  }
+
+  @override
+  int get hashCode => hashValues(
+        super.hashCode,
+        scheduledId,
+        scheduledDateTimeString,
+        status,
+        pushOption,
+        targetLanguages,
+      );
 }

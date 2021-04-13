@@ -18,7 +18,7 @@ class PublicGroupChannelListQuery extends QueryBase {
   List<String> channelUrls;
 
   /// Filters channels for super group channel. Default is `all`
-  GroupChannelSuperChannelFilter superChannelFilter;
+  SuperChannelFilter superChannelFilter;
 
   /// Filters by current user's member state in public group channel
   PublicGroupChannelMembershipFilter membershipFilter;
@@ -81,7 +81,7 @@ class PublicGroupChannelListQuery extends QueryBase {
       ..superMode = superChannelFilter
       ..publicMembershipFilter = membershipFilter
       ..metadataOrderKey = metaDataOrderKeyFilter
-      ..publicMode = GroupChannelPublicChannelFilter.public;
+      ..publicMode = PublicChannelFilter.public;
 
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.getPublicGroupChannels(

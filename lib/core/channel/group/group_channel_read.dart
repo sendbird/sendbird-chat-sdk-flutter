@@ -1,13 +1,20 @@
 part of 'group_channel.dart';
 
+/// Set of functionality related to read feature for group channel
 extension GroupChannelRead on GroupChannel {
   /// Marks as read with current time.
   ///
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onReadReceiptUpdated] can be invoked
-  void markAsRead() {
+  void markAsRead() async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (now - _lastMarkAsReadTimestamp <= 1000) {
+      throw MarkAsReadRateLimitExceededError();
+    }
+
+    _lastMarkAsReadTimestamp = now;
     final cmd = Command.buildRead(channelUrl);
-    _sdk.cmdManager.sendCommand(cmd);
+    await _sdk.cmdManager.sendCommand(cmd);
   }
 
   /// Returns a list of [Member] who has read given [message]. If [includeAll]

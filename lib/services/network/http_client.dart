@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:sendbird_sdk/constant/error_code.dart';
@@ -216,13 +217,25 @@ class HttpClient {
   }
 
   Future<dynamic> _response(http.Response response) async {
-    //use compute
-    final res = jsonDecode(response.body.toString());
-    logger.i('[Sendbird] HTTP response ' +
-        res.toString() +
-        '\nHTTP request ' +
+    dynamic res;
+
+    try {
+      res = jsonDecode(response.body.toString());
+    } catch (e) {
+      throw MalformedError();
+    }
+
+    final encoder = JsonEncoder.withIndent('  ');
+    final resString = '-- Payload: ${encoder.convert(res)}';
+    final hasErrorCode =
+        response.statusCode >= 400 && response.statusCode < 500;
+    final log = hasErrorCode ? logger.e : logger.i;
+    log('HTTP request ' +
         response.request.url.toString() +
-        '\nheaders: ${response.request.headers}');
+        '\nHTTP response ' +
+        resString +
+        '\nHeaders: ${encoder.convert(response.request.headers)}');
+
     if (response.statusCode >= 400 && response.statusCode < 500) {
       final err = SBError(message: res['message'], code: res['code']);
       errorController.sink.add(err);
@@ -232,9 +245,9 @@ class HttpClient {
         final result =
             await SendbirdSdk().getInternal().sessionManager.updateSession();
         if (result)
-          throw SBError(code: ErrorCode.sessionKeyRefreshSucceeded);
+          throw SessionKeyRefreshSucceededError();
         else
-          throw SBError(code: ErrorCode.sessionKeyRefreshFailed);
+          throw SessionKeyRefreshFailedError();
       }
     }
 
@@ -242,15 +255,15 @@ class HttpClient {
       case 200:
         return res;
       case 400:
-        logger.e('[Sendbird] Bad request: ${res['message']}');
+        logger.e('Bad request: ${res['message']}');
         throw BadRequestError(message: res['message'], code: res['code']);
       case 401:
       case 403:
-        logger.e('[Sendbird] Unauthorized request: ${res['message']}');
+        logger.e('Unauthorized request: ${res['message']}');
         throw UnauthorizeError(message: res['message'], code: res['code']);
       case 500:
       default:
-        logger.e('[Sendbird] internal server error ${res['message']}');
+        logger.e('internal server error ${res['message']}');
         throw InternalServerError(
             message: 'internal server error :${response.statusCode}');
     }

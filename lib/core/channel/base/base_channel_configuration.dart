@@ -1,5 +1,6 @@
 part of 'base_channel.dart';
 
+/// Set of functionality related to configure channel
 extension BaseChannelConfiguration on BaseChannel {
   /// Adds operators on this channel with given [userIds].
   ///

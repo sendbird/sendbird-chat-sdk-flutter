@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
@@ -16,7 +18,7 @@ import 'package:uuid/uuid.dart';
 
 part 'file_message.g.dart';
 
-/// Represents media type message.
+/// Represents media type message, typically serve image or video type message.
 @JsonSerializable()
 class FileMessage extends BaseMessage {
   /// Url address for media that this file message has
@@ -142,6 +144,32 @@ class FileMessage extends BaseMessage {
   }
 
   Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    final eq = ListEquality().equals;
+    return other is FileMessage &&
+        other.url == url &&
+        other.name == name &&
+        other.size == size &&
+        other.type == type &&
+        eq(other.thumbnails, thumbnails) &&
+        other.requireAuth == requireAuth;
+  }
+
+  @override
+  int get hashCode => hashValues(
+        super.hashCode,
+        url,
+        name,
+        size,
+        type,
+        thumbnails,
+        requireAuth,
+      );
 }
 
 /// An object represents thumbnail
@@ -166,4 +194,27 @@ class Thumbnail {
   factory Thumbnail.fromJson(Map<String, dynamic> json) =>
       _$ThumbnailFromJson(json);
   Map<String, dynamic> toJson() => _$ThumbnailToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+
+    return other is Thumbnail &&
+        other.url == url &&
+        other.plainUrl == plainUrl &&
+        other.height == height &&
+        other.width == width &&
+        other.realWidth == realWidth &&
+        other.realHeight == realHeight;
+  }
+
+  @override
+  int get hashCode => hashValues(
+        url,
+        plainUrl,
+        height,
+        width,
+        realHeight,
+        realWidth,
+      );
 }

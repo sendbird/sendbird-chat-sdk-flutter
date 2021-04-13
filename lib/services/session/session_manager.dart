@@ -36,7 +36,7 @@ class SessionManager with SdkAccessor {
   String get accessToken => _accessToken;
 
   void setAccessToken(String accessToken) {
-    logger.i('[Sendbird] Setting access token $accessToken');
+    logger.i('Setting access token $accessToken');
     _accessToken = accessToken;
   }
 
@@ -106,7 +106,7 @@ class SessionManager with SdkAccessor {
     final encryptedUserId = prefs.getString(_userIdKeyPath);
 
     if (encryptedUserId == null) {
-      logger.e('[Sendbird] userid is not found in prefs');
+      logger.e('userid is not found in prefs');
       return null;
     }
 
@@ -122,14 +122,14 @@ class SessionManager with SdkAccessor {
   Future<void> _encryptedSessionKey(String sessionKey) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionKey == null) {
-      logger.e('[Sendbird] Session key set to null, all paths will be removed');
+      logger.e('Session key set to null, all paths will be removed');
       prefs.remove(_userIdKeyPath);
       prefs.remove(_sessionKeyPath);
       throw InvalidParameterError();
     }
 
     if (_userId == null) {
-      logger.e('[Sendbird] userId is required to encrypt session');
+      logger.e('userId is required to encrypt session');
       throw InvalidParameterError();
     }
 
@@ -151,7 +151,7 @@ class SessionManager with SdkAccessor {
     // sessionPath = encryptedData.base64;
     prefs.setString(_sessionKeyPath, encryptedData.base64);
 
-    logger.i('[Sendbird] encryption completed userId: $base64UserId ' +
+    logger.i('encryption completed userId: $base64UserId ' +
         'sessionKey: $encryptedData');
   }
 
@@ -166,7 +166,7 @@ class SessionManager with SdkAccessor {
 
     isRefreshingKey = true;
 
-    logger.i('[Sendbird] Updating session with $_accessToken');
+    logger.i('Updating session with $_accessToken');
     try {
       final res = await sdk.api.updateSessionKey(
         appId: sdk.state.appId,
@@ -174,18 +174,16 @@ class SessionManager with SdkAccessor {
         expiringSession: hasSessionHandler,
       );
       isRefreshingKey = false;
-      logger.i('[Sendbird] Updated session $res');
+      logger.i('Updated session $res');
       _applyRefreshedSessionKey(res);
       return true;
     } on SBError catch (err) {
-      logger.e('[Sendbird] Failed to update session $err');
+      logger.w('Failed to update session $err');
       isRefreshingKey = false;
       if (err.code == ErrorCode.accessTokenNotValid) {
         sdk.eventManager.notifySessionTokenRequired();
       } else {
-        sdk.eventManager.notifySessionError(
-          SBError(code: ErrorCode.sessionKeyRefreshFailed),
-        );
+        sdk.eventManager.notifySessionError(SessionKeyRefreshFailedError());
       }
       return false;
     }
@@ -216,13 +214,13 @@ class SessionManager with SdkAccessor {
     if (token != null || token != '') {
       await updateSession();
     } else {
-      final error = SBError(code: ErrorCode.passedInvalidAccessToken);
+      final error = InvalidAccessTokenError();
       sdk.eventManager.notifySessionError(error);
     }
   }
 
   void _sessionErrorHandler() {
-    final error = SBError(code: ErrorCode.passedInvalidAccessToken);
+    final error = InvalidAccessTokenError();
     sdk.eventManager.notifySessionError(error);
   }
 

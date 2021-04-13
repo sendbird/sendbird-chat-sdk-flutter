@@ -23,6 +23,9 @@ MessageSearchQuery _$MessageSearchQueryFromJson(Map<String, dynamic> json) {
     ..afterIndex = json['after_index'] as String
     ..targetUserIds =
         (json['target_user_ids'] as List)?.map((e) => e as String)?.toList()
+    ..advancedQuery = json['advanced_query'] as bool
+    ..targetFields =
+        (json['target_fields'] as List)?.map((e) => e as String)?.toList()
     ..order =
         _$enumDecodeNullable(_$MessageSearchQueryOrderEnumMap, json['order']);
 }
@@ -43,6 +46,8 @@ Map<String, dynamic> _$MessageSearchQueryToJson(MessageSearchQuery instance) =>
       'before_index': instance.beforeIndex,
       'after_index': instance.afterIndex,
       'target_user_ids': instance.targetUserIds,
+      'advanced_query': instance.advancedQuery,
+      'target_fields': instance.targetFields,
       'order': _$MessageSearchQueryOrderEnumMap[instance.order],
     };
 

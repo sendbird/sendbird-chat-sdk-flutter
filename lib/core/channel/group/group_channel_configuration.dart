@@ -1,5 +1,6 @@
 part of 'group_channel.dart';
 
+/// Set of functionality related to configure group channel
 extension GroupChannelConfiguration on GroupChannel {
   /// Hides this channel.
   ///

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
@@ -185,7 +187,7 @@ class BaseMessage {
   /// Retreives list of [MessageMetaArray] with given [keys]
   List<MessageMetaArray> getMetaArrays(List<String> keys) {
     if (keys == null || keys.isEmpty) {
-      logger.e('[Sendbird] invalid keys');
+      logger.e('invalid keys');
       throw InvalidParameterError();
     }
 
@@ -200,11 +202,11 @@ class BaseMessage {
   /// successfully, otherwise `false`.
   bool applyReactionEvent(ReactionEvent event) {
     if (event == null) {
-      logger.i('[Sendbird] event is null');
+      logger.i('event is null');
       return false;
     }
     if (event.messageId != messageId) {
-      logger.i('[Sendbird] message id is mismatched');
+      logger.i('message id is mismatched');
       return false;
     }
 
@@ -290,6 +292,50 @@ class BaseMessage {
     threadInfo = event.threadInfo;
     return true;
   }
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+
+    final eq = ListEquality().equals;
+    return other is BaseMessage &&
+        other.messageId == messageId &&
+        other.message == message &&
+        other.sendingStatus == sendingStatus &&
+        other.sender == sender &&
+        other.channelUrl == channelUrl &&
+        other.channelType == channelType &&
+        other.mentionType == mentionType &&
+        eq(other.mentionedUsers, mentionedUsers) &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.customType == customType &&
+        other.data == data &&
+        other.isSilent == isSilent &&
+        other.threadInfo == threadInfo &&
+        eq(other.reactions, reactions);
+  }
+
+  @override
+  int get hashCode => hashValues(
+        messageId,
+        message,
+        sendingStatus,
+        sender,
+        channelUrl,
+        channelType,
+        mentionedUsers,
+        mentionType,
+        createdAt,
+        updatedAt,
+        isSilent,
+        customType,
+        data,
+        parentMessageId,
+        threadInfo,
+        metaArrays,
+        reactions,
+      );
 
   static T msgFromJson<T extends BaseMessage>(Map<String, dynamic> json,
       {ChannelType channelType}) {

@@ -11,6 +11,8 @@ import 'package:sendbird_sdk/core/models/user.dart';
 part 'admin_message.g.dart';
 
 /// Represents an admin message that can be sent from dashboard
+///
+/// This message type can be sent via platform api or from dashboard
 @JsonSerializable()
 class AdminMessage extends BaseMessage {
   AdminMessage({

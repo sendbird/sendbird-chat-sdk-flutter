@@ -1,10 +1,11 @@
 part of 'base_channel.dart';
 
+/// Set of functionality related to meta
 extension Meta on BaseChannel {
   /// Creates meta data on this channel with [metaData].
   ///
   /// It returns [Map<String, String>] that newly created. Once it completes
-  /// successfully, channel event [ChannelEventHandler.onChannelMetaDataCreated]
+  /// successfully, channel event [ChannelEventHandler.onMetaDataCreated]
   /// will be invoked.
   Future<Map<String, String>> createMetaData(
       Map<String, String> metaData) async {
@@ -76,7 +77,7 @@ extension Meta on BaseChannel {
   /// Updates meta data on this channel with [metaData].
   ///
   /// It returns [Map<String, String>] that newly updated. Once it completes
-  /// successfully, channel event [ChannelEventHandler.onChannelMetaDataUpdated]
+  /// successfully, channel event [ChannelEventHandler.onMetaDataUpdated]
   /// will be invoked.
   Future<Map<String, String>> updateMetaData(
       Map<String, String> metaData) async {
@@ -105,7 +106,7 @@ extension Meta on BaseChannel {
   /// Deletes a meta data on this channel with [key].
   ///
   /// After this method completes successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaDataDeleted] will be invoked.
+  /// [ChannelEventHandler.onMetaDataDeleted] will be invoked.
   Future<void> deleteMetaData(String key) async {
     if (key == null || key.isEmpty) {
       throw InvalidParameterError();
@@ -130,7 +131,7 @@ extension Meta on BaseChannel {
   /// Deletes a meta data on this channel with [key].
   ///
   /// After this method completes successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaDataDeleted] will be invoked.
+  /// [ChannelEventHandler.onMetaDataDeleted] will be invoked.
   Future<void> deleteAllMetaData() async {
     final ts = await _sdk.api.deleteAllChannelMetaData(
       channelType: channelType,
@@ -151,7 +152,7 @@ extension Meta on BaseChannel {
   ///
   /// It returns [Map<String, String>] that newly created. Once it completes
   /// successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaCountersCreated] will be invoked.
+  /// [ChannelEventHandler.onMetaCountersCreated] will be invoked.
   Future<Map<String, int>> createMetaCounters(
       Map<String, int> metaCounters) async {
     if (metaCounters == null || metaCounters.isEmpty) {
@@ -189,7 +190,7 @@ extension Meta on BaseChannel {
   ///
   /// It returns [Map<String, int>] that newly updated. Once it completes
   /// successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaCountersUpdated] will be
+  /// [ChannelEventHandler.onMetaCountersUpdated] will be
   /// invoked. Updated given key will be replaced with given value.
   ///
   /// before
@@ -221,7 +222,7 @@ extension Meta on BaseChannel {
   ///
   /// It returns [Map<String, int>] that newly updated. Once it completes
   /// successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaCountersUpdated] will be
+  /// [ChannelEventHandler.onMetaCountersUpdated] will be
   /// invoked. Given values will be added to given keys.
   ///
   /// before
@@ -252,7 +253,7 @@ extension Meta on BaseChannel {
   ///
   /// It returns [Map<String, int>] that newly updated. Once it completes
   /// successfully, channel event
-  /// [ChannelEventHandler.onChannelMetaCountersUpdated] will be
+  /// [ChannelEventHandler.onMetaCountersUpdated] will be
   /// invoked. Given values will be added to given keys.
   ///
   /// before

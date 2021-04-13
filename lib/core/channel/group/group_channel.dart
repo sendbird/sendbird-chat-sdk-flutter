@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
@@ -148,6 +150,7 @@ class GroupChannel extends BaseChannel {
 
   int _lastStartTypingTimestamp = 0;
   int _lastEndTypingTimestamp = 0;
+  int _lastMarkAsReadTimestamp = 0;
 
   /// **WARNING:** Do not use default constructor to initialize manually
   GroupChannel({
@@ -332,6 +335,7 @@ class GroupChannel extends BaseChannel {
     if (identical(other, this)) return true;
     if (!(super == (other))) return false;
 
+    final eq = ListEquality().equals;
     return other is GroupChannel &&
         other.lastMessage == lastMessage &&
         other.isSuper == isSuper &&
@@ -343,7 +347,7 @@ class GroupChannel extends BaseChannel {
         other.accessCodeRequired == accessCodeRequired &&
         other.unreadMentionCount == unreadMentionCount &&
         other.unreadMessageCount == unreadMessageCount &&
-        other.members == members &&
+        eq(other.members, members) &&
         other.memberCount == memberCount &&
         other.joinedMemberCount == joinedMemberCount &&
         other.myPushTriggerOption == myPushTriggerOption &&
@@ -361,8 +365,7 @@ class GroupChannel extends BaseChannel {
 
   @override
   int get hashCode => hashValues(
-        channelType,
-        channelUrl,
+        super.hashCode,
         lastMessage,
         myMutedState,
         myLastRead,

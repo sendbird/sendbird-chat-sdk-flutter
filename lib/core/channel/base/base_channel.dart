@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
@@ -125,70 +126,34 @@ class BaseChannel implements Cacheable {
     }
   }
 
-  /// Retrieves a list of [BaseMessage] with given [timestamp] and [params].
-  Future<List<BaseMessage>> getMessagesByTimestamp(
-    int timestamp,
-    MessageListParams params,
-  ) async {
-    if (timestamp == null || timestamp <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
-      throw InvalidParameterError();
-    }
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
 
-    if (channelType == ChannelType.group)
-      params.showSubChannelMessagesOnly = false;
-
-    return _sdk.api.getMessages(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params.toJson(),
-      timestamp: timestamp,
-    );
+    return other is BaseChannel &&
+        other.channelUrl == channelUrl &&
+        other.name == name &&
+        other.coverUrl == coverUrl &&
+        other.creator == creator &&
+        other.createdAt == createdAt &&
+        other.data == data &&
+        other.customType == customType &&
+        other.isFrozen == isFrozen &&
+        other.isEphemeral == isEphemeral;
   }
 
-  /// Retrieves a list of [BaseMessage] with given [messageId] and [params].
-  Future<List<BaseMessage>> getMessagesById(
-    int messageId,
-    MessageListParams params,
-  ) async {
-    if (messageId == null || messageId <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
-    if (channelType == ChannelType.group)
-      params.showSubChannelMessagesOnly = false;
-
-    return _sdk.api.getMessages(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params.toJson(),
-      messageId: messageId,
-    );
-  }
-
-  /// Retreieve massage change logs with [timestamp] or [token] and [params].
-  Future<MessageChangeLogsResponse> getMessageChangeLogs({
-    int timestamp,
-    String token,
-    MessageChangeLogParams params,
-  }) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
-    return _sdk.api.getMessageChangeLogs(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params,
-      token: token,
-      timestamp: timestamp ?? double.maxFinite.round(),
-    );
-  }
+  @override
+  int get hashCode => hashValues(
+        channelUrl,
+        name,
+        coverUrl,
+        creator,
+        createdAt,
+        data,
+        customType,
+        isFrozen,
+        isEphemeral,
+      );
 
   // Cacheable
 

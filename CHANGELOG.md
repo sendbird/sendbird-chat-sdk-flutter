@@ -1,6 +1,17 @@
+## [3.0.8]
+* Implemented `==` operator for channels, users and messages
+* Fixed `getMessage` method
+* Added `getMyMuteInfo` method in `BaseChannel`
+* Renamed `GroupChannelSuperChannelFilter` and `GroupChannelPublicChannelFilter` to `SuperChannelFilter` and `PublicChannelFilter`
+* Redefined error cases 
+* Added rate limit (1 second) in `markAsRead` method
+* Renamed `onChannelMetaData~` and `onChannelMetaCounter~` of channel event handler's method to `onMetaData~` and `onMetaCounter~`
+* Renamed `addChannelHandler` `removeChannelHandler` and `getChannelHandler` to `addChannelEventHandler`, `removeChannelEventHandler` and `getChannelEventHandler` respectively
+* Renamed `addConnectionHandler` `removeConnectionHandler` and `getConnectionHandler` to `addConnectionEventHandler`, `removeConnectionEventHandler` and `getConnectionEventHandler` respectively
+* Renamed `onUpdateTotalUnreadMessageCount` method in `UserEventHandler` to `onTotalUnreadMessageCountUpdated`
+
 ## [3.0.7]
 * Added `nickname` parameter in `connect` method
-* Implemented `==` operator for channels, users and messages
 * Implmeneted json serializations for queries
 * Fixed message change log bugs
 * Updated user agent

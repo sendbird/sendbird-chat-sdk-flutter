@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
@@ -36,4 +37,19 @@ class ThreadInfo {
       _$ThreadInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ThreadInfoToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+
+    return other is ThreadInfo &&
+        other.replyCount == replyCount &&
+        other.mostRepliesUsers == mostRepliesUsers &&
+        other.lastRepliedAt == lastRepliedAt &&
+        other.updatedAt == updatedAt;
+  }
+
+  @override
+  int get hashCode =>
+      hashValues(replyCount, mostRepliesUsers, lastRepliedAt, updatedAt);
 }

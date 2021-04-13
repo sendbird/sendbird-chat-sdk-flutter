@@ -3,7 +3,7 @@ import 'package:sendbird_sdk/handlers/event_manager.dart';
 /// Represents a class to notify various connection event.
 ///
 /// This is base class that you can mixin, so that you can register on
-/// [SendbirdSdk.addConnectionHandler]. Typically you want to use this class as
+/// [SendbirdSdk.addConnectionEventHandler]. Typically you want to use this class as
 /// following:
 ///
 /// ```
@@ -25,6 +25,6 @@ class ConnectionEventHandler implements EventHandler {
   /// Informs when connection has been failed to reconnect
   void onReconnectionFailed() {}
 
-  /// Informs when connection has been cancelled
-  void onReconnectionCancelled() {}
+  /// Informs when connection has been canceled
+  void onReconnectionCanceled() {}
 }

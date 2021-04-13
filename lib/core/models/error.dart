@@ -19,8 +19,24 @@ class SBError extends Error {
   Map<String, dynamic> toJson() => _$SBErrorToJson(this);
 }
 
+class InvalidInitializationError extends SBError {
+  @override
+  int get code => ErrorCode.invalidInitialization;
+}
+
+class LoginTimeoutError extends SBError {
+  @override
+  int get code => ErrorCode.loginTimeout;
+}
+
+class AckTimeoutError extends SBError {
+  @override
+  int get code => ErrorCode.ackTimeout;
+}
+
 class ConnectionRequiredError extends SBError {
-  ConnectionRequiredError() : super(code: ErrorCode.connectionRequired);
+  @override
+  int get code => ErrorCode.connectionRequired;
 }
 
 class ConnectionClosedError extends SBError {}
@@ -30,13 +46,37 @@ class WebSocketError extends SBError {
       : super(code: code, message: message);
 }
 
-class WebSocketDisconnectError extends SBError {}
+class WebSocketConnectionFailed extends SBError {
+  @override
+  int get code => ErrorCode.webSocketConnectionFailed;
+}
+
+class WebSocketConnectionClosedError extends SBError {
+  @override
+  int get code => ErrorCode.webSocketConnectionClosed;
+}
 
 class WebSocketTimeoutError extends SBError {}
 
-class InvalidParameterError extends SBError {}
+class InvalidParameterError extends SBError {
+  @override
+  int get code => ErrorCode.invalidParameter;
+}
 
-class QueryInProgressError extends SBError {}
+class QueryInProgressError extends SBError {
+  @override
+  int get code => ErrorCode.queryInProgress;
+}
+
+class MarkAsReadRateLimitExceededError extends SBError {
+  @override
+  int get code => ErrorCode.markAsReadRateLimitExceeded;
+}
+
+class MalformedError extends SBError {
+  @override
+  int get code => ErrorCode.malformedData;
+}
 
 class BadRequestError extends SBError {
   BadRequestError({String message, int code})
@@ -51,6 +91,26 @@ class UnauthorizeError extends SBError {
 class InternalServerError extends SBError {
   InternalServerError({String message, int code})
       : super(message: message, code: code);
+}
+
+class FileSizeLimitExceededError extends SBError {
+  @override
+  int get code => ErrorCode.fileSizeLimitExceeded;
+}
+
+class SessionKeyRefreshSucceededError extends SBError {
+  @override
+  int get code => ErrorCode.sessionKeyRefreshSucceeded;
+}
+
+class SessionKeyRefreshFailedError extends SBError {
+  @override
+  int get code => ErrorCode.sessionKeyRefreshFailed;
+}
+
+class InvalidAccessTokenError extends SBError {
+  @override
+  int get code => ErrorCode.passedInvalidAccessToken;
 }
 
 class UnknownError extends SBError {}

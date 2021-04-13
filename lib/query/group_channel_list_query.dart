@@ -27,10 +27,10 @@ class GroupChannelListQuery extends QueryBase {
   MemberStateFilter memberStateFilter;
 
   /// Sets to filter super channel. Default is `all`
-  GroupChannelSuperChannelFilter superChannelFilter;
+  SuperChannelFilter superChannelFilter;
 
   /// Sets to filter public channel. Default is `all`
-  GroupChannelPublicChannelFilter publicChannelFilter;
+  PublicChannelFilter publicChannelFilter;
 
   /// Sets to filter channels by custom type that starts with
   String customTypeStartWithFilter;

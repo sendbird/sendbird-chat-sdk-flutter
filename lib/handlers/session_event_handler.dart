@@ -5,7 +5,7 @@ import 'package:sendbird_sdk/handlers/event_manager.dart';
 /// Represents a class to notify user session event.
 ///
 /// This is base class that you can mixin, so that you can register on
-/// [SendbirdSdk.addSessionHandler]. Typically you want to use this class as
+/// [SendbirdSdk.addSessionEventHandler]. Typically you want to use this class as
 /// following:
 ///
 /// ```

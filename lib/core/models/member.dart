@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
@@ -74,5 +75,5 @@ class Member extends User {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => hashValues(super.hashCode, role, isMuted, state);
 }

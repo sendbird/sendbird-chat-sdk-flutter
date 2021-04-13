@@ -12,6 +12,7 @@ import 'package:sendbird_sdk/events/channel_event.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 
+/// Set of functionality for internal usage to update a channel
 extension GroupChannelInternal on GroupChannel {
   bool shouldUpdateLastMessage(BaseMessage message, Sender sender) {
     if (sender == null) {

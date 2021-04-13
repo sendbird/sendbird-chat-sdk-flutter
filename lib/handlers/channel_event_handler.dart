@@ -11,7 +11,7 @@ import 'package:sendbird_sdk/handlers/event_manager.dart';
 /// Represents a class to notify various channel event.
 ///
 /// This is base class that you can mixin, so that you can register on
-/// [SendbirdSdk.addChannelHandler]. Typically you want to use this class as
+/// [SendbirdSdk.addChannelEventHandler]. Typically you want to use this class as
 /// following:
 ///
 /// ```
@@ -109,27 +109,24 @@ class ChannelEventHandler implements EventHandler {
   void onChannelOperatorsUpdated(BaseChannel channel) {}
 
   /// Informs when `metaData` has been created on [channel]
-  void onChannelMetaDataCreated(
-      BaseChannel channel, Map<String, String> metaData) {}
+  void onMetaDataCreated(BaseChannel channel, Map<String, String> metaData) {}
 
   /// Informs when `metaData` has been updated on [channel]
-  void onChannelMetaDataUpdated(
-      BaseChannel channel, Map<String, String> metaData) {}
+  void onMetaDataUpdated(BaseChannel channel, Map<String, String> metaData) {}
 
   /// Informs when metaData with `metaDataKeys` has been deleted on [channel]
-  void onChannelMetaDataDeleted(
-      BaseChannel channel, List<String> metaDataKeys) {}
+  void onMetaDataDeleted(BaseChannel channel, List<String> metaDataKeys) {}
 
   /// Informs when `metaCounters` has been created on [channel]
-  void onChannelMetaCountersCreated(
+  void onMetaCountersCreated(
       BaseChannel channel, Map<String, int> metaCounters) {}
 
   /// Informs when `metaCounters` has been updated on [channel]
-  void onChannelMetaCountersUpdated(
+  void onMetaCountersUpdated(
       BaseChannel channel, Map<String, int> metaCounters) {}
 
   /// Informs when a meta counter with `metaCounterKeys` has been deleted on [channel]
-  void onChannelMetaCountersDeleted(
+  void onMetaCountersDeleted(
       BaseChannel channel, List<String> metaCounterKeys) {}
 
   /// Informs when an reaction [event] happens on [channel]

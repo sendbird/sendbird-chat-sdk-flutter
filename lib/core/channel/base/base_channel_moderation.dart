@@ -1,6 +1,16 @@
 part of 'base_channel.dart';
 
+/// Set of functionality related to channel moderation
 extension Moderations on BaseChannel {
+  /// Gets current user's mute information
+  Future<MuteInfoResponse> getMyMuteInfo() async {
+    return _sdk.api.getMuteInfo(
+      channelType: channelType,
+      channelUrl: channelUrl,
+      userId: _sdk.state.currentUser.userId,
+    );
+  }
+
   /// Bans a user from this channel.
   ///
   /// Provides [seconds] to set how long the user should be banned. `-1`

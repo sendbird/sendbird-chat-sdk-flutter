@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
@@ -166,15 +166,15 @@ class OpenChannel extends BaseChannel {
     if (identical(other, this)) return true;
     if (!(super == (other))) return false;
 
+    final eq = ListEquality().equals;
     return other is OpenChannel &&
         other.participantCount == participantCount &&
-        other.operators == operators;
+        eq(other.operators, operators);
   }
 
   @override
   int get hashCode => hashValues(
-        channelType,
-        channelUrl,
+        super.hashCode,
         participantCount,
         operators,
       );

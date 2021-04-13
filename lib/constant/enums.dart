@@ -100,7 +100,7 @@ enum MessageTypeFilter {
 }
 
 /// Represents a filter for super group channel
-enum GroupChannelSuperChannelFilter {
+enum SuperChannelFilter {
   all,
 
   @JsonValue('super')
@@ -111,19 +111,18 @@ enum GroupChannelSuperChannelFilter {
 }
 
 /// Represents a filter for group channel visibilty
-enum GroupChannelPublicChannelFilter { all, public, private }
+enum PublicChannelFilter { all, public, private }
 
-const groupChannelSuperFilterEnumMap = <GroupChannelSuperChannelFilter, String>{
-  GroupChannelSuperChannelFilter.all: 'all',
-  GroupChannelSuperChannelFilter.superChannel: 'super',
-  GroupChannelSuperChannelFilter.nonsuperChannel: 'nonsuper',
+const groupChannelSuperFilterEnumMap = <SuperChannelFilter, String>{
+  SuperChannelFilter.all: 'all',
+  SuperChannelFilter.superChannel: 'super',
+  SuperChannelFilter.nonsuperChannel: 'nonsuper',
 };
 
-const groupChannelPublicFilterEnumMap =
-    <GroupChannelPublicChannelFilter, String>{
-  GroupChannelPublicChannelFilter.all: 'all',
-  GroupChannelPublicChannelFilter.public: 'public',
-  GroupChannelPublicChannelFilter.private: 'private',
+const groupChannelPublicFilterEnumMap = <PublicChannelFilter, String>{
+  PublicChannelFilter.all: 'all',
+  PublicChannelFilter.public: 'public',
+  PublicChannelFilter.private: 'private',
 };
 
 /// Represents a filter for unread channel
@@ -325,13 +324,11 @@ const messageSearchQueryOrderEnumMap = <MessageSearchQueryOrder, String>{
 
 /// Defines levels of logging level
 enum LogLevel {
-  verbose,
-  debug,
+  none,
   info,
   warning,
   error,
-  wtf,
-  nothing,
+  verbose,
 }
 
 /// Represents sdk's connection status
@@ -557,7 +554,7 @@ enum ConnectionEventType {
   started,
   succeeded,
   failed,
-  cancelled,
+  canceled,
 }
 
 enum OperatorFilter {

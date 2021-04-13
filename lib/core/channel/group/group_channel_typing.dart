@@ -1,5 +1,6 @@
 part of 'group_channel.dart';
 
+/// Set of functionality related to typing feature for group channel
 extension GroupChannelTyping on GroupChannel {
   /// Starts to send typing signal.
   ///

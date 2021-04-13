@@ -45,11 +45,11 @@ class WebSocketClient {
 
   Future<void> connect(String url) async {
     if (url == null) {
-      logger.e('[Sendbird] Socket url is null');
+      logger.e('Socket url is null');
       throw WebSocketError(message: 'Invalid URL supplied');
     }
     if (url.length < 10) {
-      logger.e('[Sendbird] Socket url is too short');
+      logger.e('Socket url is too short');
       throw WebSocketError(message: 'Invalid URL supplied');
     }
     // already conncted on same url
@@ -70,7 +70,7 @@ class WebSocketClient {
         _functionConnect();
       }
     } catch (e) {
-      logger.e('[Sendbird] Websocket connection error: ' + e.toString());
+      logger.e('Websocket connection error: ' + e.toString());
       throw WebSocketError(message: e.toString());
     }
 
@@ -104,7 +104,7 @@ class WebSocketClient {
       _socket.close(code, reason);
       _subscription.cancel();
       _socket = null;
-      logger.i('[Sendbird] Socket closed ' + reason);
+      logger.i('Socket closed ' + reason);
       return true;
     } catch (e) {
       onReceiveError(e);
@@ -113,7 +113,7 @@ class WebSocketClient {
   }
 
   void send(String data) {
-    logger.i('[Sendbird] Send command \n' + data);
+    logger.i('Send command \n' + data);
     try {
       _socket.add(data);
     } catch (e) {
@@ -131,7 +131,7 @@ class WebSocketClient {
   }
 
   void onReceiveError(Object error) {
-    logger.e('[Sendbird] Websocket Error:' + error.toString());
+    logger.e('Websocket Error:' + error.toString());
     if (_functionError == null) {
       return;
     }
@@ -179,7 +179,7 @@ class WebSocketClient {
   }
 
   void _startPing() {
-    logger.i('[Sendbird] Start socket ping');
+    logger.i('Start socket ping');
     _pingTimer?.cancel();
     _pingTimer = Timer.periodic(Duration(seconds: _pingInterval), (timer) {
       var now = DateTime.now().millisecondsSinceEpoch;
@@ -193,13 +193,13 @@ class WebSocketClient {
   }
 
   void _stopPing() {
-    logger.i('[Sendbird] Stop socket ping');
+    logger.i('Stop socket ping');
     _pingTimer?.cancel();
     _pingTimer = null;
   }
 
   void _startWatchdog() {
-    logger.i('[Sendbird] Start watchdog');
+    logger.i('Start watchdog');
     _watchdogTimer?.cancel();
     _watchdogTimer = Timer(
       Duration(seconds: _watchdogInterval),
@@ -211,7 +211,7 @@ class WebSocketClient {
   }
 
   void _stopWatchdog() {
-    logger.i('[Sendbird] Stop watchdog');
+    logger.i('Stop watchdog');
     _watchdogTimer?.cancel();
     _watchdogTimer = null;
   }

@@ -1,5 +1,6 @@
 part of 'group_channel.dart';
 
+/// Set of functionality related to operating a group channel
 extension GroupChannelOperations on GroupChannel {
   /// Invites one or more [User] with given `userIds` to this channel.
   ///

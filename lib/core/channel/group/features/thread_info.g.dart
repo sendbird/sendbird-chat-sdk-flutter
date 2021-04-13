@@ -21,7 +21,8 @@ ThreadInfo _$ThreadInfoFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ThreadInfoToJson(ThreadInfo instance) =>
     <String, dynamic>{
       'reply_count': instance.replyCount,
-      'most_replies_users': instance.mostRepliesUsers,
+      'most_replies_users':
+          instance.mostRepliesUsers?.map((e) => e?.toJson())?.toList(),
       'last_replied_at': instance.lastRepliedAt,
       'updated_at': instance.updatedAt,
     };

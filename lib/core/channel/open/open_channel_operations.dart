@@ -1,5 +1,6 @@
 part of 'open_channel.dart';
 
+/// Set of functionality related to operating a open channel
 extension OpenChannelOperations on OpenChannel {
   /// Enters to this channel
   Future<void> enter() async {

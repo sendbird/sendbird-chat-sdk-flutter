@@ -61,16 +61,16 @@ class CommandManager with SdkAccessor {
       //NOTE: some test cases execute async socket data
       //even after test case was finished
       // print('[E] ${this.hashCode}');
-      logger.e('[Sendbird] sendCommand: connection is requred');
+      logger.e('sendCommand: connection is requred');
       throw ConnectionRequiredError();
     }
     if (cmd == null) {
-      logger.e('[Sendbird] sendCommand: command parameter is null');
+      logger.e('sendCommand: command parameter is null');
       throw InvalidParameterError();
     }
     if (!webSocket.isConnected()) {
-      logger.e('[Sendbird] sendCommand: Websocket connection is closed');
-      throw ConnectionClosedError();
+      logger.e('sendCommand: Websocket connection is closed');
+      throw WebSocketConnectionClosedError();
     }
 
     try {
@@ -94,8 +94,8 @@ class CommandManager with SdkAccessor {
 
     if (cmd.isAckRequired) {
       final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
-        logger.e('[Sendbird] sendCommand: did not receive ack in time');
-        throw WebSocketTimeoutError();
+        logger.e('sendCommand: did not receive ack in time');
+        throw AckTimeoutError();
       });
       _ackTimers[cmd.requestId] = timer;
 
@@ -128,13 +128,10 @@ class CommandManager with SdkAccessor {
       }
     }
 
-    if (!kReleaseMode) {
-      final cmdString = '-- Command: ${cmd.cmd}';
-      final encoder = JsonEncoder.withIndent('  ');
-      final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
-      logger
-          .i('[Sendbird] Processing Socket event\n$cmdString\n$payloadString');
-    }
+    final cmdString = '-- Command: ${cmd.cmd}';
+    final encoder = JsonEncoder.withIndent('  ');
+    final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
+    logger.i('Processing Socket event\n$cmdString\n$payloadString');
 
     Function(Command) fnc;
     if (cmd.isError || cmd.hasError)
@@ -184,7 +181,7 @@ class CommandManager with SdkAccessor {
 
     final didChange = unreadCount.copyWith(info);
     if (didChange) {
-      eventManager.notifyUpdateTotalUnreadMessageCount(
+      eventManager.notifyTotalUnreadMessageCountUpdated(
         unreadCount.all,
         unreadCount.customTypes,
       );
@@ -298,7 +295,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyMentionReceived(channel, message);
       }
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -350,7 +347,7 @@ class CommandManager with SdkAccessor {
           eventManager.notifyMentionReceived(channel, message);
       }
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -364,7 +361,7 @@ class CommandManager with SdkAccessor {
       );
       eventManager.notifyMessageDeleted(channel, event.messageId);
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -408,22 +405,17 @@ class CommandManager with SdkAccessor {
       final channel = await GroupChannel.getChannel(status.channelUrl);
 
       final isCurrentUser = status.userId == sdk.state.userId;
+      final hasUnreadCount =
+          (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0);
       if (isCurrentUser) {
         channel.myLastRead = status.timestamp;
+        if (channel.fromCache) channel.clearUnreadCount();
+        if (hasUnreadCount) eventManager.notifyChannelChanged(channel);
       } else {
         eventManager.notifyChannelReadReceiptUpdated(channel);
       }
-
-      if (isCurrentUser && channel.fromCache) {
-        channel.clearUnreadCount();
-      }
-
-      if (isCurrentUser &&
-          (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0)) {
-        eventManager.notifyChannelChanged(channel);
-      }
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -446,7 +438,7 @@ class CommandManager with SdkAccessor {
 
       status.saveToCache();
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.e('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -456,7 +448,7 @@ class CommandManager with SdkAccessor {
       final channel = await GroupChannel.getChannel(event.channelUrl);
       eventManager.notifyChannelThreadUpdated(channel, event);
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -469,7 +461,7 @@ class CommandManager with SdkAccessor {
       );
       eventManager.notifyReactionUpdated(channel, event);
     } catch (e) {
-      logger.e('[Sendbird] Aborted ${cmd.cmd} ' + e.toString());
+      logger.w('Aborted ${cmd.cmd} ' + e.toString());
     }
   }
 
@@ -480,9 +472,9 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processError(Command cmd) async {
-    logger.e('[Sendbird] Error ${cmd.cmd} ' + cmd.errorMessage);
+    logger.e('Error ${cmd.cmd} ' + cmd.errorMessage);
     sdk.state.reconnecting = false;
-    throw SBError(code: cmd.errorCode, message: cmd.errorMessage);
+    throw WebSocketError(code: cmd.errorCode, message: cmd.errorMessage);
   }
 
   // System
@@ -577,8 +569,7 @@ class CommandManager with SdkAccessor {
 
       eventManager.notifyChannelTypingStatusUpdated(channel);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -613,8 +604,7 @@ class CommandManager with SdkAccessor {
       } else
         eventManager.notifyUserUnbanned(channel, user);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -640,8 +630,7 @@ class CommandManager with SdkAccessor {
       else
         eventManager.notifyUserUnmuted(channel, user);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -684,8 +673,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyChannelMemberCountChange([channel]);
       }
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -723,8 +711,7 @@ class CommandManager with SdkAccessor {
         event.inviter,
       );
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -752,8 +739,7 @@ class CommandManager with SdkAccessor {
         event.inviter,
       );
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -770,8 +756,7 @@ class CommandManager with SdkAccessor {
         eventManager.notifyChannelParticiapntCountChanged([channel]);
       }
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -788,8 +773,7 @@ class CommandManager with SdkAccessor {
       else
         eventManager.notifyChannelUnfrozen(channel);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -816,8 +800,7 @@ class CommandManager with SdkAccessor {
       else
         eventManager.notifyChannelChanged(channel);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -845,10 +828,9 @@ class CommandManager with SdkAccessor {
       cachedMetaData.removeWithKeys(deleted, event.ts);
       cachedMetaData.saveToCache();
 
-      eventManager.notifyChannelMetaDataChanged(channel, event.data);
+      eventManager.notifyMetaDataChanged(channel, event.data);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -858,10 +840,9 @@ class CommandManager with SdkAccessor {
         event.channelType,
         event.channelUrl,
       );
-      eventManager.notifyChannelMetaCountersChanged(channel, event.data);
+      eventManager.notifyMetaCountersChanged(channel, event.data);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.e('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -886,8 +867,7 @@ class CommandManager with SdkAccessor {
       }
       eventManager.notifyChannelOperatorsUpdated(channel);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 
@@ -906,8 +886,7 @@ class CommandManager with SdkAccessor {
       channel.saveToCache();
       eventManager.notifyChannelChanged(channel);
     } catch (e) {
-      logger
-          .e('[Sendbird] Aborted ${event.category.toString()} ' + e.toString());
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 

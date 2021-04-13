@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
@@ -73,22 +75,20 @@ class UserMessage extends BaseMessage {
           reactions: reactions,
         );
 
-  // @override
-  // bool operator ==(other) {
-  //   Function eq = const MapEquality().equals;
-
-  //   if (identical(other, this)) return true;
-  //   if (!eq(translations, other.translations)) return false;
-  //   if (!(super == (other))) return false;
-
-  //   return false;
-  // }
-
-  // @override
-  // int get hashCode => super.hashCode;
-
   factory UserMessage.fromJson(Map<String, dynamic> json) =>
       _$UserMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserMessageToJson(this);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    final eq = MapEquality().equals;
+    return other is UserMessage && eq(translations, other.translations);
+  }
+
+  @override
+  int get hashCode => hashValues(super.hashCode, translations);
 }

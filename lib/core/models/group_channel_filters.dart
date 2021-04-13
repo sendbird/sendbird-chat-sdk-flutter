@@ -10,11 +10,10 @@ class GroupChannelFilter {
   MemberStateFilter memberStateFilter;
 
   /// Sets to filter super channel. Default is `all`
-  GroupChannelSuperChannelFilter superMode = GroupChannelSuperChannelFilter.all;
+  SuperChannelFilter superMode = SuperChannelFilter.all;
 
   /// Sets to filter public channel. Default is `all`
-  GroupChannelPublicChannelFilter publicMode =
-      GroupChannelPublicChannelFilter.all;
+  PublicChannelFilter publicMode = PublicChannelFilter.all;
 
   /// Sets to filter channels by custom type that starts with
   String customTypeStartswith;

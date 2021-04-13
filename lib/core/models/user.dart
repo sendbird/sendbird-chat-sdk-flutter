@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
@@ -146,15 +147,17 @@ class User {
   bool operator ==(other) {
     if (identical(other, this)) return true;
 
+    final eq = ListEquality().equals;
+    final mapEq = MapEquality().equals;
     return other is User &&
         other.userId == userId &&
         other.nickname == nickname &&
         other.profileUrl == profileUrl &&
         other.connectionStatus == connectionStatus &&
         other.lastSeenAt == lastSeenAt &&
-        other.preferredLanguages == preferredLanguages &&
+        eq(other.preferredLanguages, preferredLanguages) &&
         other.isActive == isActive &&
-        other.metaData == metaData &&
+        mapEq(other.metaData, metaData) &&
         other.requireAuth == requireAuth;
   }
 

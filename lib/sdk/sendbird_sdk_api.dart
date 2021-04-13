@@ -123,14 +123,14 @@ class SendbirdSdk {
   }
 
   /// Add [ChannelEventHandler] with [identifier] to SDK.
-  void addChannelHandler(String identifier, ChannelEventHandler handler) {
+  void addChannelEventHandler(String identifier, ChannelEventHandler handler) {
     _int.eventManager.addHandler(identifier, handler);
   }
 
   /// Returns [ChannelEventHandler] with given [identifier].
   ///
   /// null if handler is not found with [identifier]
-  ChannelEventHandler getChannelHandler(String identifier) {
+  ChannelEventHandler getChannelEventHandler(String identifier) {
     return _int.eventManager.getHandler(
       identifier: identifier,
       type: EventType.channel,
@@ -138,19 +138,20 @@ class SendbirdSdk {
   }
 
   /// Removes [ChannelEventHandler] with [identifier] from SDK.
-  void removeChannelHandler(String identifier) {
+  void removeChannelEventHandler(String identifier) {
     _int.eventManager.removeHandler(identifier, EventType.channel);
   }
 
   /// Adds [ConnectionEventHandler] with [identifier] to SDK.
-  void addConnectionHandler(String identifier, ConnectionEventHandler handler) {
+  void addConnectionEventHandler(
+      String identifier, ConnectionEventHandler handler) {
     _int.eventManager.addHandler(identifier, handler);
   }
 
   /// Returns [ConnectionEventHandler] with [identifier] from SDK.
   ///
   /// null if the handler is not found with [identifier]
-  ConnectionEventHandler getConnectionHandler(String identifier) {
+  ConnectionEventHandler getConnectionEventHandler(String identifier) {
     return _int.eventManager.getHandler(
       identifier: identifier,
       type: EventType.connection,
@@ -158,22 +159,22 @@ class SendbirdSdk {
   }
 
   /// Removes [ConnectionEventHandler] with [identifier] from SDK.
-  void removeConnectionHandler(String identifier) {
+  void removeConnectionEventHandler(String identifier) {
     _int.eventManager.removeHandler(identifier, EventType.connection);
   }
 
   /// Adds [SessionEventHandler] to SDK.
-  void addSessionHandler(SessionEventHandler handler) {
+  void addSessionEventHandler(SessionEventHandler handler) {
     _int.eventManager.addHandler('', handler);
   }
 
   /// Returns [SessionEventHandler] if registered
-  SessionEventHandler getSessionHandler() {
+  SessionEventHandler getSessionEventHandler() {
     return _int.eventManager.getHandler(type: EventType.session);
   }
 
   /// Removes [SessionEventHandler] from SDK.
-  void removeSessionHandler() {
+  void removeSessionEventHandler() {
     _int.eventManager.removeHandler('', EventType.session);
   }
 
@@ -466,7 +467,7 @@ class SendbirdSdk {
   /// Returns total number of unrad messages.
   Future<int> getTotalUnreadMessageCount() async {
     final params = GroupChannelTotalUnreadMessageCountParams();
-    params.superChannelFilter = GroupChannelSuperChannelFilter.all;
+    params.superChannelFilter = SuperChannelFilter.all;
     return getTotalUnreadMessageCountWithParams(params);
   }
 

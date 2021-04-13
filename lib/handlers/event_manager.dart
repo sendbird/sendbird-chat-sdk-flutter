@@ -308,46 +308,39 @@ class EventManager {
     });
   }
 
-  void notifyChannelMetaDataChanged(
-      BaseChannel channel, Map<String, dynamic> data) {
+  void notifyMetaDataChanged(BaseChannel channel, Map<String, dynamic> data) {
     _channelHandlers.values.forEach((element) {
       final created = Map<String, String>.from(data["created"] ?? {});
       final updated = Map<String, String>.from(data["updated"] ?? {});
       final deleted = List<String>.from(data["deleted"] ?? []);
 
-      if (created.isNotEmpty)
-        element.onChannelMetaDataCreated(channel, created);
-      if (updated.isNotEmpty)
-        element.onChannelMetaDataUpdated(channel, updated);
-      if (deleted.isNotEmpty)
-        element.onChannelMetaDataDeleted(channel, deleted);
+      if (created.isNotEmpty) element.onMetaDataCreated(channel, created);
+      if (updated.isNotEmpty) element.onMetaDataUpdated(channel, updated);
+      if (deleted.isNotEmpty) element.onMetaDataDeleted(channel, deleted);
     });
   }
 
-  void notifyChannelMetaCountersChanged(
+  void notifyMetaCountersChanged(
       BaseChannel channel, Map<String, dynamic> data) {
     _channelHandlers.values.forEach((element) {
       final created = Map<String, int>.from(data["created"] ?? {});
       final updated = Map<String, int>.from(data["updated"] ?? {});
       final deleted = List<String>.from(data["deleted"] ?? []);
 
-      if (created.isNotEmpty)
-        element.onChannelMetaCountersCreated(channel, created);
-      if (updated.isNotEmpty)
-        element.onChannelMetaCountersUpdated(channel, updated);
-      if (deleted.isNotEmpty)
-        element.onChannelMetaCountersDeleted(channel, deleted);
+      if (created.isNotEmpty) element.onMetaCountersCreated(channel, created);
+      if (updated.isNotEmpty) element.onMetaCountersUpdated(channel, updated);
+      if (deleted.isNotEmpty) element.onMetaCountersDeleted(channel, deleted);
     });
   }
 
   // session
   void notifySessionExpired() {
-    logger.i('[Sendbird] Notifying session expired');
+    logger.i('Notifying session expired');
     _sessionHandler?.onSessionExpired();
   }
 
   void notifySessionTokenRequired() {
-    logger.i('[Sendbird] Notifying session token required');
+    logger.i('Notifying session token required');
     _sessionHandler?.onSessionTokenRequired(
       sdk.sessionManager.successFunc,
       sdk.sessionManager.errorFunc,
@@ -355,31 +348,31 @@ class EventManager {
   }
 
   void notifySessionRefreshed() {
-    logger.i('[Sendbird] Notifying session refreshed $_sessionHandler');
+    logger.i('Notifying session refreshed $_sessionHandler');
     _sessionHandler?.onSessionRefreshed();
   }
 
   void notifySessionError(SBError error) {
-    logger.i('[Sendbird] Notifying session error ${error.code}');
+    logger.i('Notifying session error $error');
     _sessionHandler?.onSessionError(error);
   }
 
   void notifySessionClosed() {
-    logger.i('[Sendbird] Notifying session closed');
+    logger.i('Notifying session closed');
     _sessionHandler.onSessionClosed();
   }
 
   // UserEvent
-  void notifyDiscoveredFriend(List<User> friends) {
+  void notifyFriendsDiscovered(List<User> friends) {
     _userHandlers.values.forEach((element) {
-      element.onDiscoverFriends(friends);
+      element.onFriendsDiscovered(friends);
     });
   }
 
-  void notifyUpdateTotalUnreadMessageCount(
+  void notifyTotalUnreadMessageCountUpdated(
       int totalCount, Map<String, num> customTypesCount) {
     _userHandlers.values.forEach((element) {
-      element.onUpdateTotalUnreadMessageCount(totalCount, customTypesCount);
+      element.onTotalUnreadMessageCountUpdated(totalCount, customTypesCount);
     });
   }
 
@@ -404,7 +397,7 @@ class EventManager {
 
   void notifyReconnectionCanceled() {
     _connectionHandlers.values.forEach((element) {
-      element.onReconnectionCancelled();
+      element.onReconnectionCanceled();
     });
   }
 }

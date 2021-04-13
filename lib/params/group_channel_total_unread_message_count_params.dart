@@ -7,6 +7,5 @@ class GroupChannelTotalUnreadMessageCountParams {
   List<String> customTypes;
 
   /// The enumerator filter of super channel.
-  GroupChannelSuperChannelFilter superChannelFilter =
-      GroupChannelSuperChannelFilter.all;
+  SuperChannelFilter superChannelFilter = SuperChannelFilter.all;
 }

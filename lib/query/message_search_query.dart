@@ -10,7 +10,7 @@ part 'message_search_query.g.dart';
 /// A query object to search messages
 @JsonSerializable()
 class MessageSearchQuery extends QueryBase {
-  ///Keyword to search
+  /// Keyword to search
   String keyword;
 
   /// Channel url
@@ -28,16 +28,26 @@ class MessageSearchQuery extends QueryBase {
   /// `true` to be exact match for keyword
   bool exactMatch;
 
-  /// timestamp to begin search
+  /// Timestamp for search from
   int messageTimestampFrom;
 
-  /// timestamp to end search
+  /// Timestamp for search to
   int messageTimestampTo;
 
+  /// Index for search before
   String beforeIndex;
+
+  /// Index for search after
   String afterIndex;
 
+  /// List of user ids to filter out resultda
   List<String> targetUserIds;
+
+  /// True if keyword contains advanced query style text
+  bool advancedQuery;
+
+  /// List of strings to look up message's data field to get matched
+  List<String> targetFields;
 
   /// Message search result sort order
   MessageSearchQueryOrder order = MessageSearchQueryOrder.timestamp;
@@ -66,6 +76,8 @@ class MessageSearchQuery extends QueryBase {
       endAt: messageTimestampTo,
       sortField: messageSearchQueryOrderEnumMap[order],
       limit: limit,
+      advanced: advancedQuery,
+      targetFields: targetFields,
     );
 
     loading = false;

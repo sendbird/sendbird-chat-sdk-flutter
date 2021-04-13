@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
+
 import 'package:sendbird_sdk/constant/contants.dart' as Constants;
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/options.dart';
@@ -22,7 +23,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.7';
+const sdk_version = '3.0.8';
 const platform = 'flatter';
 const platform_version = '1.22.5';
 
@@ -61,6 +62,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     String apiToken,
     Options options,
   }) : _options = options {
+    if (appId == null || appId == '') {
+      throw InvalidInitializationError();
+    }
+
     _api.initialize(appId: appId, token: apiToken);
     _state.appId = appId;
 
@@ -94,7 +99,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   /// Callback to handle socket disconnect
   void _onWebSocketDisconnect() {
     _state.connected = false;
-    _cmdManager.clearCompleters(error: WebSocketDisconnectError());
+    _cmdManager.clearCompleters(error: WebSocketConnectionFailed());
   }
 
   /// Callback to handle incoming data from socket
@@ -131,7 +136,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       if (_loginCompleter != null)
         _loginCompleter?.completeError(e);
       else
-        logger.e('[Sendbird] fatal error thrown ${e.toString()}');
+        logger.e('fatal error thrown ${e.toString()}');
       // throw e;
     });
   }
@@ -240,7 +245,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final user = await _loginCompleter.future
         .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
       logout();
-      throw WebSocketTimeoutError();
+      throw LoginTimeoutError();
     });
 
     ConnectionManager.flushCompleters(
@@ -252,7 +257,11 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void logout() {
-    logger.i('[Sendbird] logout');
+    logger.i('logout');
+
+    if (state.reconnecting) {
+      eventManager.notifyReconnectionCanceled();
+    }
 
     _sessionManager = SessionManager();
     _cache = MemoryCacheStorage();
@@ -337,7 +346,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
           .listen((ConnectivityResult result) {
         switch (result) {
           case ConnectivityResult.none:
-            logger.i('[Sendbird] connection has been lost');
+            logger.i('connection has been lost');
             break;
           case ConnectivityResult.mobile:
           case ConnectivityResult.wifi:

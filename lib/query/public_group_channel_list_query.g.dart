@@ -16,7 +16,7 @@ PublicGroupChannelListQuery _$PublicGroupChannelListQueryFromJson(
     ..channelUrls =
         (json['channel_urls'] as List)?.map((e) => e as String)?.toList()
     ..superChannelFilter = _$enumDecodeNullable(
-        _$GroupChannelSuperChannelFilterEnumMap, json['super_channel_filter'])
+        _$SuperChannelFilterEnumMap, json['super_channel_filter'])
     ..membershipFilter = _$enumDecodeNullable(
         _$PublicGroupChannelMembershipFilterEnumMap, json['membership_filter'])
     ..order = _$enumDecodeNullable(
@@ -42,7 +42,7 @@ Map<String, dynamic> _$PublicGroupChannelListQueryToJson(
       'limit': instance.limit,
       'channel_urls': instance.channelUrls,
       'super_channel_filter':
-          _$GroupChannelSuperChannelFilterEnumMap[instance.superChannelFilter],
+          _$SuperChannelFilterEnumMap[instance.superChannelFilter],
       'membership_filter': _$PublicGroupChannelMembershipFilterEnumMap[
           instance.membershipFilter],
       'order': _$PublicGroupChannelListOrderEnumMap[instance.order],
@@ -88,10 +88,10 @@ T _$enumDecodeNullable<T>(
   return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
 }
 
-const _$GroupChannelSuperChannelFilterEnumMap = {
-  GroupChannelSuperChannelFilter.all: 'all',
-  GroupChannelSuperChannelFilter.superChannel: 'super',
-  GroupChannelSuperChannelFilter.nonsuperChannel: 'nonsuper',
+const _$SuperChannelFilterEnumMap = {
+  SuperChannelFilter.all: 'all',
+  SuperChannelFilter.superChannel: 'super',
+  SuperChannelFilter.nonsuperChannel: 'nonsuper',
 };
 
 const _$PublicGroupChannelMembershipFilterEnumMap = {

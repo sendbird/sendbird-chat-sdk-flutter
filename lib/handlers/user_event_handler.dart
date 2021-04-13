@@ -16,9 +16,11 @@ import 'package:sendbird_sdk/handlers/event_manager.dart';
 /// }
 /// ```
 class UserEventHandler implements EventHandler {
-  void onDiscoverFriends(List<User> friends) {}
+  /// Not supporting TBD
+  void onFriendsDiscovered(List<User> friends) {}
 
-  void onUpdateTotalUnreadMessageCount(
+  /// Informs total unread message count has been changed
+  void onTotalUnreadMessageCountUpdated(
     int totalCount,
     Map<String, num> customTypesCount,
   ) {}
