@@ -6,24 +6,25 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:sendbird_sdk/constant/contants.dart' as Constants;
+import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/options.dart';
 import 'package:sendbird_sdk/core/models/state.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/managers/command_manager.dart';
+import 'package:sendbird_sdk/managers/connection_manager.dart';
+import 'package:sendbird_sdk/managers/event_manager.dart';
+import 'package:sendbird_sdk/managers/session_manager.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_streams.dart';
-import 'package:sendbird_sdk/services/command/command_manager.dart';
-import 'package:sendbird_sdk/services/connection/connection_manager.dart';
 import 'package:sendbird_sdk/services/db/memory_cache_service.dart';
 import 'package:sendbird_sdk/services/network/api_client.dart';
 import 'package:sendbird_sdk/services/network/websocket_client.dart';
-import 'package:sendbird_sdk/services/session/session_manager.dart';
 import 'package:sendbird_sdk/utils/async/async_operation.dart';
 import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.8';
+const sdk_version = '3.0.9';
 const platform = 'flatter';
 const platform_version = '1.22.5';
 

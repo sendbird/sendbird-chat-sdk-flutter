@@ -53,7 +53,7 @@ class User {
 
   List<String> discoveryKeys;
 
-  @JsonKey(defaultValue: {})
+  @JsonKey(defaultValue: {}, name: 'metadata')
   Map<String, String> metaData;
 
   @JsonKey(name: "require_auth_for_profile_image")

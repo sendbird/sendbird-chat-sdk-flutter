@@ -1,5 +1,5 @@
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/managers/event_manager.dart';
 
 /// Represents a class to get notify authentication events
 class AuthenticateEventHandler implements EventHandler {

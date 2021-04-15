@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/managers/event_manager.dart';
 
 /// Represents a class to notify user session event.
 ///

@@ -1,7 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
@@ -13,7 +12,7 @@ import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/emoji.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
-import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/file_info.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/unread_item_count.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
@@ -1221,7 +1220,7 @@ class ApiClient {
     ]);
 
     final body = {
-      if (type == PushTokenType.gcm) 'gcm_reg_token': token,
+      if (type == PushTokenType.fcm) 'gcm_reg_token': token,
       if (type == PushTokenType.apns) 'apns_device_token': token,
       'is_unique': unique,
     };
@@ -1301,17 +1300,17 @@ class ApiClient {
   Future<User> updateUser({
     @required String userId,
     String nickname,
-    ImageInfo imageInfo,
+    FileInfo fileInfo,
     List<String> discoveryKeys,
     List<String> preferredLanguages,
     OnUploadProgressCallback progress,
   }) async {
-    if (nickname == null && imageInfo == null && preferredLanguages == null) {
+    if (nickname == null && fileInfo == null && preferredLanguages == null) {
       throw InvalidParameterError();
     }
 
     final url = endpoint.Users.userid.format([userId]);
-    if (imageInfo?.hasBinary ?? false) {
+    if (fileInfo?.hasBinary ?? false) {
       final body = {
         'nickname': nickname,
         'profile_file': uploadFile,
@@ -1329,7 +1328,7 @@ class ApiClient {
     } else {
       final body = {
         'nickname': nickname,
-        'profile_url': imageInfo?.url,
+        'profile_url': fileInfo?.url,
         'discovery_keys': discoveryKeys,
         'preferred_languages': preferredLanguages,
       };
@@ -1481,6 +1480,7 @@ class ApiClient {
       if (searchFieldStrings.isNotEmpty) 'search_field': searchFieldStrings,
       if (searchFieldStrings.isNotEmpty) 'search_query': searchQuery,
       'distinct_mode': 'all',
+      'show_member': true,
     };
 
     params.addAll(options.toJson());

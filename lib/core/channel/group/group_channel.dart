@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';

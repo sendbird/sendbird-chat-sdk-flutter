@@ -10,7 +10,6 @@ import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
-import 'package:sendbird_sdk/handlers/event_manager.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';

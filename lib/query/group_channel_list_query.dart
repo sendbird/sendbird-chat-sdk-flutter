@@ -96,6 +96,7 @@ class GroupChannelListQuery extends QueryBase {
     nicknameContainsFilter = null;
     userIdsIncludeFilter = null;
     userIdsExactFilter = userIds;
+    queryType = GroupChannelListQueryType.and;
   }
 
   void setUserIdsIncludeFilter(

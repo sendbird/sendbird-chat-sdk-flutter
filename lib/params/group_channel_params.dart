@@ -1,5 +1,5 @@
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
-import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/file_info.dart';
 
 /// An object consists a set of parameters to create/update group channel.
 class GroupChannelParams {
@@ -50,7 +50,7 @@ class GroupChannelParams {
   /// Name for a channel
   String name;
 
-  ImageInfo coverImage;
+  FileInfo coverImage;
 
   /// List of user id who will get invited
   List<String> userIds;

@@ -1,4 +1,4 @@
-import 'package:sendbird_sdk/handlers/event_manager.dart';
+import 'package:sendbird_sdk/managers/event_manager.dart';
 
 /// Represents a class to notify various connection event.
 ///

@@ -3,13 +3,13 @@ import 'dart:ui';
 
 import 'package:mime/mime.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
-import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/file_info.dart';
 import 'package:sendbird_sdk/params/base_message_params.dart';
 
 /// An object consists a set of parameters for file message.
 class FileMessageParams extends BaseMessageParams {
   /// Binary file data.
-  ImageInfo uploadFile;
+  FileInfo uploadFile;
 
   /// Thumbnail sizes. This parameter is the array of `Size` and works for image file only
   List<Size> thumbnailSizes;
@@ -17,7 +17,7 @@ class FileMessageParams extends BaseMessageParams {
   /// NOTE: should use this constructor when updating message
   FileMessageParams.withMessage(FileMessage fileMessage, {bool deepCopy})
       : super.withMessage(fileMessage, deepCopy: deepCopy) {
-    uploadFile = ImageInfo.fromUrl(
+    uploadFile = FileInfo.fromUrl(
       url: fileMessage?.url,
       mimeType: fileMessage?.type,
     );
@@ -28,7 +28,7 @@ class FileMessageParams extends BaseMessageParams {
     String name,
     FileMessage fileMessage,
   }) : super.withMessage(fileMessage, deepCopy: false) {
-    uploadFile = ImageInfo.fromData(
+    uploadFile = FileInfo.fromData(
       name: name ?? 'my_file',
       file: file,
       mimeType: file != null ? lookupMimeType(file.path) : null,
@@ -42,7 +42,7 @@ class FileMessageParams extends BaseMessageParams {
     String name,
     FileMessage fileMessage,
   }) : super.withMessage(fileMessage, deepCopy: false) {
-    uploadFile = ImageInfo.fromUrl(
+    uploadFile = FileInfo.fromUrl(
       name: name ?? 'image',
       mimeType: mimeType,
       url: fileUrl,

@@ -19,8 +19,6 @@ import 'package:sendbird_sdk/utils/logger.dart';
 
 abstract class EventHandler {}
 
-enum EventType { channel, connection, session, userEvent }
-
 class EventManager {
   Map<String, ChannelEventHandler> _channelHandlers = {};
   Map<String, ConnectionEventHandler> _connectionHandlers = {};

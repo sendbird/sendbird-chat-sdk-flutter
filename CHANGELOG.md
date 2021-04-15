@@ -1,3 +1,9 @@
+## [3.0.9]
+* Fixed metaData mapping for `User`
+* Renamed `ImageInfo` to `FileInfo`
+* Renamed `markAsDelivered` parameter name from `payload` to `data`
+* Renamed `PushTokenType` `gcm` to `fcm` 
+
 ## [3.0.8]
 * Implemented `==` operator for channels, users and messages
 * Fixed `getMessage` method

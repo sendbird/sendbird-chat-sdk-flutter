@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/file_info.dart';
+import 'package:sendbird_sdk/managers/connection_manager.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
-import 'package:sendbird_sdk/services/connection/connection_manager.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 
@@ -189,7 +188,7 @@ class HttpClient {
     );
 
     body.forEach((key, value) {
-      if (value is ImageInfo) {
+      if (value is FileInfo) {
         request.files.add(http.MultipartFile.fromBytes(
           key,
           value.file.readAsBytesSync(),

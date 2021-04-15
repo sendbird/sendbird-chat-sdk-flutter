@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
@@ -25,9 +24,9 @@ import 'package:sendbird_sdk/events/reaction_event.dart';
 import 'package:sendbird_sdk/events/session_event.dart';
 import 'package:sendbird_sdk/events/thread_info_update_event.dart';
 import 'package:sendbird_sdk/events/user_event.dart';
+import 'package:sendbird_sdk/managers/connection_manager.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
-import 'package:sendbird_sdk/services/connection/connection_manager.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
 import 'package:sendbird_sdk/utils/async/async_operation.dart';

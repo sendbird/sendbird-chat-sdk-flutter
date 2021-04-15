@@ -17,7 +17,7 @@ export 'core/models/error.dart';
 export 'core/models/emoji.dart';
 export 'core/models/member.dart';
 export 'core/models/meta_array.dart';
-export 'core/models/image_info.dart';
+export 'core/models/file_info.dart';
 export 'core/models/options.dart';
 export 'core/models/reaction.dart';
 export 'core/models/sender.dart';

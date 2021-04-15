@@ -28,7 +28,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     friendName: json['friend_name'] as String,
     discoveryKeys:
         (json['discovery_keys'] as List)?.map((e) => e as String)?.toList(),
-    metaData: (json['meta_data'] as Map<String, dynamic>)?.map(
+    metaData: (json['metadata'] as Map<String, dynamic>)?.map(
           (k, e) => MapEntry(k, e as String),
         ) ??
         {},
@@ -50,7 +50,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'friend_discovery_key': instance.friendDiscoveryKey,
       'friend_name': instance.friendName,
       'discovery_keys': instance.discoveryKeys,
-      'meta_data': instance.metaData,
+      'metadata': instance.metaData,
       'require_auth_for_profile_image': instance.requireAuth,
       'session_token': instance.sessionToken,
       'state': _$MemberStateEnumMap[instance.state],

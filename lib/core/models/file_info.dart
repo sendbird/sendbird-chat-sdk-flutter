@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 /// Represents information about image that will be used to upload
-class ImageInfo {
+class FileInfo {
   /// name of this file
   final String name;
 
@@ -18,14 +18,14 @@ class ImageInfo {
 
   int fileSize;
 
-  ImageInfo.fromData({
+  FileInfo.fromData({
     @required this.name,
     @required this.file,
     @required this.mimeType,
   })  : fileSize = file?.lengthSync(),
         url = null;
 
-  ImageInfo.fromUrl({
+  FileInfo.fromUrl({
     @required this.url,
     @required this.mimeType,
     this.fileSize,

@@ -13,6 +13,8 @@ enum MessageSendingStatus { none, pending, failed, succeeded, canceled }
 /// Represents the type of channel
 enum ChannelType { group, open }
 
+enum EventType { channel, connection, session, userEvent }
+
 extension ChannelTypeExtension on ChannelType {
   String get urlString {
     switch (this) {
@@ -338,7 +340,7 @@ enum ConnectionState { connecting, open, closed }
 enum PushTokenRegistrationStatus { success, pending, error }
 
 /// Represents push token type
-enum PushTokenType { none, gcm, apns }
+enum PushTokenType { none, fcm, apns }
 
 /// Represents unread item key filter
 enum UnreadItemKey {
@@ -425,31 +427,6 @@ enum ChannelEventCategory {
   hidden,
   unhidden,
 }
-
-// const channelEventEnumMap = <ChannelEventCategory, int>{
-//   ChannelEventCategory.none: 0,
-//   ChannelEventCategory.join: 10000,
-//   ChannelEventCategory.leave: 10001,
-//   ChannelEventCategory.updateOperators: 10002,
-//   ChannelEventCategory.invite: 10020,
-//   ChannelEventCategory.declineInvite: 10022,
-//   ChannelEventCategory.enter: 10102,
-//   ChannelEventCategory.exit: 10103,
-//   ChannelEventCategory.unmute: 10200,
-//   ChannelEventCategory.mute: 10201,
-//   ChannelEventCategory.unban: 10600,
-//   ChannelEventCategory.ban: 10601,
-//   ChannelEventCategory.unfrozen: 10700,
-//   ChannelEventCategory.frozen: 10701,
-//   ChannelEventCategory.typingStart: 10900,
-//   ChannelEventCategory.typingEnd: 10901,
-//   ChannelEventCategory.propChanged: 11000,
-//   ChannelEventCategory.deleted: 12000,
-//   ChannelEventCategory.metaDataChanged: 11100,
-//   ChannelEventCategory.metaCounterChanged: 11200,
-//   ChannelEventCategory.hidden: 13000,
-//   ChannelEventCategory.unhidden: 13001,
-// };
 
 ChannelEventCategory channelEventValueOf(int value) {
   switch (value) {

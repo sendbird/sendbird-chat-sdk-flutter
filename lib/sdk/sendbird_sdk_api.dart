@@ -10,14 +10,13 @@ import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/app_info.dart';
 import 'package:sendbird_sdk/core/models/emoji.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/core/models/image_info.dart';
+import 'package:sendbird_sdk/core/models/file_info.dart';
 import 'package:sendbird_sdk/core/models/options.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/unread_item_count.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
-import 'package:sendbird_sdk/handlers/event_manager.dart';
 import 'package:sendbird_sdk/handlers/session_event_handler.dart';
 import 'package:sendbird_sdk/handlers/user_event_handler.dart';
 import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
@@ -226,18 +225,18 @@ class SendbirdSdk {
     return ConnectionState.closed;
   }
 
-  /// Updates current user information with [nickname], [imageInfo],
+  /// Updates current user information with [nickname], [fileInfo],
   /// [preferredLanguages].
   Future<void> updateCurrentUserInfo({
     String nickname,
-    ImageInfo imageInfo,
+    FileInfo fileInfo,
     List<String> preferredLanguages,
     OnUploadProgressCallback progress,
   }) async {
     final user = await _int.api.updateUser(
       userId: _int.state.userId,
       nickname: nickname,
-      imageInfo: imageInfo,
+      fileInfo: fileInfo,
       preferredLanguages: preferredLanguages,
       progress: progress,
     );
@@ -415,10 +414,10 @@ class SendbirdSdk {
   }
 
   /// Mark a message as delivered with given payload from push notification
-  Future<void> markAsDelivered({Map<String, dynamic> payload}) async {
-    if (payload == null) throw InvalidParameterError();
+  Future<void> markAsDelivered({Map<String, dynamic> data}) async {
+    if (data == null) throw InvalidParameterError();
 
-    Map<String, dynamic> sendbird = payload['sendbird'];
+    Map<String, dynamic> sendbird = data['sendbird'];
     String appId, userId, channelUrl, sessionKey;
     int createdAt;
 
