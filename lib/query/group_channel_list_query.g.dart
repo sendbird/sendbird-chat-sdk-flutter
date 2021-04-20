@@ -25,23 +25,20 @@ GroupChannelListQuery _$GroupChannelListQueryFromJson(
         _$SuperChannelFilterEnumMap, json['super_channel_filter'])
     ..publicChannelFilter = _$enumDecodeNullable(
         _$PublicChannelFilterEnumMap, json['public_channel_filter'])
-    ..customTypeStartWithFilter =
-        json['custom_type_start_with_filter'] as String
-    ..customTypesFilter =
-        (json['custom_types_filter'] as List)?.map((e) => e as String)?.toList()
-    ..nicknameContainsFilter = json['nickname_contains_filter'] as String
-    ..userIdsIncludeFilter = (json['user_ids_include_filter'] as List)
-        ?.map((e) => e as String)
-        ?.toList()
-    ..userIdsExactFilter = (json['user_ids_exact_filter'] as List)
-        ?.map((e) => e as String)
-        ?.toList()
-    ..channelNameContainsFilter = json['channel_name_contains_filter'] as String
     ..unreadChannelFilter = _$enumDecodeNullable(
         _$UnreadChannelFilterEnumMap, json['unread_channel_filter'])
-    ..metaDataOrderKeyFilter = json['meta_data_order_key_filter'] as String
     ..channelHiddenStateFilter = _$enumDecodeNullable(
         _$ChannelHiddenStateFilterEnumMap, json['channel_hidden_state_filter'])
+    ..customTypeStartWith = json['custom_type_start_with'] as String
+    ..customTypes =
+        (json['custom_types'] as List)?.map((e) => e as String)?.toList()
+    ..nicknameContains = json['nickname_contains'] as String
+    ..userIdsIncludeIn =
+        (json['user_ids_include_in'] as List)?.map((e) => e as String)?.toList()
+    ..userIdsExactlyIn =
+        (json['user_ids_exactly_in'] as List)?.map((e) => e as String)?.toList()
+    ..channelNameContains = json['channel_name_contains'] as String
+    ..metaDataOrderKey = json['meta_data_order_key'] as String
     ..searchQuery = json['search_query'] as String
     ..searchFields = (json['search_fields'] as List)
         ?.map((e) =>
@@ -69,17 +66,17 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
           _$SuperChannelFilterEnumMap[instance.superChannelFilter],
       'public_channel_filter':
           _$PublicChannelFilterEnumMap[instance.publicChannelFilter],
-      'custom_type_start_with_filter': instance.customTypeStartWithFilter,
-      'custom_types_filter': instance.customTypesFilter,
-      'nickname_contains_filter': instance.nicknameContainsFilter,
-      'user_ids_include_filter': instance.userIdsIncludeFilter,
-      'user_ids_exact_filter': instance.userIdsExactFilter,
-      'channel_name_contains_filter': instance.channelNameContainsFilter,
       'unread_channel_filter':
           _$UnreadChannelFilterEnumMap[instance.unreadChannelFilter],
-      'meta_data_order_key_filter': instance.metaDataOrderKeyFilter,
       'channel_hidden_state_filter':
           _$ChannelHiddenStateFilterEnumMap[instance.channelHiddenStateFilter],
+      'custom_type_start_with': instance.customTypeStartWith,
+      'custom_types': instance.customTypes,
+      'nickname_contains': instance.nicknameContains,
+      'user_ids_include_in': instance.userIdsIncludeIn,
+      'user_ids_exactly_in': instance.userIdsExactlyIn,
+      'channel_name_contains': instance.channelNameContains,
+      'meta_data_order_key': instance.metaDataOrderKey,
       'search_query': instance.searchQuery,
       'search_fields': instance.searchFields
           ?.map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e])

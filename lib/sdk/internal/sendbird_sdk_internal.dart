@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.9';
+const sdk_version = '3.0.10';
 const platform = 'flatter';
 const platform_version = '1.22.5';
 
@@ -51,10 +51,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   AsyncQueue _commandQueue = AsyncQueue<String>();
   Map<String, String> _extensions = {};
   List<String> _extraDatas = [
-    Constants.SbExtraDataPremiumFeatureList,
-    Constants.SbExtraDataFileUploadSizeLimit,
-    Constants.SbExtraDataApplicationAttributes,
-    Constants.SbExtraDataEmojiHash,
+    Constants.sbExtraDataPremiumFeatureList,
+    Constants.sbExtraDataFileUploadSizeLimit,
+    Constants.sbExtraDataApplicationAttributes,
+    Constants.sbExtraDataEmojiHash,
   ];
 
   //should only keep one instance
@@ -330,7 +330,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _state.connected = false;
     _state.connecting = false;
     _state.reconnecting = false;
-    _webSocket.close();
+    _webSocket?.close();
   }
 
   _handleEnterForeground() async {
@@ -369,7 +369,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   String get _sbUserAgent {
-    final uikitVersion = _extensions[Constants.SbExtensionKeyUIKit];
+    final uikitVersion = _extensions[Constants.sbExtensionKeyUIKit];
     final core = '/c$sdk_version';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
     final os = '/o${Platform.operatingSystem.toLowerCase()}';
@@ -377,8 +377,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void addVersionExtension(String key, String version) {
-    if (key != Constants.SbExtensionKeyUIKit ||
-        key != Constants.SbExtensionKeySyncManager) {
+    if (key != Constants.sbExtensionKeyUIKit ||
+        key != Constants.sbExtensionKeySyncManager) {
       return;
     }
     _extensions[key] = version;

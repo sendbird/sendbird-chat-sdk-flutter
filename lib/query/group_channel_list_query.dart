@@ -32,44 +32,44 @@ class GroupChannelListQuery extends QueryBase {
   /// Sets to filter public channel. Default is `all`
   PublicChannelFilter publicChannelFilter;
 
+  /// Sets to filter channels by the unread messages.
+  /// The default value is `all`
+  UnreadChannelFilter unreadChannelFilter;
+
+  /// Sets to filter channels by the hidden state.
+  /// The default value is `unhiddenOnly`
+  ChannelHiddenStateFilter channelHiddenStateFilter;
+
   /// Sets to filter channels by custom type that starts with
-  String customTypeStartWithFilter;
+  String customTypeStartWith;
 
   /// Sets the custom type filter.
-  List<String> customTypesFilter;
+  List<String> customTypes;
 
   /// Sets the filter with nickname.
   ///
   /// Query result will contains
   /// channels that any one of member contains given nickname
-  String nicknameContainsFilter;
+  String nicknameContains;
 
   /// Sets the filter with user IDs
   ///
   /// Query result will return if any one of user id matches with channel's members
-  List<String> userIdsIncludeFilter;
+  List<String> userIdsIncludeIn;
 
   /// Sets the filter with user IDs
   ///
   /// Query result will return only if channel's members are exactly matched
   /// with this property
-  List<String> userIdsExactFilter;
+  List<String> userIdsExactlyIn;
 
   /// Sets a filter to return only channels that contains the
   /// specified group channel name
-  String channelNameContainsFilter;
-
-  /// Sets to filter channels by the unread messages.
-  /// The default value is `all`
-  UnreadChannelFilter unreadChannelFilter;
+  String channelNameContains;
 
   /// Sets a key for ordering by value in the metadata.
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  String metaDataOrderKeyFilter;
-
-  /// Sets to filter channels by the hidden state.
-  /// The default value is `unhiddenOnly`
-  ChannelHiddenStateFilter channelHiddenStateFilter;
+  String metaDataOrderKey;
 
   String searchQuery;
   List<GroupChannelListQuerySearchField> searchFields;
@@ -86,31 +86,31 @@ class GroupChannelListQuery extends QueryBase {
   /// default value is `true`
   bool includeMemberList = true;
 
-  // Query result of channel object contains meta data if `true`.
-  // deault value is `false`
+  /// Query result of channel object contains meta data if `true`.
+  /// deault value is `false`
   bool includeMetaData = true;
 
   GroupChannelListQuery();
 
   void setUserIdsExactFilter(List<String> userIds) {
-    nicknameContainsFilter = null;
-    userIdsIncludeFilter = null;
-    userIdsExactFilter = userIds;
+    nicknameContains = null;
+    userIdsIncludeIn = null;
+    userIdsExactlyIn = userIds;
     queryType = GroupChannelListQueryType.and;
   }
 
   void setUserIdsIncludeFilter(
       List<String> userIds, GroupChannelListQueryType type) {
-    nicknameContainsFilter = null;
-    userIdsExactFilter = null;
-    userIdsIncludeFilter = userIds;
+    nicknameContains = null;
+    userIdsExactlyIn = null;
+    userIdsIncludeIn = userIds;
     queryType = type;
   }
 
   void setNicknameContainsFilter(String nickname) {
-    userIdsIncludeFilter = null;
-    userIdsExactFilter = null;
-    nicknameContainsFilter = nickname;
+    userIdsIncludeIn = null;
+    userIdsExactlyIn = null;
+    nicknameContains = nickname;
   }
 
   void setSearchFilter(
@@ -120,11 +120,11 @@ class GroupChannelListQuery extends QueryBase {
   }
 
   void setChannelUrlsFilter(List<String> channelUrls) {
-    userIdsExactFilter = null;
-    userIdsIncludeFilter = null;
+    userIdsExactlyIn = null;
+    userIdsIncludeIn = null;
     searchFields = null;
     searchQuery = null;
-    nicknameContainsFilter = null;
+    nicknameContains = null;
     channelUrls = channelUrls;
   }
 
@@ -145,17 +145,17 @@ class GroupChannelListQuery extends QueryBase {
     ];
 
     final filter = GroupChannelFilter()
-      ..customTypeStartswith = customTypeStartWithFilter
-      ..customTypes = customTypesFilter
+      ..customTypeStartswith = customTypeStartWith
+      ..customTypes = customTypes
       ..memberStateFilter = memberStateFilter
-      ..membersExactlyIn = userIdsExactFilter
-      ..membersIncludeIn = userIdsIncludeFilter
-      ..membersNicknameContains = nicknameContainsFilter
-      ..nameContains = channelNameContainsFilter
+      ..membersExactlyIn = userIdsExactlyIn
+      ..membersIncludeIn = userIdsIncludeIn
+      ..membersNicknameContains = nicknameContains
+      ..nameContains = channelNameContains
       ..superMode = superChannelFilter
       ..publicMode = publicChannelFilter
       ..unreadFilter = unreadChannelFilter
-      ..metadataOrderKey = metaDataOrderKeyFilter
+      ..metadataOrderKey = metaDataOrderKey
       ..hiddenMode = channelHiddenStateFilter;
 
     final sdk = SendbirdSdk().getInternal();

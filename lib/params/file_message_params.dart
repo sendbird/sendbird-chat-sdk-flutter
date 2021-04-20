@@ -36,15 +36,15 @@ class FileMessageParams extends BaseMessageParams {
   }
 
   FileMessageParams.withUrl(
-    String fileUrl,
-    String mimeType, {
+    String fileUrl, {
+    String mimeType,
     int size,
     String name,
     FileMessage fileMessage,
   }) : super.withMessage(fileMessage, deepCopy: false) {
     uploadFile = FileInfo.fromUrl(
       name: name ?? 'image',
-      mimeType: mimeType,
+      mimeType: mimeType ?? 'image/jpeg',
       url: fileUrl,
       fileSize: size,
     );

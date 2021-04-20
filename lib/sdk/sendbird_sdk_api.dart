@@ -102,7 +102,7 @@ class SendbirdSdk {
   /// Reconnects if previously connected and disconnect due to any reasons.
   /// It will return `false` if previous connection was not made.
   bool reconnect() {
-    if (getCurrentUser() == null && _int.state.sessionKey == null) {
+    if (currentUser == null && _int.state.sessionKey == null) {
       return false;
     }
 
@@ -111,7 +111,7 @@ class SendbirdSdk {
   }
 
   /// Returns current connected [User], nullable.
-  User getCurrentUser() {
+  User get currentUser {
     return _int.state?.currentUser;
   }
 
@@ -505,7 +505,7 @@ class SendbirdSdk {
 
   /// Returns a stream to listen message count has been changed
   Stream<int> get totalUnreadMessageCountStream {
-    if (getCurrentUser() == null) return null;
+    if (currentUser == null) return null;
     return _int.streamManager.unread.stream;
   }
 
@@ -513,7 +513,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every message update if [channelUrl] is not provided.
   Stream<BaseMessage> messageUpdateStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.msgUpdated.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.message;
@@ -527,7 +527,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every new message if [channelUrl] is not provided
   Stream<BaseMessage> messageReceiveStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.msgReceived.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.message;
@@ -541,7 +541,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every message deletion if [channelUrl] is not provided
   Stream<int> messageDeleteStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.msgDeletd.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.deletedId;
@@ -555,7 +555,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every channel chaange if [channelUrl] is not provided
   Stream<BaseChannel> channelChangedStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.channelChanged.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res;
@@ -569,7 +569,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every read event if [channelUrl] is not provided
   Stream<GroupChannel> readStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.read.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res;
@@ -583,7 +583,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered every delivery event if [channelUrl] is not provided
   Stream<Map<String, int>> deliveryStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.delivery.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) {
@@ -603,7 +603,7 @@ class SendbirdSdk {
   ///
   /// It will be triggered for every typing event if [channelUrl] is not provided
   Stream<List<User>> usersTypingStream({String channelUrl}) async* {
-    if (getCurrentUser() == null) yield null;
+    if (currentUser == null) yield null;
     await for (final res in _int.streamManager.typing.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res.getTypingUsers();
@@ -615,7 +615,7 @@ class SendbirdSdk {
 
   /// Returns a stream to listen connection events
   Stream<ConnectionEventType> get connectionStream {
-    if (getCurrentUser() == null) return null;
+    if (currentUser == null) return null;
     return _int.streamManager.connection.stream;
   }
 

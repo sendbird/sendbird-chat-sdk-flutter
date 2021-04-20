@@ -123,7 +123,7 @@ class User {
     metaData.removeWhere((key, value) => true);
   }
 
-  bool get isCurrentUser => userId == SendbirdSdk().getCurrentUser()?.userId;
+  bool get isCurrentUser => userId == SendbirdSdk().currentUser?.userId;
 
   // json serialization
 

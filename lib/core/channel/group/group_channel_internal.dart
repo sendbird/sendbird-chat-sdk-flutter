@@ -38,7 +38,7 @@ extension GroupChannelInternal on GroupChannel {
   bool updateUnreadCount(BaseMessage message) {
     if (message == null) return false;
 
-    final currentUser = SendbirdSdk().getCurrentUser();
+    final currentUser = SendbirdSdk().currentUser;
 
     if (!message.isSilent) {
       if (!message.sender.isCurrentUser) {

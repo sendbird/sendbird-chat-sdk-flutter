@@ -67,10 +67,10 @@ class CommandManager with SdkAccessor {
       logger.e('sendCommand: command parameter is null');
       throw InvalidParameterError();
     }
-    if (!webSocket.isConnected()) {
-      logger.e('sendCommand: Websocket connection is closed');
-      throw WebSocketConnectionClosedError();
-    }
+    // if (!webSocket.isConnected()) {
+    //   logger.e('sendCommand: Websocket connection is closed');
+    //   throw WebSocketConnectionClosedError();
+    // }
 
     try {
       await ConnectionManager.readyToExecuteWSRequest();

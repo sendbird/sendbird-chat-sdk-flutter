@@ -253,7 +253,7 @@ class BaseMessage {
 
   /// Retrieves threaded messages (replies) on this message with [timestamp]
   /// and [params].
-  Future<ThreadedMessageResponse> getThreadedMessageByTimestamp(
+  Future<ThreadedMessageResponse> getThreadedMessagesByTimestamp(
     int timestamp,
     ThreadedMessageListParams params,
   ) async {

@@ -344,7 +344,7 @@ extension Meta on BaseChannel {
     return BaseMessage.msgFromJson(result.payload);
   }
 
-  /// Removes list of [metaArrays] with given [message]
+  /// Removes values from list of [metaArrays] with given [message]
   Future<BaseMessage> removeMessageMetaArray(
     BaseMessage message,
     List<MessageMetaArray> metaArrays,

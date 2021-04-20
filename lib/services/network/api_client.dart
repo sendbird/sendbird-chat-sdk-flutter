@@ -817,8 +817,9 @@ class ApiClient {
   // MetaData
 
   Future<Map<String, dynamic>> createUserMetaData(
-      {Map<String, String> metaData}) async {
-    final url = endpoint.Users.userid_metadata.format([currentUserId]);
+      {Map<String, String> metaData, String userId}) async {
+    final url =
+        endpoint.Users.userid_metadata.format([userId ?? currentUserId]);
     final body = {'metadata': metaData, 'upsert': true};
     final res = await client.post(url: url, body: body);
     return res;
@@ -826,21 +827,25 @@ class ApiClient {
 
   Future<Map<String, dynamic>> updateUserMetaData({
     @required Map<String, String> metaData,
+    String userId,
     bool upsert = true,
   }) async {
-    final url = endpoint.Users.userid_metadata.format([currentUserId]);
+    final url =
+        endpoint.Users.userid_metadata.format([userId ?? currentUserId]);
     final body = {'metadata': metaData, 'upsert': upsert};
     final res = await client.put(url: url, body: body);
     return res;
   }
 
-  Future<void> deleteUserMetaData(String key) async {
-    final url = endpoint.Users.userid_metadata_key.format([currentUserId, key]);
+  Future<void> deleteUserMetaData(String key, {String userId}) async {
+    final url = endpoint.Users.userid_metadata_key
+        .format([userId ?? currentUserId, key]);
     await client.delete(url: url);
   }
 
-  Future<void> deleteAllUserMetaData() async {
-    final url = endpoint.Users.userid_metadata.format([currentUserId]);
+  Future<void> deleteAllUserMetaData({String userId}) async {
+    final url =
+        endpoint.Users.userid_metadata.format([userId ?? currentUserId]);
     await client.delete(url: url);
   }
 
@@ -1214,9 +1219,10 @@ class ApiClient {
     @required String token,
     bool unique = true,
   }) async {
+    final typeString = type == PushTokenType.fcm ? "gcm" : type.asString();
     final url = endpoint.Users.userid_push_tokentype.format([
       currentUserId,
-      type.asString(),
+      typeString,
     ]);
 
     final body = {
@@ -1230,9 +1236,10 @@ class ApiClient {
   }
 
   Future<void> unregisterPushToken({PushTokenType type, String token}) async {
+    final typeString = type == PushTokenType.fcm ? "gcm" : type.asString();
     final url = endpoint.Users.userid_push_tokentype_token.format([
       currentUserId,
-      type.asString(),
+      typeString,
       token,
     ]);
     await client.delete(url: url);
@@ -1509,6 +1516,7 @@ class ApiClient {
     List<String> userIds,
     String metaDataKey,
     List<String> metaDataValues,
+    String nicknameStartsWith,
     String token,
     int limit = 30,
   }) async {
@@ -1519,6 +1527,7 @@ class ApiClient {
       'user_ids': userIds,
       'metadatakey': metaDataKey,
       'metadatavalues_in': metaDataValues,
+      'nickname_startswith': nicknameStartsWith,
     };
     params.removeWhere((key, value) => value == null);
     final res = await client.get(url: url, queryParams: params);

@@ -1,3 +1,11 @@
+## [3.0.10] - Apr 19, 2021
+* Fixed register token endpoint
+* Fixed typo
+* Dropped some suffix `~Filter` from `GroupChannelListQuery`
+* Changed `FileInfo.fromUrl` parameter `mimeType` as optional (default is `image/jpeg`)
+* Changed `getCurrentUser` to `currentUser` getter
+* Improved stability
+
 ## [3.0.9]
 * Fixed metaData mapping for `User`
 * Renamed `ImageInfo` to `FileInfo`
