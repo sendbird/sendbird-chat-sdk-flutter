@@ -722,7 +722,7 @@ packages:
     source: hosted
     version: "0.1.2"
   yaml:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: yaml
       url: "https://pub.dartlang.org"

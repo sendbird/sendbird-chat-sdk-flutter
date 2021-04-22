@@ -14,4 +14,3 @@ analyzer:
   exclude:
     - example
     - lib/**/*.g.dart
-    - lib/params/message_change_logs_params.g.dart

@@ -1,3 +1,7 @@
+## [3.0.11] - Apr 22, 2021
+* Updated pubspec and README
+* Fixed typo
+
 ## [3.0.10] - Apr 19, 2021
 * Fixed register token endpoint
 * Fixed typo
