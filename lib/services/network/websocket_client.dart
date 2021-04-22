@@ -6,10 +6,10 @@ import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 
-typedef void OnWSConnect();
-typedef void OnWSDisconnect();
-typedef void OnWSData(dynamic data);
-typedef void OnWSError(Object error);
+typedef OnWSConnect = void Function();
+typedef OnWSDisconnect = void Function();
+typedef OnWSData = void Function(dynamic data);
+typedef OnWSError = void Function(Object error);
 
 class WebSocketClient {
   bool _connected = false;
@@ -55,7 +55,7 @@ class WebSocketClient {
     // already conncted on same url
     if (_connected && url == _url) return;
 
-    var hdrs = Map<String, dynamic>();
+    var hdrs = <String, dynamic>{};
     hdrs['Content-Type'] = 'application/json;charset=utf8';
 
     try {

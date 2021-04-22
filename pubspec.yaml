@@ -1,5 +1,5 @@
 name: sendbird_sdk
-description: Sendbird Chat SDK Dart/Flutter package
+description: The Flutter SDK for Sendbird Chat brings modern messenger chat features to your iOS and Android deployments.. 
 version: 3.0.10
 homepage: https://www.sendbird.com
 
@@ -31,3 +31,4 @@ dev_dependencies:
   json_serializable: ^3.5.0
   build_runner: ^1.0.0
   stack_trace: ^1.9.6
+  pedantic: ^1.0.0

@@ -35,7 +35,7 @@ extension GroupChannelTyping on GroupChannel {
   bool get isTyping {
     final typingStatuses =
         _sdk.cache.findAll<TypingStatus>(channelKey: channelUrl);
-    return typingStatuses != null && typingStatuses.length > 0;
+    return typingStatuses != null && typingStatuses.isNotEmpty;
   }
 
   /// Returns a list of [User] who are currently typing.

@@ -8,9 +8,9 @@ Future<Command> parseCommand(String data) async {
 }
 
 Command parseCommandData(String data) {
-  String cmdData = data.substring(0, 4);
-  String payloadData = data.substring(4);
-  Map<String, dynamic> payload = jsonDecode(payloadData);
+  final cmdData = data.substring(0, 4);
+  final payloadData = data.substring(4);
+  final payload = jsonDecode(payloadData);
   final cmd = Command.fromJson(payload);
   cmd.cmd = cmdData;
   cmd.payload = payload;

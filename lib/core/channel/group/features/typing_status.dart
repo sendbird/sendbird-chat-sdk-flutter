@@ -9,6 +9,7 @@ class TypingStatus implements Cacheable {
   User user;
   int timestamp;
 
+  @override
   bool dirty = false;
 
   TypingStatus({

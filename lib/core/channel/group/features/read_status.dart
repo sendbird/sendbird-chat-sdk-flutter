@@ -23,6 +23,7 @@ class ReadStatus implements Cacheable {
   int timestamp;
 
   @JsonKey(ignore: true)
+  @override
   bool dirty = false;
 
   ReadStatus({

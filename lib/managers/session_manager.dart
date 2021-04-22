@@ -68,10 +68,8 @@ class SessionManager with SdkAccessor {
   /// Get current `sessionKey` from prefs
   Future<String> getSessionKey() async {
     if (_sessionKey != null) return _sessionKey;
-    String decryptedKey = await _decryptedSessionKey();
-    if (_sessionKey == null) {
-      _sessionKey = decryptedKey;
-    }
+    final decryptedKey = await _decryptedSessionKey();
+    _sessionKey ??= decryptedKey;
     return decryptedKey;
   }
 
@@ -150,8 +148,8 @@ class SessionManager with SdkAccessor {
     // sessionPath = encryptedData.base64;
     prefs.setString(_sessionKeyPath, encryptedData.base64);
 
-    logger.i('encryption completed userId: $base64UserId ' +
-        'sessionKey: $encryptedData');
+    logger.i(
+        'encryption completed userId: $base64UserId sessionKey: $encryptedData');
   }
 
   // Updates session and notify

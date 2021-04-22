@@ -51,19 +51,19 @@ class IsolateSlave {
     try {
       handleMessage(action);
     } catch (e) {
-      //print("Exec Paction Exception:" + e.toString());
-      setError("Exception Thrown:" +
+      //print('Exec Paction Exception:' + e.toString());
+      setError('Exception Thrown:' +
           e.toString() +
-          "-" +
+          '-' +
           action.runtimeType.toString());
     }
   }
 
   // void cleanUp() async {
-  //   throw UnimplementedError("cleanUp should be overridden");
+  //   throw UnimplementedError('cleanUp should be overridden');
   // }
 
   void handleMessage(dynamic action) async {
-    throw UnimplementedError("handleMessage should be overridden");
+    throw UnimplementedError('handleMessage should be overridden');
   }
 }

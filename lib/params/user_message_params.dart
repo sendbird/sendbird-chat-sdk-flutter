@@ -35,6 +35,7 @@ class UserMessageParams extends BaseMessageParams {
         targetLanguages = userMessage.translations?.keys?.toList() ?? [],
         super.withMessage(userMessage, deepCopy: deepCopy);
 
+  @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
     ret['message'] = message;

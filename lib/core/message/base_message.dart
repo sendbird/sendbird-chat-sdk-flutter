@@ -88,7 +88,7 @@ class BaseMessage {
 
   /// Gets an array of meta arrays sorted by chronological order.
   /// current does not support backward compatibility
-  @JsonKey(name: "sorted_metaarray")
+  @JsonKey(name: 'sorted_metaarray')
   List<MessageMetaArray> metaArrays;
 
   /// Custom message type
@@ -165,7 +165,7 @@ class BaseMessage {
 
   /// Returns `true` if this message can be resend.
   bool isResendable() {
-    bool resendableError = errorCode == ErrorCode.connectionRequired ||
+    final resendableError = errorCode == ErrorCode.connectionRequired ||
         errorCode == ErrorCode.networkError ||
         errorCode == ErrorCode.ackTimeout ||
         errorCode == ErrorCode.webSocketConnectionClosed ||
@@ -339,7 +339,7 @@ class BaseMessage {
 
   static T msgFromJson<T extends BaseMessage>(Map<String, dynamic> json,
       {ChannelType channelType}) {
-    String cmd = json["type"] as String;
+    final cmd = json['type'] as String;
     T msg;
     //basemessage backward compatibility -
     if (json['custom'] != null) json['data'] = json['custom'];
@@ -386,7 +386,7 @@ class BaseMessage {
 
   /// Map [json] object
   factory BaseMessage.fromJson(Map<String, dynamic> json) {
-    String cmd = json["type"] as String;
+    final cmd = json['type'] as String;
     BaseMessage msg;
     //basemessage backward compatibility -
     if (json['custom'] != null) json['data'] = json['custom'];

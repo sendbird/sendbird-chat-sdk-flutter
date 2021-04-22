@@ -10,7 +10,7 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage sendUserMessageWithText(
     String text, {
-    OnMessageCallback onCompleted,
+    OnUserMessageCallback onCompleted,
   }) {
     final params = UserMessageParams()..message = text;
     return sendUserMessage(
@@ -27,7 +27,7 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage sendUserMessage(
     UserMessageParams params, {
-    OnMessageCallback onCompleted,
+    OnUserMessageCallback onCompleted,
   }) {
     if (params.message == null || params.message.isEmpty) {
       throw InvalidParameterError();
@@ -77,7 +77,7 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage resendUserMessage(
     UserMessage message, {
-    OnMessageCallback onCompleted,
+    OnUserMessageCallback onCompleted,
   }) {
     if (message == null ||
         message.sendingStatus != MessageSendingStatus.failed) {
@@ -118,7 +118,7 @@ extension Messages on BaseChannel {
       final msg = BaseMessage.msgFromJson<UserMessage>(res.payload);
       return msg;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -162,7 +162,7 @@ extension Messages on BaseChannel {
           Duration(seconds: _sdk.options.fileTransferTimeout),
           onTimeout: () {
             logger.e('upload timeout');
-            if (onCompleted != null)
+            if (onCompleted != null) {
               onCompleted(
                 pending..sendingStatus = MessageSendingStatus.failed,
                 SBError(
@@ -170,6 +170,7 @@ extension Messages on BaseChannel {
                   code: ErrorCode.fileUploadTimeout,
                 ),
               );
+            }
             return;
           },
         );
@@ -272,7 +273,7 @@ extension Messages on BaseChannel {
       final msg = BaseMessage.msgFromJson<FileMessage>(res.payload);
       return msg;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -364,8 +365,9 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-    if (channelType == ChannelType.group)
+    if (channelType == ChannelType.group) {
       params.showSubChannelMessagesOnly = false;
+    }
 
     return _sdk.api.getMessages(
       channelType: channelType,
@@ -387,8 +389,9 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-    if (channelType == ChannelType.group)
+    if (channelType == ChannelType.group) {
       params.showSubChannelMessagesOnly = false;
+    }
 
     return _sdk.api.getMessages(
       channelType: channelType,

@@ -41,7 +41,7 @@ class ConnectionManager {
 
     final sdk = SendbirdSdk().getInternal();
     final sessionKey = await sdk.sessionManager.getSessionKey();
-    final hasValidSession = sessionKey != null && sessionKey.length > 0;
+    final hasValidSession = sessionKey != null && sessionKey.isNotEmpty;
     final hasToken = sdk.api.token != null;
     if (hasValidSession || hasToken) {
       return;
@@ -67,7 +67,7 @@ class ConnectionManager {
   }
 
   static void flushCompleters({SBError error}) {
-    while (_queue.length > 0) {
+    while (_queue.isNotEmpty) {
       final completer = _queue.removeAt(0);
       if (error != null) {
         completer.completeError(error);

@@ -78,6 +78,7 @@ class UserMessage extends BaseMessage {
   factory UserMessage.fromJson(Map<String, dynamic> json) =>
       _$UserMessageFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$UserMessageToJson(this);
 
   @override

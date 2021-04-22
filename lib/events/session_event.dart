@@ -15,7 +15,7 @@ class SessionEvent extends BaseEvent {
 
   final String key;
 
-  String get sessionKey => key ?? newKey ?? null;
+  String get sessionKey => key ?? newKey;
 
   SessionEvent({this.expiresIn, this.newKey, this.ekey, this.key});
 

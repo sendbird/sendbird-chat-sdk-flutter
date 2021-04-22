@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:sendbird_sdk/constant/contants.dart' as Constants;
+import 'package:sendbird_sdk/constant/contants.dart' as constants;
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/options.dart';
@@ -51,10 +51,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   AsyncQueue _commandQueue = AsyncQueue<String>();
   Map<String, String> _extensions = {};
   List<String> _extraDatas = [
-    Constants.sbExtraDataPremiumFeatureList,
-    Constants.sbExtraDataFileUploadSizeLimit,
-    Constants.sbExtraDataApplicationAttributes,
-    Constants.sbExtraDataEmojiHash,
+    constants.sbExtraDataPremiumFeatureList,
+    constants.sbExtraDataFileUploadSizeLimit,
+    constants.sbExtraDataApplicationAttributes,
+    constants.sbExtraDataEmojiHash,
   ];
 
   //should only keep one instance
@@ -129,15 +129,16 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       try {
         _cmdManager.processCommand(cmd);
       } catch (e) {
-        throw e;
+        rethrow;
       }
     }, onError: (e, s) {
       //handle error how to toss this..?
       //get waiting func and error?
-      if (_loginCompleter != null)
+      if (_loginCompleter != null) {
         _loginCompleter?.completeError(e);
-      else
+      } else {
         logger.e('fatal error thrown ${e.toString()}');
+      }
       // throw e;
     });
   }
@@ -216,7 +217,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       ..apiHost = apiHost;
 
     _api.initialize(baseUrl: apiHost, headers: {
-      'SB-User-Agent': this._sbUserAgent,
+      'SB-User-Agent': _sbUserAgent,
       'User-Agent':
           '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
     });
@@ -233,7 +234,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         'key': sessionKey
       else
         'user_id': userId,
-      'SB-User-Agent': this._sbUserAgent,
+      'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
       'expiring_session':
           _eventManager.getHandler(type: EventType.session) != null ? '1' : '0',
@@ -324,7 +325,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) _handleEnterForeground();
   }
 
-  _handleEnterBackground() {
+  void _handleEnterBackground() {
     _cache.markAsDirtyAll();
     //clear all timers
     _state.connected = false;
@@ -333,14 +334,15 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _webSocket?.close();
   }
 
-  _handleEnterForeground() async {
-    if (_state.currentUser != null)
+  void _handleEnterForeground() async {
+    if (_state.currentUser != null) {
       await connect(userId: _state.userId, reconnect: true);
+    }
   }
 
   void _listenConnectionEvents() {
     //NOTE: do not run connectivity on test
-    bool isTest = Platform.environment['FLUTTER_TEST'] == 'true';
+    final isTest = Platform.environment['FLUTTER_TEST'] == 'true';
     if (!isTest) {
       _connectionSub = Connectivity()
           .onConnectivityChanged
@@ -369,7 +371,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   String get _sbUserAgent {
-    final uikitVersion = _extensions[Constants.sbExtensionKeyUIKit];
+    final uikitVersion = _extensions[constants.sbExtensionKeyUIKit];
     final core = '/c$sdk_version';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
     final os = '/o${Platform.operatingSystem.toLowerCase()}';
@@ -377,8 +379,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void addVersionExtension(String key, String version) {
-    if (key != Constants.sbExtensionKeyUIKit ||
-        key != Constants.sbExtensionKeySyncManager) {
+    if (key != constants.sbExtensionKeyUIKit ||
+        key != constants.sbExtensionKeySyncManager) {
       return;
     }
     _extensions[key] = version;

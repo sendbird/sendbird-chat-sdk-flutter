@@ -50,8 +50,8 @@ class Command {
     this.payload,
   }) {
     if (payload != null) {
-      this.requestId = requestId != null ? requestId : Uuid().v1();
-      payload['req_id'] = this.requestId;
+      requestId = requestId ?? Uuid().v1();
+      payload['req_id'] = requestId;
       payload.removeWhere((key, value) => value == null);
     }
   }
@@ -132,17 +132,16 @@ class Command {
     UserMessageParams params,
     String requestId,
   ) {
-    Map<String, dynamic> payload = {
+    final payload = <String, dynamic>{
       'channel_url': channelUrl,
       'message': params.message ?? '',
       'data': params.data,
       'custom_type': params.customType
     };
 
-    if (params.targetLanguages?.length != 0) {
+    if (params.targetLanguages.isNotEmpty) {
       payload['target_langs'] = params.targetLanguages;
-      payload['translations'] = Map.fromIterable(params.targetLanguages,
-          key: (e) => e, value: (e) => '');
+      payload['translations'] = {for (var e in params.targetLanguages) e: ''};
     }
 
     if (params.pushOption == PushNotificationDeliveryOption.suppress) {
@@ -174,7 +173,7 @@ class Command {
     int messageId,
     UserMessageParams params,
   ) {
-    Map<String, dynamic> payload = {
+    final payload = <String, dynamic>{
       'msg_id': messageId,
       'channel_url': channelUrl,
       'message': params.message,
@@ -194,7 +193,7 @@ class Command {
     List<dynamic> thumbnails,
     bool requireAuth,
   }) {
-    Map<String, dynamic> payload = {
+    final payload = <String, dynamic>{
       'channel_url': channelUrl,
       if (requireAuth != null) 'require_auth': requireAuth,
       'url': params.uploadFile.url,
@@ -233,7 +232,7 @@ class Command {
 
   static Command buildUpdateFileMessage(
       String channelUrl, int messageId, FileMessageParams params) {
-    Map<String, dynamic> payload = {
+    final payload = <String, dynamic>{
       'channel_url': channelUrl,
       'msg_id': messageId,
       'data': params.data,
@@ -258,12 +257,13 @@ class Command {
     }
 
     String type;
-    if (message is UserMessage)
+    if (message is UserMessage) {
       type = CommandType.userMessageUpdate;
-    else if (message is FileMessage)
+    } else if (message is FileMessage) {
       type = CommandType.fileMessageUpdate;
-    else
+    } else {
       throw InvalidParameterError();
+    }
 
     return Command(cmd: type, payload: {
       'channel_url': message.channelUrl,

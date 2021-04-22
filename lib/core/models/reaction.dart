@@ -21,8 +21,7 @@ class Reaction {
     this.userIds,
     this.updatedAt,
   }) {
-    updatedAts =
-        Map.fromIterable(userIds, key: (e) => e, value: (e) => updatedAt);
+    updatedAts = {for (var e in userIds) e: updatedAt};
   }
 
   bool merge(ReactionEvent event) {

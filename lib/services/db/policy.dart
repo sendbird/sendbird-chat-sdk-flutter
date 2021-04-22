@@ -24,7 +24,7 @@ class PeriodEviction implements EvictionPolicy {
   void start() {
     timer?.cancel();
     timer = Timer(Duration(seconds: periodInSeconds), () {
-      this.evict();
+      evict();
     });
   }
 

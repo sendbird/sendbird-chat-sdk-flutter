@@ -43,8 +43,9 @@ class UserListQuery extends QueryBase {
     switch (queryType) {
       case UserListQueryType.banned:
       case UserListQueryType.muted:
-        if (channelType == null || channelUrl == null)
+        if (channelType == null || channelUrl == null) {
           throw InvalidParameterError();
+        }
         break;
       case UserListQueryType.participants:
         if (channelUrl == null) throw InvalidParameterError();

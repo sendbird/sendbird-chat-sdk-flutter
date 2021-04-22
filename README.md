@@ -17,11 +17,11 @@ Through Chat SDK for flutter, you can efficiently integrate real-time chat into 
 
 ### How it works
 
-It is simple to implement chat in your client app with Sendbird Chat SDK for Flutter: a user logs in, sees a list of channels, selects or creates an [open channel](https://sendbird.com/docs/chat/v3/ios/guides/open-channel) or a [group channel](https://sendbird.com/docs/chat/v3/ios/guides/group-channel), and, through the use of the [channel event handler](https://sendbird.com/docs/chat/v3/ios/guides/event-delegate), sends messages to the channel, while also receiving them from other users within the channel. 
+It is simple to implement chat in your client app with Sendbird Chat SDK for Flutter: a user logs in, sees a list of channels, selects or creates an [open channel](https://sendbird.com/docs/chat/v3/flutter/guides/open-channel) or a [group channel](https://sendbird.com/docs/chat/v3/flutter/guides/group-channel), and, through the use of the [channel event handler](https://sendbird.com/docs/chat/v3/flutter/guides/event-handler), sends messages to the channel, while also receiving them from other users within the channel. 
 
 ### More about Sendbird Chat SDK for flutter
 
-Find out more about Sendbird Chat for Flutter at [Sendbird Docs](). If you have any comments or questions regarding bugs and feature requests, visit [Sendbird community](https://community.sendbird.com). 
+Find out more about Sendbird Chat for Flutter at [Sendbird Docs](https://sendbird.com/docs/chat/v3/flutter/getting-started/about-chat-sdk). If you have any comments or questions regarding bugs and feature requests, visit [Sendbird community](https://community.sendbird.com). 
 
 <br />
 
@@ -35,9 +35,7 @@ The minimum requirements for Chat SDK for Flutter are:
 
 - Xcode or Android studio 
 - Dart 2.10.4
-- Flutter 1.22.x 
- 
->__Note__: Flutter 2.0.x aren't compatible yet.
+- Flutter 1.22.x or higher
 
 ## Getting started
 
@@ -146,7 +144,7 @@ For security reasons, you can also use a session token when a user logs in to Se
 
 ### Step 3: Create a new open channel
 
-Create an [open channel](https://sendbird.com/docs/chat/v3/ios/guides/open-channel#2-create-a-channel). Once created, all users in your Sendbird application can easily participate in the channel.
+Create an [open channel](https://sendbird.com/docs/chat/v3/flutter/guides/open-channel#2-create-a-channel). Once created, all users in your Sendbird application can easily participate in the channel.
 
 ```dart
 try {
@@ -156,7 +154,7 @@ try {
 }
 ```
 
-You can also create a [group channel](https://sendbird.com/docs/chat/v3/ios/guides/group-channel#2-create-a-channel) by [inviting users as new members](https://sendbird.com/docs/chat/v3/ios/guides/group-channel#2-invite-users-as-members) to the channel.
+You can also create a [group channel](https://sendbird.com/docs/chat/v3/flutter/guides/group-channel#2-create-a-channel) by [inviting users as new members](https://sendbird.com/docs/chat/v3/flutter/guides/group-channel#2-invite-users-as-members) to the channel.
 
 > Note: The majority of the methods used in the following steps are all asynchronous. This means, with asynchronous methods, your client app must receive a result via `await` or `then()` callbacks from Sendbird server through completion handlers before moving on to the next step.  
 

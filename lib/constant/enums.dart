@@ -19,9 +19,9 @@ extension ChannelTypeExtension on ChannelType {
   String get urlString {
     switch (this) {
       case ChannelType.group:
-        return "group_channels";
+        return 'group_channels';
       case ChannelType.open:
-        return "open_channels";
+        return 'open_channels';
       default:
         return null;
     }
@@ -52,7 +52,7 @@ enum Role {
   none,
 
   /// Operator
-  @JsonValue("operator")
+  @JsonValue('operator')
   chat_operator
 }
 
@@ -499,13 +499,12 @@ enum ChannelQueryIncludeOption {
 
 extension IncludeOptionList on List<ChannelQueryIncludeOption> {
   Map<String, bool> toJson() {
-    final hasEmpty = this.contains(ChannelQueryIncludeOption.emptyChannel);
-    final hasMember = this.contains(ChannelQueryIncludeOption.memberList);
-    final hasFrozen = this.contains(ChannelQueryIncludeOption.frozenChannel);
-    final hasRead = this.contains(ChannelQueryIncludeOption.readReceipt);
-    final hasDelivery =
-        this.contains(ChannelQueryIncludeOption.deliveryReceipt);
-    final hasMeta = this.contains(ChannelQueryIncludeOption.metaData);
+    final hasEmpty = contains(ChannelQueryIncludeOption.emptyChannel);
+    final hasMember = contains(ChannelQueryIncludeOption.memberList);
+    final hasFrozen = contains(ChannelQueryIncludeOption.frozenChannel);
+    final hasRead = contains(ChannelQueryIncludeOption.readReceipt);
+    final hasDelivery = contains(ChannelQueryIncludeOption.deliveryReceipt);
+    final hasMeta = contains(ChannelQueryIncludeOption.metaData);
 
     return {
       if (hasEmpty) 'show_empty': true,

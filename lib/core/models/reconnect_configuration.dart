@@ -4,16 +4,16 @@ part 'reconnect_configuration.g.dart';
 
 @JsonSerializable()
 class ReconnectConfiguration {
-  @JsonKey(name: "interval")
+  @JsonKey(name: 'interval')
   double interval;
 
-  @JsonKey(name: "max_interval")
+  @JsonKey(name: 'max_interval')
   double maxInterval;
 
-  @JsonKey(name: "mul")
+  @JsonKey(name: 'mul')
   int multiplier;
 
-  @JsonKey(name: "retry_cnt")
+  @JsonKey(name: 'retry_cnt')
   int maximumRetryCount;
 
   bool get enabledInfinitelyRetry => maximumRetryCount < 0;

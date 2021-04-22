@@ -308,9 +308,9 @@ class EventManager {
 
   void notifyMetaDataChanged(BaseChannel channel, Map<String, dynamic> data) {
     _channelHandlers.values.forEach((element) {
-      final created = Map<String, String>.from(data["created"] ?? {});
-      final updated = Map<String, String>.from(data["updated"] ?? {});
-      final deleted = List<String>.from(data["deleted"] ?? []);
+      final created = Map<String, String>.from(data['created'] ?? {});
+      final updated = Map<String, String>.from(data['updated'] ?? {});
+      final deleted = List<String>.from(data['deleted'] ?? []);
 
       if (created.isNotEmpty) element.onMetaDataCreated(channel, created);
       if (updated.isNotEmpty) element.onMetaDataUpdated(channel, updated);
@@ -321,9 +321,9 @@ class EventManager {
   void notifyMetaCountersChanged(
       BaseChannel channel, Map<String, dynamic> data) {
     _channelHandlers.values.forEach((element) {
-      final created = Map<String, int>.from(data["created"] ?? {});
-      final updated = Map<String, int>.from(data["updated"] ?? {});
-      final deleted = List<String>.from(data["deleted"] ?? []);
+      final created = Map<String, int>.from(data['created'] ?? {});
+      final updated = Map<String, int>.from(data['updated'] ?? {});
+      final deleted = List<String>.from(data['deleted'] ?? []);
 
       if (created.isNotEmpty) element.onMetaCountersCreated(channel, created);
       if (updated.isNotEmpty) element.onMetaCountersUpdated(channel, updated);

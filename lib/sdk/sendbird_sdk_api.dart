@@ -405,8 +405,9 @@ class SendbirdSdk {
 
   /// Mark list of group channels with [channelUrls] as read.
   Future<void> markAsRead({@required List<String> channelUrls}) async {
-    if (channelUrls == null || channelUrls.isEmpty)
+    if (channelUrls == null || channelUrls.isEmpty) {
       throw InvalidParameterError();
+    }
     await _int.api.markAsRead(
       channelUrls: channelUrls,
       userId: _int.state.userId,
@@ -441,8 +442,7 @@ class SendbirdSdk {
         createdAt > 0) {
       SendbirdSdk(appId: appId);
 
-      _int.sessionManager
-          .setUserId(_int.state.userId != null ? _int.state.userId : userId);
+      _int.sessionManager.setUserId(_int.state.userId ?? userId);
       _int.sessionManager.setSessionKey(sessionKey);
       await _int.api.markAsDelivered(channelUrl: channelUrl, userId: userId);
     } else {

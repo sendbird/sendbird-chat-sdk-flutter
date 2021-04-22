@@ -65,7 +65,7 @@ class PublicGroupChannelListQuery extends QueryBase {
 
     loading = true;
 
-    List<ChannelQueryIncludeOption> options = [
+    final options = <ChannelQueryIncludeOption>[
       if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
       if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
       if (includeMemberList) ChannelQueryIncludeOption.memberList,

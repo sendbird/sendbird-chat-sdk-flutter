@@ -12,7 +12,7 @@ enum IsoBridgeStatus {
   shutdown,
 }
 
-typedef void IsolateBridgeEntryFunc(IsoactionInternalInit action);
+typedef IsolateBridgeEntryFunc = void Function(IsoactionInternalInit action);
 
 class IsoactionInternalInit {
   SendPort port;

@@ -25,7 +25,7 @@ class IsolateMaster {
     _receivePortForUxIsolate = RawReceivePort(_processAction);
     _sendPortForExecIsolate = _receivePortForUxIsolate
         .sendPort; //Temporary assignment for early callers
-    _errors = List<IsoactionInternalError>();
+    _errors = <IsoactionInternalError>[];
     _pingLastStamp = DateTime.now();
     _pingCount = 0;
     Timer.run(initialize);
@@ -46,11 +46,11 @@ class IsolateMaster {
         actionInit,
         paused: false,
         errorsAreFatal: false,
-        debugName: "Exec",
+        debugName: 'Exec',
       );
       return;
     } catch (except) {
-      _setError("Exception:" + except.toString());
+      _setError('Exception:' + except.toString());
     }
     _status = IsoBridgeStatus.error;
   }
@@ -111,9 +111,9 @@ class IsolateMaster {
     try {
       handleMessage(action);
     } catch (exception) {
-      _setError("Exception:" +
+      _setError('Exception:' +
           exception.toString() +
-          "-" +
+          '-' +
           action.runtimeType.toString());
     }
   }
@@ -126,13 +126,13 @@ class IsolateMaster {
     if (current == ref) {
       return current;
     }
-    if (_errors.length > 0) {
+    if (_errors.isNotEmpty) {
       return IsoBridgeStatus.error;
     }
-    int total = 0;
+    var total = 0;
     while (_status != ref) {
       await Future.delayed(Duration(milliseconds: 10));
-      if (_errors.length > 0) {
+      if (_errors.isNotEmpty) {
         return IsoBridgeStatus.error;
       }
       total += 10;
@@ -150,7 +150,7 @@ class IsolateMaster {
   }
 
   void handleError(String action) async {
-    //print("Override Handleerror:" + action);
+    //print('Override Handleerror:' + action);
   }
 
   void didInitialize() async {}

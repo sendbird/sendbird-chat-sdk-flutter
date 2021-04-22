@@ -20,7 +20,7 @@ class ScheduledUserMessage extends BaseMessage {
   final int scheduledId;
 
   /// Scheduled message date time. (format: "YYYY-MM-DD HH:mm")
-  @JsonKey(name: "scheduled_dt")
+  @JsonKey(name: 'scheduled_dt')
   final String scheduledDateTimeString;
 
   /// Scheduled message timezone. (e.g. UTC, America/Los_Angeles, etc)
@@ -40,7 +40,7 @@ class ScheduledUserMessage extends BaseMessage {
   final SBError error;
 
   /// Target languages that the message will be translated into
-  @JsonKey(name: "translation_target_langs")
+  @JsonKey(name: 'translation_target_langs')
   final List<String> targetLanguages;
 
   ScheduledUserMessage({
@@ -106,6 +106,7 @@ class ScheduledUserMessage extends BaseMessage {
   factory ScheduledUserMessage.fromJson(Map<String, dynamic> json) =>
       _$ScheduledUserMessageFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$ScheduledUserMessageToJson(this);
 
   @override

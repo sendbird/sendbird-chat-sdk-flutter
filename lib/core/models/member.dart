@@ -61,6 +61,7 @@ class Member extends User {
 
   factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$MemberToJson(this);
 
   @override

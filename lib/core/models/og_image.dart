@@ -7,9 +7,11 @@ part 'og_image.g.dart';
 @JsonSerializable()
 class OGImage implements OGMedia, OGDisplayable {
   /// Image url
+  @override
   final String url;
 
   /// Image secure url
+  @override
   final String secureUrl;
 
   /// Image type
@@ -19,9 +21,11 @@ class OGImage implements OGMedia, OGDisplayable {
   final String alt;
 
   /// Image width
+  @override
   final int width;
 
   /// Image height
+  @override
   final int height;
 
   OGImage({

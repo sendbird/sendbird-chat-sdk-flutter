@@ -8,10 +8,11 @@ part 'delivery_status.g.dart';
 class DeliveryStatus implements Cacheable {
   final String channelUrl;
 
-  @JsonKey(name: "updated")
+  @JsonKey(name: 'updated')
   Map<String, int> updatedDeliveryReceipt;
 
   @JsonKey(ignore: true)
+  @override
   bool dirty = false;
 
   DeliveryStatus({
@@ -30,7 +31,8 @@ class DeliveryStatus implements Cacheable {
 
   @override
   void copyWith(dynamic others) {
-    if (others is DeliveryStatus)
+    if (others is DeliveryStatus) {
       updatedDeliveryReceipt.addAll(others.updatedDeliveryReceipt);
+    }
   }
 }

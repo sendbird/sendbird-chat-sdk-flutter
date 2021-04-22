@@ -140,7 +140,7 @@ class ApiClient {
     GroupChannelParams params, {
     OnUploadProgressCallback progress,
   }) async {
-    Map<String, dynamic> body = {
+    final body = {
       'name': params.name,
       'user_ids': params.userIds,
       'custom_type': params.customType,
@@ -180,7 +180,7 @@ class ApiClient {
     GroupChannelParams params, {
     OnUploadProgressCallback progress,
   }) async {
-    Map<String, dynamic> body = {
+    final body = {
       'name': params.name,
       'user_ids': params.userIds,
       'custom_type': params.customType,
@@ -307,7 +307,7 @@ class ApiClient {
       channelType.urlString,
       channelUrl,
     ]);
-    Map<String, dynamic> body = {
+    final body = {
       'user_id': userId,
       'mark_as_read': markAsRead,
     };
@@ -340,11 +340,11 @@ class ApiClient {
     }
 
     final url = endpoint.Users.userid_groupchannel_changelogs.format([userId]);
-    var queryParams = Map<String, dynamic>();
+    var queryParams = <String, dynamic>{};
     queryParams.addAll(params.toJson());
-    if (timestamp != null && timestamp > 0)
+    if (timestamp != null && timestamp > 0) {
       queryParams['change_ts'] = timestamp;
-    else if (token != null) queryParams['token'] = token;
+    } else if (token != null) queryParams['token'] = token;
 
     final res = await client.get(url: url, queryParams: queryParams);
     return ChannelChangeLogsResponse.fromJson(res);
@@ -706,7 +706,7 @@ class ApiClient {
       throw InvalidParameterError();
     }
 
-    if (fileSize > this.uploadSizeLimit) {
+    if (fileSize > uploadSizeLimit) {
       throw FileSizeLimitExceededError();
     }
 
@@ -719,7 +719,7 @@ class ApiClient {
 
     params.thumbnailSizes?.asMap()?.forEach((index, value) =>
         body['thumbnail${index + 1}'] =
-            "${value.width.round()},${value.height.round()}");
+            '${value.width.round()},${value.height.round()}');
 
     final res = await client.multipartRequest(
       method: Method.post,
@@ -895,8 +895,8 @@ class ApiClient {
       channelType.urlString,
       channelUrl,
     ]);
-    Map<String, dynamic> queryParams = {'include_ts': true};
-    if (keys != null && keys.length > 0) {
+    final queryParams = <String, dynamic>{'include_ts': true};
+    if (keys != null && keys.isNotEmpty) {
       queryParams['keys'] = keys;
     }
     final res = await client.get(url: url, queryParams: queryParams);
@@ -980,8 +980,8 @@ class ApiClient {
       channelType.urlString,
       channelUrl,
     ]);
-    Map<String, dynamic> queryParams = {};
-    if (keys != null && keys.length > 0) {
+    final queryParams = <String, dynamic>{};
+    if (keys != null && keys.isNotEmpty) {
       queryParams['keys'] = keys;
     }
     final res = await client.get(url: url, queryParams: queryParams);
@@ -1079,8 +1079,9 @@ class ApiClient {
   }) async {
     if (enable) {
       if (startDate == null || endDate == null) throw InvalidParameterError();
-      if (endDate.difference(startDate).inSeconds < 0)
+      if (endDate.difference(startDate).inSeconds < 0) {
         throw InvalidParameterError();
+      }
     }
 
     if (enable == null) {
@@ -1219,7 +1220,7 @@ class ApiClient {
     @required String token,
     bool unique = true,
   }) async {
-    final typeString = type == PushTokenType.fcm ? "gcm" : type.asString();
+    final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
     final url = endpoint.Users.userid_push_tokentype.format([
       currentUserId,
       typeString,
@@ -1236,7 +1237,7 @@ class ApiClient {
   }
 
   Future<void> unregisterPushToken({PushTokenType type, String token}) async {
-    final typeString = type == PushTokenType.fcm ? "gcm" : type.asString();
+    final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
     final url = endpoint.Users.userid_push_tokentype_token.format([
       currentUserId,
       typeString,
@@ -1563,7 +1564,7 @@ class ApiClient {
     };
     final res = await client.get(url: url, queryParams: params);
     final users =
-        List<Map>.from(res["banned_list"]).map((e) => e['user']).toList();
+        List<Map>.from(res['banned_list']).map((e) => e['user']).toList();
     final output = {'users': users, 'next': res['next']};
     return UserListQueryResponse.fromJson(output);
   }
@@ -1581,7 +1582,7 @@ class ApiClient {
       if (token != null) 'token': token,
     };
     final res = await client.get(url: url, queryParams: params);
-    final output = {'users': res["muted_list"], 'next': res['next']};
+    final output = {'users': res['muted_list'], 'next': res['next']};
     return UserListQueryResponse.fromJson(output);
   }
 
@@ -1626,7 +1627,7 @@ class ApiClient {
       'show_member_is_muted': 'true',
     };
     final res = await client.get(url: url, queryParams: params);
-    final output = {'users': res["members"], 'next': res['next']};
+    final output = {'users': res['members'], 'next': res['next']};
     return UserListQueryResponse.fromJson(output);
   }
 
@@ -1641,7 +1642,7 @@ class ApiClient {
       if (token != null) 'token': token,
     };
     final res = await client.get(url: url, queryParams: params);
-    final output = {'users': res["participants"], 'next': res['next']};
+    final output = {'users': res['participants'], 'next': res['next']};
     return UserListQueryResponse.fromJson(output);
   }
 

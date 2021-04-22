@@ -35,6 +35,7 @@ class ScheduledUserMessageParams extends UserMessageParams {
           metaArrays: metaArrays,
         );
 
+  @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
     ret['scheduled_dt'] = '$scheduledDateString $timezone';

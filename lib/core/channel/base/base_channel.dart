@@ -76,7 +76,8 @@ class BaseChannel implements Cacheable {
   bool fromCache = false;
 
   @JsonKey(ignore: true)
-  bool dirty = false;
+  @override
+  bool dirty;
 
   /// **WARNING:** Do not use default constructor to initialize manually
   BaseChannel({

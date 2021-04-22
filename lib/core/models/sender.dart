@@ -47,7 +47,7 @@ class Sender extends User {
         );
 
   factory Sender.fromUser(User user, BaseChannel channel) {
-    Sender sender = Sender.fromJson(user.toJson());
+    final sender = Sender.fromJson(user.toJson());
     if (channel is GroupChannel) {
       sender.role = channel.myRole;
     } else if (channel is OpenChannel) {
@@ -66,6 +66,7 @@ class Sender extends User {
     return _$SenderFromJson(json);
   }
 
+  @override
   Map<String, dynamic> toJson() => _$SenderToJson(this);
 
   @override

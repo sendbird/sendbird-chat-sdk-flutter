@@ -42,7 +42,7 @@ class ThreadedMessageListParams {
 
   /// Determines whether to include the metaarray information of the
   /// messages in the results.
-  @JsonKey(name: "with_sorted_meta_array")
+  @JsonKey(name: 'with_sorted_meta_array')
   bool includeMetaArray = false;
 
   /// Determines whether to include the reactions to the messages

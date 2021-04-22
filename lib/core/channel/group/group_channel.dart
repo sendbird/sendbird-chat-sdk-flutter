@@ -264,9 +264,8 @@ class GroupChannel extends BaseChannel {
     if (params == null) {
       throw InvalidParameterError();
     }
-    if (params.channelUrl == null) {
-      params.channelUrl = channelUrl;
-    }
+    params.channelUrl ??= channelUrl;
+
     if (params.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }

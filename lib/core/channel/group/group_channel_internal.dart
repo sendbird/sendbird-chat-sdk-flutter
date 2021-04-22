@@ -110,11 +110,11 @@ extension GroupChannelInternal on GroupChannel {
     members.sort((a, b) => a.nickname.compareTo(b.nickname));
 
     final ts = DateTime.now().millisecondsSinceEpoch;
-    DeliveryStatus delivery = DeliveryStatus(
+    final delivery = DeliveryStatus(
       channelUrl: channelUrl,
       updatedDeliveryReceipt: {newMember.userId: ts},
     );
-    ReadStatus read = ReadStatus(
+    final read = ReadStatus(
       channelType: channelType,
       channelUrl: channelUrl,
       timestamp: ts,

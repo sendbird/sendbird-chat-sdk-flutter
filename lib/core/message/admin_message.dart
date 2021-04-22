@@ -72,5 +72,6 @@ class AdminMessage extends BaseMessage {
   factory AdminMessage.fromJson(Map<String, dynamic> json) =>
       _$AdminMessageFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$AdminMessageToJson(this);
 }

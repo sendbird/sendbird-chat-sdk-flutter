@@ -10,10 +10,9 @@ extension BaseMessageInternal on BaseMessage {
     }
 
     return mentionedUsers
-            .where((element) => element.userId == user.userId)
-            .toList()
-            .length !=
-        0;
+        .where((element) => element.userId == user.userId)
+        .toList()
+        .isNotEmpty;
   }
 
   bool mentioned({User user, User byOtherUser}) {
@@ -35,6 +34,6 @@ extension BaseMessageInternal on BaseMessage {
   }
 
   bool hasUpdatedLaterThan(int time) {
-    return this.hasCreatedLaterThan(time) && updatedAt > time;
+    return hasCreatedLaterThan(time) && updatedAt > time;
   }
 }

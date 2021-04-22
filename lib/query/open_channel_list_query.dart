@@ -36,7 +36,7 @@ class OpenChannelListQuery extends QueryBase {
 
     loading = true;
 
-    List<ChannelQueryIncludeOption> options = [
+    final options = [
       if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
       if (includeMetaData) ChannelQueryIncludeOption.metaData
     ];

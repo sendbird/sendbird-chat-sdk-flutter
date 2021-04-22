@@ -50,6 +50,7 @@ class FileMessageParams extends BaseMessageParams {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
     ret['url'] = uploadFile?.url;

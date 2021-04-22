@@ -16,7 +16,7 @@ class MessageRetrievalParams {
   int messageId;
 
   /// Determines whether the metaarray of the message is included in the results.
-  @JsonKey(name: "with_sorted_meta_array")
+  @JsonKey(name: 'with_sorted_meta_array')
   bool includeMetaArray = false;
 
   /// Determines whether to include the parent message text in the

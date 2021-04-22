@@ -56,7 +56,7 @@ class User {
   @JsonKey(defaultValue: {}, name: 'metadata')
   Map<String, String> metaData;
 
-  @JsonKey(name: "require_auth_for_profile_image")
+  @JsonKey(name: 'require_auth_for_profile_image')
   bool requireAuth;
 
   String sessionToken;
@@ -130,7 +130,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     if (json['guest_id'] != null) json['user_id'] = json['guest_id'];
     if (json['session_tokens'] != null &&
-        (json['session_tokens'] as List).length > 0) {
+        (json['session_tokens'] as List).isEmpty) {
       final tokens = List<Map>.from(json['session_tokens'] as List);
       json['session_token'] = tokens?.first['session_token'];
     }

@@ -47,5 +47,6 @@ class ApplicationUserListQuery extends UserListQuery {
   }
 
   // Json Serialization
+  @override
   Map<String, dynamic> toJson() => _$ApplicationUserListQueryToJson(this);
 }

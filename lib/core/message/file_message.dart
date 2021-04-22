@@ -143,6 +143,7 @@ class FileMessage extends BaseMessage {
     return msg;
   }
 
+  @override
   Map<String, dynamic> toJson() => _$FileMessageToJson(this);
 
   @override

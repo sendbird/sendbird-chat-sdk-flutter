@@ -309,7 +309,7 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    if (metaArrays == null || metaArrays.length == 0) {
+    if (metaArrays == null || metaArrays.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -330,7 +330,7 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    if (keys == null || keys.length <= 0) {
+    if (keys == null || keys.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -353,7 +353,7 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    if (metaArrays == null || metaArrays.length == 0) {
+    if (metaArrays == null || metaArrays.isEmpty) {
       throw InvalidParameterError();
     }
 

@@ -17,7 +17,7 @@ extension GroupChannelConfiguration on GroupChannel {
     );
 
     if (offset != null) messageOffsetTimestamp = offset;
-    if (hidePreviousMessage) this.clearUnreadCount();
+    if (hidePreviousMessage) clearUnreadCount();
 
     isHidden = true;
     hiddenState = allowAutoUnhide

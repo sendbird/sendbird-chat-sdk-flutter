@@ -35,9 +35,9 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
 class CommandManager with SdkAccessor {
-  Map<String, Timer> _ackTimers = {};
-  Map<String, Completer<Command>> _completers = {};
-  AsyncQueue _queue = AsyncQueue<Command>();
+  final Map<String, Timer> _ackTimers = {};
+  final Map<String, Completer<Command>> _completers = {};
+  final AsyncQueue _queue = AsyncQueue<Command>();
 
   void cleanUp() {
     _ackTimers.removeWhere((key, value) => true);
@@ -47,10 +47,11 @@ class CommandManager with SdkAccessor {
 
   void clearCompleters({Error error}) {
     _completers.forEach((key, value) {
-      if (error != null)
+      if (error != null) {
         value.completeError(error);
-      else
+      } else {
         value.complete();
+      }
     });
     _completers.removeWhere((key, value) => true);
   }
@@ -76,14 +77,14 @@ class CommandManager with SdkAccessor {
       await ConnectionManager.readyToExecuteWSRequest();
     } catch (e) {
       _ackTimers.remove(cmd.requestId)?.cancel();
-      throw e;
+      rethrow;
     }
 
     try {
       webSocket.send(cmd.encode());
     } catch (e) {
       _ackTimers.remove(cmd.requestId)?.cancel();
-      throw e;
+      rethrow;
     }
     // } else {
     //   ackTimers[cmd.requestId].cancel();
@@ -98,7 +99,7 @@ class CommandManager with SdkAccessor {
       });
       _ackTimers[cmd.requestId] = timer;
 
-      final completer = new Completer<Command>();
+      final completer = Completer<Command>();
       _completers[cmd.requestId] = completer;
       return completer.future;
     } else {
@@ -133,35 +134,35 @@ class CommandManager with SdkAccessor {
     logger.i('Processing Socket event\n$cmdString\n$payloadString');
 
     Function(Command) fnc;
-    if (cmd.isError || cmd.hasError)
+    if (cmd.isError || cmd.hasError) {
       fnc = _processError;
-    else if (cmd.isLogin && cmd.requestId != null)
+    } else if (cmd.isLogin && cmd.requestId != null) {
       fnc = _processSessionRefresh;
-    else if (cmd.isLogin)
+    } else if (cmd.isLogin) {
       fnc = _processLogin;
-    else if (cmd.isSessionExpired)
+    } else if (cmd.isSessionExpired) {
       fnc = _processSessionExpired;
-    else if (cmd.isNewMessage)
+    } else if (cmd.isNewMessage) {
       fnc = _processNewMessage;
-    else if (cmd.isUpdatedMessage)
+    } else if (cmd.isUpdatedMessage) {
       fnc = _processUpdateMessage;
-    else if (cmd.isDeletedMessage)
+    } else if (cmd.isDeletedMessage) {
       fnc = _processDeleteMessage;
-    else if (cmd.isMemberCountChange)
+    } else if (cmd.isMemberCountChange) {
       fnc = _processMemberCountChange;
-    else if (cmd.isRead)
+    } else if (cmd.isRead) {
       fnc = _processRead;
-    else if (cmd.isDelivery)
+    } else if (cmd.isDelivery) {
       fnc = _processDelivery;
-    else if (cmd.isThread)
+    } else if (cmd.isThread) {
       fnc = _processThread;
-    else if (cmd.isReaction)
+    } else if (cmd.isReaction) {
       fnc = _processReaction;
-    else if (cmd.isUserEvent)
+    } else if (cmd.isUserEvent) {
       fnc = _processUserEvent;
-    else if (cmd.isSystemEvent)
+    } else if (cmd.isSystemEvent) {
       fnc = _processSystemEvent;
-    else {/*not handle command*/}
+    } else {/*not handle command*/}
 
     if (fnc != null) {
       final op = AsyncTask<Command>(func: fnc, arg: cmd);
@@ -340,10 +341,12 @@ class CommandManager with SdkAccessor {
 
         eventManager.notifyMessageUpdate(channel, message);
 
-        if (shouldCallChannelChanged)
+        if (shouldCallChannelChanged) {
           eventManager.notifyChannelChanged(channel);
-        if (shouldCallMentionReceived)
+        }
+        if (shouldCallMentionReceived) {
           eventManager.notifyMentionReceived(channel, message);
+        }
       }
     } catch (e) {
       logger.w('Aborted ${cmd.cmd} ' + e.toString());
@@ -398,7 +401,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processRead(Command cmd) async {
     try {
-      ReadStatus status = ReadStatus.fromJson(cmd.payload);
+      final status = ReadStatus.fromJson(cmd.payload);
       status.saveToCache();
 
       final channel = await GroupChannel.getChannel(status.channelUrl);
@@ -420,11 +423,11 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processDelivery(Command cmd) async {
     try {
-      DeliveryStatus status = DeliveryStatus.fromJson(cmd.payload);
+      final status = DeliveryStatus.fromJson(cmd.payload);
 
       final channel = await GroupChannel.getChannel(status.channelUrl);
       final currUserId = appState.currentUser.userId;
-      bool shouldCallDelivery = true;
+      var shouldCallDelivery = true;
       if (status.updatedDeliveryReceipt.length == 1 &&
           status.updatedDeliveryReceipt[currUserId] != null) {
         //not to call
@@ -443,7 +446,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processThread(Command cmd) async {
     try {
-      ThreadInfoUpdateEvent event = ThreadInfoUpdateEvent.fromJson(cmd.payload);
+      final event = ThreadInfoUpdateEvent.fromJson(cmd.payload);
       final channel = await GroupChannel.getChannel(event.channelUrl);
       eventManager.notifyChannelThreadUpdated(channel, event);
     } catch (e) {
@@ -453,7 +456,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processReaction(Command cmd) async {
     try {
-      ReactionEvent event = ReactionEvent.fromJson(cmd.payload);
+      final event = ReactionEvent.fromJson(cmd.payload);
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
@@ -478,7 +481,7 @@ class CommandManager with SdkAccessor {
 
   // System
   Future<void> _processSystemEvent(Command cmd) async {
-    ChannelEvent event = ChannelEvent.fromJson(cmd.payload);
+    final event = ChannelEvent.fromJson(cmd.payload);
 
     switch (event.category) {
       case ChannelEventCategory.typingStart:
@@ -551,9 +554,9 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processTyping(ChannelEvent event, bool start) async {
     try {
-      User user = User.fromJson(event.data);
+      final user = User.fromJson(event.data);
       final channel = await GroupChannel.getChannel(event.channelUrl);
-      TypingStatus status = TypingStatus(
+      final status = TypingStatus(
         channelType: ChannelType.group,
         channelUrl: event.channelUrl,
         user: user,
@@ -574,7 +577,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processBan(ChannelEvent event, bool banned) async {
     try {
-      User user = User.fromJson(event.data);
+      final user = User.fromJson(event.data);
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
@@ -600,8 +603,9 @@ class CommandManager with SdkAccessor {
           }
         }
         eventManager.notifyUserBanned(channel, user);
-      } else
+      } else {
         eventManager.notifyUserUnbanned(channel, user);
+      }
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
@@ -609,7 +613,7 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processMute(ChannelEvent event, bool muted) async {
     try {
-      User user = User.fromJson(event.data);
+      final user = User.fromJson(event.data);
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
@@ -619,15 +623,16 @@ class CommandManager with SdkAccessor {
           channel.myMutedState = muted ? MuteState.muted : MuteState.unmuted;
         }
 
-        Member member =
+        final member =
             channel.members.firstWhere((e) => e.userId == user.userId);
         member?.isMuted = muted;
       }
 
-      if (muted)
+      if (muted) {
         eventManager.notifyUserMuted(channel, user);
-      else
+      } else {
         eventManager.notifyUserUnmuted(channel, user);
+      }
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
@@ -641,7 +646,7 @@ class CommandManager with SdkAccessor {
       }
 
       if (joined) {
-        for (Member member in event.users) {
+        for (final member in event.users) {
           if (!channel.isSuper) {
             channel.addMember(member);
           }
@@ -653,7 +658,7 @@ class CommandManager with SdkAccessor {
           eventManager.notifyChannelMemberCountChange([channel]);
         }
       } else {
-        Member member = Member.fromJson(event.data);
+        final member = Member.fromJson(event.data);
         if (!channel.isSuper) {
           channel.removeMember(member.userId);
         }
@@ -685,7 +690,7 @@ class CommandManager with SdkAccessor {
         channel.addMember(event.inviter);
       }
 
-      for (Member member in event.invitees) {
+      for (final member in event.invitees) {
         if (!channel.isSuper) {
           channel.addMember(member);
         }
@@ -767,10 +772,11 @@ class CommandManager with SdkAccessor {
       );
       channel.isFrozen = frozen;
 
-      if (frozen)
+      if (frozen) {
         eventManager.notifyChannelFrozen(channel);
-      else
+      } else {
         eventManager.notifyChannelUnfrozen(channel);
+      }
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
@@ -794,10 +800,11 @@ class CommandManager with SdkAccessor {
       channel.isHidden = hidden;
       channel.hiddenState = event.hiddenState;
 
-      if (hidden)
+      if (hidden) {
         eventManager.notifyChannelHidden(channel);
-      else
+      } else {
         eventManager.notifyChannelChanged(channel);
+      }
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
@@ -818,9 +825,9 @@ class CommandManager with SdkAccessor {
                 timestamp: event.ts,
               );
 
-      final created = Map<String, String>.from(event.data["created"] ?? {});
-      final updated = Map<String, String>.from(event.data["updated"] ?? {});
-      final deleted = List<String>.from(event.data["deleted"] ?? []);
+      final created = Map<String, String>.from(event.data['created'] ?? {});
+      final updated = Map<String, String>.from(event.data['updated'] ?? {});
+      final deleted = List<String>.from(event.data['deleted'] ?? []);
 
       cachedMetaData.addMap(created, event.ts);
       cachedMetaData.addMap(updated, event.ts);
@@ -877,10 +884,12 @@ class CommandManager with SdkAccessor {
         event.channelUrl,
       );
       if (channel is GroupChannel) {
-        if (!channel.canChangeUnreadMessageCount)
+        if (!channel.canChangeUnreadMessageCount) {
           channel.unreadMessageCount = 0;
-        if (!channel.canChangeUnreadMentionCount)
+        }
+        if (!channel.canChangeUnreadMentionCount) {
           channel.unreadMentionCount = 0;
+        }
       }
       channel.saveToCache();
       eventManager.notifyChannelChanged(channel);
@@ -898,7 +907,7 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processUserEvent(Command cmd) async {
-    UserEvent event = UserEvent.fromJson(cmd.payload);
+    final event = UserEvent.fromJson(cmd.payload);
     switch (event.category) {
       case UserEventCategory.block:
         _processBlock(event);

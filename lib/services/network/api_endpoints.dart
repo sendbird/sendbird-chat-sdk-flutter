@@ -1,14 +1,14 @@
 const needleRegex = r'{#}';
 const needle = '{#}';
-final RegExp exp = new RegExp(needleRegex);
+final RegExp exp = RegExp(needleRegex);
 
 extension Helpers on String {
   String format(List args) {
-    Iterable<RegExpMatch> matches = exp.allMatches(this);
+    final matches = exp.allMatches(this);
     assert(args.length == matches.length);
 
     var i = -1;
-    return this.replaceAllMapped(exp, (match) {
+    return replaceAllMapped(exp, (match) {
       i = i + 1;
       return '${args[i]}';
     });

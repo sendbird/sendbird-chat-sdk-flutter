@@ -56,15 +56,16 @@ class BaseMessageParams {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> ret = {};
-    ret['custom_type'] = customType;
-    ret['data'] = data;
-    ret['mention_type'] = mentionType?.asString();
-    ret['mentioned_user_ids'] = mentionedUserIds;
-    ret['sorted_metaarray'] = metaArrays?.map((e) => e.toJson())?.toList();
-    if (pushOption == PushNotificationDeliveryOption.suppress)
-      ret['push_option'] = pushOption.asString();
-    if (parentMessageId > 0) ret['parent_message_id'] = parentMessageId;
+    final ret = <String, dynamic>{
+      'custom_type': customType,
+      'data': data,
+      'mention_type': mentionType?.asString(),
+      'mentioned_user_ids': mentionedUserIds,
+      'sorted_metaarray': metaArrays?.map((e) => e.toJson())?.toList(),
+      if (pushOption == PushNotificationDeliveryOption.suppress)
+        'push_option': pushOption.asString(),
+      if (parentMessageId > 0) 'parent_message_id': parentMessageId,
+    };
 
     ret.removeWhere((key, value) => value == null);
     return ret;

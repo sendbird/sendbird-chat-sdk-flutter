@@ -71,7 +71,7 @@ class HttpClient {
     Map<String, dynamic> queryParams,
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
@@ -96,7 +96,7 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
@@ -121,7 +121,7 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
@@ -146,7 +146,7 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
@@ -173,7 +173,7 @@ class HttpClient {
     Map<String, String> headers,
     OnUploadProgressCallback progress,
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: this.bypassAuth);
+    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final request = MultipartRequest(
       method.asString().toUpperCase(),
@@ -243,10 +243,11 @@ class HttpClient {
         sessionKey = null;
         final result =
             await SendbirdSdk().getInternal().sessionManager.updateSession();
-        if (result)
+        if (result) {
           throw SessionKeyRefreshSucceededError();
-        else
+        } else {
           throw SessionKeyRefreshFailedError();
+        }
       }
     }
 
@@ -270,13 +271,14 @@ class HttpClient {
 
   Map<String, dynamic> _convertQueryParams(Map<String, dynamic> q) {
     if (q == null) return {};
-    Map<String, dynamic> result = {};
+    final result = <String, dynamic>{};
     q.forEach((key, value) {
       if (value is List) {
-        if (value is List<String>)
+        if (value is List<String>) {
           result[key] = value;
-        else
+        } else {
           result[key] = value.map((e) => e.toString()).toList();
+        }
       } else if (value != null) {
         result[key] = value.toString();
       }
@@ -302,8 +304,8 @@ class MultipartRequest extends http.MultipartRequest {
     try {
       var response = await client.send(this);
       var stream = onDone(response.stream, client.close);
-      return new http.StreamedResponse(
-        new http.ByteStream(stream),
+      return http.StreamedResponse(
+        http.ByteStream(stream),
         response.statusCode,
         contentLength: response.contentLength,
         request: response.request,
@@ -318,20 +320,21 @@ class MultipartRequest extends http.MultipartRequest {
     }
   }
 
-  Stream<T> onDone<T>(Stream<T> stream, void onDone()) =>
-      stream.transform(new StreamTransformer.fromHandlers(handleDone: (sink) {
+  Stream<T> onDone<T>(Stream<T> stream, void Function() onDone) =>
+      stream.transform(StreamTransformer.fromHandlers(handleDone: (sink) {
         sink.close();
         onDone();
       }));
 
   /// Freezes all mutable fields and returns a single-subscription [ByteStream]
   /// that will emit the request body.
+  @override
   http.ByteStream finalize() {
     final byteStream = super.finalize();
     if (onProgress == null) return byteStream;
 
-    final total = this.contentLength;
-    int bytes = 0;
+    final total = contentLength;
+    var bytes = 0;
 
     final t = StreamTransformer.fromHandlers(
       handleData: (List<int> data, EventSink<List<int>> sink) {

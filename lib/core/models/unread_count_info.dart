@@ -11,7 +11,7 @@ class UnreadCountInfo {
   UnreadCountInfo({this.all, this.customTypes, this.ts});
 
   bool copyWith(UnreadCountInfo others) {
-    bool didChange = false;
+    var didChange = false;
 
     ts = others.ts;
 

@@ -94,7 +94,7 @@ class PreviousMessageListQuery extends QueryBase {
         params: params.toJson(),
         timestamp: _timestamp);
 
-    _timestamp = res.length != 0 ? res.last.createdAt : null;
+    _timestamp = res.isNotEmpty ? res.last.createdAt : null;
 
     loading = false;
     token = '';

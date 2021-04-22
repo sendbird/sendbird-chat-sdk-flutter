@@ -94,10 +94,11 @@ class ChannelCacheUnit implements CacheUnit {
   @override
   void insert(Cacheable data) {
     if (data is GroupChannel || data is OpenChannel) {
-      if (channel != null)
+      if (channel != null) {
         channel.copyWith(data);
-      else
+      } else {
         channel = data;
+      }
     } else if (data is ReadStatus) {
       final existData = readStatus[data.key];
       if (existData != null) {
@@ -106,10 +107,11 @@ class ChannelCacheUnit implements CacheUnit {
         readStatus[data.key] = data;
       }
     } else if (data is DeliveryStatus) {
-      if (deliveryStatus != null)
+      if (deliveryStatus != null) {
         deliveryStatus.copyWith(data);
-      else
+      } else {
         deliveryStatus = data;
+      }
     } else if (data is TypingStatus) {
       final existData = typingStatus[data.key];
       if (existData != null) {
