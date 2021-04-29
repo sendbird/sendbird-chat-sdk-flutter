@@ -24,9 +24,8 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.11';
+const sdk_version = '3.0.12';
 const platform = 'flutter';
-const platform_version = '1.22.5';
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {
@@ -206,10 +205,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       _onWebSocketError,
     );
 
+    _sessionManager.setAccessToken(accessToken);
+
     apiHost = reconnect ? _state.apiHost : apiHost ?? _getDefaultApiHost();
     wsHost = reconnect ? _state.wsHost : wsHost ?? _getDefaultWsHost();
-
-    _sessionManager.setAccessToken(accessToken);
 
     _state
       ..reconnecting = reconnect
@@ -224,7 +223,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     var params = {
       'p': platform,
-      'pv': platform_version,
+      'pv': Platform.version.split(' ').first,
       'o': Platform.operatingSystem, // os
       'ov': Platform.operatingSystemVersion, // os version
       'sv': sdk_version,

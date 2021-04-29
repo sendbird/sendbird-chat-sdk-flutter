@@ -34,8 +34,8 @@ This section shows you the prerequisites you need to check for using Sendbird Ch
 The minimum requirements for Chat SDK for Flutter are:
 
 - Xcode or Android studio 
-- Dart 2.10.4
-- Flutter 1.22.x or higher
+- Dart 2.10.4 or above
+- Flutter 1.22.0 or higher
 
 ## Getting started
 

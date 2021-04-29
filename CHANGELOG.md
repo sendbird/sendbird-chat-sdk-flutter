@@ -1,4 +1,10 @@
+## [3.0.12] - Apr 25, 2021
+* Fixed to apply option to `SendbirdSdk` properly
+* Fixed `sendFileMessage` progress inconsistency
+* Improved stability
+
 ## [3.0.11] - Apr 22, 2021
+* Added `nicknameStartWith` filter in `ApplicationListQuery`
 * Updated pubspec and README
 * Fixed typo
 

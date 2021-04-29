@@ -189,12 +189,14 @@ class HttpClient {
 
     body.forEach((key, value) {
       if (value is FileInfo) {
-        request.files.add(http.MultipartFile.fromBytes(
+        final part = http.MultipartFile(
           key,
-          value.file.readAsBytesSync(),
+          value.file.openRead(),
+          value.file.lengthSync(),
           filename: value.name,
           contentType: MediaType.parse(value.mimeType),
-        ));
+        );
+        request.files.add(part);
       } else if (value is List<String>) {
         request.fields[key] = value.join(',');
       } else if (value is List) {

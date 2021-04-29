@@ -1,13 +1,14 @@
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 
 void main(List<String> arguments) async {
-  // This example uses the Google Books API to search for books about http.
-  // https://developers.google.com/books/docs/overview
-
+  // create sendbird sdk instance with application id
   final sendbird = SendbirdSdk(appId: 'YOUR-APP-ID');
 
   try {
+    // connect sendbird server with user id
     final user = await sendbird.connect('UNIQUE-USER-ID');
+
+    // generate group channel parameters
     final params = GroupChannelParams()
       ..userIds = [user.userId]
       ..operatorUserIds = [user.userId]
@@ -18,6 +19,7 @@ void main(List<String> arguments) async {
     // create group channel
     final channel = await GroupChannel.createChannel(params);
 
+    // send user message to the group channel
     channel.sendUserMessageWithText('Hello World',
         onCompleted: (message, error) {
       // message has been sent successfully

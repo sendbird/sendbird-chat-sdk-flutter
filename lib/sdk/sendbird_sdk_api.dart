@@ -38,13 +38,12 @@ class SendbirdSdk {
   }) {
     if (_instance != null &&
         (appId == null || appId == _instance._int?.state?.appId)) {
-      _instance.setOptions(options);
       return _instance;
     }
 
     // initialize with different app id, so logout and
     // reinitialize internal obj
-    _instance._int?.logout();
+    _instance = SendbirdSdk._instanceFunction();
     _instance._int = SendbirdSdkInternal(
       appId: appId,
       apiToken: apiToken,
