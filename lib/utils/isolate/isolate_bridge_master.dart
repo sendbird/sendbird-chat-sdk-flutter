@@ -149,9 +149,7 @@ class IsolateMaster {
     throw UnimplementedError();
   }
 
-  void handleError(String action) async {
-    //print('Override Handleerror:' + action);
-  }
+  void handleError(String action) async {}
 
   void didInitialize() async {}
 

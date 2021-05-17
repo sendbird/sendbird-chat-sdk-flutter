@@ -8,6 +8,7 @@ class AsyncQueue<T> {
 
   Queue<Operation> _queue = Queue<Operation>();
   Map<int, Completer> _completers = {};
+  Operation _currentOp;
 
   Future enqueue(Operation operation) {
     _queue.add(operation);
@@ -22,6 +23,18 @@ class AsyncQueue<T> {
     return completer.future;
   }
 
+  bool cancel(int hashCode) {
+    final completer = _completers.remove(hashCode);
+    if (completer != null && !completer.isCompleted) {
+      if (_currentOp?.onCancel != null) {
+        _currentOp.onCancel();
+      }
+      completer.complete();
+      return true;
+    }
+    return false;
+  }
+
   Future _execute() async {
     while (true) {
       if (_queue.isEmpty) {
@@ -29,18 +42,27 @@ class AsyncQueue<T> {
         return;
       }
 
-      var first = _queue.removeFirst();
-      if (first is AsyncTask<T>) {
-        final res = await first.func(first.arg);
-        _completers.remove(first.hashCode)?.complete(res);
-      } else if (first is AsyncSimpleTask) {
-        await first.func();
-        _completers.remove(first.hashCode)?.complete();
+      var task = _queue.removeFirst();
+      _currentOp = task;
+      try {
+        if (task is AsyncTask<T>) {
+          final res = await task.func(task.arg);
+          _completers.remove(task.hashCode)?.complete(res);
+        } else if (task is AsyncSimpleTask) {
+          await task.func();
+          _completers.remove(task.hashCode)?.complete();
+        }
+      } catch (e) {
+        // do nothing
       }
     }
   }
 
   void cleanUp() {
+    _queue.forEach((q) {
+      cancel(q.hashCode);
+    });
     _queue.removeWhere((element) => true);
+    _currentOp = null;
   }
 }

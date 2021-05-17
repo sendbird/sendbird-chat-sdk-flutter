@@ -47,11 +47,9 @@ class IsolateSlave {
   }
 
   void _processMessage(dynamic action) {
-    //print('exec receive message ' + action.toString());
     try {
       handleMessage(action);
     } catch (e) {
-      //print('Exec Paction Exception:' + e.toString());
       setError('Exception Thrown:' +
           e.toString() +
           '-' +

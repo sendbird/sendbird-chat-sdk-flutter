@@ -61,6 +61,8 @@ extension GroupChannelOperations on GroupChannel {
   /// [ChannelEventHandler.onUserLeaved] will be invoked.
   Future<void> leave() async {
     await _sdk.api.leaveGroupChannel(channelUrl: channelUrl);
+    invitedAt = 0;
+    joinedAt = 0;
   }
 
   /// Resets (clear) any previous messages on this channel.

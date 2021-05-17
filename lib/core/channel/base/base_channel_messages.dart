@@ -150,76 +150,102 @@ extension Messages on BaseChannel {
     pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
 
     final queue = _sdk.getMsgQueue(channelUrl);
-    queue.enqueue(AsyncSimpleTask(() async {
-      if (params.uploadFile.hasBinary) {
-        upload = await _sdk.api
-            .uploadFile(
-                channelUrl: channelUrl,
-                requestId: pending.requestId,
-                params: params,
-                progress: progress)
-            .timeout(
-          Duration(seconds: _sdk.options.fileTransferTimeout),
-          onTimeout: () {
-            logger.e('upload timeout');
-            if (onCompleted != null) {
-              onCompleted(
-                pending..sendingStatus = MessageSendingStatus.failed,
-                SBError(
-                  message: 'upload timeout',
-                  code: ErrorCode.fileUploadTimeout,
-                ),
-              );
+    final task = AsyncSimpleTask(
+      () async {
+        if (params.uploadFile.hasBinary) {
+          try {
+            upload = await _sdk.api
+                .uploadFile(
+                    channelUrl: channelUrl,
+                    requestId: pending.requestId,
+                    params: params,
+                    progress: progress)
+                .timeout(
+              Duration(seconds: _sdk.options.fileTransferTimeout),
+              onTimeout: () {
+                logger.e('upload timeout');
+                if (onCompleted != null) {
+                  onCompleted(
+                    pending..sendingStatus = MessageSendingStatus.failed,
+                    SBError(
+                      message: 'upload timeout',
+                      code: ErrorCode.fileUploadTimeout,
+                    ),
+                  );
+                }
+                return;
+              },
+            );
+            if (upload == null) {
+              throw SBError(code: ErrorCode.fileUploadTimeout);
             }
-            return;
-          },
+            fileSize = upload.fileSize;
+            url = upload.url;
+          } catch (e) {
+            rethrow;
+          }
+        }
+
+        if (fileSize != null) params.uploadFile.fileSize = fileSize;
+        if (url != null) params.uploadFile.url = url;
+
+        final cmd = Command.buildFileMessage(
+          channelUrl: channelUrl,
+          params: params,
+          requestId: pending.requestId,
+          requireAuth: upload?.requireAuth,
+          thumbnails: upload?.thumbnails,
         );
-        if (upload == null) throw SBError(code: ErrorCode.fileUploadTimeout);
 
-        fileSize = upload.fileSize;
-        url = upload.url;
-      }
+        final msgFromPayload = BaseMessage.msgFromJson<FileMessage>(
+          cmd.payload,
+          channelType: channelType,
+        );
 
-      if (fileSize != null) params.uploadFile.fileSize = fileSize;
-      if (url != null) params.uploadFile.url = url;
+        if (!_sdk.state.hasActiveUser) {
+          final error = ConnectionRequiredError();
+          msgFromPayload
+            ..errorCode = error.code
+            ..sendingStatus = MessageSendingStatus.failed;
+          if (onCompleted != null) onCompleted(msgFromPayload, error);
+          return msgFromPayload;
+        }
 
-      final cmd = Command.buildFileMessage(
-        channelUrl: channelUrl,
-        params: params,
-        requestId: pending.requestId,
-        requireAuth: upload?.requireAuth,
-        thumbnails: upload?.thumbnails,
-      );
+        _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
+          final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
+          if (onCompleted != null) onCompleted(msg, null);
+        }).catchError((e) {
+          // pending.errorCode = e?.code ?? ErrorCode.unknownError;
+          pending
+            ..errorCode = e.code
+            ..sendingStatus = MessageSendingStatus.failed;
+          if (onCompleted != null) onCompleted(pending, e);
+        });
+      },
+      onCancel: () {
+        if (onCompleted != null) onCompleted(pending, OperationCancelError());
+      },
+    );
 
-      final msgFromPayload = BaseMessage.msgFromJson<FileMessage>(
-        cmd.payload,
-        channelType: channelType,
-      );
-
-      if (!_sdk.state.hasActiveUser) {
-        final error = ConnectionRequiredError();
-        msgFromPayload
-          ..errorCode = error.code
-          ..sendingStatus = MessageSendingStatus.failed;
-        if (onCompleted != null) onCompleted(msgFromPayload, error);
-        return msgFromPayload;
-      }
-
-      _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-        final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
-        if (onCompleted != null) onCompleted(msg, null);
-      }).catchError((e) {
-        // pending.errorCode = e?.code ?? ErrorCode.unknownError;
-        pending
-          ..errorCode = e.code
-          ..sendingStatus = MessageSendingStatus.failed;
-        if (onCompleted != null) onCompleted(pending, e);
-      });
-    }));
-
+    queue.enqueue(task);
+    _sdk.setUploadTask(pending.requestId, task);
     _sdk.setMsgQueue(channelUrl, queue);
 
     return pending;
+  }
+
+  bool cancelUploadingFileMessage(String requestId) {
+    if (requestId == null || requestId == '') {
+      throw InvalidParameterError();
+    }
+    final task = _sdk.getUploadTask(requestId);
+    if (task == null) {
+      throw NotFoundError();
+    }
+
+    final queue = _sdk.getMsgQueue(channelUrl);
+    _sdk.api.cancelUploadingFile(requestId);
+    return queue.cancel(task.hashCode);
   }
 
   /// Resends failed [FileMessage] on this channel with [message].

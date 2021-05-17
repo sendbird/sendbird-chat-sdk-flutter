@@ -23,6 +23,5 @@ Future<BaseMessage> parseMessage(Command data) async {
 
 BaseMessage parseMessageFromCommand(Command command) {
   final payload = command.payload;
-  payload['type'] = command.cmd;
-  return BaseMessage.msgFromJson(payload);
+  return BaseMessage.msgFromJson(payload, type: command.cmd);
 }

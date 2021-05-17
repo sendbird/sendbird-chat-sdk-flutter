@@ -122,9 +122,14 @@ class GroupChannel extends BaseChannel {
   /// User who invited
   Member inviter;
 
-  /// The time stamp when current user got a invitation
+  /// Timestamp when current user got a invitation
   /// from other user in the channel
+  @JsonKey(defaultValue: 0)
   int invitedAt;
+
+  /// Timestamp when current user joined on this channel
+  @JsonKey(name: 'joined_ts', defaultValue: 0)
+  int joinedAt;
 
   /// True if this channel is hidden
   bool isHidden;
@@ -166,6 +171,7 @@ class GroupChannel extends BaseChannel {
     this.members,
     this.memberCount,
     this.joinedMemberCount,
+    this.joinedAt,
     this.myPushTriggerOption,
     this.myMemberState,
     this.myRole,

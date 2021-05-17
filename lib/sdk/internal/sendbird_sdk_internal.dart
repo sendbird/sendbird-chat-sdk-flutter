@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.12';
+const sdk_version = '3.0.13';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -42,12 +42,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   Completer<User> _loginCompleter;
 
   Options _options;
+  AsyncQueue _commandQueue = AsyncQueue<String>();
   Map<String, AsyncQueue> _messageQueues = {};
+  Map<String, AsyncSimpleTask> _uploads = {};
 
   Timer _reconnectTimer;
   ConnectivityResult _connectionResult;
   StreamSubscription _connectionSub;
-  AsyncQueue _commandQueue = AsyncQueue<String>();
+
   Map<String, String> _extensions = {};
   List<String> _extraDatas = [
     constants.sbExtraDataPremiumFeatureList,
@@ -90,6 +92,9 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       _messageQueues[channelUrl] ?? AsyncQueue();
   void setMsgQueue(String channelUrl, AsyncQueue queue) =>
       _messageQueues[channelUrl] = queue;
+  AsyncSimpleTask getUploadTask(String requestId) => _uploads[requestId];
+  void setUploadTask(String requestId, AsyncSimpleTask task) =>
+      _uploads[requestId] = task;
 
   // socket callbacks
 
@@ -123,22 +128,19 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     //NOTE: compute does not gaurantee the order of commands
     final op = AsyncTask<String>(func: parseCommand, arg: stringCommand);
     final cmd = await _commandQueue.enqueue(op);
-    // cmdManager.processCommand(cmd);
-    runZoned(() async {
+
+    runZonedGuarded(() async {
       try {
         _cmdManager.processCommand(cmd);
       } catch (e) {
         rethrow;
       }
-    }, onError: (e, s) {
-      //handle error how to toss this..?
-      //get waiting func and error?
+    }, (e, trace) {
       if (_loginCompleter != null) {
         _loginCompleter?.completeError(e);
       } else {
         logger.e('fatal error thrown ${e.toString()}');
       }
-      // throw e;
     });
   }
 
@@ -270,6 +272,13 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _cmdManager = CommandManager();
     _streamManager.reset();
 
+    _commandQueue.cleanUp();
+    _messageQueues.forEach((key, q) => q.cleanUp());
+    _messageQueues = {};
+    _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
+    _uploads = {};
+    _loginCompleter = null;
+
     _api = ApiClient();
     _api.initialize(appId: _state.appId);
 
@@ -279,10 +288,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     WidgetsBinding.instance?.removeObserver(this);
     _connectionSub?.cancel();
-
-    _commandQueue.cleanUp();
-    _messageQueues = {};
-    _loginCompleter = null;
 
     ConnectionManager.flushCompleters(error: ConnectionClosedError());
   }

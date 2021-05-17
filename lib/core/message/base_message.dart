@@ -337,9 +337,12 @@ class BaseMessage {
         reactions,
       );
 
-  static T msgFromJson<T extends BaseMessage>(Map<String, dynamic> json,
-      {ChannelType channelType}) {
-    final cmd = json['type'] as String;
+  static T msgFromJson<T extends BaseMessage>(
+    Map<String, dynamic> json, {
+    ChannelType channelType,
+    String type,
+  }) {
+    final cmd = type ?? json['type'] as String;
     T msg;
     //basemessage backward compatibility -
     if (json['custom'] != null) json['data'] = json['custom'];

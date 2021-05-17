@@ -33,6 +33,8 @@ class HttpClient {
   StreamController errorController =
       StreamController<SBError>.broadcast(sync: true);
 
+  Map<String, MultipartRequest> uploadRequests = {};
+
   HttpClient({
     this.baseUrl,
     this.port,
@@ -46,6 +48,7 @@ class HttpClient {
     sessionKey = null;
     token = null;
     headers = {};
+    uploadRequests = {};
     errorController?.close();
   }
 
@@ -130,6 +133,7 @@ class HttpClient {
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
+
     final request = http.Request('PUT', uri);
     request.body = jsonEncode(body);
     request.headers.addAll(commonHeaders());
@@ -212,9 +216,24 @@ class HttpClient {
     request.headers.addAll(commonHeaders());
     if (headers != null && headers.isNotEmpty) request.headers.addAll(headers);
 
+    String reqId = body['request_id'];
+    uploadRequests[reqId] = request;
+
     final res = await request.send();
     final result = await http.Response.fromStream(res);
+
+    uploadRequests.remove(reqId);
     return _response(result);
+  }
+
+  bool cancelUploadRequest(String requestId) {
+    final req = uploadRequests[requestId];
+    if (req != null) {
+      req.cancel();
+      uploadRequests.remove(requestId);
+      return true;
+    }
+    return false;
   }
 
   Future<dynamic> _response(http.Response response) async {
@@ -265,7 +284,6 @@ class HttpClient {
         throw UnauthorizeError(message: res['message'], code: res['code']);
       case 500:
       default:
-        logger.e('internal server error ${res['message']}');
         throw InternalServerError(
             message: 'internal server error :${response.statusCode}');
     }
@@ -300,6 +318,8 @@ class MultipartRequest extends http.MultipartRequest {
   }) : super(method, url);
 
   final void Function(int bytes, int totalBytes) onProgress;
+
+  void cancel() => client.close();
 
   @override
   Future<http.StreamedResponse> send() async {
@@ -348,12 +368,4 @@ class MultipartRequest extends http.MultipartRequest {
     final stream = byteStream.transform(t);
     return http.ByteStream(stream);
   }
-}
-
-class CloseableMultipartRequest extends http.MultipartRequest {
-  var client = http.Client();
-
-  CloseableMultipartRequest(String method, Uri uri) : super(method, uri);
-
-  void close() => client.close();
 }

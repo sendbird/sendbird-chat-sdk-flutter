@@ -114,3 +114,7 @@ class InvalidAccessTokenError extends SBError {
 }
 
 class UnknownError extends SBError {}
+
+class NotFoundError extends SBError {}
+
+class OperationCancelError extends SBError {}

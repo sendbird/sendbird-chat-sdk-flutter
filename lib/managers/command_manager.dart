@@ -59,8 +59,6 @@ class CommandManager with SdkAccessor {
   Future<Command> sendCommand(Command cmd) async {
     if (appState.currentUser == null) {
       //NOTE: some test cases execute async socket data
-      //even after test case was finished
-      // print('[E] ${this.hashCode}');
       logger.e('sendCommand: connection is requred');
       throw ConnectionRequiredError();
     }
@@ -68,10 +66,6 @@ class CommandManager with SdkAccessor {
       logger.e('sendCommand: command parameter is null');
       throw InvalidParameterError();
     }
-    // if (!webSocket.isConnected()) {
-    //   logger.e('sendCommand: Websocket connection is closed');
-    //   throw WebSocketConnectionClosedError();
-    // }
 
     try {
       await ConnectionManager.readyToExecuteWSRequest();
@@ -668,6 +662,7 @@ class CommandManager with SdkAccessor {
         if (member.isCurrentUser) {
           channel.myMemberState = MemberState.none;
           channel.invitedAt = 0;
+          channel.joinedAt = 0;
           channel.clearUnreadCount();
           if (!channel.isPublic) {
             channel.removeFromCache();

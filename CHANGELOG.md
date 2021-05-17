@@ -1,3 +1,9 @@
+## [3.0.13] - May 17, 2021
+* Fixed file type mis mapping bug
+* Added `cancelUploadingFileMessage` in `BaseChannel`
+* Added `joinedAt` in `GroupChannel`
+* Improved stability
+
 ## [3.0.12] - Apr 25, 2021
 * Fixed to apply option to `SendbirdSdk` properly
 * Fixed `sendFileMessage` progress inconsistency

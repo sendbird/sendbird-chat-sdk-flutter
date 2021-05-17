@@ -721,19 +721,23 @@ class ApiClient {
         body['thumbnail${index + 1}'] =
             '${value.width.round()},${value.height.round()}');
 
-    final res = await client.multipartRequest(
-      method: Method.post,
-      url: url,
-      body: body,
-      progress: progress,
-    );
-    return UploadResponse.fromJson(res);
+    try {
+      final res = await client.multipartRequest(
+        method: Method.post,
+        url: url,
+        body: body,
+        progress: progress,
+      );
+      return UploadResponse.fromJson(res);
+    } catch (_) {
+      rethrow;
+    }
   }
 
   // https://github.com/dart-lang/http/issues/424
-  // Future<void> cancelUploading {
-
-  // }
+  bool cancelUploadingFile(String requestId) {
+    return client.cancelUploadRequest(requestId);
+  }
 
   Future<UserMessage> translateUserMessage({
     @required ChannelType channelType,
