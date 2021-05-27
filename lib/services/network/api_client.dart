@@ -602,7 +602,7 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    return BaseMessage.msgFromJson<UserMessage>(res, channelType: channelType);
   }
 
   Future<UserMessage> updateUserMessage({
@@ -630,7 +630,7 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.put(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    return BaseMessage.msgFromJson<UserMessage>(res, channelType: channelType);
   }
 
   Future<FileMessage> sendFileMessage({
@@ -660,7 +660,7 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<FileMessage>(res);
+    return BaseMessage.msgFromJson<FileMessage>(res, channelType: channelType);
   }
 
   Future<FileMessage> updateFileMessage({
@@ -688,7 +688,7 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.put(url: url, body: body);
-    return BaseMessage.msgFromJson<FileMessage>(res);
+    return BaseMessage.msgFromJson<FileMessage>(res, channelType: channelType);
   }
 
   Future<UploadResponse> uploadFile({
@@ -753,7 +753,7 @@ class ApiClient {
     ]);
     final body = {'target_langs': targetLanguages};
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    return BaseMessage.msgFromJson<UserMessage>(res, channelType: channelType);
   }
 
   Future<BaseMessage> getMessage({
@@ -767,7 +767,7 @@ class ApiClient {
     final queryParams = params.toJson();
 
     final res = await client.get(url: url, queryParams: queryParams);
-    return BaseMessage.msgFromJson(res);
+    return BaseMessage.msgFromJson(res, channelType: channelType);
   }
 
   Future<List<BaseMessage>> getMessages({
