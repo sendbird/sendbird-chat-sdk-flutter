@@ -10,26 +10,27 @@ part 'responses.g.dart';
 
 DateTime _epochFromJson(int time) => DateTime.fromMillisecondsSinceEpoch(time);
 List<int> _deletedIds(List<dynamic> json) =>
-    json.map((e) => e['deleted_id'] as int).toList();
+    json.map((e) => e['message_id'] as int).toList();
 
 class BaseResponse {}
 
 @JsonSerializable(createToJson: false)
 class ChannelChangeLogsResponse extends BaseResponse {
-  @JsonKey(name: 'updated')
+  @JsonKey(defaultValue: [], name: 'updated')
   final List<GroupChannel> updatedChannels;
 
-  @JsonKey(name: 'deleted')
+  @JsonKey(defaultValue: [], name: 'deleted')
   final List<String> deletedChannelUrls;
 
+  @JsonKey(defaultValue: false)
   final bool hasMore;
 
-  final String next;
+  final String? next;
 
   ChannelChangeLogsResponse({
-    this.updatedChannels,
-    this.deletedChannelUrls,
-    this.hasMore,
+    required this.updatedChannels,
+    required this.deletedChannelUrls,
+    required this.hasMore,
     this.next,
   });
 
@@ -42,20 +43,21 @@ class ChannelChangeLogsResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class MessageChangeLogsResponse extends BaseResponse {
-  @JsonKey(name: 'updated')
+  @JsonKey(defaultValue: [], name: 'updated')
   final List<BaseMessage> updatedMessages;
 
   @JsonKey(fromJson: _deletedIds, name: 'deleted')
   final List<int> deletedMessageIds;
 
+  @JsonKey(defaultValue: false)
   final bool hasMore;
 
-  final String next;
+  final String? next;
 
   MessageChangeLogsResponse({
-    this.updatedMessages,
-    this.deletedMessageIds,
-    this.hasMore,
+    required this.updatedMessages,
+    required this.deletedMessageIds,
+    required this.hasMore,
     this.next,
   });
 
@@ -66,13 +68,13 @@ class MessageChangeLogsResponse extends BaseResponse {
 @JsonSerializable(createToJson: false)
 class MuteInfoResponse extends BaseResponse {
   final bool isMuted;
-  final String description;
-  final int startAt;
-  final int endAt;
-  final int remainingDuration;
+  final String? description;
+  final int? startAt;
+  final int? endAt;
+  final int? remainingDuration;
 
   MuteInfoResponse({
-    this.isMuted,
+    required this.isMuted,
     this.description,
     this.startAt,
     this.endAt,
@@ -87,14 +89,14 @@ class MuteInfoResponse extends BaseResponse {
 class DoNotDisturbResponse extends BaseResponse {
   @JsonKey(name: 'do_not_disturb')
   final bool enabled;
-  final int startHour;
-  final int startMin;
-  final int endHour;
-  final int endMin;
-  final String timezone;
+  final int? startHour;
+  final int? startMin;
+  final int? endHour;
+  final int? endMin;
+  final String? timezone;
 
   DoNotDisturbResponse({
-    this.enabled,
+    required this.enabled,
     this.startHour,
     this.startMin,
     this.endHour,
@@ -112,12 +114,12 @@ class SnoozeResponse extends BaseResponse {
   final bool enabled;
 
   @JsonKey(fromJson: _epochFromJson, name: 'snooze_start_ts')
-  final DateTime startDate;
+  final DateTime? startDate;
 
   @JsonKey(fromJson: _epochFromJson, name: 'snooze_end_ts')
-  final DateTime endDate;
+  final DateTime? endDate;
 
-  SnoozeResponse({this.enabled, this.startDate, this.endDate});
+  SnoozeResponse({required this.enabled, this.startDate, this.endDate});
 
   static SnoozeResponse fromJson(Map<String, dynamic> json) =>
       _$SnoozeResponseFromJson(json);
@@ -126,15 +128,16 @@ class SnoozeResponse extends BaseResponse {
 @JsonSerializable(createToJson: false)
 class UploadResponse extends BaseResponse {
   final String url;
+  @JsonKey(defaultValue: [])
   final List thumbnails;
   final bool requireAuth;
   final int fileSize;
 
   UploadResponse({
-    this.url,
-    this.thumbnails,
-    this.requireAuth,
-    this.fileSize,
+    required this.url,
+    required this.thumbnails,
+    required this.requireAuth,
+    required this.fileSize,
   });
 
   static UploadResponse fromJson(Map<String, dynamic> json) =>
@@ -143,10 +146,12 @@ class UploadResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class OperatorListQueryResponse extends BaseResponse {
+  @JsonKey(defaultValue: [])
   List<User> operators;
-  String next;
 
-  OperatorListQueryResponse({this.operators, this.next});
+  String? next;
+
+  OperatorListQueryResponse({required this.operators, this.next});
 
   static OperatorListQueryResponse fromJson(Map<String, dynamic> json) =>
       _$OperatorListQueryResponseFromJson(json);
@@ -154,10 +159,12 @@ class OperatorListQueryResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class UserListQueryResponse extends BaseResponse {
+  @JsonKey(defaultValue: [])
   List<User> users;
-  String next;
 
-  UserListQueryResponse({this.users, this.next});
+  String? next;
+
+  UserListQueryResponse({this.users = const [], this.next});
 
   factory UserListQueryResponse.fromJson(Map<String, dynamic> json) =>
       _$UserListQueryResponseFromJson(json);
@@ -165,12 +172,12 @@ class UserListQueryResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class ChannelListQueryResponse<T extends BaseChannel> extends BaseResponse {
-  @JsonKey(name: 'channels')
+  @JsonKey(defaultValue: [], name: 'channels')
   @ChannelConverter()
   List<T> channels;
-  String next;
+  String? next;
 
-  ChannelListQueryResponse({this.channels, this.next});
+  ChannelListQueryResponse({this.channels = const [], this.next});
 
   factory ChannelListQueryResponse.fromJson(Map<String, dynamic> json) =>
       _$ChannelListQueryResponseFromJson<T>(json);
@@ -181,32 +188,41 @@ class ChannelConverter<T> implements JsonConverter<T, Object> {
 
   @override
   T fromJson(Object json) {
-    if (json is Map<String, dynamic> && json.containsKey('participant_count')) {
-      return OpenChannel.fromJsonAndCached(json) as T;
+    if (json is Map<String, dynamic>) {
+      if (json.containsKey('participant_count')) {
+        return OpenChannel.fromJsonAndCached(json) as T;
+      } else {
+        return GroupChannel.fromJsonAndCached(json) as T;
+      }
     }
-    return GroupChannel.fromJsonAndCached(json) as T;
+    return json as T;
   }
 
   @override
   Object toJson(T object) {
-    return object;
+    return object as Object;
   }
 }
 
 @JsonSerializable(createToJson: false)
 class MessageSearchQueryResponse extends BaseResponse {
+  @JsonKey(defaultValue: [])
   List<BaseMessage> results;
 
   @JsonKey(name: 'end_cursor')
-  String next;
+  String? next;
+
+  @JsonKey(defaultValue: false)
   bool hasNext;
+
+  @JsonKey(defaultValue: 0)
   int totalCount;
 
   MessageSearchQueryResponse({
-    this.results,
+    this.results = const [],
     this.next,
-    this.hasNext,
-    this.totalCount,
+    this.hasNext = false,
+    this.totalCount = 0,
   });
 
   factory MessageSearchQueryResponse.fromJson(Map<String, dynamic> json) =>
@@ -215,10 +231,12 @@ class MessageSearchQueryResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class MetaDataResponse extends BaseResponse {
+  @JsonKey(defaultValue: {})
   Map<String, String> metadata;
-  int ts;
 
-  MetaDataResponse({this.metadata, this.ts});
+  int? ts;
+
+  MetaDataResponse({this.metadata = const {}, this.ts});
 
   factory MetaDataResponse.fromJson(Map<String, dynamic> json) =>
       _$MetaDataResponseFromJson(json);
@@ -226,10 +244,12 @@ class MetaDataResponse extends BaseResponse {
 
 @JsonSerializable(createToJson: false)
 class MetaCounterResponse extends BaseResponse {
+  @JsonKey(defaultValue: {})
   Map<String, num> metaCounter;
-  int ts;
 
-  MetaCounterResponse({this.metaCounter, this.ts});
+  int? ts;
+
+  MetaCounterResponse({this.metaCounter = const {}, this.ts});
 
   factory MetaCounterResponse.fromJson(Map<String, dynamic> json) =>
       _$MetaCounterResponseFromJson(json);
@@ -237,18 +257,20 @@ class MetaCounterResponse extends BaseResponse {
 
 class ThreadedMessageResponse extends BaseResponse {
   BaseMessage parentMessage;
+
+  @JsonKey(defaultValue: [])
   List<BaseMessage> replies;
 
   ThreadedMessageResponse({
-    this.parentMessage,
-    this.replies,
+    required this.parentMessage,
+    required this.replies,
   });
 }
 
 class ChannelMessageResponse extends BaseResponse {
   BaseChannel channel;
-  BaseMessage message;
-  int deletedId;
+  BaseMessage? message;
+  int? deletedId;
 
   ChannelMessageResponse(this.channel, {this.message, this.deletedId});
 }

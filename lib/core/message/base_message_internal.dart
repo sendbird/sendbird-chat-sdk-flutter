@@ -4,8 +4,8 @@ import 'package:sendbird_sdk/core/models/user.dart';
 import 'base_message.dart';
 
 extension BaseMessageInternal on BaseMessage {
-  bool containsMentionedUser(User user) {
-    if (user == null || mentionedUsers == null) {
+  bool containsMentionedUser(User? user) {
+    if (user == null || mentionedUsers.isEmpty) {
       return false;
     }
 
@@ -15,7 +15,7 @@ extension BaseMessageInternal on BaseMessage {
         .isNotEmpty;
   }
 
-  bool mentioned({User user, User byOtherUser}) {
+  bool mentioned({User? user, User? byOtherUser}) {
     if (user == null || byOtherUser == null) {
       return false;
     }

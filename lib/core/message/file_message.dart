@@ -25,71 +25,73 @@ class FileMessage extends BaseMessage {
   final String url;
 
   /// Secure url address for media that this file message has
-  String get secureUrl {
+  String? get secureUrl {
     final sdk = SendbirdSdk().getInternal();
-    if (requireAuth && sdk.sessionManager.getEKey() != null && url != null) {
+    final eKey = sdk.sessionManager.getEKey();
+    if (requireAuth && eKey != null) {
       //https://github.com/flutter/flutter/issues/25107
       //final urlString = url.replaceAll('https://', 'http://');
-      return '$url?auth=${sdk.sessionManager.getEKey()}';
+      return '$url?auth=$eKey';
     }
     return null;
   }
 
   /// Name of this file message
-  final String name;
+  final String? name;
 
   /// Size of this file message
-  final int size;
+  final int? size;
 
   /// Type of this file message
-  final String type;
+  final String? type;
 
   /// Thumbnails list of this message
-  final List<Thumbnail> thumbnails;
+  final List<Thumbnail>? thumbnails;
 
   /// True if this requires auth to access this media, otherwise false.
+  @JsonKey(defaultValue: false)
   final bool requireAuth;
 
   @JsonKey(ignore: true)
-  File localFile;
+  File? localFile;
 
   FileMessage({
-    this.url,
+    required this.url,
     this.name,
-    this.size,
+    this.size = 0,
     this.type,
     this.thumbnails,
-    this.requireAuth,
+    this.requireAuth = false,
     this.localFile,
-    String requestId,
-    int messageId,
-    String message,
-    MessageSendingStatus sendingStatus,
-    Sender sender,
-    String channelUrl,
-    ChannelType channelType,
-    List<User> mentionedUsers,
-    MentionType mentionType,
-    List<String> requestedMentionUserIds,
-    int createdAt,
-    int updatedAt,
-    int parentMessageId,
-    String parentMessageText,
-    ThreadInfo threadInfo,
-    List<MessageMetaArray> metaArrays,
-    String customType,
-    int messageSurvivalSeconds,
-    bool forceUpdateLastMessage,
-    bool isSilent,
-    int errorCode,
-    bool isOperatorMessage,
-    String data,
-    OGMetaData ogMetaData,
-    List<Reaction> reactions,
+    String? requestId,
+    String? message,
+    required int messageId,
+    MessageSendingStatus? sendingStatus,
+    Sender? sender,
+    required String channelUrl,
+    required ChannelType channelType,
+    List<User> mentionedUsers = const [],
+    MentionType? mentionType,
+    List<String>? requestedMentionUserIds,
+    int createdAt = 0,
+    int updatedAt = 0,
+    int? parentMessageId,
+    String? parentMessageText,
+    ThreadInfo? threadInfo,
+    List<MessageMetaArray>? metaArrays,
+    String? customType,
+    int? messageSurvivalSeconds,
+    bool forceUpdateLastMessage = false,
+    bool isSilent = false,
+    int? errorCode,
+    bool isOperatorMessage = false,
+    String? data,
+    OGMetaData? ogMetaData,
+    List<Reaction>? reactions,
   }) : super(
           requestId: requestId,
           messageId: messageId,
-          message: message,
+          message: message ?? '',
           sendingStatus: sendingStatus,
           sender: sender,
           channelUrl: channelUrl,
@@ -115,7 +117,7 @@ class FileMessage extends BaseMessage {
         );
 
   factory FileMessage.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> file = json['file'];
+    Map<String, dynamic>? file = json['file'];
     if (file != null) {
       json['url'] = file['url'];
       json['type'] = file['type'];
@@ -126,14 +128,17 @@ class FileMessage extends BaseMessage {
     return _$FileMessageFromJson(json);
   }
 
-  factory FileMessage.fromParams(
-      {FileMessageParams params, BaseChannel channel}) {
+  factory FileMessage.fromParams({
+    required FileMessageParams params,
+    required BaseChannel channel,
+  }) {
     final msg = FileMessage(
       requestId: Uuid().v1(),
-      url: params.uploadFile.url,
+      url: params.uploadFile.url ?? '',
+      messageId: 0,
       name: params.uploadFile.name,
       localFile: params.uploadFile.file,
-      size: params.uploadFile.fileSize,
+      size: params.uploadFile.fileSize ?? 0,
       channelType: channel.channelType,
       channelUrl: channel.channelUrl,
       mentionType: params.mentionType,
@@ -177,11 +182,11 @@ class FileMessage extends BaseMessage {
 @JsonSerializable()
 class Thumbnail {
   String url;
-  String plainUrl;
-  double height;
-  double width;
-  double realHeight;
-  double realWidth;
+  String? plainUrl;
+  double? height;
+  double? width;
+  double? realHeight;
+  double? realWidth;
 
   Thumbnail(
     this.url,

@@ -8,11 +8,11 @@ part of 'message_retrieval_params.dart';
 
 MessageRetrievalParams _$MessageRetrievalParamsFromJson(
     Map<String, dynamic> json) {
-  return MessageRetrievalParams()
-    ..channelUrl = json['channel_url'] as String
-    ..channelType =
-        _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type'])
-    ..messageId = json['message_id'] as int
+  return MessageRetrievalParams(
+    channelType: _$enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
+    channelUrl: json['channel_url'] as String,
+    messageId: json['message_id'] as int,
+  )
     ..includeMetaArray = json['with_sorted_meta_array'] as bool
     ..includeParentMessageText = json['include_parent_message_text'] as bool
     ..includeThreadInfo = json['include_thread_info'] as bool;
@@ -29,36 +29,30 @@ Map<String, dynamic> _$MessageRetrievalParamsToJson(
       'include_thread_info': instance.includeThreadInfo,
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
 const _$ChannelTypeEnumMap = {

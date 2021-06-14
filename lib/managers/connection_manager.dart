@@ -66,7 +66,7 @@ class ConnectionManager {
     return completer.future;
   }
 
-  static void flushCompleters({SBError error}) {
+  static void flushCompleters({SBError? error}) {
     while (_queue.isNotEmpty) {
       final completer = _queue.removeAt(0);
       if (error != null) {

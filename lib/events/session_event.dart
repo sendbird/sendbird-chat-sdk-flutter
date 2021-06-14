@@ -7,15 +7,15 @@ part 'session_event.g.dart';
 @JsonSerializable(createToJson: false)
 class SessionEvent extends BaseEvent {
   @JsonKey(defaultValue: 0)
-  final int expiresIn;
+  final int? expiresIn;
 
-  final String newKey;
+  final String? newKey;
 
-  final String ekey;
+  final String? ekey;
 
-  final String key;
+  final String? key;
 
-  String get sessionKey => key ?? newKey;
+  String get sessionKey => key ?? newKey ?? '';
 
   SessionEvent({this.expiresIn, this.newKey, this.ekey, this.key});
 

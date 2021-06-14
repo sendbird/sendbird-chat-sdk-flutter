@@ -4,7 +4,7 @@ import 'package:sendbird_sdk/constant/enums.dart';
 ///  message count.
 class GroupChannelTotalUnreadMessageCountParams {
   /// List of channel custom types to be used as filter
-  List<String> customTypes;
+  List<String>? customTypes;
 
   /// The enumerator filter of super channel.
   SuperChannelFilter superChannelFilter = SuperChannelFilter.all;

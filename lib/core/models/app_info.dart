@@ -13,20 +13,22 @@ class AppInfo {
   final int uploadSizeLimit;
 
   /// List of premium feature on current application id
+  @JsonKey(defaultValue: [])
   final List<String> premiumFeatureList;
 
   /// True if reaction feature is enabled
   final bool useReaction;
 
   /// list of application attributes of current application id
+  @JsonKey(defaultValue: [])
   final List<String> applicationAttributes;
 
   AppInfo({
-    this.emojiHash,
-    this.uploadSizeLimit,
-    this.premiumFeatureList,
-    this.useReaction,
-    this.applicationAttributes,
+    required this.emojiHash,
+    required this.uploadSizeLimit,
+    required this.premiumFeatureList,
+    required this.useReaction,
+    required this.applicationAttributes,
   });
 
   /// Return `true` if a given [prevEmojiHash] is outdated

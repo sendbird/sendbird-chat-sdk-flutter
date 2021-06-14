@@ -9,9 +9,10 @@ part of 'unread_count_info.dart';
 UnreadCountInfo _$UnreadCountInfoFromJson(Map<String, dynamic> json) {
   return UnreadCountInfo(
     all: json['all'] as int,
-    customTypes: (json['custom_types'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(k, e as num),
-    ),
+    customTypes: (json['custom_types'] as Map<String, dynamic>?)?.map(
+          (k, e) => MapEntry(k, e as int),
+        ) ??
+        {},
     ts: json['ts'] as int,
   );
 }

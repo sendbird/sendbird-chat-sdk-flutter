@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'async_operation.dart';
 
 class AsyncQueue<T> {
@@ -8,7 +7,7 @@ class AsyncQueue<T> {
 
   Queue<Operation> _queue = Queue<Operation>();
   Map<int, Completer> _completers = {};
-  Operation _currentOp;
+  Operation? _currentOp;
 
   Future enqueue(Operation operation) {
     _queue.add(operation);
@@ -27,7 +26,7 @@ class AsyncQueue<T> {
     final completer = _completers.remove(hashCode);
     if (completer != null && !completer.isCompleted) {
       if (_currentOp?.onCancel != null) {
-        _currentOp.onCancel();
+        _currentOp?.onCancel!();
       }
       completer.complete();
       return true;

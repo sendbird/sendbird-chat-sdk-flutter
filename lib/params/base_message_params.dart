@@ -6,10 +6,10 @@ import 'package:sendbird_sdk/utils/extensions.dart';
 /// Represents base class for message parameters.
 class BaseMessageParams {
   /// Message data. The default value is `null`
-  String data;
+  String? data;
 
   /// Customize message's type to filter
-  String customType;
+  String? customType;
 
   /// The push notification delivery option that determines how to deliver
   /// the push notification when sending a user or a file message.
@@ -17,14 +17,14 @@ class BaseMessageParams {
       PushNotificationDeliveryOption.normal;
 
   /// Meta array with keys and values
-  List<MessageMetaArray> metaArrays;
+  List<MessageMetaArray>? metaArrays;
 
   /// Mention type
-  MentionType mentionType;
+  MentionType? mentionType;
 
   /// Mention to specific users. If sends a message with this field,
   /// the message will be arrived to mentioned users.
-  List<String> mentionedUserIds;
+  List<String>? mentionedUserIds;
 
   /// The unique ID of a parent message. A parent message is a message
   /// that has a thread of replies. If the message sent through the
@@ -32,26 +32,26 @@ class BaseMessageParams {
   /// is a parent message, the value of this property is 0. If the message
   /// is a reply to a parent message, the value is the message ID of the
   /// parent message.
-  int parentMessageId = 0;
+  int? parentMessageId;
 
   BaseMessageParams({
     this.data,
     this.customType,
-    this.pushOption,
+    this.pushOption = PushNotificationDeliveryOption.normal,
     this.metaArrays,
     this.mentionType,
     this.mentionedUserIds,
-    this.parentMessageId = 0,
+    this.parentMessageId,
   });
 
-  BaseMessageParams.withMessage(BaseMessage message, {bool deepCopy}) {
-    data = message?.data;
-    customType = message?.customType;
-    metaArrays = message?.metaArrays;
-    mentionType = message?.mentionType;
-    mentionedUserIds = message?.mentionedUsers?.map((e) => e.userId)?.toList();
+  BaseMessageParams.withMessage(BaseMessage message, {bool? deepCopy}) {
+    data = message.data;
+    customType = message.customType;
+    metaArrays = message.metaArrays;
+    mentionType = message.mentionType;
+    mentionedUserIds = message.mentionedUsers.map((e) => e.userId).toList();
     if (deepCopy != null && deepCopy) {
-      parentMessageId = message?.parentMessageId;
+      parentMessageId = message.parentMessageId;
     }
   }
 
@@ -61,10 +61,10 @@ class BaseMessageParams {
       'data': data,
       'mention_type': mentionType?.asString(),
       'mentioned_user_ids': mentionedUserIds,
-      'sorted_metaarray': metaArrays?.map((e) => e.toJson())?.toList(),
+      'sorted_metaarray': metaArrays?.map((e) => e.toJson()).toList(),
       if (pushOption == PushNotificationDeliveryOption.suppress)
         'push_option': pushOption.asString(),
-      if (parentMessageId > 0) 'parent_message_id': parentMessageId,
+      if (parentMessageId != null) 'parent_message_id': parentMessageId,
     };
 
     ret.removeWhere((key, value) => value == null);

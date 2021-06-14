@@ -9,9 +9,10 @@ class MessageMetaArray {
   final String key;
 
   /// Meta array values
+  @JsonKey(defaultValue: [])
   final List<String> value;
 
-  MessageMetaArray({this.key, this.value});
+  MessageMetaArray({required this.key, this.value = const []});
 
   factory MessageMetaArray.fromJson(Map<String, dynamic> json) =>
       _$MessageMetaArrayFromJson(json);

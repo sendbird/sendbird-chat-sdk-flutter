@@ -8,19 +8,21 @@ part 'mcnt_event.g.dart';
 /// Represents mcnt event
 @JsonSerializable(createToJson: false)
 class MCNTEvent implements BaseEvent {
+  @JsonKey(defaultValue: [])
   List<GroupChannel> groupChannels;
 
+  @JsonKey(defaultValue: [])
   List<OpenChannel> openChannels;
 
   @JsonKey(name: 'sts')
-  int systemTimestamp;
+  int? systemTimestamp;
 
   @JsonKey(name: 'ts')
-  int timestamp;
+  int? timestamp;
 
   MCNTEvent({
-    this.groupChannels,
-    this.openChannels,
+    required this.groupChannels,
+    required this.openChannels,
     this.systemTimestamp,
     this.timestamp,
   });

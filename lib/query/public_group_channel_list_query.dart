@@ -15,30 +15,32 @@ class PublicGroupChannelListQuery extends QueryBase {
   ///
   /// Result will return a list containing only and exactly matched
   /// with given urls. This filter does not cooperate with other filters.
-  List<String> channelUrls;
+  List<String>? channelUrls;
 
   /// Filters channels for super group channel. Default is `all`
-  SuperChannelFilter superChannelFilter;
+  SuperChannelFilter superChannelFilter = SuperChannelFilter.all;
 
   /// Filters by current user's member state in public group channel
-  PublicGroupChannelMembershipFilter membershipFilter;
+  PublicGroupChannelMembershipFilter membershipFilter =
+      PublicGroupChannelMembershipFilter.all;
 
   /// Order of query result
-  PublicGroupChannelListOrder order;
+  PublicGroupChannelListOrder order =
+      PublicGroupChannelListOrder.channelNameAlphabetical;
 
   /// Filter by custom type that starts with
-  String customTypeStartWithFilter;
+  String? customTypeStartWithFilter;
 
   /// Filters by custom types.
-  List<String> customTypesFilter;
+  List<String>? customTypesFilter;
 
   /// Filters by channel name contains certain text
-  String channelNameContainsFilter;
+  String? channelNameContainsFilter;
 
   /// Sets metadata's key for ordering its value
   ///
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  String metaDataOrderKeyFilter;
+  String? metaDataOrderKeyFilter;
 
   /// Query result includes empty (message) channel if `true`
   /// default value is `true`

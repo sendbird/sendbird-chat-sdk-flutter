@@ -8,18 +8,18 @@ class IsolateMaster {
   //Major properties
   IsoBridgeStatus _status = IsoBridgeStatus.none;
   //NOTE: @Mark why list of error
-  List<IsoactionInternalError> _errors;
+  late List<IsoactionInternalError> _errors;
 
   //Stream processing
-  RawReceivePort _receivePortForUxIsolate;
-  Isolate _isolate;
-  SendPort _sendPortForExecIsolate;
-  DateTime _pingLastStamp;
-  int _pingCount;
-  IsolateBridgeEntryFunc _entryFunc;
+  late RawReceivePort _receivePortForUxIsolate;
+  Isolate? _isolate;
+  late SendPort _sendPortForExecIsolate;
+  late DateTime _pingLastStamp;
+  late int _pingCount;
+  late IsolateBridgeEntryFunc _entryFunc;
 
   //Constructor
-  IsolateMaster([IsolateBridgeEntryFunc cb]) {
+  IsolateMaster(IsolateBridgeEntryFunc cb) {
     _status = IsoBridgeStatus.init;
     _entryFunc = cb;
     _receivePortForUxIsolate = RawReceivePort(_processAction);
@@ -70,7 +70,7 @@ class IsolateMaster {
       //clean up isolate part
       // _sendExec.send(ShutdownAction());
       //wait to finish cleanup
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
       _isolate = null;
     }
     _status = IsoBridgeStatus.shutdown;

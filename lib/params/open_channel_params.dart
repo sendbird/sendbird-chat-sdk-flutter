@@ -4,20 +4,20 @@ import 'package:sendbird_sdk/core/models/file_info.dart';
 class OpenChannelParams {
   /// Channel url that a channel is to be updated.
   /// Use in creation only.
-  String channelUrl;
+  String? channelUrl;
 
   /// Custom type for a channel
-  String customType;
+  String? customType;
 
   /// Custom data for a channel
-  String data;
+  String? data;
 
   /// Name for a channel
-  String name;
+  String? name;
 
   /// Object contains url or file to be uploaded
-  FileInfo coverImage;
+  FileInfo? coverImage;
 
   /// List of user id who will be operator in a channel
-  List<String> operatorUserIds;
+  List<String>? operatorUserIds;
 }

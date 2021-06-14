@@ -22,19 +22,16 @@ extension GroupChannelRead on GroupChannel {
   List<Member> getReadMembers(BaseMessage message, {bool includeAll = false}) {
     if (message is AdminMessage) return [];
     if (isSuper) return [];
-    if (message == null) {
-      throw InvalidParameterError();
-    }
     // if (_sdk.state.currentUser == null) return []; //check connection
 
     return members.where((m) {
       if (!includeAll && m.isCurrentUser) return false;
-      if (message.sender.userId == m.userId) return false;
+      if (message.sender?.userId == m.userId) return false;
       final readStatus = _sdk.cache.find<ReadStatus>(
         channelKey: channelUrl,
         key: m.userId,
       );
-      if (readStatus == null || readStatus.timestamp == null) return false;
+      if (readStatus == null || readStatus.timestamp == 0) return false;
       return readStatus.timestamp >= message.createdAt;
     }).toList();
   }
@@ -46,14 +43,11 @@ extension GroupChannelRead on GroupChannel {
       {bool includeAll = false}) {
     if (message is AdminMessage) return [];
     if (isSuper) return [];
-    if (message == null) {
-      throw InvalidParameterError();
-    }
     // if (_sdk.state.currentUser == null) return []; //check connection
 
     return members.where((m) {
       if (!includeAll && m.isCurrentUser) return false;
-      if (message.sender.userId == m.userId) return false;
+      if (message.sender?.userId == m.userId) return false;
       final readStatus = _sdk.cache.find<ReadStatus>(
         channelKey: channelUrl,
         key: m.userId,
@@ -89,7 +83,7 @@ extension GroupChannelRead on GroupChannel {
           channelKey: channelUrl,
           key: m.userId,
         );
-        return {'user': m, 'last_seen_at': readStatus.timestamp};
+        return {'user': m, 'last_seen_at': readStatus?.timestamp};
       },
     );
   }
@@ -108,7 +102,7 @@ extension GroupChannelRead on GroupChannel {
 
     return members.where((m) {
       if (m.isCurrentUser) return false;
-      if (message.sender.userId == m.userId) return false;
+      if (message.sender?.userId == m.userId) return false;
       if (m.state != MemberState.joined) return false;
       final deliveredAt = deliveryStatus.updatedDeliveryReceipt[m.userId] ?? 0;
       return deliveredAt < message.createdAt;

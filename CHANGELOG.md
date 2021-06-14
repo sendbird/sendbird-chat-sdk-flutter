@@ -1,3 +1,9 @@
+## [3.0.14-nullsafety] - Jun 13, 2021
+* Applied null-safety
+* Updated dependencies
+* Fixed `mostRepliesUsers` mapping in ThreadInfo
+* Improved stability
+
 ## [3.0.13] - May 17, 2021
 * Fixed file type mis mapping bug
 * Added `cancelUploadingFileMessage` in `BaseChannel`

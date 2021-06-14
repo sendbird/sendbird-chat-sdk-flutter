@@ -17,16 +17,18 @@ class ChannelEvent implements BaseEvent {
   //NOTE: https://github.com/dart-lang/sdk/issues/33698
   final ChannelEventCategory category;
 
+  @JsonKey(defaultValue: {})
   final Map<String, dynamic> data;
 
-  final int ts;
+  final int? ts;
 
   @JsonKey(name: 'ts_message_offset')
-  final int messageOffset;
+  final int? messageOffset;
 
   GroupChannelHiddenState get hiddenState {
-    if (allowAutoUnhide != null) {
-      return allowAutoUnhide
+    final auto = allowAutoUnhide;
+    if (auto != null) {
+      return auto
           ? GroupChannelHiddenState.allowAutoUnhide
           : GroupChannelHiddenState.preventAutoUnhide;
     } else {
@@ -35,42 +37,37 @@ class ChannelEvent implements BaseEvent {
   }
 
   ChannelEvent({
-    this.channelType,
-    this.channelUrl,
-    this.category,
-    this.data,
+    required this.channelType,
+    required this.channelUrl,
+    required this.category,
+    required this.data,
     this.ts,
     this.messageOffset,
   });
 
-  int get memberCount => data != null ? data['member_count'] : null;
-  int get joinedMemberCount =>
-      data != null ? data['joined_member_count'] : null;
-  int get participantCount => data != null ? data['participant_count'] : null;
-  bool get allowAutoUnhide => data != null ? data['allow_auto_unhide'] : null;
+  int get joinedAt => data['joined_ts'] ?? 0;
+  int get memberCount => data['member_count'] ?? 0;
+  int get joinedMemberCount => data['joined_member_count'] ?? 0;
+  int get participantCount => data['participant_count'] ?? 0;
+  bool? get allowAutoUnhide => data['allow_auto_unhide'];
   bool get hidePreviousMessage => data['hide_previous_messages'];
-  Member get inviter => data != null && data['inviter'] != null
-      ? Member.fromJson(data['inviter'])
-      : null;
-  Member get invitee => data != null && data['invitee'] != null
-      ? Member.fromJson(data['invitee'])
-      : null;
+  Member? get inviter =>
+      data['inviter'] != null ? Member.fromJson(data['inviter']) : null;
+  Member? get invitee =>
+      data['invitee'] != null ? Member.fromJson(data['invitee']) : null;
   List<Member> get invitees {
-    if (data != null && data['invitees'] == null) {
-      return [];
-    }
-
+    if (data['invitees'] == null) return [];
     final dics = data['invitees'] as List;
     final members = dics.map((e) => Member.fromJson(e)).toList();
     // members.forEach((e) => e.state = MemberState.invited);
     return members;
   }
 
-  User get user => data != null ? User.fromJson(data) : null;
+  User? get user => data.isEmpty ? null : User.fromJson(data);
 
   List<Member> get users {
     if (data['users'] != null) {
-      final dics = data['users'] as List<Map>;
+      final dics = data['users'] as List<Map<String, dynamic>>;
       final users = dics.map((e) => Member.fromJson(e)).toList();
       // users.forEach((e) => e.state = MemberState.invited);
       return users;
@@ -91,7 +88,7 @@ class ChannelEvent implements BaseEvent {
   }
 
   int get invitedAt =>
-      category == ChannelEventCategory.invite ? data['invited_at'] : 0;
+      category == ChannelEventCategory.invite ? (data['invited_at'] ?? 0) : 0;
 
   factory ChannelEvent.fromJson(Map<String, dynamic> json) =>
       _$ChannelEventFromJson(json);

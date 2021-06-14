@@ -12,26 +12,27 @@ part 'sender.g.dart';
 @JsonSerializable()
 class Sender extends User {
   /// True if current user blocked this sender
+  @JsonKey(defaultValue: false)
   final bool isBlockedByMe;
 
   /// Role of this sender in the channel
-  @JsonKey(unknownEnumValue: Role.none)
+  @JsonKey(defaultValue: Role.none, unknownEnumValue: Role.none)
   Role role;
 
   Sender({
-    this.isBlockedByMe,
-    this.role,
-    String userId,
-    String nickname,
-    String profileUrl,
-    UserConnectionStatus connectionStatus,
-    int lastSeenAt,
-    List<String> preferredLanguages,
-    String friendDiscoveryKey,
-    String friendName,
-    List<String> discoveryKeys,
-    Map<String, String> metaData,
-    bool requireAuth,
+    this.isBlockedByMe = false,
+    this.role = Role.none,
+    required String userId,
+    required String nickname,
+    String? profileUrl,
+    UserConnectionStatus? connectionStatus,
+    int? lastSeenAt,
+    List<String>? preferredLanguages,
+    String? friendDiscoveryKey,
+    String? friendName,
+    List<String>? discoveryKeys,
+    Map<String, String> metaData = const {},
+    bool requireAuth = false,
   }) : super(
           userId: userId,
           nickname: nickname,
@@ -46,7 +47,8 @@ class Sender extends User {
           requireAuth: requireAuth,
         );
 
-  factory Sender.fromUser(User user, BaseChannel channel) {
+  static Sender? fromUser(User? user, BaseChannel channel) {
+    if (user == null) return null;
     final sender = Sender.fromJson(user.toJson());
     if (channel is GroupChannel) {
       sender.role = channel.myRole;

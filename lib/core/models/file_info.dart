@@ -1,33 +1,31 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-
 /// Represents information about image that will be used to upload
 class FileInfo {
   /// name of this file
-  final String name;
+  final String? name;
 
   /// url of this file
-  String url;
+  String? url;
 
   /// file data
-  final File file;
+  final File? file;
 
   /// mime file type
-  final String mimeType;
+  final String? mimeType;
 
-  int fileSize;
+  int? fileSize;
 
   FileInfo.fromData({
-    @required this.name,
-    @required this.file,
-    @required this.mimeType,
+    required this.name,
+    required this.file,
+    this.mimeType,
   })  : fileSize = file?.lengthSync(),
         url = null;
 
   FileInfo.fromUrl({
-    @required this.url,
-    @required this.mimeType,
+    required this.url,
+    this.mimeType,
     this.fileSize,
     this.name,
   }) : file = null;

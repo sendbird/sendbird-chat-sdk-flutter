@@ -9,7 +9,7 @@ extension Meta on BaseChannel {
   /// will be invoked.
   Future<Map<String, String>> createMetaData(
       Map<String, String> metaData) async {
-    if (metaData == null || metaData.isEmpty) {
+    if (metaData.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -33,7 +33,7 @@ extension Meta on BaseChannel {
 
   /// Retrieves meta data from this channel with [keys].
   Future<Map<String, String>> getMetaData(List<String> keys) async {
-    if (keys == null || keys.isEmpty) {
+    if (keys.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -81,7 +81,7 @@ extension Meta on BaseChannel {
   /// will be invoked.
   Future<Map<String, String>> updateMetaData(
       Map<String, String> metaData) async {
-    if (metaData == null || metaData.isEmpty) {
+    if (metaData.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -108,7 +108,7 @@ extension Meta on BaseChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onMetaDataDeleted] will be invoked.
   Future<void> deleteMetaData(String key) async {
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -155,7 +155,7 @@ extension Meta on BaseChannel {
   /// [ChannelEventHandler.onMetaCountersCreated] will be invoked.
   Future<Map<String, int>> createMetaCounters(
       Map<String, int> metaCounters) async {
-    if (metaCounters == null || metaCounters.isEmpty) {
+    if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
     return _sdk.api.createChannelMetaCounters(
@@ -167,7 +167,7 @@ extension Meta on BaseChannel {
 
   /// Retrieves meta counters from this channel with [keys].
   Future<Map<String, int>> getMetaCounters(List<String> keys) async {
-    if (keys == null || keys.isEmpty) {
+    if (keys.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -206,7 +206,7 @@ extension Meta on BaseChannel {
   /// ```
   Future<Map<String, int>> updateMetaCounters(
       Map<String, int> metaCounters) async {
-    if (metaCounters == null || metaCounters.isEmpty) {
+    if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -238,7 +238,7 @@ extension Meta on BaseChannel {
   /// ```
   Future<Map<String, int>> increaseMetaCounters(
       Map<String, int> metaCounters) async {
-    if (metaCounters == null || metaCounters.isEmpty) {
+    if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
     return _sdk.api.updateChannelMetaCounters(
@@ -269,7 +269,7 @@ extension Meta on BaseChannel {
   /// ```
   Future<Map<String, int>> decreaseMetaCounters(
       Map<String, int> metaCounters) async {
-    if (metaCounters == null || metaCounters.isEmpty) {
+    if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
     return _sdk.api.updateChannelMetaCounters(
@@ -282,7 +282,7 @@ extension Meta on BaseChannel {
 
   /// Deletes a meta counter with given [key]
   Future<void> deleteMetaCounters(String key) async {
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw InvalidParameterError();
     }
     return _sdk.api.deleteChannelMetaCounter(
@@ -305,20 +305,27 @@ extension Meta on BaseChannel {
     BaseMessage message,
     List<MessageMetaArray> metaArrays,
   ) async {
-    if (message == null || message.channelUrl != channelUrl) {
+    if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
 
-    if (metaArrays == null || metaArrays.isEmpty) {
+    if (metaArrays.isEmpty) {
       throw InvalidParameterError();
     }
 
     final cmd = Command.buildUpdateMessageMetaArray(
         message, metaArrays, MetaArrayUpdateMode.add, true);
 
-    final result = await _sdk.cmdManager.sendCommand(cmd);
-    result.payload['type'] = result.cmd;
-    return BaseMessage.msgFromJson(result.payload);
+    try {
+      var result = await _sdk.cmdManager.sendCommand(cmd);
+      if (result != null) {
+        return BaseMessage.msgFromJson(result.payload, type: result.cmd)!;
+      } else {
+        throw WebSocketError();
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Deletes [keys] from [MessageMetaArray] given [message].
@@ -326,11 +333,11 @@ extension Meta on BaseChannel {
     BaseMessage message,
     List<String> keys,
   ) async {
-    if (message == null || message.channelUrl != channelUrl) {
+    if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
 
-    if (keys == null || keys.isEmpty) {
+    if (keys.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -339,9 +346,16 @@ extension Meta on BaseChannel {
     final cmd = Command.buildUpdateMessageMetaArray(
         message, metaArrays, MetaArrayUpdateMode.remove, false);
 
-    final result = await _sdk.cmdManager.sendCommand(cmd);
-    result.payload['type'] = result.cmd;
-    return BaseMessage.msgFromJson(result.payload);
+    try {
+      var result = await _sdk.cmdManager.sendCommand(cmd);
+      if (result != null) {
+        return BaseMessage.msgFromJson(result.payload, type: result.cmd)!;
+      } else {
+        throw WebSocketError();
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Removes values from list of [metaArrays] with given [message]
@@ -349,26 +363,36 @@ extension Meta on BaseChannel {
     BaseMessage message,
     List<MessageMetaArray> metaArrays,
   ) async {
-    if (message == null || message.channelUrl != channelUrl) {
+    if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
 
-    if (metaArrays == null || metaArrays.isEmpty) {
+    if (metaArrays.isEmpty) {
       throw InvalidParameterError();
     }
 
     final cmd = Command.buildUpdateMessageMetaArray(
         message, metaArrays, MetaArrayUpdateMode.remove, true);
 
-    final result = await _sdk.cmdManager.sendCommand(cmd);
-    result.payload['type'] = result.cmd;
-    return BaseMessage.msgFromJson(result.payload);
+    try {
+      var result = await _sdk.cmdManager.sendCommand(cmd);
+      if (result != null) {
+        return BaseMessage.msgFromJson(result.payload, type: result.cmd)!;
+      } else {
+        throw WebSocketError();
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Returns cached meta data
   ///
   /// This meta data is cached by any of create / update / delete operations
   /// and channel query with `includeMetaData`
-  Map<String, String> getCachedMetaData() =>
-      _sdk.cache.find<CachedDataMap>(channelKey: channelUrl)?.getAll();
+  Map<String, String> getCachedMetaData() {
+    final metaData =
+        _sdk.cache.find<CachedDataMap>(channelKey: channelUrl)?.getAll() ?? {};
+    return Map<String, String>.from(metaData);
+  }
 }

@@ -17,6 +17,7 @@ class ThreadInfo {
   /// Users who left most replies in the thread. The order of users
   /// is based on the number of replies they made in the thread and
   /// the maximum size of the array can be adjusted per request.
+  @JsonKey(defaultValue: [], name: 'most_replies')
   final List<User> mostRepliesUsers;
 
   /// Time that the last reply was created, in Unix milliseconds
@@ -24,12 +25,12 @@ class ThreadInfo {
   final int lastRepliedAt;
 
   /// Time that this information was updated at
-  int updatedAt;
+  int? updatedAt;
 
   ThreadInfo({
-    this.replyCount,
-    this.mostRepliesUsers,
-    this.lastRepliedAt,
+    this.replyCount = 0,
+    this.mostRepliesUsers = const [],
+    this.lastRepliedAt = 0,
     this.updatedAt,
   });
 

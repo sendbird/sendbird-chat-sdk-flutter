@@ -42,6 +42,6 @@ extension GroupChannelTyping on GroupChannel {
   List<User> getTypingUsers() {
     final typingStatuses =
         _sdk.cache.findAll<TypingStatus>(channelKey: channelUrl);
-    return typingStatuses.map((e) => e.user).toList();
+    return typingStatuses?.map((e) => e.user).toList() ?? [];
   }
 }

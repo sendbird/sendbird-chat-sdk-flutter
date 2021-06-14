@@ -13,30 +13,31 @@ typedef OnWSError = void Function(Object error);
 
 class WebSocketClient {
   bool _connected = false;
-  bool _disconnect;
-  String _url; //ConnectWithUser URL + parms
-  //Completer _completer
-  WebSocket _socket;
-  Stream _rx;
+  bool _disconnect = true;
+
+  String? _url;
+  WebSocket? _socket;
+  Stream? _rx;
 
   int _lastActiveAt = 0;
   int _pingInterval = 15;
   int _watchdogInterval = 5;
-  Timer _pingTimer;
-  Timer _watchdogTimer;
+  Timer? _pingTimer;
+  Timer? _watchdogTimer;
 
-  StreamSubscription _subscription;
-  OnWSConnect _functionConnect;
-  OnWSDisconnect _functionDisconnect;
-  OnWSData _functionData;
-  OnWSError _functionError;
+  StreamSubscription? _subscription;
 
-  WebSocketClient([
-    OnWSConnect onConnect,
-    OnWSDisconnect onDisconnect,
-    OnWSData onData,
-    OnWSError onError,
-  ]) {
+  late OnWSConnect _functionConnect;
+  late OnWSDisconnect _functionDisconnect;
+  late OnWSData _functionData;
+  late OnWSError _functionError;
+
+  WebSocketClient({
+    required OnWSConnect onConnect,
+    required OnWSDisconnect onDisconnect,
+    required OnWSData onData,
+    required OnWSError onError,
+  }) {
     _functionConnect = onConnect;
     _functionDisconnect = onDisconnect;
     _functionData = onData;
@@ -44,10 +45,6 @@ class WebSocketClient {
   }
 
   Future<void> connect(String url) async {
-    if (url == null) {
-      logger.e('Socket url is null');
-      throw WebSocketError(message: 'Invalid URL supplied');
-    }
     if (url.length < 10) {
       logger.e('Socket url is too short');
       throw WebSocketError(message: 'Invalid URL supplied');
@@ -66,22 +63,19 @@ class WebSocketClient {
 
       _startPing();
 
-      if (_functionConnect != null) {
-        _functionConnect();
-      }
+      _functionConnect();
     } catch (e) {
       logger.e('Websocket connection error: ' + e.toString());
       throw WebSocketError(message: e.toString());
     }
 
-    _rx = _socket.asBroadcastStream();
-    _subscription = _rx.listen(
+    _rx = _socket!.asBroadcastStream();
+    _subscription = _rx?.listen(
       onReceiveData,
       onError: onReceiveError,
       onDone: onReceiveDone,
       cancelOnError: true,
     );
-    return true;
   }
 
   bool close({int code = WebSocketStatus.normalClosure, String reason = ''}) {
@@ -101,8 +95,8 @@ class WebSocketClient {
     try {
       //This should trigger callback for Done()
       //And set _connected to false before returning from close
-      _socket.close(code, reason);
-      _subscription.cancel();
+      _socket?.close(code, reason);
+      _subscription?.cancel();
       _socket = null;
       logger.i('Socket closed ' + reason);
       return true;
@@ -115,16 +109,13 @@ class WebSocketClient {
   void send(String data) {
     logger.i('Send command \n' + data);
     try {
-      _socket.add(data);
+      _socket?.add(data);
     } catch (e) {
       throw WebSocketError(message: e.toString());
     }
   }
 
   void onReceiveData(dynamic evt) {
-    if (_functionData == null) {
-      return;
-    }
     _lastActiveAt = DateTime.now().millisecondsSinceEpoch;
     _stopWatchdog();
     _functionData(evt);
@@ -132,9 +123,6 @@ class WebSocketClient {
 
   void onReceiveError(Object error) {
     logger.e('Websocket Error:' + error.toString());
-    if (_functionError == null) {
-      return;
-    }
     _functionError(error);
   }
 
@@ -143,9 +131,7 @@ class WebSocketClient {
     _connected = false;
     _socket = null;
 
-    if (_functionDisconnect != null) {
-      _functionDisconnect();
-    }
+    _functionDisconnect();
 
     if (_disconnect) {
       return;
@@ -169,12 +155,12 @@ class WebSocketClient {
   }
 
   void setInterval(int seconds) {
-    if (seconds == null) return;
+    if (seconds < 0) return;
     _pingInterval = seconds;
   }
 
   void setWatchdogInterval(int seconds) {
-    if (seconds == null) return;
+    if (seconds < 0) return;
     _watchdogInterval = seconds;
   }
 
@@ -183,7 +169,7 @@ class WebSocketClient {
     _pingTimer?.cancel();
     _pingTimer = Timer.periodic(Duration(seconds: _pingInterval), (timer) {
       var now = DateTime.now().millisecondsSinceEpoch;
-      if (_lastActiveAt != null && now - _lastActiveAt >= _pingInterval) {
+      if (now - _lastActiveAt >= _pingInterval) {
         _lastActiveAt = now;
         send(Command.buildPing().encode());
         _startWatchdog();

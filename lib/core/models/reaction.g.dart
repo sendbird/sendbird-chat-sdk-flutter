@@ -9,7 +9,10 @@ part of 'reaction.dart';
 Reaction _$ReactionFromJson(Map<String, dynamic> json) {
   return Reaction(
     key: json['key'] as String,
-    userIds: (json['user_ids'] as List)?.map((e) => e as String)?.toList(),
+    userIds: (json['user_ids'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList() ??
+        [],
     updatedAt: json['updated_at'] as int,
   );
 }

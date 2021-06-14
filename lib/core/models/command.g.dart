@@ -9,11 +9,11 @@ part of 'command.dart';
 Command _$CommandFromJson(Map<String, dynamic> json) {
   return Command(
     cmd: json['cmd'] as String,
-    requestId: json['req_id'] as String,
-    timestamp: json['ts'] as int,
-    requireAuth: json['require_auth'] as bool,
-    errorCode: json['code'] as int,
-    errorMessage: json['message'] as String,
+    requestId: json['req_id'] as String?,
+    timestamp: json['ts'] as int?,
+    requireAuth: json['require_auth'] as bool?,
+    errorCode: json['code'] as int?,
+    errorMessage: json['message'] as String?,
   );
 }
 

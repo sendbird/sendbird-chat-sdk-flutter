@@ -4,8 +4,8 @@ class CachedData<T> {
   int ts;
 
   CachedData({
-    this.value,
+    required this.value,
     this.isRemoved = false,
-    this.ts,
+    this.ts = 0,
   });
 }

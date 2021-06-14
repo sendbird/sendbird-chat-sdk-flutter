@@ -13,17 +13,18 @@ class ScheduledUserMessageParams extends UserMessageParams {
   /// Initializes this params instance with a text message and
   /// the date to send the message.
   ScheduledUserMessageParams({
-    this.scheduledDateString,
-    this.timezone,
-    String message,
-    List<String> targetLanguages,
-    String data,
-    String customType,
-    PushNotificationDeliveryOption pushOption,
-    MentionType mentionType,
-    List<String> mentionedUserIds,
-    List<MessageMetaArray> metaArrays,
-    int parentMessageId,
+    required this.scheduledDateString,
+    required this.timezone,
+    required String message,
+    List<String>? targetLanguages,
+    String? data,
+    String? customType,
+    PushNotificationDeliveryOption pushOption =
+        PushNotificationDeliveryOption.normal,
+    MentionType? mentionType,
+    List<String>? mentionedUserIds,
+    List<MessageMetaArray>? metaArrays,
+    int? parentMessageId,
   }) : super(
           message: message,
           targetLanguages: targetLanguages,

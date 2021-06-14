@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
@@ -28,26 +27,27 @@ import 'package:sendbird_sdk/utils/logger.dart';
 class SendbirdSdk {
   //Singleton Pattern
   static SendbirdSdk _instance = SendbirdSdk._instanceFunction();
-  SendbirdSdk._instanceFunction();
-  SendbirdSdkInternal _int;
+  SendbirdSdk._instanceFunction() : _int = SendbirdSdkInternal();
+
+  late SendbirdSdkInternal _int;
 
   factory SendbirdSdk({
-    String appId,
-    String apiToken,
-    Options options,
+    String? appId,
+    String? apiToken,
+    Options? options,
   }) {
-    if (_instance != null &&
-        (appId == null || appId == _instance._int?.state?.appId)) {
+    if ((appId == null || appId == _instance._int.state.appId)) {
       return _instance;
     }
 
     // initialize with different app id, so logout and
     // reinitialize internal obj
+    _instance._int.logout();
     _instance = SendbirdSdk._instanceFunction();
     _instance._int = SendbirdSdkInternal(
       appId: appId,
       apiToken: apiToken,
-      options: options ?? Options(),
+      options: options,
     );
 
     return _instance;
@@ -55,7 +55,7 @@ class SendbirdSdk {
 
   /// Sets [Options] to configure SDK
   void setOptions(Options options) {
-    _int?.setOptions(options);
+    _int.setOptions(options);
   }
 
   /// Returns current configuration [Options]
@@ -79,10 +79,10 @@ class SendbirdSdk {
   /// generated the token from platform api
   Future<User> connect(
     String userId, {
-    String nickname,
-    String accessToken,
-    String apiHost,
-    String wsHost,
+    String? nickname,
+    String? accessToken,
+    String? apiHost,
+    String? wsHost,
   }) async {
     return _int.connect(
       userId: userId,
@@ -110,14 +110,14 @@ class SendbirdSdk {
   }
 
   /// Returns current connected [User], nullable.
-  User get currentUser {
-    return _int.state?.currentUser;
+  User? get currentUser {
+    return _int.state.currentUser;
   }
 
   /// Returns current user's last connection timestamp as epoch milliseocnds,
   /// nullable
-  int getLastConnectedAt() {
-    return _int.state?.lastConnectedAt;
+  int? getLastConnectedAt() {
+    return _int.state.lastConnectedAt;
   }
 
   /// Add [ChannelEventHandler] with [identifier] to SDK.
@@ -128,16 +128,15 @@ class SendbirdSdk {
   /// Returns [ChannelEventHandler] with given [identifier].
   ///
   /// null if handler is not found with [identifier]
-  ChannelEventHandler getChannelEventHandler(String identifier) {
-    return _int.eventManager.getHandler(
+  ChannelEventHandler? getChannelEventHandler(String identifier) {
+    return _int.eventManager.getHandler<ChannelEventHandler>(
       identifier: identifier,
-      type: EventType.channel,
     );
   }
 
   /// Removes [ChannelEventHandler] with [identifier] from SDK.
   void removeChannelEventHandler(String identifier) {
-    _int.eventManager.removeHandler(identifier, EventType.channel);
+    _int.eventManager.removeHandler<ChannelEventHandler>(identifier);
   }
 
   /// Adds [ConnectionEventHandler] with [identifier] to SDK.
@@ -149,16 +148,14 @@ class SendbirdSdk {
   /// Returns [ConnectionEventHandler] with [identifier] from SDK.
   ///
   /// null if the handler is not found with [identifier]
-  ConnectionEventHandler getConnectionEventHandler(String identifier) {
-    return _int.eventManager.getHandler(
-      identifier: identifier,
-      type: EventType.connection,
-    );
+  ConnectionEventHandler? getConnectionEventHandler(String identifier) {
+    return _int.eventManager
+        .getHandler<ConnectionEventHandler>(identifier: identifier);
   }
 
   /// Removes [ConnectionEventHandler] with [identifier] from SDK.
   void removeConnectionEventHandler(String identifier) {
-    _int.eventManager.removeHandler(identifier, EventType.connection);
+    _int.eventManager.removeHandler<ConnectionEventHandler>(identifier);
   }
 
   /// Adds [SessionEventHandler] to SDK.
@@ -167,13 +164,13 @@ class SendbirdSdk {
   }
 
   /// Returns [SessionEventHandler] if registered
-  SessionEventHandler getSessionEventHandler() {
-    return _int.eventManager.getHandler(type: EventType.session);
+  SessionEventHandler? getSessionEventHandler() {
+    return _int.eventManager.getHandler<SessionEventHandler>();
   }
 
   /// Removes [SessionEventHandler] from SDK.
   void removeSessionEventHandler() {
-    _int.eventManager.removeHandler('', EventType.session);
+    _int.eventManager.removeHandler<SessionEventHandler>('');
   }
 
   /// Adds [UserEventHandler] with [identifier] to SDK.
@@ -182,16 +179,14 @@ class SendbirdSdk {
   }
 
   /// Returns [UserEventHandler] with [identifier] from SDK.
-  UserEventHandler getUserEventHandler(String identifier) {
-    return _int.eventManager.getHandler(
-      identifier: identifier,
-      type: EventType.userEvent,
-    );
+  UserEventHandler? getUserEventHandler(String identifier) {
+    return _int.eventManager
+        .getHandler<UserEventHandler>(identifier: identifier);
   }
 
   /// Removes [UserEventHandler] with [identifier] from SDK.
   void removeUserEventHandler(String identifier) {
-    _int.eventManager.removeHandler(identifier, EventType.userEvent);
+    _int.eventManager.removeHandler<UserEventHandler>(identifier);
   }
 
   /// Returns current SDK version as `String`.
@@ -205,21 +200,22 @@ class SendbirdSdk {
   }
 
   /// Returns current application id as `String` if initialized.
-  String getApplicationId() {
+  String? getApplicationId() {
     return _int.state.appId;
   }
 
   /// Returns current application information with [AppInfo].
-  AppInfo getAppInfo() {
+  AppInfo? getAppInfo() {
     return _int.state.appInfo;
   }
 
   /// Returns [ConnectionState].
   ConnectionState getConnectionState() {
+    final socket = _int.webSocket;
     if (_int.state.connecting || _int.state.reconnecting) {
       return ConnectionState.connecting;
-    } else if (_int.webSocket != null) {
-      return _int.webSocket.connectionState;
+    } else if (socket != null) {
+      return socket.connectionState;
     }
     return ConnectionState.closed;
   }
@@ -227,19 +223,19 @@ class SendbirdSdk {
   /// Updates current user information with [nickname], [fileInfo],
   /// [preferredLanguages].
   Future<void> updateCurrentUserInfo({
-    String nickname,
-    FileInfo fileInfo,
-    List<String> preferredLanguages,
-    OnUploadProgressCallback progress,
+    String? nickname,
+    FileInfo? fileInfo,
+    List<String>? preferredLanguages,
+    OnUploadProgressCallback? progress,
   }) async {
     final user = await _int.api.updateUser(
-      userId: _int.state.userId,
+      userId: _int.state.userId ?? '',
       nickname: nickname,
       fileInfo: fileInfo,
       preferredLanguages: preferredLanguages,
       progress: progress,
     );
-    _int.state.currentUser.copyWith(user);
+    _int.state.currentUser?.copyWith(user);
   }
 
   /// Blocks a user with [userId].
@@ -266,7 +262,7 @@ class SendbirdSdk {
   }
 
   /// Returns pending push token
-  String getPendingToken() {
+  String? getPendingToken() {
     return _int.state.pushToken;
   }
 
@@ -276,8 +272,8 @@ class SendbirdSdk {
   /// registered with specific [PushTokenType] such as fcm or apns. If [unique]
   /// is `true` then only one push token will be keep tracked
   Future<PushTokenRegistrationStatus> registerPushToken({
-    @required PushTokenType type,
-    @required String token,
+    required PushTokenType type,
+    required String token,
     bool unique = false,
   }) async {
     //if not connected return pending
@@ -289,8 +285,8 @@ class SendbirdSdk {
   /// Once [token] has been unregistered from sendbird server, associated device
   /// will not receive any push notification from sendbird.
   Future<void> unregisterPushToken({
-    @required PushTokenType type,
-    @required String token,
+    required PushTokenType type,
+    required String token,
   }) async {
     return _int.api.unregisterPushToken(type: type, token: token);
   }
@@ -302,13 +298,24 @@ class SendbirdSdk {
 
   /// Sets do not disturb mode [enable] with given start and end time.
   Future<void> setDoNotDisturb({
-    @required bool enable,
+    required bool enable,
     int startHour = 0,
     int startMin = 0,
     int endHour = 23,
     int endMin = 59,
-    String timezone,
+    String timezone = 'UTC',
   }) async {
+    if (enable && startHour < 0 ||
+        startHour > 23 ||
+        startMin < 0 ||
+        startMin > 59 ||
+        endHour < 0 ||
+        endHour > 23 ||
+        endMin < 0 ||
+        endMin > 59) {
+      throw InvalidParameterError();
+    }
+
     return _int.api.setDoNotDisturb(
       enable: enable,
       startHour: startHour,
@@ -326,10 +333,19 @@ class SendbirdSdk {
 
   /// Sets snooze period [enable] with start and end date.
   Future<void> setSnoozePeriod({
-    @required bool enable,
-    DateTime startDate,
-    DateTime endDate,
+    required bool enable,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
+    if (enable) {
+      if (startDate == null || endDate == null) throw InvalidParameterError();
+      if (endDate.difference(startDate).inSeconds < 0) {
+        throw InvalidParameterError();
+      }
+      if (endDate.difference(DateTime.now()).inSeconds < 0) {
+        throw InvalidParameterError();
+      }
+    }
     return _int.api.setSnoozePeriod(
       enable: enable,
       startDate: startDate,
@@ -344,7 +360,7 @@ class SendbirdSdk {
 
   /// Sets push trigger [option] for current user.
   Future<void> setPushTriggerOption(PushTriggerOption option) async {
-    return _int.api.setPushTriggerOption(option);
+    await _int.api.setPushTriggerOption(option);
   }
 
   /// Returns [PushTriggerOption] of current user.
@@ -385,9 +401,9 @@ class SendbirdSdk {
   /// may contains updated or deleted channels along with next token if there
   /// are more to load
   Future<ChannelChangeLogsResponse> getMyGroupChannelChangeLogs({
-    @required GroupChannelChangeLogsParams params,
-    String token,
-    int timestamp,
+    required GroupChannelChangeLogsParams params,
+    String? token,
+    int? timestamp,
   }) async {
     return _int.api.getGroupChannelChangeLogs(
       params: params,
@@ -403,10 +419,8 @@ class SendbirdSdk {
   }
 
   /// Mark list of group channels with [channelUrls] as read.
-  Future<void> markAsRead({@required List<String> channelUrls}) async {
-    if (channelUrls == null || channelUrls.isEmpty) {
-      throw InvalidParameterError();
-    }
+  Future<void> markAsRead({required List<String> channelUrls}) async {
+    if (channelUrls.isEmpty) throw InvalidParameterError();
     await _int.api.markAsRead(
       channelUrls: channelUrls,
       userId: _int.state.userId,
@@ -414,17 +428,15 @@ class SendbirdSdk {
   }
 
   /// Mark a message as delivered with given payload from push notification
-  Future<void> markAsDelivered({Map<String, dynamic> data}) async {
-    if (data == null) throw InvalidParameterError();
-
-    Map<String, dynamic> sendbird = data['sendbird'];
-    String appId, userId, channelUrl, sessionKey;
-    int createdAt;
+  Future<void> markAsDelivered({required Map<String, dynamic> data}) async {
+    Map<String, dynamic>? sendbird = data['sendbird'];
+    String? appId, userId, channelUrl, sessionKey;
+    int? createdAt;
 
     if (sendbird != null) {
-      Map<String, dynamic> recipient = sendbird['recipient'];
-      Map<String, dynamic> channel = sendbird['channel'];
-      Map<String, dynamic> session = sendbird['session_key'];
+      Map<String, dynamic>? recipient = sendbird['recipient'];
+      Map<String, dynamic>? channel = sendbird['channel'];
+      Map<String, dynamic>? session = sendbird['session_key'];
 
       createdAt = sendbird['created_at'];
       appId = sendbird['app_id'];
@@ -438,7 +450,7 @@ class SendbirdSdk {
         userId != null &&
         channelUrl != null &&
         sessionKey != null &&
-        createdAt > 0) {
+        createdAt != null) {
       SendbirdSdk(appId: appId);
 
       _int.sessionManager.setUserId(_int.state.userId ?? userId);
@@ -473,8 +485,8 @@ class SendbirdSdk {
   Future<int> getTotalUnreadMessageCountWithParams(
       GroupChannelTotalUnreadMessageCountParams params) async {
     return _int.api.getTotalUnreadMessageCount(
-      customTypes: params?.customTypes,
-      filter: params?.superChannelFilter,
+      customTypes: params.customTypes,
+      filter: params.superChannelFilter,
     );
   }
 
@@ -498,21 +510,22 @@ class SendbirdSdk {
   }
 
   /// Returns total unread messgea count for given custom type
-  int subscribedCustomTypeUnreadMessageCount(String customType) {
+  int? subscribedCustomTypeUnreadMessageCount(String customType) {
     return _int.state.unreadCountInfo.customTypes[customType];
   }
 
   /// Returns a stream to listen message count has been changed
-  Stream<int> get totalUnreadMessageCountStream {
-    if (currentUser == null) return null;
+  Stream<int>? get totalUnreadMessageCountStream {
+    if (currentUser == null) throw ConnectionRequiredError();
     return _int.streamManager.unread.stream;
   }
 
   /// Retruns a stream to listen message update event with given [channelUrl].
   ///
   /// It will be triggered every message update if [channelUrl] is not provided.
-  Stream<BaseMessage> messageUpdateStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<BaseMessage?> messageUpdateStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.msgUpdated.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.message;
@@ -525,8 +538,9 @@ class SendbirdSdk {
   /// Returns a stream to listen new messsage event with given [channelUrl].
   ///
   /// It will be triggered every new message if [channelUrl] is not provided
-  Stream<BaseMessage> messageReceiveStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<BaseMessage?> messageReceiveStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.msgReceived.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.message;
@@ -539,8 +553,9 @@ class SendbirdSdk {
   /// Returns a stream to listen messsage delete event with given [channelUrl].
   ///
   /// It will be triggered every message deletion if [channelUrl] is not provided
-  Stream<int> messageDeleteStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<int?> messageDeleteStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.msgDeletd.stream) {
       if (channelUrl != null) {
         if (res.channel.channelUrl == channelUrl) yield res.deletedId;
@@ -553,8 +568,9 @@ class SendbirdSdk {
   /// Returns a stream to listen channel change event with given [channelUrl]
   ///
   /// It will be triggered every channel chaange if [channelUrl] is not provided
-  Stream<BaseChannel> channelChangedStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<BaseChannel> channelChangedStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.channelChanged.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res;
@@ -567,8 +583,9 @@ class SendbirdSdk {
   /// Returns a stream to listen read event with given [channelUrl]
   ///
   /// It will be triggered every read event if [channelUrl] is not provided
-  Stream<GroupChannel> readStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<GroupChannel> readStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.read.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res;
@@ -581,19 +598,20 @@ class SendbirdSdk {
   /// Returns a stream to listen delivery event with given [channelUrl]
   ///
   /// It will be triggered every delivery event if [channelUrl] is not provided
-  Stream<Map<String, int>> deliveryStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<Map<String, int>> deliveryStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.delivery.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) {
           final status =
               _int.cache.find<DeliveryStatus>(channelKey: channelUrl);
-          yield status.updatedDeliveryReceipt;
+          if (status != null) yield status.updatedDeliveryReceipt;
         }
       } else {
         final status =
             _int.cache.find<DeliveryStatus>(channelKey: res.channelUrl);
-        yield status.updatedDeliveryReceipt;
+        if (status != null) yield status.updatedDeliveryReceipt;
       }
     }
   }
@@ -601,8 +619,9 @@ class SendbirdSdk {
   /// Returns a stream to listen typing event with given [channelUrl]
   ///
   /// It will be triggered for every typing event if [channelUrl] is not provided
-  Stream<List<User>> usersTypingStream({String channelUrl}) async* {
-    if (currentUser == null) yield null;
+  Stream<List<User>> usersTypingStream({String? channelUrl}) async* {
+    if (currentUser == null) throw ConnectionRequiredError();
+
     await for (final res in _int.streamManager.typing.stream) {
       if (channelUrl != null) {
         if (res.channelUrl == channelUrl) yield res.getTypingUsers();
@@ -614,7 +633,7 @@ class SendbirdSdk {
 
   /// Returns a stream to listen connection events
   Stream<ConnectionEventType> get connectionStream {
-    if (currentUser == null) return null;
+    if (currentUser == null) throw ConnectionRequiredError();
     return _int.streamManager.connection.stream;
   }
 
@@ -628,13 +647,13 @@ class SendbirdSdk {
 
   /// Returns an [Emoji] with given [key]
   Future<Emoji> getEmoji(String key) {
-    if (key == null || key.isEmpty) throw InvalidParameterError();
+    if (key.isEmpty) throw InvalidParameterError();
     return _int.api.getEmoji(key);
   }
 
   /// Return an [EmojiCategory] with given [categoryId]
   Future<EmojiCategory> getEmojiCategory(int categoryId) {
-    if (categoryId == null || categoryId <= 0) throw InvalidParameterError();
+    if (categoryId <= 0) throw InvalidParameterError();
     return _int.api.getEmojiCategory(categoryId);
   }
 

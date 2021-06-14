@@ -19,7 +19,7 @@ class ReadStatus implements Cacheable {
   final ChannelType channelType;
 
   /// Latest read timestamps
-  @JsonKey(name: 'ts')
+  @JsonKey(defaultValue: 0, name: 'ts')
   int timestamp;
 
   @JsonKey(ignore: true)
@@ -27,10 +27,10 @@ class ReadStatus implements Cacheable {
   bool dirty = false;
 
   ReadStatus({
-    this.userId,
-    this.timestamp,
-    this.channelUrl,
-    this.channelType,
+    required this.userId,
+    required this.timestamp,
+    required this.channelUrl,
+    required this.channelType,
   });
 
   factory ReadStatus.fromJson(Map<String, dynamic> json) =>

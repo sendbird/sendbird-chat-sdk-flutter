@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
@@ -14,19 +13,19 @@ part 'application_user_list_query.dart';
 @JsonSerializable()
 class UserListQuery extends QueryBase {
   /// Channel type related to this query
-  ChannelType channelType;
+  ChannelType? channelType;
 
   /// Channel url related to this query
-  String channelUrl;
+  String? channelUrl;
 
   /// Query type
   UserListQueryType queryType;
 
   /// Filter for list of user ids
-  List<String> userIds;
+  List<String>? userIds;
 
   UserListQuery({
-    @required this.queryType,
+    required this.queryType,
     this.channelType,
     this.channelUrl,
     this.userIds,
@@ -34,7 +33,6 @@ class UserListQuery extends QueryBase {
 
   @override
   Future<List<User>> loadNext() async {
-    if (queryType == null) throw InvalidParameterError();
     if (loading) throw QueryInProgressError();
     if (!hasNext) return [];
 
@@ -67,8 +65,8 @@ class UserListQuery extends QueryBase {
         break;
       case UserListQueryType.banned:
         res = await sdk.api.getBannedUsers(
-          type: channelType,
-          channelUrl: channelUrl,
+          type: channelType!,
+          channelUrl: channelUrl!,
           token: token,
           limit: limit,
         );
@@ -81,8 +79,8 @@ class UserListQuery extends QueryBase {
         break;
       case UserListQueryType.muted:
         res = await sdk.api.getMutedUsers(
-          type: channelType,
-          channelUrl: channelUrl,
+          type: channelType!,
+          channelUrl: channelUrl!,
           token: token,
           limit: limit,
         );

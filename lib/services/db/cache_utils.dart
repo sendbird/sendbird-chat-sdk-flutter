@@ -5,14 +5,14 @@ import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 extension JsonCacheUtils on Map<String, dynamic> {
-  void cacheMetaData({BaseChannel channel, int ts}) {
+  void cacheMetaData({required BaseChannel channel, int? ts}) {
     if (this['metadata'] != null) {
       final data = Map<String, String>.from(this['metadata']);
       final metaData = CachedDataMap<String>(
         channelType: channel.channelType,
         channelUrl: channel.channelUrl,
         data: data,
-        timestamp: ts,
+        timestamp: ts ?? DateTime.now().millisecondsSinceEpoch,
       );
       metaData.saveToCache();
     }

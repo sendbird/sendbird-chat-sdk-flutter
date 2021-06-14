@@ -29,8 +29,11 @@ class MessageRetrievalParams {
   /// message when it is a parent message.
   bool includeThreadInfo = false;
 
-  bool get isValid =>
-      channelUrl != null && channelType != null && messageId != null;
+  MessageRetrievalParams({
+    required this.channelType,
+    required this.channelUrl,
+    required this.messageId,
+  });
 
   Map<String, dynamic> toJson() {
     final json = _$MessageRetrievalParamsToJson(this);

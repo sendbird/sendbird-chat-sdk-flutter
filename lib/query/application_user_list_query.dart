@@ -7,16 +7,16 @@ class ApplicationUserListQuery extends UserListQuery {
   ///
   /// This query will return users that has the meta data key and values
   /// This should be specified in conjunction with the metaDataValues.
-  String metaDataKey;
+  String? metaDataKey;
 
   /// Filters users who have this meta data values.
   ///
   /// This query will return users that has the meta data key and values
   /// This should be specified in conjunction with the metaDataKey.
-  List<String> metaDataValues;
+  List<String>? metaDataValues;
 
   /// Filters users whose nicknames start with the this value
-  String nicknameStartsWith;
+  String? nicknameStartsWith;
 
   ApplicationUserListQuery({
     this.metaDataKey,

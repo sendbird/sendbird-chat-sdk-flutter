@@ -8,19 +8,19 @@ part 'og_meta_data.g.dart';
 class OGMetaData {
   /// Open graph title
   @JsonKey(name: 'og:title')
-  final String title;
+  final String? title;
 
   /// Open graph url
   @JsonKey(name: 'og:url')
-  final String url;
+  final String? url;
 
   /// Open graph description
   @JsonKey(name: 'og:description')
-  final String descrption;
+  final String? descrption;
 
   /// Open graph image
   @JsonKey(name: 'og:image')
-  final OGImage defaultImage;
+  final OGImage? defaultImage;
 
   OGMetaData({
     this.title,

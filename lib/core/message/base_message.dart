@@ -21,15 +21,17 @@ import 'package:sendbird_sdk/events/thread_info_update_event.dart';
 import 'package:sendbird_sdk/params/message_retrieval_params.dart';
 import 'package:sendbird_sdk/params/threaded_message_list_params.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 
 /// Represents base class for messages.
 class BaseMessage {
   /// Request ID for checking ACK.
-  final String requestId;
+  final String? requestId;
 
   /// Unique message ID.
   //or msg_id
+  @JsonKey(defaultValue: 0)
   final int messageId;
 
   /// Message text.
@@ -39,33 +41,35 @@ class BaseMessage {
   /// is not dispatched completely to the Sendbird server, the value
   /// is `pending`. If failed to send the message, the value  is `failed`.
   /// And if success to send the message, the value is `succeeded`.
-  MessageSendingStatus sendingStatus;
+  MessageSendingStatus? sendingStatus;
 
   /// [Sender] of this message
   @JsonKey(name: 'user')
-  Sender sender;
+  Sender? sender;
 
   /// Channel url of this message.
   final String channelUrl;
 
   /// Channel type of this message
+  @JsonKey(defaultValue: ChannelType.group)
   ChannelType channelType;
 
   /// The list of users who was mentioned together with this message.
+  @JsonKey(defaultValue: [])
   final List<User> mentionedUsers;
 
   /// Mention type that this message uses
-  @JsonKey(unknownEnumValue: null, nullable: true)
-  final MentionType mentionType;
+  @JsonKey(unknownEnumValue: null)
+  final MentionType? mentionType;
 
   /// Represents target user ids to mention when success to send this
   /// message. This value is valid only when the message is a pending
   /// message or failed message. If the message is a succeeded message,
   /// see `mentionedUserIds`
-  final List<String> requestedMentionUserIds;
+  final List<String>? requestedMentionUserIds;
 
   /// Message creation time in millisecond(UTC)
-  //or ts
+  @JsonKey(defaultValue: 0)
   final int createdAt;
 
   /// Message update time in millisecond(UTC).
@@ -75,28 +79,28 @@ class BaseMessage {
   /// The unique ID of the parent message. If the message object is a parent message
   ///  or a single message without any reply, the value of this property is `0`. If
   /// the object is a reply, the value is the unique ID of its parent message.
-  final int parentMessageId;
+  final int? parentMessageId;
 
   /// The written text of the message object’s parent message. If the message object
   /// is a parent message, the value of this property is null. If the object is a reply
   /// to a parent message and the type of the parent message is [UserMessage], the value
   ///  is `message`. If it is [FileMessage], the value is the `name` of the uploaded file.
-  final String parentMessageText;
+  final String? parentMessageText;
 
   /// The thread info that belongs to this message object.
-  ThreadInfo threadInfo;
+  ThreadInfo? threadInfo;
 
   /// Gets an array of meta arrays sorted by chronological order.
   /// current does not support backward compatibility
   @JsonKey(name: 'sorted_metaarray')
-  List<MessageMetaArray> metaArrays;
+  List<MessageMetaArray>? metaArrays;
 
   /// Custom message type
-  final String customType;
+  final String? customType;
 
   /// Message disappear in seconds, default is -1 and won't disappear
   @JsonKey(defaultValue: -1)
-  final int messageSurvivalSeconds;
+  final int? messageSurvivalSeconds;
 
   /// True if this message should update last message of its channel
   @JsonKey(defaultValue: false)
@@ -107,37 +111,37 @@ class BaseMessage {
   final bool isSilent;
 
   /// The error code of this message. This value generated only when message send fails.
-  int errorCode;
+  int? errorCode;
 
   /// True if this message was created by an operator.
   @JsonKey(name: 'is_op_msg', defaultValue: false)
   final bool isOperatorMessage;
 
   /// data for this message
-  String data;
+  String? data;
 
   /// Open graph information in this message. Nullable
   @JsonKey(name: 'og_tag')
-  final OGMetaData ogMetaData;
+  final OGMetaData? ogMetaData;
 
   /// reactions for this message
   @JsonKey(defaultValue: [])
-  List<Reaction> reactions;
+  List<Reaction>? reactions;
 
   /// default constructor
   BaseMessage({
+    required this.message,
+    required this.sendingStatus,
+    required this.channelUrl,
+    required this.channelType,
+    required this.sender,
+    this.mentionedUsers = const <User>[],
     this.requestId,
-    this.messageId,
-    this.message,
-    this.sendingStatus,
-    this.sender,
-    this.channelUrl,
-    this.channelType,
-    this.mentionedUsers,
+    this.messageId = 0,
     this.mentionType,
     this.requestedMentionUserIds,
-    this.createdAt,
-    this.updatedAt,
+    this.createdAt = 0,
+    this.updatedAt = 0,
     this.parentMessageId,
     this.parentMessageText,
     this.threadInfo,
@@ -147,13 +151,13 @@ class BaseMessage {
     this.forceUpdateLastMessage = false,
     this.isSilent = false,
     this.errorCode,
-    this.isOperatorMessage,
+    this.isOperatorMessage = false,
     this.data,
     this.ogMetaData,
-    this.reactions,
+    this.reactions = const <Reaction>[],
   }) {
     if (sendingStatus == null) {
-      if (messageId != null && messageId > 0) {
+      if (messageId > 0) {
         sendingStatus = MessageSendingStatus.succeeded;
       } else if (requestId != null) {
         sendingStatus = MessageSendingStatus.pending;
@@ -186,12 +190,12 @@ class BaseMessage {
 
   /// Retreives list of [MessageMetaArray] with given [keys]
   List<MessageMetaArray> getMetaArrays(List<String> keys) {
-    if (keys == null || keys.isEmpty) {
+    if (keys.isEmpty) {
       logger.e('invalid keys');
       throw InvalidParameterError();
     }
 
-    final result = List<MessageMetaArray>.from(metaArrays);
+    final result = List<MessageMetaArray>.from(metaArrays ?? []);
     result.removeWhere((e) => !keys.contains(e.key));
     return result;
   }
@@ -201,23 +205,19 @@ class BaseMessage {
   /// Returns `true` if the given [ReactionEvent] applied to this message
   /// successfully, otherwise `false`.
   bool applyReactionEvent(ReactionEvent event) {
-    if (event == null) {
-      logger.i('event is null');
-      return false;
-    }
     if (event.messageId != messageId) {
       logger.i('message id is mismatched');
       return false;
     }
 
-    final keys = reactions.map((e) => e.key).toList();
-    final existIndex = keys.indexWhere((e) => e == event.key);
+    final keys = reactions?.map((e) => e.key).toList();
+    final existIndex = keys?.indexWhere((e) => e == event.key) ?? -1;
     if (existIndex != -1) {
-      final reaction = reactions[existIndex];
-      if (reaction.merge(event)) {
+      final reaction = reactions?[existIndex];
+      if (reaction != null && reaction.merge(event)) {
         if (event.operation == ReactionEventAction.delete &&
             reaction.userIds.isEmpty) {
-          reactions.removeWhere((e) => e.key == event.key);
+          reactions?.removeWhere((e) => e.key == event.key);
         }
         return true;
       } else {
@@ -229,7 +229,7 @@ class BaseMessage {
         userIds: [event.userId],
         updatedAt: event.updatedAt,
       );
-      reactions.add(reaction);
+      reactions?.add(reaction);
       return true;
     } else {
       return false;
@@ -238,7 +238,7 @@ class BaseMessage {
 
   /// Retrieves a [BaseMessage] with given [MessageRetrievalParams].
   static Future<BaseMessage> getMessage(MessageRetrievalParams params) async {
-    if (params == null || !params.isValid) {
+    if (params.messageId < 0) {
       throw InvalidParameterError();
     }
 
@@ -257,22 +257,19 @@ class BaseMessage {
     int timestamp,
     ThreadedMessageListParams params,
   ) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
     final sdk = SendbirdSdk().getInternal();
     final result = await sdk.api.getMessages(
       channelType: channelType,
       channelUrl: channelUrl,
       params: params.toJson(),
-      timestamp: timestamp ?? double.maxFinite.round(),
+      timestamp: timestamp,
       parentMessageId: messageId,
     );
 
-    return ThreadedMessageResponse()
-      ..parentMessage = result.first
-      ..replies = result.sublist(1);
+    return ThreadedMessageResponse(
+      parentMessage: result.first,
+      replies: result.sublist(1),
+    );
   }
 
   /// Applies [ThreadInfoUpdateEvent] event to this message.
@@ -282,15 +279,18 @@ class BaseMessage {
   /// applied to corresponding message in order to display threaded messages
   /// properly.
   bool applyThreadInfoUpdateEvent(ThreadInfoUpdateEvent event) {
-    if (event == null) return false;
     if (messageId != event.rootMessageId) return false;
     if (threadInfo == null) {
       threadInfo = event.threadInfo;
       return true;
     }
-    if (threadInfo.updatedAt > event.threadInfo.updatedAt) return false;
-    threadInfo = event.threadInfo;
-    return true;
+    final updatedAt = threadInfo?.updatedAt ?? 0;
+    final newUpdatedAt = event.threadInfo.updatedAt ?? 0;
+    if (updatedAt <= newUpdatedAt) {
+      threadInfo = event.threadInfo;
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -337,10 +337,10 @@ class BaseMessage {
         reactions,
       );
 
-  static T msgFromJson<T extends BaseMessage>(
+  static T? msgFromJson<T extends BaseMessage>(
     Map<String, dynamic> json, {
-    ChannelType channelType,
-    String type,
+    ChannelType? channelType,
+    String? type,
   }) {
     final cmd = type ?? json['type'] as String;
     T msg;
@@ -349,6 +349,8 @@ class BaseMessage {
     if (json['ts'] != null) json['created_at'] = json['ts'];
     if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
     if (json['req_id'] != null) json['request_id'] = json['req_id'];
+    //manually insert type if channel is provided
+    if (channelType != null) json['channel_type'] = channelType.asString();
 
     if (T == UserMessage || CommandType.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json) as T;
@@ -379,11 +381,6 @@ class BaseMessage {
       }).toList();
     }
 
-    //manually insert type if channel is provided
-    if (channelType != null) {
-      msg.channelType = channelType;
-    }
-
     return msg;
   }
 
@@ -403,7 +400,7 @@ class BaseMessage {
     } else if (CommandType.isAdminMessage(cmd)) {
       msg = AdminMessage.fromJson(json);
     } else {
-      return null;
+      throw UnrecognizedMessageTypeError();
     }
 
     final metaArray = json['metaarray'];
@@ -434,6 +431,6 @@ class BaseMessage {
         object is FileMessage ||
         object is AdminMessage ||
         object is ScheduledUserMessage) return object.toJson();
-    return null;
+    throw UnrecognizedMessageTypeError();
   }
 }

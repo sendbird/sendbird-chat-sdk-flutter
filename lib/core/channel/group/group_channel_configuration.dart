@@ -41,10 +41,6 @@ extension GroupChannelConfiguration on GroupChannel {
   Future<void> setMyPushTriggerOption(
     GroupChannelPushTriggerOption option,
   ) async {
-    if (option == null) {
-      throw InvalidParameterError();
-    }
-
     final result = await _sdk.api.setGroupChannelPushTriggerOption(
       channelUrl: channelUrl,
       option: option,
@@ -54,10 +50,6 @@ extension GroupChannelConfiguration on GroupChannel {
 
   /// Sets current user's count preference with [countPreference].
   Future<void> setMyCountPreference(CountPreference countPreference) async {
-    if (countPreference == null) {
-      throw InvalidParameterError();
-    }
-
     final result = await _sdk.api.setCountPreference(
       channelUrl: channelUrl,
       prefs: countPreference,

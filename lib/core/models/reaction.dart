@@ -10,16 +10,19 @@ part 'reaction.g.dart';
 @JsonSerializable()
 class Reaction {
   final String key;
+
+  @JsonKey(defaultValue: [])
   List<String> userIds;
+
   int updatedAt;
 
   @JsonKey(ignore: true)
-  Map<String, int> updatedAts;
+  Map<String, int> updatedAts = {};
 
   Reaction({
-    this.key,
-    this.userIds,
-    this.updatedAt,
+    required this.key,
+    required this.userIds,
+    required this.updatedAt,
   }) {
     updatedAts = {for (var e in userIds) e: updatedAt};
   }

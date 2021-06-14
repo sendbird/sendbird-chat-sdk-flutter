@@ -10,9 +10,13 @@ part 'reaction_event.g.dart';
 /// when this is acquired from [ChannelEventHandler.onReactionUpdated]
 @JsonSerializable(createToJson: false)
 class ReactionEvent implements BaseEvent {
+  @JsonKey(defaultValue: '')
   final String channelUrl;
 
-  @JsonKey(unknownEnumValue: ChannelType.group)
+  @JsonKey(
+    defaultValue: ChannelType.group,
+    unknownEnumValue: ChannelType.group,
+  )
   final ChannelType channelType;
 
   /// Corresponding message id
@@ -33,13 +37,13 @@ class ReactionEvent implements BaseEvent {
   final int updatedAt;
 
   ReactionEvent({
-    this.channelType,
-    this.channelUrl,
-    this.messageId,
-    this.key,
-    this.userId,
-    this.operation,
-    this.updatedAt,
+    required this.channelType,
+    required this.channelUrl,
+    required this.messageId,
+    required this.key,
+    required this.userId,
+    required this.operation,
+    required this.updatedAt,
   });
 
   factory ReactionEvent.fromJson(Map<String, dynamic> json) =>

@@ -8,7 +8,7 @@ part 'delivery_status.g.dart';
 class DeliveryStatus implements Cacheable {
   final String channelUrl;
 
-  @JsonKey(name: 'updated')
+  @JsonKey(defaultValue: {}, name: 'updated')
   Map<String, int> updatedDeliveryReceipt;
 
   @JsonKey(ignore: true)
@@ -16,8 +16,8 @@ class DeliveryStatus implements Cacheable {
   bool dirty = false;
 
   DeliveryStatus({
-    this.channelUrl,
-    this.updatedDeliveryReceipt,
+    required this.channelUrl,
+    this.updatedDeliveryReceipt = const {},
   });
 
   factory DeliveryStatus.fromJson(Map<String, dynamic> json) =>

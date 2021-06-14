@@ -33,12 +33,12 @@ class ThreadedMessageListParams {
   /// Restricts the search scope only to retrieve the messages with the
   /// specified custom message type. When the custom type filtering is
   /// not needed, the value should be set to `null`.
-  String customType;
+  String? customType;
 
   /// Restricts the search scope only to retrieve the messages sent by
   /// the users with the specified user IDs. When the user ID filtering
   /// is not needed, the value should be set to `null`.
-  List<String> senderIds;
+  List<String>? senderIds;
 
   /// Determines whether to include the metaarray information of the
   /// messages in the results.

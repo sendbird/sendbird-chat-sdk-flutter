@@ -9,7 +9,9 @@ part of 'meta_array.dart';
 MessageMetaArray _$MessageMetaArrayFromJson(Map<String, dynamic> json) {
   return MessageMetaArray(
     key: json['key'] as String,
-    value: (json['value'] as List)?.map((e) => e as String)?.toList(),
+    value:
+        (json['value'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+            [],
   );
 }
 

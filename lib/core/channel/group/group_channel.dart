@@ -57,9 +57,10 @@ part 'group_channel_configuration.dart';
 @JsonSerializable()
 class GroupChannel extends BaseChannel {
   /// Last message of the channel
-  BaseMessage lastMessage;
+  BaseMessage? lastMessage;
 
   /// True if this channel is super channel
+  @JsonKey(defaultValue: false)
   final bool isSuper;
 
   /// True if this channel is strict
@@ -67,60 +68,76 @@ class GroupChannel extends BaseChannel {
   final bool isStrict;
 
   /// True if this channel is broadcast
+  @JsonKey(defaultValue: false)
   final bool isBroadcast;
 
   /// True if this channel is public
+  @JsonKey(defaultValue: false)
   bool isPublic;
 
   /// True if this channel is distinct
+  @JsonKey(defaultValue: false)
   bool isDistinct;
 
   /// True if this channel is discoverable
   /// It is only for a public group channel.
+  @JsonKey(defaultValue: false)
   bool isDiscoverable;
 
   /// True if this channel is required access code
+  @JsonKey(defaultValue: false)
   bool accessCodeRequired;
 
   /// Unread message count of the channel
+  @JsonKey(defaultValue: 0)
   int unreadMessageCount;
 
   /// The number of mentions that user does not read yet in the channel
+  @JsonKey(defaultValue: 0)
   int unreadMentionCount;
 
   /// Channel members
   /// Note: Number of member for SuperGroupChannel is limited to 10
+  @JsonKey(defaultValue: [])
   List<Member> members;
 
   /// Number of members
+  @JsonKey(defaultValue: 0)
   int memberCount;
 
   /// Number of joined member
+  @JsonKey(defaultValue: 0)
   int joinedMemberCount;
 
   /// Push notification option for the current user to receive in the group channel
-  @JsonKey(name: 'push_trigger_option')
+  @JsonKey(
+    defaultValue: GroupChannelPushTriggerOption.global,
+    name: 'push_trigger_option',
+  )
   GroupChannelPushTriggerOption myPushTriggerOption;
 
   /// Member state of current user in this channel
-  @JsonKey(name: 'member_state')
+  @JsonKey(defaultValue: MemberState.none, name: 'member_state')
   MemberState myMemberState;
 
   /// Role of current user in this channel
-  @JsonKey(unknownEnumValue: Role.none)
+  @JsonKey(defaultValue: Role.none, unknownEnumValue: Role.none)
   Role myRole;
 
   /// Muted state of current user in this channel
-  @JsonKey(fromJson: booltoMuteState, name: 'is_muted')
+  @JsonKey(
+    fromJson: booltoMuteState,
+    name: 'is_muted',
+  )
   MuteState myMutedState;
 
   /// Message count preference of current user in this channel
   /// The default value is all
-  @JsonKey(name: 'count_preference')
+  @JsonKey(defaultValue: CountPreference.all, name: 'count_preference')
   CountPreference myCountPreference;
 
   /// User who invited
-  Member inviter;
+  Member? inviter;
 
   /// Timestamp when current user got a invitation
   /// from other user in the channel
@@ -132,24 +149,30 @@ class GroupChannel extends BaseChannel {
   int joinedAt;
 
   /// True if this channel is hidden
+  @JsonKey(defaultValue: false)
   bool isHidden;
 
   /// Hidden state of this channel
+  @JsonKey(
+    defaultValue: GroupChannelHiddenState.unhidden,
+    unknownEnumValue: GroupChannelHiddenState.unhidden,
+  )
   GroupChannelHiddenState hiddenState;
 
   /// A last read information for the current user
-  @JsonKey(name: 'user_last_read')
+  @JsonKey(defaultValue: 0, name: 'user_last_read')
   int myLastRead;
 
   /// Message offset of this channel. User can only see messages after this offset
   @JsonKey(name: 'ts_message_offset')
-  int messageOffsetTimestamp;
+  int? messageOffsetTimestamp;
 
   /// A value that sets the message survival time in seconds. In the channel
   /// that is created or updated with this option, the read messages are
   /// automatically deleted after a determined amount of time. The default
   /// value is `-1` that represents the disappearing message is disabled.
   /// Note: This feature is available in a 1-on-1 group channel.
+  @JsonKey(defaultValue: -1)
   int messageSurvivalSeconds;
 
   int _lastStartTypingTimestamp = 0;
@@ -159,39 +182,40 @@ class GroupChannel extends BaseChannel {
   /// **WARNING:** Do not use default constructor to initialize manually
   GroupChannel({
     this.lastMessage,
-    this.isSuper,
-    this.isStrict,
-    this.isBroadcast,
-    this.isPublic,
-    this.isDistinct,
-    this.isDiscoverable,
-    this.accessCodeRequired,
-    this.unreadMessageCount,
-    this.unreadMentionCount,
-    this.members,
-    this.memberCount,
-    this.joinedMemberCount,
-    this.joinedAt,
-    this.myPushTriggerOption,
-    this.myMemberState,
-    this.myRole,
-    this.myMutedState,
-    this.myCountPreference,
-    this.invitedAt,
-    this.isHidden,
-    this.hiddenState,
-    this.myLastRead,
+    this.isSuper = false,
+    this.isStrict = false,
+    this.isBroadcast = false,
+    this.isPublic = false,
+    this.isDistinct = false,
+    this.isDiscoverable = false,
+    this.accessCodeRequired = false,
+    this.unreadMessageCount = 0,
+    this.unreadMentionCount = 0,
+    this.members = const [],
+    this.memberCount = 0,
+    this.joinedMemberCount = 0,
+    this.joinedAt = 0,
+    this.myPushTriggerOption = GroupChannelPushTriggerOption.all,
+    this.myMemberState = MemberState.none,
+    this.myRole = Role.none,
+    this.myMutedState = MuteState.unmuted,
+    this.myCountPreference = CountPreference.all,
+    this.invitedAt = 0,
+    this.inviter,
+    this.isHidden = false,
+    this.hiddenState = GroupChannelHiddenState.unhidden,
+    this.myLastRead = 0,
     this.messageOffsetTimestamp,
-    this.messageSurvivalSeconds,
-    String channelUrl,
-    String name,
-    String coverUrl,
-    User creator,
-    int createdAt,
-    String data,
-    String customType,
-    bool isFrozen,
-    bool isEphemeral,
+    this.messageSurvivalSeconds = -1,
+    required String channelUrl,
+    String? name,
+    String? coverUrl,
+    User? creator,
+    int? createdAt,
+    String? data,
+    String? customType,
+    bool isFrozen = false,
+    bool isEphemeral = false,
   }) : super(
           channelUrl: channelUrl,
           name: name,
@@ -211,7 +235,7 @@ class GroupChannel extends BaseChannel {
   /// Refreshes an [GroupChannel] with given [channelUrl]
   static Future<GroupChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
-    final result = await sdk.api.getChannel(
+    final result = await sdk.api.getChannel<GroupChannel>(
       channelType: ChannelType.group,
       channelUrl: channelUrl,
       passive: false,
@@ -246,13 +270,14 @@ class GroupChannel extends BaseChannel {
   /// on the given [params].
   static Future<GroupChannel> createChannel(
     GroupChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
     final sdk = SendbirdSdk().getInternal();
-    if (params.userIds == null) {
-      params.userIds = [sdk.state.userId];
-    } else if (!params.userIds.contains(sdk.state.userId)) {
-      params.userIds.add(sdk.state.userId);
+    final currentUserId = sdk.state.userId ?? '';
+    if (params.userIds.isEmpty) {
+      params.userIds = [currentUserId];
+    } else if (!params.userIds.contains(currentUserId)) {
+      params.userIds.add(currentUserId);
     }
     return sdk.api.createGroupChannel(params, progress: progress);
   }
@@ -265,11 +290,8 @@ class GroupChannel extends BaseChannel {
   /// based on given [params].
   Future<GroupChannel> updateChannel(
     GroupChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
     params.channelUrl ??= channelUrl;
 
     if (params.channelUrl != channelUrl) {
@@ -294,10 +316,6 @@ class GroupChannel extends BaseChannel {
   /// Registers a [ScheduledUserMessage] with given [params].
   Future<ScheduledUserMessage> registerScheduledUserMessage(
       ScheduledUserMessageParams params) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
     return _sdk.api.registerScheduleUserMessage(
       channelType: channelType,
       channelUrl: channelUrl,
@@ -308,9 +326,8 @@ class GroupChannel extends BaseChannel {
 
   /// Returns [Member] with given [userId]. It will return `null` if [userId]
   /// is not exist in members.
-  Member getMember(String userId) {
-    return members?.firstWhere((element) => element.userId == userId,
-        orElse: () => null);
+  Member? getMember(String userId) {
+    return members.firstWhereOrNull((element) => element.userId == userId);
   }
 
   // json serialization
@@ -323,7 +340,7 @@ class GroupChannel extends BaseChannel {
     return channel;
   }
 
-  factory GroupChannel.fromJsonAndCached(Map<String, dynamic> json, {int ts}) {
+  factory GroupChannel.fromJsonAndCached(Map<String, dynamic> json, {int? ts}) {
     final channel = _$GroupChannelFromJson(json);
     channel.saveToCache();
     json.cacheMetaData(channel: channel, ts: ts);
@@ -397,6 +414,7 @@ class GroupChannel extends BaseChannel {
       members = List<Member>.from(other.members);
       memberCount = other.memberCount;
       joinedMemberCount = other.joinedMemberCount;
+      joinedAt = other.joinedAt;
       myPushTriggerOption = other.myPushTriggerOption;
       myMemberState = other.myMemberState;
       myRole = other.myRole;

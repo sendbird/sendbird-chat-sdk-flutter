@@ -9,48 +9,53 @@ part of 'reaction_event.dart';
 ReactionEvent _$ReactionEventFromJson(Map<String, dynamic> json) {
   return ReactionEvent(
     channelType: _$enumDecodeNullable(
-        _$ChannelTypeEnumMap, json['channel_type'],
-        unknownValue: ChannelType.group),
-    channelUrl: json['channel_url'] as String,
+            _$ChannelTypeEnumMap, json['channel_type'],
+            unknownValue: ChannelType.group) ??
+        ChannelType.group,
+    channelUrl: json['channel_url'] as String? ?? '',
     messageId: json['msg_id'] as int,
     key: json['reaction'] as String,
     userId: json['user_id'] as String,
-    operation:
-        _$enumDecodeNullable(_$ReactionEventActionEnumMap, json['operation']),
+    operation: _$enumDecode(_$ReactionEventActionEnumMap, json['operation']),
     updatedAt: json['updated_at'] as int,
   );
 }
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
   dynamic source, {
-  T unknownValue,
+  K? unknownValue,
 }) {
   if (source == null) {
     return null;
   }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$ChannelTypeEnumMap = {

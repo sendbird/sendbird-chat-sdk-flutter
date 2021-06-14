@@ -45,6 +45,7 @@ class OpenChannel extends BaseChannel {
   int participantCount;
 
   /// Operators of this channel
+  @JsonKey(defaultValue: [])
   List<User> operators;
 
   @JsonKey(ignore: true)
@@ -54,17 +55,17 @@ class OpenChannel extends BaseChannel {
 
   /// **WARNING:** Do not use default constructor to initialize manually
   OpenChannel({
-    this.participantCount,
-    this.operators,
-    String channelUrl,
-    String name,
-    String coverUrl,
-    User creator,
-    int createdAt,
-    String data,
-    String customType,
-    bool isFrozen,
-    bool isEphemeral,
+    required this.participantCount,
+    required this.operators,
+    required String channelUrl,
+    String? name,
+    String? coverUrl,
+    User? creator,
+    int? createdAt,
+    String? data,
+    String? customType,
+    bool isFrozen = false,
+    bool isEphemeral = false,
   }) : super(
           channelUrl: channelUrl,
           name: name,
@@ -93,7 +94,7 @@ class OpenChannel extends BaseChannel {
   /// Refreshes an [OpenChannel] with given [channelUrl]
   static Future<OpenChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
-    final channel = await sdk.api.getChannel(
+    final channel = await sdk.api.getChannel<OpenChannel>(
       channelType: ChannelType.open,
       channelUrl: channelUrl,
       passive: false,
@@ -103,13 +104,12 @@ class OpenChannel extends BaseChannel {
   }
 
   /// Creates an [OpenChannel] with given [params] and optional [progress].
-  static Future<OpenChannel> createChannel({
-    OpenChannelParams params,
-    OnUploadProgressCallback progress,
+  static Future<OpenChannel> createChannel(
+    OpenChannelParams params, {
+    OnUploadProgressCallback? progress,
   }) async {
-    final channelParams = params ?? OpenChannelParams();
     final sdk = SendbirdSdk().getInternal();
-    return sdk.api.createOpenChannel(channelParams, progress: progress);
+    return sdk.api.createOpenChannel(params, progress: progress);
   }
 
   /// Updates an [OpenChannel] with given [params] and optional [progress].
@@ -118,11 +118,8 @@ class OpenChannel extends BaseChannel {
   /// the given [params]
   Future<OpenChannel> updateChannel(
     OpenChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
     params.channelUrl ??= channelUrl;
     if (params.channelUrl != channelUrl) {
       throw InvalidParameterError();
@@ -147,7 +144,7 @@ class OpenChannel extends BaseChannel {
 
   // Json serialization
 
-  factory OpenChannel.fromJsonAndCached(Map<String, dynamic> json, {int ts}) {
+  factory OpenChannel.fromJsonAndCached(Map<String, dynamic> json, {int? ts}) {
     final channel = _$OpenChannelFromJson(json);
     channel.saveToCache();
     json.cacheMetaData(channel: channel, ts: ts);

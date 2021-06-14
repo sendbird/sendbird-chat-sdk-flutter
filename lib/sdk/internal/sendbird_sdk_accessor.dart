@@ -6,7 +6,7 @@ import 'package:sendbird_sdk/services/network/websocket_client.dart';
 
 abstract class SdkAccessor {
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();
-  WebSocketClient get webSocket => sdk?.webSocket;
-  SendbirdState get appState => sdk?.state;
-  EventManager get eventManager => sdk?.eventManager;
+  WebSocketClient? get webSocket => sdk.webSocket;
+  SendbirdState get appState => sdk.state;
+  EventManager get eventManager => sdk.eventManager;
 }
