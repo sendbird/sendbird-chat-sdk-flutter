@@ -64,9 +64,8 @@ extension Messages on BaseChannel {
       );
       if (onCompleted != null && msg != null) onCompleted(msg, null);
     }).catchError((e) {
-      // pending.errorCode = e?.code ?? ErrorCode.unknownError;
       pending
-        ..errorCode = e.code
+        ..errorCode = e?.code ?? ErrorCode.unknownError
         ..sendingStatus = MessageSendingStatus.failed;
       if (onCompleted != null) onCompleted(pending, e);
     });
@@ -224,9 +223,8 @@ extension Messages on BaseChannel {
           );
           if (onCompleted != null && msg != null) onCompleted(msg, null);
         }).catchError((e) {
-          // pending.errorCode = e?.code ?? ErrorCode.unknownError;
           pending
-            ..errorCode = e.code
+            ..errorCode = e?.code ?? ErrorCode.unknownError
             ..sendingStatus = MessageSendingStatus.failed;
           if (onCompleted != null) onCompleted(pending, e);
         });

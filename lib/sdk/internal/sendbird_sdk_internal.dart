@@ -215,7 +215,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       ..apiHost = apiHostUrl
       ..wsHost = wsHostUrl;
 
-    _api.initialize(baseUrl: apiHost, headers: {
+    _api.initialize(baseUrl: apiHostUrl, headers: {
       'SB-User-Agent': _sbUserAgent,
       'User-Agent':
           '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
