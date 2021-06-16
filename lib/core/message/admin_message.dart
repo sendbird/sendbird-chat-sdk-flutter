@@ -17,7 +17,6 @@ part 'admin_message.g.dart';
 class AdminMessage extends BaseMessage {
   AdminMessage({
     required int messageId,
-    required Sender sender,
     required String message,
     required String channelUrl,
     required ChannelType channelType,
@@ -46,7 +45,6 @@ class AdminMessage extends BaseMessage {
           messageId: messageId,
           message: message,
           sendingStatus: sendingStatus,
-          sender: sender,
           channelType: channelType,
           channelUrl: channelUrl,
           mentionedUsers: mentionedUsers,

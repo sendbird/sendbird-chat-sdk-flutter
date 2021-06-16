@@ -134,7 +134,7 @@ class BaseMessage {
     required this.sendingStatus,
     required this.channelUrl,
     required this.channelType,
-    required this.sender,
+    this.sender,
     this.mentionedUsers = const <User>[],
     this.requestId,
     this.messageId = 0,

@@ -9,7 +9,6 @@ part of 'admin_message.dart';
 AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
   return AdminMessage(
     messageId: json['message_id'] as int? ?? 0,
-    sender: Sender.fromJson(json['user'] as Map<String, dynamic>),
     message: json['message'] as String,
     channelUrl: json['channel_url'] as String,
     channelType:
@@ -52,7 +51,9 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
             ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
-  );
+  )..sender = json['user'] == null
+      ? null
+      : Sender.fromJson(json['user'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
