@@ -12,7 +12,7 @@ class UserMessageParams extends BaseMessageParams {
   List<String> targetLanguages;
 
   UserMessageParams({
-    this.message = '',
+    required this.message,
     List<String>? targetLanguages,
     String? data,
     String? customType,

@@ -262,9 +262,7 @@ class CommandManager with SdkAccessor {
         message.channelUrl,
       );
 
-      if (event.requestId == null) {
-        eventManager.notifyMessageReceived(channel, message);
-      }
+      var shouldCallChannelChanged = false;
 
       if (channel is GroupChannel) {
         if (channel.hiddenState == GroupChannelHiddenState.allowAutoUnhide) {
@@ -274,7 +272,6 @@ class CommandManager with SdkAccessor {
 
         channel.updateMember(event.sender);
 
-        var shouldCallChannelChanged = false;
         if (channel.shouldUpdateLastMessage(message, message.sender)) {
           shouldCallChannelChanged = true;
           channel.lastMessage = message;
@@ -283,15 +280,19 @@ class CommandManager with SdkAccessor {
         if (channel.fromCache && channel.updateUnreadCount(message)) {
           shouldCallChannelChanged = true;
         }
+      }
 
-        if (shouldCallChannelChanged) {
-          eventManager.notifyChannelChanged(channel);
-        }
+      if (event.requestId == null) {
+        eventManager.notifyMessageReceived(channel, message);
       }
 
       final currentUser = appState.currentUser;
       if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
         eventManager.notifyMentionReceived(channel, message);
+      }
+
+      if (shouldCallChannelChanged) {
+        eventManager.notifyChannelChanged(channel);
       }
     } catch (e) {
       logger.w('Aborted ${cmd.cmd} ' + e.toString());
@@ -343,11 +344,12 @@ class CommandManager with SdkAccessor {
 
         eventManager.notifyMessageUpdate(channel, message);
 
-        if (shouldCallChannelChanged) {
-          eventManager.notifyChannelChanged(channel);
-        }
         if (shouldCallMentionReceived) {
           eventManager.notifyMentionReceived(channel, message);
+        }
+
+        if (shouldCallChannelChanged) {
+          eventManager.notifyChannelChanged(channel);
         }
       }
     } catch (e) {

@@ -50,7 +50,7 @@ class MessageSearchQuery extends QueryBase {
   List<String> targetFields = [];
 
   /// Message search result sort order
-  MessageSearchQueryOrder order = MessageSearchQueryOrder.timestamp;
+  MessageSearchQueryOrder order = MessageSearchQueryOrder.score;
 
   MessageSearchQuery({required this.keyword});
 

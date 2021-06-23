@@ -1,3 +1,7 @@
+## [3.1.0-nullsafety] - Jun 22, 2021
+* Fixed channel object to contain last message when invoking `onMessageReceived` callback
+* Improved stability
+
 ## [3.0.14-nullsafety] - Jun 13, 2021
 * Applied null-safety
 * Updated dependencies
