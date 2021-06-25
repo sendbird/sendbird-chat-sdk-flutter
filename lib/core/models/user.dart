@@ -6,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'user.g.dart';
 
@@ -36,11 +37,11 @@ class User {
 
   /// This user's connection status
   @JsonKey(
-    defaultValue: UserConnectionStatus.notAvailable,
-    unknownEnumValue: UserConnectionStatus.notAvailable,
+    name: 'is_online',
+    fromJson: boolToConnectionStatus,
+    toJson: connectionStatusToBool,
   )
-  @JsonKey(defaultValue: UserConnectionStatus.notAvailable)
-  UserConnectionStatus? connectionStatus;
+  UserConnectionStatus connectionStatus;
 
   /// The lastest time when the user became offline
   int? lastSeenAt;

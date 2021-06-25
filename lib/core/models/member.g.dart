@@ -20,10 +20,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     userId: json['user_id'] as String,
     nickname: json['nickname'] as String? ?? '',
     profileUrl: json['profile_url'] as String?,
-    connectionStatus: _$enumDecodeNullable(
-            _$UserConnectionStatusEnumMap, json['connection_status'],
-            unknownValue: UserConnectionStatus.notAvailable) ??
-        UserConnectionStatus.notAvailable,
+    connectionStatus: boolToConnectionStatus(json['is_online'] as bool?),
     lastSeenAt: json['last_seen_at'] as int?,
     preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
         ?.map((e) => e as String)
@@ -47,8 +44,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'user_id': instance.userId,
       'nickname': instance.nickname,
       'profile_url': instance.profileUrl,
-      'connection_status':
-          _$UserConnectionStatusEnumMap[instance.connectionStatus],
+      'is_online': connectionStatusToBool(instance.connectionStatus),
       'last_seen_at': instance.lastSeenAt,
       'is_active': instance.isActive,
       'preferred_languages': instance.preferredLanguages,
@@ -111,10 +107,4 @@ const _$MemberStateEnumMap = {
 const _$RoleEnumMap = {
   Role.none: 'none',
   Role.chat_operator: 'operator',
-};
-
-const _$UserConnectionStatusEnumMap = {
-  UserConnectionStatus.online: 'online',
-  UserConnectionStatus.offline: 'offline',
-  UserConnectionStatus.notAvailable: 'notAvailable',
 };

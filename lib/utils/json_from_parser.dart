@@ -5,3 +5,14 @@ MuteState booltoMuteState(bool? isMuted) =>
 
 String userToUserId(Map<String, dynamic>? userDic) =>
     userDic != null ? userDic['user_id'] ?? userDic['guest_id'] : null;
+
+UserConnectionStatus boolToConnectionStatus(bool? isOnline) => isOnline == null
+    ? UserConnectionStatus.notAvailable
+    : isOnline
+        ? UserConnectionStatus.online
+        : UserConnectionStatus.offline;
+
+bool? connectionStatusToBool(UserConnectionStatus status) =>
+    status == UserConnectionStatus.notAvailable
+        ? null
+        : status == UserConnectionStatus.online;

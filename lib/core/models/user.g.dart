@@ -11,10 +11,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
     userId: json['user_id'] as String,
     nickname: json['nickname'] as String? ?? '',
     profileUrl: json['profile_url'] as String?,
-    connectionStatus: _$enumDecodeNullable(
-            _$UserConnectionStatusEnumMap, json['connection_status'],
-            unknownValue: UserConnectionStatus.notAvailable) ??
-        UserConnectionStatus.notAvailable,
+    connectionStatus: boolToConnectionStatus(json['is_online'] as bool?),
     lastSeenAt: json['last_seen_at'] as int?,
     isActive: json['is_active'] as bool?,
     preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
@@ -38,8 +35,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'user_id': instance.userId,
       'nickname': instance.nickname,
       'profile_url': instance.profileUrl,
-      'connection_status':
-          _$UserConnectionStatusEnumMap[instance.connectionStatus],
+      'is_online': connectionStatusToBool(instance.connectionStatus),
       'last_seen_at': instance.lastSeenAt,
       'is_active': instance.isActive,
       'preferred_languages': instance.preferredLanguages,
@@ -50,46 +46,3 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'require_auth_for_profile_image': instance.requireAuth,
       'session_token': instance.sessionToken,
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
-
-const _$UserConnectionStatusEnumMap = {
-  UserConnectionStatus.online: 'online',
-  UserConnectionStatus.offline: 'offline',
-  UserConnectionStatus.notAvailable: 'notAvailable',
-};

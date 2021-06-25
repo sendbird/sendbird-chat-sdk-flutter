@@ -5,6 +5,7 @@ import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'sender.g.dart';
 
@@ -25,7 +26,7 @@ class Sender extends User {
     required String userId,
     required String nickname,
     String? profileUrl,
-    UserConnectionStatus? connectionStatus,
+    UserConnectionStatus connectionStatus = UserConnectionStatus.notAvailable,
     int? lastSeenAt,
     List<String>? preferredLanguages,
     String? friendDiscoveryKey,

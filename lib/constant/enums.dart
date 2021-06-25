@@ -334,7 +334,7 @@ enum ConnectionState { connecting, open, closed }
 enum PushTokenRegistrationStatus { success, pending, error }
 
 /// Represents push token type
-enum PushTokenType { none, fcm, apns }
+enum PushTokenType { none, hms, fcm, apns }
 
 /// Represents unread item key filter
 enum UnreadItemKey {

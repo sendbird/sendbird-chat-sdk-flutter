@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'member.g.dart';
 
@@ -39,7 +40,7 @@ class Member extends User {
     required String userId,
     required String nickname,
     String? profileUrl,
-    UserConnectionStatus? connectionStatus = UserConnectionStatus.notAvailable,
+    UserConnectionStatus connectionStatus = UserConnectionStatus.notAvailable,
     int? lastSeenAt,
     List<String>? preferredLanguages,
     String? friendDiscoveryKey,

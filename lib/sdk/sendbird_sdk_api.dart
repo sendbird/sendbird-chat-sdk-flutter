@@ -274,10 +274,16 @@ class SendbirdSdk {
   Future<PushTokenRegistrationStatus> registerPushToken({
     required PushTokenType type,
     required String token,
+    bool alwaysPush = false,
     bool unique = false,
   }) async {
     //if not connected return pending
-    return _int.api.registerPushToken(type: type, token: token, unique: unique);
+    return _int.api.registerPushToken(
+      type: type,
+      token: token,
+      alwaysPush: alwaysPush,
+      unique: unique,
+    );
   }
 
   /// Unregisters push [token] with [type].

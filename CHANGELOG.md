@@ -1,3 +1,9 @@
+## [3.1.0-nullsafety.1] - Jun 22, 2021
+* Fixed `connectionStatus` mapping for user/sender/member
+* Added HMS for push type
+* Added `always_push` parameter for push registeration
+* Improved stability
+
 ## [3.1.0-nullsafety] - Jun 22, 2021
 * Fixed channel object to contain last message when invoking `onMessageReceived` callback
 * Improved stability

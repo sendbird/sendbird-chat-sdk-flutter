@@ -1189,6 +1189,7 @@ class ApiClient {
   Future<PushTokenRegistrationStatus> registerPushToken({
     required PushTokenType type,
     required String token,
+    bool alwaysPush = false,
     bool unique = true,
   }) async {
     final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
@@ -1200,6 +1201,8 @@ class ApiClient {
     final body = {
       if (type == PushTokenType.fcm) 'gcm_reg_token': token,
       if (type == PushTokenType.apns) 'apns_device_token': token,
+      if (type == PushTokenType.hms) 'huawei_device_token': token,
+      'always_push': alwaysPush,
       'is_unique': unique,
     };
 

@@ -88,7 +88,7 @@ class GroupChannelListQuery extends QueryBase {
   bool includeMemberList = true;
 
   /// Query result of channel object contains meta data if `true`.
-  /// deault value is `false`
+  /// deault value is `true`
   bool includeMetaData = true;
 
   GroupChannelListQuery();
