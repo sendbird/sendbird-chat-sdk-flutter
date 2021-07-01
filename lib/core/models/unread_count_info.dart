@@ -5,17 +5,20 @@ part 'unread_count_info.g.dart';
 @JsonSerializable()
 class UnreadCountInfo {
   int all;
-  Map<String, num> customTypes;
+
+  @JsonKey(defaultValue: {})
+  Map<String, int> customTypes;
+
   int ts;
 
-  UnreadCountInfo({this.all, this.customTypes, this.ts});
+  UnreadCountInfo({this.all = 0, this.customTypes = const {}, this.ts = 0});
 
   bool copyWith(UnreadCountInfo others) {
     var didChange = false;
 
     ts = others.ts;
 
-    others.customTypes?.forEach((key, value) {
+    others.customTypes.forEach((key, value) {
       final currValue = customTypes[key];
       if (currValue != value) {
         didChange = true;

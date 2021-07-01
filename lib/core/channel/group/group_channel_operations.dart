@@ -11,7 +11,7 @@ extension GroupChannelOperations on GroupChannel {
   /// invoked based on their channel invitation preference which can be set
   /// through [SendbirdSdk.setChannelInvitationPreference]
   Future<void> inviteUsers(List<String> userIds) async {
-    if (userIds == null || userIds.isEmpty) {
+    if (userIds.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -27,7 +27,7 @@ extension GroupChannelOperations on GroupChannel {
   /// If this channel sets [accessCode] to join, you have to provide
   /// [accessCode] as parameter. After this method completes successfully,
   /// channel event [ChannelEventHandler.onUserJoined] will be invoked.
-  Future<void> acceptInvitation({String accessCode}) async {
+  Future<void> acceptInvitation({String? accessCode}) async {
     //await or return?
     await _sdk.api.acceptInvitation(
       channelUrl: channelUrl,
@@ -48,7 +48,7 @@ extension GroupChannelOperations on GroupChannel {
   /// If this channel sets [accessCode] to join, you have to provide
   /// [accessCode] as parameter. After this method completes successfully,
   /// channel event [ChannelEventHandler.onUserJoined] will be invoked.
-  Future<void> join({String accessCode}) async {
+  Future<void> join({String? accessCode}) async {
     await _sdk.api.joinGroupChannel(
       channelUrl: channelUrl,
       accessCode: accessCode,

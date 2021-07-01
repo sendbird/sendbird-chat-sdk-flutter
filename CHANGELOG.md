@@ -1,3 +1,83 @@
+## [3.1.0] - Jul 7, 2021
+
+### Breaking changes
+
+In line with the overall update for Chat SDK for Flutter 3.1.0, behavior changes are applied to the following classes. Visit Sendbird Docs for further information.
+
+- The `PreviousMessageListQuery` now requires `channelType` and `channelUrl`.
+
+```dart
+PreviousMessageListQuery({
+	required this.channelType,
+	required this.channelUrl,
+});
+```
+
+- The `OperatorListQuery` now requires `channelType` and `channelUrl`.
+
+```dart
+ OperatorListQuery({
+	required this.channelType,
+	required this.channelUrl,
+});
+```
+
+- The `MessageSearchQuery` now requires `keyword`.
+
+```dart
+MessageSearchQuery({required this.keyword});
+```
+
+- The `GroupChannelMemberListQuery` now requires `channelUrl`.
+
+```dart
+GroupChannelMemberListQuery({required this.channelUrl});
+```
+
+- The `UserMessageParams` now requires `message`.
+
+```dart
+UserMessageParams({
+	required this.message,
+})
+```
+
+- The `ScheduledUserMessageParams` now requires `scheduledDateString`, `timezone`, and `message`.
+
+```dart
+ ScheduledUserMessageParams({
+	required this.scheduledDateString,
+	required this.timezone,
+	required String message,
+})
+```
+
+- The `MessageRetrievalParams` now requires `channelType`, `channelUrl`, and `messageId`.
+
+```dart
+ MessageRetrievalParams({
+	required this.channelType,
+	required this.channelUrl,
+	required this.messageId,
+});
+```
+
+## [3.1.0-nullsafety.1] - Jun 22, 2021
+* Fixed `connectionStatus` mapping for user/sender/member
+* Added HMS for push type
+* Added `always_push` parameter for push registeration
+* Improved stability
+
+## [3.1.0-nullsafety] - Jun 22, 2021
+* Fixed channel object to contain last message when invoking `onMessageReceived` callback
+* Improved stability
+
+## [3.0.14-nullsafety] - Jun 13, 2021
+* Applied null-safety
+* Updated dependencies
+* Fixed `mostRepliesUsers` mapping in ThreadInfo
+* Improved stability
+
 ## [3.0.13] - May 17, 2021
 * Fixed file type mis mapping bug
 * Added `cancelUploadingFileMessage` in `BaseChannel`

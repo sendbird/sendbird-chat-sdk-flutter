@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
@@ -47,28 +46,29 @@ class BaseChannel implements Cacheable {
   String channelUrl;
 
   /// name for this channel
-  String name;
+  String? name;
 
   /// cover image URL for this channel
-  String coverUrl;
+  String? coverUrl;
 
   /// User who creates this channel
-  User creator;
+  User? creator;
 
   /// timestamp when this channel is created
-  int createdAt;
+  int? createdAt;
 
   /// custom data for this channel
-  String data;
+  String? data;
 
   /// custom type for this channel
-  String customType;
+  String? customType;
 
   /// Ture if this channel is frozen
-  @JsonKey(name: 'freeze')
+  @JsonKey(defaultValue: false, name: 'freeze')
   bool isFrozen;
 
   /// True if this channel is ephemeral
+  @JsonKey(defaultValue: false)
   bool isEphemeral;
 
   /// local usage
@@ -81,17 +81,17 @@ class BaseChannel implements Cacheable {
 
   /// **WARNING:** Do not use default constructor to initialize manually
   BaseChannel({
-    this.channelUrl,
-    this.name,
-    this.coverUrl,
+    required this.channelUrl,
     this.creator,
     this.createdAt,
+    this.name,
+    this.coverUrl,
     this.data,
     this.customType,
-    this.isFrozen,
-    this.isEphemeral,
-    this.fromCache,
-    this.dirty,
+    this.isFrozen = false,
+    this.isEphemeral = false,
+    this.fromCache = false,
+    this.dirty = false,
   });
 
   SendbirdSdkInternal get _sdk => SendbirdSdk().getInternal();
@@ -110,8 +110,6 @@ class BaseChannel implements Cacheable {
         return GroupChannel.getChannel(channelUrl);
       case ChannelType.open:
         return OpenChannel.getChannel(channelUrl);
-      default:
-        return null;
     }
   }
 

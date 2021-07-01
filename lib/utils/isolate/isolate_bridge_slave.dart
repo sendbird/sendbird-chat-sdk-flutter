@@ -5,15 +5,16 @@ import 'dart:async';
 import 'isolate_bridge_def.dart';
 
 class IsolateSlave {
-  RawReceivePort _portReceive;
-  SendPort _portTransmit;
+  RawReceivePort? _portReceive;
+  SendPort? _portTransmit;
   SendPort _masterPort;
   int _pingCount;
 
-  IsolateSlave(IsoactionInternalInit actionInit) {
+  IsolateSlave(IsoactionInternalInit actionInit)
+      : _masterPort = actionInit.port,
+        _pingCount = 1 {
     _portReceive = RawReceivePort(_processMessage);
-    _portTransmit = _portReceive.sendPort;
-    _masterPort = actionInit.port;
+    _portTransmit = _portReceive?.sendPort;
     //Do not reply to UX side yet, it needs to happen
     //after the parent class has fully initialized
     //Call the replyInit() inside the constructor of parent class
@@ -26,7 +27,7 @@ class IsolateSlave {
   }
 
   void replyInit(IsoactionInternalInit actionInit) {
-    actionInit.port = _portTransmit;
+    actionInit.port = _portTransmit!;
     _masterPort.send(actionInit);
   }
 
@@ -35,7 +36,7 @@ class IsolateSlave {
   }
 
   void sendToSlave(dynamic action) {
-    _portTransmit.send(action);
+    _portTransmit?.send(action);
   }
 
   void setError(String action) {

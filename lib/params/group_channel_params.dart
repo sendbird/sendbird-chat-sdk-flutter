@@ -36,27 +36,27 @@ class GroupChannelParams {
 
   /// A string that allows access to the public group channel.
   /// ONLY use for public group channel.
-  String accessCode;
+  String? accessCode;
 
   /// An unique identification for channel. Use in creation only.
-  String channelUrl;
+  String? channelUrl;
 
   /// Custom type for a channel
-  String customType;
+  String? customType;
 
   /// Custom data for a channel
-  String data;
+  String? data;
 
   /// Name for a channel
-  String name;
+  String? name;
 
-  FileInfo coverImage;
+  FileInfo? coverImage;
 
   /// List of user id who will get invited
-  List<String> userIds;
+  List<String> userIds = [];
 
   /// List of user id who are operator
-  List<String> operatorUserIds;
+  List<String> operatorUserIds = [];
 
   //TBD
   //Int messageSurvivalSeconds;

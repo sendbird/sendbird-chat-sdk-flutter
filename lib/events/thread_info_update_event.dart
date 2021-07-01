@@ -25,10 +25,10 @@ class ThreadInfoUpdateEvent implements BaseEvent {
   final ChannelType channelType;
 
   ThreadInfoUpdateEvent({
-    this.threadInfo,
-    this.rootMessageId,
-    this.channelType,
-    this.channelUrl,
+    required this.threadInfo,
+    required this.rootMessageId,
+    required this.channelType,
+    required this.channelUrl,
   });
 
   factory ThreadInfoUpdateEvent.fromJson(Map<String, dynamic> json) =>

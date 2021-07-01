@@ -7,7 +7,7 @@ abstract class QueryBase {
   bool hasNext = true;
 
   /// token for next query
-  String token;
+  String? token;
 
   /// number of item per executing [loadNext]
   int limit = 20;

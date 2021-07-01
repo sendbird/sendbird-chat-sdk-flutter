@@ -6,7 +6,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:sendbird_sdk/constant/contants.dart' as constants;
-import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/options.dart';
 import 'package:sendbird_sdk/core/models/state.dart';
@@ -16,6 +15,7 @@ import 'package:sendbird_sdk/managers/connection_manager.dart';
 import 'package:sendbird_sdk/managers/event_manager.dart';
 import 'package:sendbird_sdk/managers/session_manager.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_streams.dart';
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/services/db/memory_cache_service.dart';
 import 'package:sendbird_sdk/services/network/api_client.dart';
 import 'package:sendbird_sdk/services/network/websocket_client.dart';
@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.0.13';
+const sdk_version = '3.1.0';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -38,17 +38,17 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   StreamManager _streamManager = StreamManager();
 
   ApiClient _api = ApiClient();
-  WebSocketClient _webSocket;
-  Completer<User> _loginCompleter;
+  WebSocketClient? _webSocket;
+  Completer<User>? _loginCompleter;
 
-  Options _options;
+  late Options _options;
   AsyncQueue _commandQueue = AsyncQueue<String>();
   Map<String, AsyncQueue> _messageQueues = {};
   Map<String, AsyncSimpleTask> _uploads = {};
 
-  Timer _reconnectTimer;
-  ConnectivityResult _connectionResult;
-  StreamSubscription _connectionSub;
+  Timer? _reconnectTimer;
+  ConnectivityResult? _connectionResult;
+  StreamSubscription? _connectionSub;
 
   Map<String, String> _extensions = {};
   List<String> _extraDatas = [
@@ -60,17 +60,13 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
   //should only keep one instance
   SendbirdSdkInternal({
-    String appId,
-    String apiToken,
-    Options options,
-  }) : _options = options {
-    if (appId == null || appId == '') {
-      throw InvalidInitializationError();
-    }
-
+    String? appId,
+    String? apiToken,
+    Options? options,
+  }) {
     _api.initialize(appId: appId, token: apiToken);
     _state.appId = appId;
-
+    _options = options ?? Options();
     WidgetsBinding.instance?.addObserver(this);
     _listenConnectionEvents();
   }
@@ -84,15 +80,15 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   CommandManager get cmdManager => _cmdManager;
   StreamManager get streamManager => _streamManager;
   ApiClient get api => _api;
-  WebSocketClient get webSocket => _webSocket;
-  Completer<User> get loginCompleter => _loginCompleter;
+  WebSocketClient? get webSocket => _webSocket;
+  Completer<User>? get loginCompleter => _loginCompleter;
   Options get options => _options;
-  void setOptions(Options options) => _options = options ?? Options();
+  void setOptions(Options options) => _options = options;
   AsyncQueue getMsgQueue(String channelUrl) =>
       _messageQueues[channelUrl] ?? AsyncQueue();
   void setMsgQueue(String channelUrl, AsyncQueue queue) =>
       _messageQueues[channelUrl] = queue;
-  AsyncSimpleTask getUploadTask(String requestId) => _uploads[requestId];
+  AsyncSimpleTask? getUploadTask(String requestId) => _uploads[requestId];
   void setUploadTask(String requestId, AsyncSimpleTask task) =>
       _uploads[requestId] = task;
 
@@ -135,7 +131,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       } catch (e) {
         rethrow;
       }
-    }, (e, trace) {
+    }, (e, s) {
       if (_loginCompleter != null) {
         _loginCompleter?.completeError(e);
       } else {
@@ -157,38 +153,38 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   ///
   /// [apiHost] and [wsHost] are optional in case to connect own server
   Future<User> connect({
-    String userId,
-    String nickname,
-    String accessToken,
-    String apiHost,
-    String wsHost,
+    required String userId,
+    String? nickname,
+    String? accessToken,
+    String? apiHost,
+    String? wsHost,
     bool reconnect = false,
   }) async {
-    if (userId == null || userId.isEmpty) {
+    if (userId.isEmpty) {
       throw InvalidParameterError();
     }
 
     userId = userId.trim();
-    String sessionKey;
+    String? sessionKey;
 
     if (!reconnect) {
       // already connected
       if (_state.connected && _state.userId == userId) {
-        return _state.currentUser;
+        return _state.currentUser!;
       }
 
       // is already in progress to connect
       if (_state.connecting &&
           _state.userId == userId &&
           _loginCompleter != null) {
-        return _loginCompleter.future;
+        return _loginCompleter!.future;
       }
     } else {
       sessionKey = await _sessionManager.getSessionKey();
-      if (sessionKey == '' || sessionKey == null) {
+      if (sessionKey == null || sessionKey.isEmpty) {
         ConnectionManager.flushCompleters(error: ConnectionRequiredError());
         _eventManager.notifyReconnectionFailed();
-        return null;
+        throw ConnectionFailedError();
       }
       if (!_state.reconnecting) _eventManager.notifyReconnectionStarted();
     }
@@ -201,23 +197,25 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _webSocket?.close();
     _webSocket = WebSocketClient(
-      _onWebSocketConnect,
-      _onWebSocketDisconnect,
-      _onWebSocketData,
-      _onWebSocketError,
+      onConnect: _onWebSocketConnect,
+      onDisconnect: _onWebSocketDisconnect,
+      onData: _onWebSocketData,
+      onError: _onWebSocketError,
     );
 
     _sessionManager.setAccessToken(accessToken);
 
-    apiHost = reconnect ? _state.apiHost : apiHost ?? _getDefaultApiHost();
-    wsHost = reconnect ? _state.wsHost : wsHost ?? _getDefaultWsHost();
+    final apiHostUrl =
+        reconnect ? _state.apiHost! : apiHost ?? _getDefaultApiHost();
+    final wsHostUrl =
+        reconnect ? _state.wsHost! : wsHost ?? _getDefaultWsHost();
 
     _state
       ..reconnecting = reconnect
-      ..wsHost = wsHost
-      ..apiHost = apiHost;
+      ..apiHost = apiHostUrl
+      ..wsHost = wsHostUrl;
 
-    _api.initialize(baseUrl: apiHost, headers: {
+    _api.initialize(baseUrl: apiHostUrl, headers: {
       'SB-User-Agent': _sbUserAgent,
       'User-Agent':
           '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
@@ -238,14 +236,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
       'expiring_session':
-          _eventManager.getHandler(type: EventType.session) != null ? '1' : '0',
+          _eventManager.getHandler<SessionEventHandler>() != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
-    final fullWsHost = wsHost + '/?' + Uri(queryParameters: params).query;
+    final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
-    await _webSocket.connect(fullWsHost);
-    final user = await _loginCompleter.future
+    await _webSocket?.connect(fullWsHost);
+    final user = await _loginCompleter!.future
         .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
       logout();
       throw LoginTimeoutError();
@@ -303,6 +301,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     if (_reconnectTimer != null) return;
 
     final task = _state.reconnectTask;
+    if (task == null) throw MisConfigurationError();
     if (task.exceedRetryCount && task.hasRetriedLastChance) {
       task.increaseRetryCount();
       _state.reconnecting = false;
@@ -317,7 +316,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () {
       connect(
         reconnect: true,
-        userId: _state.userId,
+        userId: _state.userId ?? '',
         accessToken: _sessionManager.accessToken,
       );
     });
@@ -339,8 +338,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void _handleEnterForeground() async {
-    if (_state.currentUser != null) {
-      await connect(userId: _state.userId, reconnect: true);
+    if (_state.userId != null) {
+      await connect(userId: _state.userId!, reconnect: true);
     }
   }
 
@@ -367,11 +366,15 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   String _getDefaultApiHost() {
-    return 'api-' + _state.appId + '.sendbird.com';
+    final appId = _state.appId;
+    if (appId == null) throw MisConfigurationError();
+    return 'api-' + appId + '.sendbird.com';
   }
 
   String _getDefaultWsHost() {
-    return 'wss://ws-' + _state.appId + '.sendbird.com';
+    final appId = _state.appId;
+    if (appId == null) throw MisConfigurationError();
+    return 'wss://ws-' + appId + '.sendbird.com';
   }
 
   String get _sbUserAgent {

@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
@@ -31,21 +30,21 @@ import 'package:sendbird_sdk/utils/extensions.dart';
 
 class ApiClient {
   HttpClient client = HttpClient();
-  String currentUserId; //inject userid whenever current user status changes
+  String? currentUserId; //inject userid whenever current user status changes
 
-  String appId;
-  String sessionKey;
-  String token;
-  String baseUrl;
-  int uploadSizeLimit;
+  String? appId;
+  String? baseUrl;
+  String? sessionKey;
+  String? token;
+  int uploadSizeLimit = 30;
 
   void initialize({
-    String appId,
-    String sessionKey,
-    String token,
-    String baseUrl,
-    int uploadSizeLimit,
-    Map<String, String> headers,
+    String? appId,
+    String? sessionKey,
+    String? token,
+    String? baseUrl,
+    int? uploadSizeLimit,
+    Map<String, String>? headers,
   }) {
     if (appId != null) this.appId = appId;
     if (sessionKey != null) this.sessionKey = sessionKey;
@@ -75,7 +74,7 @@ class ApiClient {
 
   Future<OpenChannel> createOpenChannel(
     OpenChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
     var body = {
       'channel_url': params.channelUrl,
@@ -85,7 +84,8 @@ class ApiClient {
       'operator_ids': params.operatorUserIds,
     };
     final url = endpoint.OpenChannels.origin;
-    if (params.coverImage != null && params.coverImage.hasBinary) {
+    final image = params.coverImage;
+    if (image != null && image.hasBinary) {
       body['cover_file'] = params.coverImage;
       body.removeWhere((key, value) => value == null);
       final res = await client.multipartRequest(
@@ -106,7 +106,7 @@ class ApiClient {
 
   Future<OpenChannel> updateOpenChannel(
     OpenChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
     var body = {
       'channel_url': params.channelUrl,
@@ -118,7 +118,8 @@ class ApiClient {
     };
 
     final url = endpoint.OpenChannels.channelurl.format([params.channelUrl]);
-    if (params.coverImage != null && params.coverImage.hasBinary) {
+    final image = params.coverImage;
+    if (image != null && image.hasBinary) {
       body['cover_file'] = params.coverImage;
       body.removeWhere((key, value) => value == null);
       final res = await client.multipartRequest(
@@ -138,7 +139,7 @@ class ApiClient {
 
   Future<GroupChannel> createGroupChannel(
     GroupChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
     final body = {
       'name': params.name,
@@ -153,12 +154,13 @@ class ApiClient {
       'is_ephemeral': params.isEphemeral,
       'is_distinct': params.isDistinct,
       if (params.isPublic) 'access_code': params.accessCode,
-      if (params.operatorUserIds != null)
+      if (params.operatorUserIds.isNotEmpty)
         'operator_ids': params.operatorUserIds,
       // 'message_survival_seconds': params.
     };
     final url = endpoint.GroupChannels.origin;
-    if (params.coverImage != null && params.coverImage.hasBinary) {
+    final image = params.coverImage;
+    if (image != null && image.hasBinary) {
       body['cover_file'] = params.coverImage;
       body.removeWhere((key, value) => value == null);
       final res = await client.multipartRequest(
@@ -178,7 +180,7 @@ class ApiClient {
 
   Future<GroupChannel> updateGroupChannel(
     GroupChannelParams params, {
-    OnUploadProgressCallback progress,
+    OnUploadProgressCallback? progress,
   }) async {
     final body = {
       'name': params.name,
@@ -190,12 +192,13 @@ class ApiClient {
       if (params.isPublic) 'is_discoverable': params.isDiscoverable,
       'is_distinct': params.isDistinct,
       'access_code': params.accessCode,
-      if (params.operatorUserIds != null)
+      if (params.operatorUserIds.isNotEmpty)
         'operator_ids': params.operatorUserIds,
     };
 
     final url = endpoint.GroupChannels.channelurl.format([params.channelUrl]);
-    if (params.coverImage != null && params.coverImage.hasBinary) {
+    final image = params.coverImage;
+    if (image != null && image.hasBinary) {
       body['cover_file'] = params.coverImage;
       body.removeWhere((key, value) => value == null);
       final res = await client.multipartRequest(
@@ -213,11 +216,11 @@ class ApiClient {
     }
   }
 
-  Future<BaseChannel> getChannel({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required bool passive,
-    List<ChannelQueryIncludeOption> options,
+  Future<T> getChannel<T extends BaseChannel>({
+    required ChannelType channelType,
+    required String channelUrl,
+    required bool passive,
+    List<ChannelQueryIncludeOption> options = const [],
   }) async {
     var url = passive
         ? endpoint.Channels.channelurl_passively
@@ -227,13 +230,13 @@ class ApiClient {
     final res = await client.get(url: url, queryParams: options.toJson());
     final ts = DateTime.now().millisecondsSinceEpoch;
     return channelType == ChannelType.group
-        ? GroupChannel.fromJsonAndCached(res, ts: ts)
-        : OpenChannel.fromJsonAndCached(res, ts: ts);
+        ? GroupChannel.fromJsonAndCached(res, ts: ts) as T
+        : OpenChannel.fromJsonAndCached(res, ts: ts) as T;
   }
 
   Future<void> deleteChannel({
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl.format([
       channelType.urlString,
@@ -242,10 +245,10 @@ class ApiClient {
     await client.delete(url: url);
   }
 
-  Future<int> hideGroupChannel({
-    @required String channelUrl,
+  Future<int?> hideGroupChannel({
+    required String channelUrl,
     bool hidePreviousMessages = false,
-    bool allowAutoUnhide,
+    bool allowAutoUnhide = true,
   }) async {
     final url = endpoint.GroupChannels.channelurl_hide.format([channelUrl]);
     final body = {
@@ -255,17 +258,17 @@ class ApiClient {
     };
 
     final res = await client.put(url: url, body: body);
-    return res['ts_message_offset'] as int;
+    return res['ts_message_offset'] as int?;
   }
 
-  Future<void> unhideGroupChannel({@required String channelUrl}) async {
+  Future<void> unhideGroupChannel({required String channelUrl}) async {
     final url = endpoint.GroupChannels.channelurl_hide.format([channelUrl]);
     await client.delete(url: url);
   }
 
-  Future<int> resetGroupChannelHistory({
-    @required String channelUrl,
-    bool resetAll,
+  Future<int?> resetGroupChannelHistory({
+    required String channelUrl,
+    bool resetAll = false,
   }) async {
     final url =
         endpoint.GroupChannels.channelurl_reset_history.format([channelUrl]);
@@ -275,9 +278,9 @@ class ApiClient {
   }
 
   Future<GroupChannel> joinGroupChannel({
-    @required String channelUrl,
-    String accessCode,
-    String userId,
+    required String channelUrl,
+    String? accessCode,
+    String? userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_join.format([channelUrl]);
     final body = {
@@ -289,18 +292,18 @@ class ApiClient {
   }
 
   Future<void> leaveGroupChannel({
-    @required String channelUrl,
-    String userId,
+    required String channelUrl,
+    String? userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_leave.format([channelUrl]);
     await client.put(url: url, body: {'user_id': userId ?? currentUserId});
   }
 
   Future<ScheduledUserMessage> registerScheduleUserMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required ScheduledUserMessageParams params,
-    @required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required ScheduledUserMessageParams params,
+    String? userId,
     bool markAsRead = false,
   }) async {
     final url = endpoint.Channels.channelurl_scheduled_message.format([
@@ -317,9 +320,9 @@ class ApiClient {
   }
 
   Future<void> deleteMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid.format([
       channelType.urlString,
@@ -330,16 +333,13 @@ class ApiClient {
   }
 
   Future<ChannelChangeLogsResponse> getGroupChannelChangeLogs({
-    @required GroupChannelChangeLogsParams params,
-    @required String userId,
-    String token,
-    int timestamp,
+    required GroupChannelChangeLogsParams params,
+    String? userId,
+    String? token,
+    int? timestamp,
   }) async {
-    if (params == null || userId == null) {
-      throw InvalidParameterError();
-    }
-
-    final url = endpoint.Users.userid_groupchannel_changelogs.format([userId]);
+    final url = endpoint.Users.userid_groupchannel_changelogs
+        .format([userId ?? currentUserId]);
     var queryParams = <String, dynamic>{};
     queryParams.addAll(params.toJson());
     if (timestamp != null && timestamp > 0) {
@@ -351,20 +351,23 @@ class ApiClient {
   }
 
   Future<GroupChannel> inviteUsers({
-    @required List<String> userIds,
-    @required String channelUrl,
-    @required String inviterId,
+    required List<String> userIds,
+    required String channelUrl,
+    String? inviterId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_invite.format([channelUrl]);
-    final body = {'user_ids': userIds, 'inviter_id': inviterId};
+    final body = {
+      'user_ids': userIds,
+      'inviter_id': inviterId ?? currentUserId
+    };
     final res = await client.post(url: url, body: body);
     return GroupChannel.fromJsonAndCached(res);
   }
 
   Future<void> acceptInvitation({
-    @required String channelUrl,
-    String accessCode,
-    String userId,
+    required String channelUrl,
+    String? accessCode,
+    String? userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_accept.format([channelUrl]);
     final body = {
@@ -375,43 +378,43 @@ class ApiClient {
   }
 
   Future<void> declineInvitation({
-    @required String channelUrl,
-    String userId,
+    required String channelUrl,
+    String? userId,
   }) async {
     final url = endpoint.GroupChannels.channelurl_decline.format([channelUrl]);
     await client.put(url: url, body: {'user_id': userId ?? currentUserId});
   }
 
   Future<void> markAsRead({
-    List<String> channelUrls,
-    String userId,
+    List<String>? channelUrls,
+    String? userId,
   }) async {
     final url = endpoint.Users.userid_readall.format([userId]);
     final body = {
       'user_id': userId,
-      if (channelUrls != null && channelUrls.isNotEmpty)
+      if (channelUrls != null && channelUrls.isEmpty)
         'channel_urls': channelUrls,
     };
     await client.put(url: url, body: body);
   }
 
   Future<void> markAsDelivered({
-    @required String channelUrl,
-    @required String userId,
-    int timestamp,
+    required String channelUrl,
+    String? userId,
+    int? timestamp,
   }) async {
     final url = endpoint.GroupChannels.channelurl_messages_delivered
         .format([channelUrl]);
     final body = {
-      'user_id': userId,
+      'user_id': userId ?? currentUserId,
       'ts': timestamp,
     };
     await client.put(url: url, body: body);
   }
 
   Future<int> getGroupChannelCount({
-    @required MemberStateFilter memberFilter,
-    @required String userId,
+    required MemberStateFilter memberFilter,
+    String? userId,
   }) async {
     final url = endpoint.Users.userid_groupchannel_count.format([userId]);
     final params = {'state': memberStateFilterEnumMap[memberFilter]};
@@ -428,10 +431,10 @@ class ApiClient {
   // moderation
 
   Future<void> banUser({
-    @required String userId,
-    @required ChannelType channelType,
-    @required String channelUrl,
-    String description,
+    required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    String? description,
     int seconds = -1,
   }) async {
     final url = endpoint.Channels.channelurl_ban.format([
@@ -447,9 +450,9 @@ class ApiClient {
   }
 
   Future<void> unbanUser({
-    @required String userId,
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl_ban_banned_userid.format([
       channelType.urlString,
@@ -460,10 +463,10 @@ class ApiClient {
   }
 
   Future<void> muteUser({
-    @required String userId,
-    @required ChannelType channelType,
-    @required String channelUrl,
-    String description,
+    required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    String? description,
     int seconds = -1,
   }) async {
     final url = endpoint.Channels.channelurl_mute.format([
@@ -479,9 +482,9 @@ class ApiClient {
   }
 
   Future<void> unmuteUser({
-    @required String userId,
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl_mute_muted_userid.format([
       channelType.urlString,
@@ -492,9 +495,9 @@ class ApiClient {
   }
 
   Future<MuteInfoResponse> getMuteInfo({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    String? userId,
   }) async {
     final url = endpoint.Channels.channelurl_mute_muted_userid.format([
       channelType.urlString,
@@ -506,9 +509,9 @@ class ApiClient {
   }
 
   Future<void> freezeChannel({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required bool freeze,
+    required ChannelType channelType,
+    required String channelUrl,
+    required bool freeze,
   }) async {
     final url = endpoint.Channels.channelurl_freeze.format([
       channelType.urlString,
@@ -518,29 +521,29 @@ class ApiClient {
   }
 
   Future<void> reportUser({
-    @required String userId,
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required ReportCategory category,
-    String reporterId,
-    String description,
+    required String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required ReportCategory category,
+    String? reporterId,
+    String? description,
   }) async {
     final url = endpoint.Misc.report_userid.format([userId]);
     final body = {
       'channel_type': channelType.urlString,
       'channel_url': channelUrl,
       'report_category': category.asString(),
-      'reporting_user_id': reporterId,
+      'reporting_user_id': reporterId ?? currentUserId,
       if (description != null) 'report_description': description
     };
     await client.post(url: url, body: body);
   }
 
   Future<void> reportChannel({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required ReportCategory category,
-    String description,
+    required ChannelType channelType,
+    required String channelUrl,
+    required ReportCategory category,
+    String? description,
   }) async {
     final url = endpoint.Misc.report_channelurl.format([
       channelType.urlString,
@@ -555,12 +558,12 @@ class ApiClient {
   }
 
   Future<void> reportMessage({
-    @required int messageId,
-    @required String senderId,
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required ReportCategory category,
-    String description,
+    required int messageId,
+    required String senderId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required ReportCategory category,
+    String? description,
   }) async {
     final url = endpoint.Misc.report_channelurl_messageid.format([
       channelType.urlString,
@@ -579,21 +582,21 @@ class ApiClient {
   // messages
 
   Future<UserMessage> sendUserMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required UserMessageParams params,
-    @required String senderId,
-    List<String> additionalMentionedUserIds,
-    bool markAsRead,
+    required ChannelType channelType,
+    required String channelUrl,
+    required UserMessageParams params,
+    String? senderId,
+    List<String>? additionalMentionedUserIds,
+    bool markAsRead = false,
   }) async {
     final url = endpoint.Channels.channelurl_messages.format([
       channelType.urlString,
       channelUrl,
     ]);
-    final body = {
+    final body = <String, dynamic>{
       'message_type': CommandType.userMessage,
-      'user_id': senderId,
-      'mark_as_read': markAsRead ?? false,
+      'user_id': senderId ?? currentUserId,
+      'mark_as_read': markAsRead,
       if (additionalMentionedUserIds != null)
         'mentioned_user_ids': additionalMentionedUserIds,
     };
@@ -602,16 +605,17 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    return BaseMessage.msgFromJson<UserMessage>(res,
+        channelType: channelType)!; //mark!
   }
 
-  Future<UserMessage> updateUserMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required UserMessageParams params,
-    @required String senderId,
-    List<String> additionalMentionedUserIds,
+  Future<void> updateUserMessage({
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required UserMessageParams params,
+    String? senderId,
+    List<String>? additionalMentionedUserIds,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid.format([
       channelType.urlString,
@@ -619,9 +623,9 @@ class ApiClient {
       messageId,
     ]);
 
-    final body = {
+    final body = <String, dynamic>{
       'message_type': CommandType.userMessage,
-      'user_id': senderId,
+      'user_id': senderId ?? currentUserId,
       if (additionalMentionedUserIds != null)
         'mentioned_user_ids': additionalMentionedUserIds,
     };
@@ -629,28 +633,27 @@ class ApiClient {
     body.addAll(params.toJson());
     body.removeWhere((key, value) => value == null);
 
-    final res = await client.put(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    await client.put(url: url, body: body); //mark!
   }
 
   Future<FileMessage> sendFileMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required FileMessageParams params,
-    @required String senderId,
-    List<Thumbnail> thumbnails,
+    required ChannelType channelType,
+    required String channelUrl,
+    required FileMessageParams params,
+    String? senderId,
+    List<Thumbnail>? thumbnails,
     bool markAsRead = false,
     bool requireAuth = false,
-    List<String> additionalMentionedUserIds,
+    List<String>? additionalMentionedUserIds,
   }) async {
     final url = endpoint.Channels.channelurl_messages.format([
       channelType.urlString,
       channelUrl,
     ]);
-    final body = {
+    final body = <String, dynamic>{
       'message_type': CommandType.fileMessage,
-      'user_id': senderId,
-      'mark_as_read': markAsRead ?? false,
+      'user_id': senderId ?? currentUserId,
+      'mark_as_read': markAsRead,
       'require_auth': requireAuth,
       if (additionalMentionedUserIds != null)
         'mentioned_user_ids': additionalMentionedUserIds,
@@ -660,16 +663,17 @@ class ApiClient {
     body.removeWhere((key, value) => value == null);
 
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<FileMessage>(res);
+    return BaseMessage.msgFromJson<FileMessage>(res,
+        channelType: channelType)!; //mark!
   }
 
-  Future<FileMessage> updateFileMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required FileMessageParams params,
-    @required String senderId,
-    List<String> additionalMentionedUserIds,
+  Future<void> updateFileMessage({
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required FileMessageParams params,
+    String? senderId,
+    List<String>? additionalMentionedUserIds,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid.format([
       channelType.urlString,
@@ -677,9 +681,9 @@ class ApiClient {
       messageId,
     ]);
 
-    final body = {
+    final body = <String, dynamic>{
       'message_type': CommandType.fileMessage,
-      'user_id': senderId,
+      'user_id': senderId ?? currentUserId,
       if (additionalMentionedUserIds != null)
         'mentioned_user_ids': additionalMentionedUserIds,
     };
@@ -687,15 +691,14 @@ class ApiClient {
     body.addAll(params.toJson());
     body.removeWhere((key, value) => value == null);
 
-    final res = await client.put(url: url, body: body);
-    return BaseMessage.msgFromJson<FileMessage>(res);
+    await client.put(url: url, body: body);
   }
 
   Future<UploadResponse> uploadFile({
-    @required String channelUrl,
-    @required String requestId,
-    @required FileMessageParams params,
-    OnUploadProgressCallback progress,
+    required String channelUrl,
+    required String requestId,
+    required FileMessageParams params,
+    OnUploadProgressCallback? progress,
   }) async {
     if (!params.uploadFile.hasBinary) {
       throw InvalidParameterError();
@@ -717,7 +720,7 @@ class ApiClient {
       'file': params.uploadFile
     };
 
-    params.thumbnailSizes?.asMap()?.forEach((index, value) =>
+    params.thumbnailSizes?.asMap().forEach((index, value) =>
         body['thumbnail${index + 1}'] =
             '${value.width.round()},${value.height.round()}');
 
@@ -740,10 +743,10 @@ class ApiClient {
   }
 
   Future<UserMessage> translateUserMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required List<String> targetLanguages,
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required List<String> targetLanguages,
   }) async {
     final url =
         endpoint.Channels.channelurl_messages_messageid_translation.format([
@@ -753,30 +756,31 @@ class ApiClient {
     ]);
     final body = {'target_langs': targetLanguages};
     final res = await client.post(url: url, body: body);
-    return BaseMessage.msgFromJson<UserMessage>(res);
+    return BaseMessage.msgFromJson<UserMessage>(res,
+        channelType: channelType)!; //mark!
   }
 
   Future<BaseMessage> getMessage({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required MessageRetrievalParams params,
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required MessageRetrievalParams params,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid
         .format([channelType.urlString, channelUrl, messageId]);
     final queryParams = params.toJson();
 
     final res = await client.get(url: url, queryParams: queryParams);
-    return BaseMessage.msgFromJson(res);
+    return BaseMessage.msgFromJson(res, channelType: channelType)!; //mark!
   }
 
   Future<List<BaseMessage>> getMessages({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required Map<String, dynamic> params,
-    int messageId,
-    int timestamp,
-    int parentMessageId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required Map<String, dynamic> params,
+    int? messageId,
+    int? timestamp,
+    int? parentMessageId,
   }) async {
     final url = endpoint.Channels.channelurl_messages
         .format([channelType.urlString, channelUrl]);
@@ -794,18 +798,19 @@ class ApiClient {
     }
 
     final res = await client.get(url: url, queryParams: queryParams);
-    return (res['messages'] as List)
+    final lst = (res['messages'] as List)
         .map((e) => BaseMessage.msgFromJson(e, channelType: channelType))
-        .toList()
-          ..removeWhere((e) => e == null);
+        .toList();
+    lst.removeWhere((element) => element == null);
+    return List<BaseMessage>.from(lst);
   }
 
   Future<MessageChangeLogsResponse> getMessageChangeLogs({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required MessageChangeLogParams params,
-    String token,
-    int timestamp,
+    required ChannelType channelType,
+    required String channelUrl,
+    required MessageChangeLogParams params,
+    String? token,
+    int? timestamp,
   }) async {
     final url = endpoint.Channels.channelurl_messages_changelogs
         .format([channelType.urlString, channelUrl]);
@@ -821,7 +826,7 @@ class ApiClient {
   // MetaData
 
   Future<Map<String, dynamic>> createUserMetaData(
-      {Map<String, String> metaData, String userId}) async {
+      {required Map<String, String> metaData, String? userId}) async {
     final url =
         endpoint.Users.userid_metadata.format([userId ?? currentUserId]);
     final body = {'metadata': metaData, 'upsert': true};
@@ -830,8 +835,8 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> updateUserMetaData({
-    @required Map<String, String> metaData,
-    String userId,
+    required Map<String, String> metaData,
+    String? userId,
     bool upsert = true,
   }) async {
     final url =
@@ -841,22 +846,22 @@ class ApiClient {
     return res;
   }
 
-  Future<void> deleteUserMetaData(String key, {String userId}) async {
+  Future<void> deleteUserMetaData(String key, {String? userId}) async {
     final url = endpoint.Users.userid_metadata_key
         .format([userId ?? currentUserId, key]);
     await client.delete(url: url);
   }
 
-  Future<void> deleteAllUserMetaData({String userId}) async {
+  Future<void> deleteAllUserMetaData({String? userId}) async {
     final url =
         endpoint.Users.userid_metadata.format([userId ?? currentUserId]);
     await client.delete(url: url);
   }
 
   Future<MetaDataResponse> createChannelMetaData({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required Map<String, String> metaData,
+    required ChannelType channelType,
+    required String channelUrl,
+    required Map<String, String> metaData,
   }) async {
     final url = endpoint.Channels.channelurl_metadata.format([
       channelType.urlString,
@@ -872,9 +877,9 @@ class ApiClient {
   }
 
   Future<MetaDataResponse> updateChannelMetaData({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required Map<String, String> metaData,
+    required ChannelType channelType,
+    required String channelUrl,
+    required Map<String, String> metaData,
     bool upsert = true,
   }) async {
     final url = endpoint.Channels.channelurl_metadata.format([
@@ -891,16 +896,16 @@ class ApiClient {
   }
 
   Future<MetaDataResponse> getChannelMetaData({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    List<String> keys,
+    required ChannelType channelType,
+    required String channelUrl,
+    List<String> keys = const [],
   }) async {
     final url = endpoint.Channels.channelurl_metadata.format([
       channelType.urlString,
       channelUrl,
     ]);
     final queryParams = <String, dynamic>{'include_ts': true};
-    if (keys != null && keys.isNotEmpty) {
+    if (keys.isNotEmpty) {
       queryParams['keys'] = keys;
     }
     final res = await client.get(url: url, queryParams: queryParams);
@@ -908,9 +913,9 @@ class ApiClient {
   }
 
   Future<int> deleteChannelMetaData({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required String key,
+    required ChannelType channelType,
+    required String channelUrl,
+    required String key,
   }) async {
     final url = endpoint.Channels.channelurl_metadata_key.format([
       channelType.urlString,
@@ -925,8 +930,8 @@ class ApiClient {
   }
 
   Future<int> deleteAllChannelMetaData({
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl_metadata.format([
       channelType.urlString,
@@ -942,9 +947,9 @@ class ApiClient {
   // MetaCounter
 
   Future<Map<String, int>> createChannelMetaCounters({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required Map<String, int> metaCounters,
+    required ChannelType channelType,
+    required String channelUrl,
+    required Map<String, int> metaCounters,
   }) async {
     final url = endpoint.Channels.channelurl_metacounter.format([
       channelType.urlString,
@@ -956,10 +961,10 @@ class ApiClient {
   }
 
   Future<Map<String, int>> updateChannelMetaCounters({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required Map<String, int> metaCounters,
-    MetaCounterMode mode,
+    required ChannelType channelType,
+    required String channelUrl,
+    required Map<String, int> metaCounters,
+    required MetaCounterMode mode,
     bool upsert = true,
   }) async {
     final url = endpoint.Channels.channelurl_metacounter.format([
@@ -976,16 +981,16 @@ class ApiClient {
   }
 
   Future<Map<String, int>> getChannelMetaCounters({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    List<String> keys,
+    required ChannelType channelType,
+    required String channelUrl,
+    List<String> keys = const [],
   }) async {
     final url = endpoint.Channels.channelurl_metacounter.format([
       channelType.urlString,
       channelUrl,
     ]);
     final queryParams = <String, dynamic>{};
-    if (keys != null && keys.isNotEmpty) {
+    if (keys.isNotEmpty) {
       queryParams['keys'] = keys;
     }
     final res = await client.get(url: url, queryParams: queryParams);
@@ -993,9 +998,9 @@ class ApiClient {
   }
 
   Future<void> deleteChannelMetaCounter({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required String key,
+    required ChannelType channelType,
+    required String channelUrl,
+    required String key,
   }) async {
     final url = endpoint.Channels.channelurl_metacounter_key.format([
       channelType.urlString,
@@ -1006,8 +1011,8 @@ class ApiClient {
   }
 
   Future<void> deleteAllChannelMetaCounters({
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl_metacounter.format([
       channelType.urlString,
@@ -1018,11 +1023,8 @@ class ApiClient {
 
   // configurations
 
-  Future<void> setAutoAcceptInvitation(bool autoAccept, {String userId}) async {
-    if (autoAccept == null) {
-      throw InvalidParameterError();
-    }
-
+  Future<void> setAutoAcceptInvitation(bool autoAccept,
+      {String? userId}) async {
     final url = endpoint.Users.userid_channel_invitation_preference
         .format([userId ?? currentUserId]);
     await client.put(url: url, body: {'auto_accept': autoAccept});
@@ -1036,27 +1038,13 @@ class ApiClient {
   }
 
   Future<void> setDoNotDisturb({
-    @required bool enable,
-    @required int startHour,
-    @required int startMin,
-    @required int endHour,
-    @required int endMin,
-    @required String timezone,
+    required bool enable,
+    int startHour = 0,
+    int startMin = 0,
+    int endHour = 23,
+    int endMin = 59,
+    String timezone = 'pst',
   }) async {
-    if (enable == null) {
-      throw InvalidParameterError();
-    }
-    if (enable && startHour < 0 ||
-        startHour > 23 ||
-        startMin < 0 ||
-        startMin > 59 ||
-        endHour < 0 ||
-        endHour > 23 ||
-        endMin < 0 ||
-        endMin > 59) {
-      throw InvalidParameterError();
-    }
-
     final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {
       'do_not_disturb': enable,
@@ -1077,26 +1065,16 @@ class ApiClient {
   }
 
   Future<void> setSnoozePeriod({
-    @required bool enable,
-    @required DateTime startDate,
-    @required DateTime endDate,
+    required bool enable,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
-    if (enable) {
-      if (startDate == null || endDate == null) throw InvalidParameterError();
-      if (endDate.difference(startDate).inSeconds < 0) {
-        throw InvalidParameterError();
-      }
-    }
-
-    if (enable == null) {
-      throw InvalidParameterError();
-    }
-
     final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {
       'snooze_enabled': enable,
-      'snooze_start_ts': startDate.millisecondsSinceEpoch,
-      'snooze_end_ts': endDate.millisecondsSinceEpoch
+      if (startDate != null)
+        'snooze_start_ts': startDate.millisecondsSinceEpoch,
+      if (endDate != null) 'snooze_end_ts': endDate.millisecondsSinceEpoch
     };
     await client.put(url: url, body: body);
   }
@@ -1107,21 +1085,10 @@ class ApiClient {
     return SnoozeResponse.fromJson(res);
   }
 
-  Future<PushTriggerOption> setPushTriggerOption(
-    PushTriggerOption option,
-  ) async {
-    if (option == null) {
-      throw InvalidParameterError();
-    }
-
+  Future<void> setPushTriggerOption(PushTriggerOption option) async {
     final url = endpoint.Users.userid_push_preference.format([currentUserId]);
     final body = {'push_trigger_option': pushTriggerOptionEnumMap[option]};
-    final res = await client.put(url: url, body: body);
-    return enumDecode(
-      pushTriggerOptionEnumMap,
-      res['push_trigger_option'],
-      unknownValue: PushTriggerOption.all,
-    );
+    await client.put(url: url, body: body);
   }
 
   Future<PushTriggerOption> getPushTriggerOption() async {
@@ -1135,8 +1102,8 @@ class ApiClient {
   }
 
   Future<GroupChannelPushTriggerOption> setGroupChannelPushTriggerOption({
-    @required String channelUrl,
-    @required GroupChannelPushTriggerOption option,
+    required String channelUrl,
+    required GroupChannelPushTriggerOption option,
   }) async {
     final url = endpoint.Users.userid_push_preference_channelurl.format([
       currentUserId,
@@ -1169,8 +1136,8 @@ class ApiClient {
   }
 
   Future<CountPreference> setCountPreference({
-    String channelUrl,
-    CountPreference prefs,
+    required String channelUrl,
+    required CountPreference prefs,
   }) async {
     final url = endpoint.Users.userid_count_preference_channelurl.format([
       currentUserId,
@@ -1186,7 +1153,7 @@ class ApiClient {
   }
 
   Future<void> setPushSound(String sound) async {
-    if (sound == null || sound.isEmpty) {
+    if (sound.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -1202,7 +1169,7 @@ class ApiClient {
   }
 
   Future<void> setPushTemplate(String name) async {
-    if (name == null || name.isEmpty) {
+    if (name.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -1220,8 +1187,9 @@ class ApiClient {
   // push
 
   Future<PushTokenRegistrationStatus> registerPushToken({
-    @required PushTokenType type,
-    @required String token,
+    required PushTokenType type,
+    required String token,
+    bool alwaysPush = false,
     bool unique = true,
   }) async {
     final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
@@ -1233,6 +1201,8 @@ class ApiClient {
     final body = {
       if (type == PushTokenType.fcm) 'gcm_reg_token': token,
       if (type == PushTokenType.apns) 'apns_device_token': token,
+      if (type == PushTokenType.hms) 'huawei_device_token': token,
+      'always_push': alwaysPush,
       'is_unique': unique,
     };
 
@@ -1240,7 +1210,10 @@ class ApiClient {
     return PushTokenRegistrationStatus.success;
   }
 
-  Future<void> unregisterPushToken({PushTokenType type, String token}) async {
+  Future<void> unregisterPushToken({
+    required PushTokenType type,
+    required String token,
+  }) async {
     final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
     final url = endpoint.Users.userid_push_tokentype_token.format([
       currentUserId,
@@ -1257,7 +1230,7 @@ class ApiClient {
 
   // users
   Future<User> blockUser(String targetId) async {
-    if (targetId == null || targetId.isEmpty) {
+    if (targetId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -1268,7 +1241,7 @@ class ApiClient {
   }
 
   Future<void> unblockUser(String targetId) async {
-    if (targetId == null || targetId.isEmpty) {
+    if (targetId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -1278,30 +1251,33 @@ class ApiClient {
   }
 
   Future<int> getTotalUnreadMessageCount({
-    List<String> customTypes,
+    List<String>? customTypes,
     SuperChannelFilter filter = SuperChannelFilter.all,
   }) async {
     final url =
         endpoint.Users.userid_unread_message_count.format([currentUserId]);
     final params = {
-      'custom_types': customTypes,
+      if (customTypes != null && customTypes.isNotEmpty)
+        'custom_types': customTypes,
       'super_mode': groupChannelSuperFilterEnumMap[filter],
     };
     final res = await client.get(url: url, queryParams: params);
     return res['unread_count'];
   }
 
-  Future<int> getTotalUnreadChannelCount({@required String userId}) async {
-    final url = endpoint.Users.userid_unread_channel_count.format([userId]);
+  Future<int> getTotalUnreadChannelCount({String? userId}) async {
+    final url = endpoint.Users.userid_unread_channel_count
+        .format([userId ?? currentUserId]);
     final res = await client.get(url: url);
     return res['unread_count'];
   }
 
   Future<UnreadItemCount> getUnreadItemCount({
-    @required List<UnreadItemKey> keys,
-    @required String userId,
+    required List<UnreadItemKey> keys,
+    String? userId,
   }) async {
-    final url = endpoint.Users.userid_unread_item_count.format([userId]);
+    final url = endpoint.Users.userid_unread_item_count
+        .format([userId ?? currentUserId]);
     final params = {
       'item_keys': keys.map((e) => unreadItemKeyEnumMap[e]).toList()
     };
@@ -1310,12 +1286,12 @@ class ApiClient {
   }
 
   Future<User> updateUser({
-    @required String userId,
-    String nickname,
-    FileInfo fileInfo,
-    List<String> discoveryKeys,
-    List<String> preferredLanguages,
-    OnUploadProgressCallback progress,
+    required String userId,
+    String? nickname,
+    FileInfo? fileInfo,
+    List<String>? discoveryKeys,
+    List<String>? preferredLanguages,
+    OnUploadProgressCallback? progress,
   }) async {
     if (nickname == null && fileInfo == null && preferredLanguages == null) {
       throw InvalidParameterError();
@@ -1351,9 +1327,9 @@ class ApiClient {
   }
 
   Future<void> addOperators({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required List<String> userIds,
+    required ChannelType channelType,
+    required String channelUrl,
+    required List<String> userIds,
   }) async {
     final url = endpoint.Channels.channelurl_operators.format([
       channelType.urlString,
@@ -1364,9 +1340,9 @@ class ApiClient {
   }
 
   Future<void> removeOperators({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required List<String> userIds,
+    required ChannelType channelType,
+    required String channelUrl,
+    required List<String> userIds,
   }) async {
     final url = endpoint.Channels.channelurl_operators.format([
       channelType.urlString,
@@ -1377,8 +1353,8 @@ class ApiClient {
   }
 
   Future<void> removeAllOperators({
-    @required ChannelType channelType,
-    @required String channelUrl,
+    required ChannelType channelType,
+    required String channelUrl,
   }) async {
     final url = endpoint.Channels.channelurl_operators.format([
       channelType.urlString,
@@ -1389,29 +1365,25 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> updateSessionKey({
-    String appId,
-    String accessToken,
-    bool expiringSession,
+    required String appId,
+    required String accessToken,
+    bool expiringSession = false,
   }) async {
     final url = endpoint.Users.userid_session_key.format([currentUserId]);
     final body = {'expiring_session': expiringSession};
-    var headers = {'App-Id': appId};
-    if (accessToken != null) {
-      headers['Access-Token'] = accessToken;
-    }
-
+    var headers = {'App-Id': appId, 'Access-Token': accessToken};
     final res = await client.post(url: url, body: body, headers: headers);
     return Map.from(res);
   }
 
   //fetch list
 
-  Future<ChannelListQueryResponse> getOpenChannels({
-    String channelName,
-    String channelUrl,
-    String customType,
-    List<ChannelQueryIncludeOption> options,
-    String token,
+  Future<ChannelListQueryResponse<OpenChannel>> getOpenChannels({
+    String? channelName,
+    String? channelUrl,
+    String? customType,
+    List<ChannelQueryIncludeOption>? options,
+    String? token,
     int limit = 30,
   }) async {
     final url = endpoint.OpenChannels.origin;
@@ -1423,7 +1395,7 @@ class ApiClient {
       'custom_type': customType,
     };
 
-    params.addAll(options.toJson());
+    params.addAll(options?.toJson() ?? {});
     params.removeWhere((key, value) => value == null);
 
     final res = await client.get(url: url, queryParams: params);
@@ -1434,13 +1406,13 @@ class ApiClient {
       ..next = res['next'] as String;
   }
 
-  Future<ChannelListQueryResponse> getPublicGroupChannels({
-    PublicGroupChannelListOrder order,
-    String token,
+  Future<ChannelListQueryResponse<GroupChannel>> getPublicGroupChannels({
+    required PublicGroupChannelListOrder order,
+    String? token,
     int limit = 30,
-    List<String> channelUrls,
-    List<ChannelQueryIncludeOption> options,
-    GroupChannelFilter filter,
+    List<String>? channelUrls,
+    List<ChannelQueryIncludeOption>? options,
+    GroupChannelFilter? filter,
   }) async {
     final url = endpoint.GroupChannels.origin;
     final params = {
@@ -1452,12 +1424,12 @@ class ApiClient {
       'distinct_mode': 'all',
     };
 
-    params.addAll(options.toJson());
-    params.addAll(filter.toJson());
+    params.addAll(options?.toJson() ?? {});
+    params.addAll(filter?.toJson() ?? {});
 
     if (order == PublicGroupChannelListOrder.channelMetaDataValueAlphabetical &&
-        filter.metadataOrderKey != null) {
-      params['metadata_order_key'] = filter.metadataOrderKey;
+        filter?.metadataOrderKey != null) {
+      params['metadata_order_key'] = filter?.metadataOrderKey;
     }
 
     params.removeWhere((key, value) => value == null);
@@ -1469,20 +1441,21 @@ class ApiClient {
       ..next = res['next'] as String;
   }
 
-  Future<ChannelListQueryResponse> getMyGroupChannels({
-    GroupChannelListOrder order,
-    GroupChannelListQueryType queryType,
-    String token,
+  Future<ChannelListQueryResponse<GroupChannel>> getMyGroupChannels({
+    required GroupChannelListOrder order,
+    required GroupChannelListQueryType queryType,
+    String? token,
     int limit = 30,
-    List<String> channelUrls,
-    List<ChannelQueryIncludeOption> options,
-    GroupChannelFilter filter,
-    String searchQuery,
-    List<GroupChannelListQuerySearchField> searchFields,
-    @required String userId,
+    List<String>? channelUrls,
+    List<ChannelQueryIncludeOption>? options,
+    GroupChannelFilter? filter,
+    String? searchQuery,
+    List<GroupChannelListQuerySearchField>? searchFields,
+    String? userId,
   }) async {
-    final url = endpoint.Users.userid_my_groupchannel.format([userId]);
-    final searchFieldStrings = stringFromSearchFields(searchFields);
+    final url =
+        endpoint.Users.userid_my_groupchannel.format([userId ?? currentUserId]);
+    final searchFieldStrings = stringFromSearchFields(searchFields ?? []);
     final params = {
       'user_id': userId,
       'token': token,
@@ -1495,17 +1468,19 @@ class ApiClient {
       'show_member': true,
     };
 
-    params.addAll(options.toJson());
-    params.addAll(filter.toJson());
+    params.addAll(options?.toJson() ?? {});
+    params.addAll(filter?.toJson() ?? {});
 
-    if (filter.membersIncludeIn != null && filter.membersIncludeIn.isNotEmpty) {
+    if (filter != null &&
+        filter.membersIncludeIn != null &&
+        filter.membersIncludeIn!.isNotEmpty) {
       params['members_include_in'] = filter.membersIncludeIn;
       params['query_type'] = queryType.asString();
     }
 
     if (order == GroupChannelListOrder.channelMetaDataValueAlphabetical &&
-        filter.metadataOrderKey != null) {
-      params['metadata_order_key'] = filter.metadataOrderKey;
+        filter?.metadataOrderKey != null) {
+      params['metadata_order_key'] = filter?.metadataOrderKey;
     }
 
     params.removeWhere((key, value) => value == null);
@@ -1518,20 +1493,21 @@ class ApiClient {
   }
 
   Future<UserListQueryResponse> getUsers({
-    List<String> userIds,
-    String metaDataKey,
-    List<String> metaDataValues,
-    String nicknameStartsWith,
-    String token,
+    List<String>? userIds,
+    String? metaDataKey,
+    List<String>? metaDataValues,
+    String? nicknameStartsWith,
+    String? token,
     int limit = 30,
   }) async {
     final url = endpoint.Users.users;
     final params = {
       'limit': limit,
       'token': token,
-      'user_ids': userIds,
+      if (userIds != null && userIds.isNotEmpty) 'user_ids': userIds,
       'metadatakey': metaDataKey,
-      'metadatavalues_in': metaDataValues,
+      if (metaDataValues != null && metaDataValues.isNotEmpty)
+        'metadatavalues_in': metaDataValues,
       'nickname_startswith': nicknameStartsWith,
     };
     params.removeWhere((key, value) => value == null);
@@ -1540,24 +1516,24 @@ class ApiClient {
   }
 
   Future<UserListQueryResponse> getBlockedUsers({
-    List<String> userIds,
-    String token,
+    List<String> userIds = const [],
+    String? token,
     int limit = 30,
   }) async {
     final url = endpoint.Users.userid_block.format([currentUserId]);
     final params = {
       'limit': limit,
       if (token != null) 'token': token,
-      if (userIds != null && userIds.isNotEmpty) 'user_ids': userIds,
+      if (userIds.isNotEmpty) 'user_ids': userIds,
     };
     final res = await client.get(url: url, queryParams: params);
     return UserListQueryResponse.fromJson(res);
   }
 
   Future<UserListQueryResponse> getBannedUsers({
-    @required ChannelType type,
-    @required String channelUrl,
-    String token,
+    required ChannelType type,
+    required String channelUrl,
+    String? token,
     int limit = 30,
   }) async {
     final url =
@@ -1574,9 +1550,9 @@ class ApiClient {
   }
 
   Future<UserListQueryResponse> getMutedUsers({
-    @required ChannelType type,
-    @required String channelUrl,
-    String token,
+    required ChannelType type,
+    required String channelUrl,
+    String? token,
     int limit = 30,
   }) async {
     final url =
@@ -1591,9 +1567,9 @@ class ApiClient {
   }
 
   Future<OperatorListQueryResponse> getOperators({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    String token,
+    required ChannelType channelType,
+    required String channelUrl,
+    String? token,
     int limit = 30,
   }) async {
     final url = endpoint.Channels.channelurl_operators
@@ -1607,14 +1583,14 @@ class ApiClient {
   }
 
   Future<UserListQueryResponse> getGroupChannelMembers({
-    @required channelUrl,
-    String token,
-    int limit,
-    OperatorFilter operatorFilter,
-    MutedMemberFilter mutedMemberFilter,
-    MemberStateFilter memberStateFilter,
-    String nicknameStartsWith,
-    MemberListOrder order,
+    required String channelUrl,
+    String? token,
+    int limit = 30,
+    OperatorFilter operatorFilter = OperatorFilter.all,
+    MutedMemberFilter mutedMemberFilter = MutedMemberFilter.all,
+    MemberStateFilter memberStateFilter = MemberStateFilter.all,
+    String? nicknameStartsWith,
+    MemberListOrder order = MemberListOrder.nicknameAlphabetical,
   }) async {
     final url = endpoint.GroupChannels.channelurl_members.format([channelUrl]);
     final params = {
@@ -1636,8 +1612,8 @@ class ApiClient {
   }
 
   Future<UserListQueryResponse> getOpenChannelParticipants({
-    @required channelUrl,
-    String token,
+    required channelUrl,
+    String? token,
     int limit = 30,
   }) async {
     final url = endpoint.OpenChannels.channelurl_members.format([channelUrl]);
@@ -1669,21 +1645,21 @@ class ApiClient {
   }
 
   Future<MessageSearchQueryResponse> searchMessages({
-    String keyword,
-    String channelUrl,
-    String customType,
-    String beforeIndex,
-    String afterIndex,
-    String token,
-    List<String> targetUserIds,
-    int startAt,
-    int endAt,
-    String sortField,
-    int limit,
-    bool reverse,
-    bool exactMatch,
-    bool advanced,
-    List<String> targetFields,
+    required String keyword,
+    String? channelUrl,
+    String? customType,
+    String? beforeIndex,
+    String? afterIndex,
+    String? token,
+    List<String>? targetUserIds,
+    int? startAt,
+    int? endAt,
+    String? sortField,
+    int? limit,
+    bool? reverse,
+    bool? exactMatch,
+    bool? advanced,
+    List<String>? targetFields,
   }) async {
     final url = endpoint.Misc.search_messages;
     final params = {
@@ -1712,11 +1688,11 @@ class ApiClient {
   }
 
   Future<ReactionEvent> addReaction({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required String key,
-    String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required String key,
+    String? userId,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);
@@ -1726,11 +1702,11 @@ class ApiClient {
   }
 
   Future<ReactionEvent> deleteReaction({
-    @required ChannelType channelType,
-    @required String channelUrl,
-    @required int messageId,
-    @required String key,
-    String userId,
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+    required String key,
+    String? userId,
   }) async {
     final url = endpoint.Channels.channelurl_messages_messageid_reactions
         .format([channelType.urlString, channelUrl, messageId]);

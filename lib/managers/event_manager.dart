@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
@@ -23,7 +22,7 @@ class EventManager {
   Map<String, ChannelEventHandler> _channelHandlers = {};
   Map<String, ConnectionEventHandler> _connectionHandlers = {};
   Map<String, UserEventHandler> _userHandlers = {};
-  SessionEventHandler _sessionHandler;
+  SessionEventHandler? _sessionHandler;
 
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();
 
@@ -39,75 +38,55 @@ class EventManager {
     }
   }
 
-  void removeHandler(String identifier, EventType type) {
-    switch (type) {
-      case EventType.channel:
-        _channelHandlers.remove(identifier);
-        break;
-      case EventType.connection:
-        _connectionHandlers.remove(identifier);
-        break;
-      case EventType.session:
-        _sessionHandler = null;
-        // sessionManager.removeHandler(identifier);
-        break;
-      case EventType.userEvent:
-        _userHandlers.remove(identifier);
-        break;
-      default:
-        break;
+  void removeHandler<T extends EventHandler>(String identifier) {
+    if (T == ChannelEventHandler) {
+      _channelHandlers.remove(identifier);
+    } else if (T == ConnectionEventHandler) {
+      _connectionHandlers.remove(identifier);
+    } else if (T == SessionEventHandler) {
+      _sessionHandler = null;
+    } else if (T == UserEventHandler) {
+      _userHandlers.remove(identifier);
     }
   }
 
-  void removeAll(EventType type) {
-    switch (type) {
-      case EventType.channel:
-        _channelHandlers = {};
-        break;
-      case EventType.connection:
-        _connectionHandlers = {};
-        break;
-      case EventType.session:
-        _sessionHandler = null;
-        break;
-      case EventType.userEvent:
-        _userHandlers = {};
-        break;
-      default:
-        break;
+  void removeAll<T extends EventHandler>() {
+    if (T == ChannelEventHandler) {
+      _channelHandlers = {};
+    } else if (T == ConnectionEventHandler) {
+      _connectionHandlers = {};
+    } else if (T == SessionEventHandler) {
+      _sessionHandler = null;
+    } else if (T == UserEventHandler) {
+      _userHandlers = {};
     }
   }
 
-  EventHandler getHandler({
-    String identifier,
-    @required EventType type,
-  }) {
-    switch (type) {
-      case EventType.channel:
-        return _channelHandlers[identifier];
-      case EventType.connection:
-        return _connectionHandlers[identifier];
-      case EventType.session:
-        return _sessionHandler;
-      case EventType.userEvent:
-        return _userHandlers[identifier];
-      default:
-        return null;
+  T? getHandler<T extends EventHandler>({String? identifier}) {
+    if (T == ChannelEventHandler) {
+      return _channelHandlers[identifier] as T?;
+    } else if (T == ConnectionEventHandler) {
+      return _connectionHandlers[identifier] as T?;
+    } else if (T == SessionEventHandler) {
+      return _sessionHandler as T?;
+    } else if (T == UserEventHandler) {
+      return _userHandlers[identifier] as T?;
+    } else {
+      return null;
     }
   }
 
-  List<EventHandler> getHandlers(EventType type) {
-    switch (type) {
-      case EventType.channel:
-        return _channelHandlers.values.toList();
-      case EventType.connection:
-        return _connectionHandlers.values.toList();
-      case EventType.session:
-        return [_sessionHandler];
-      case EventType.userEvent:
-        return _userHandlers.values.toList();
-      default:
-        return null;
+  List<T> getHandlers<T extends EventHandler>() {
+    if (T == ChannelEventHandler) {
+      return _channelHandlers.values.toList() as List<T>;
+    } else if (T == ConnectionEventHandler) {
+      return _connectionHandlers.values.toList() as List<T>;
+    } else if (T == SessionEventHandler) {
+      return _sessionHandler != null ? [_sessionHandler] as List<T> : [];
+    } else if (T == UserEventHandler) {
+      return _userHandlers.values.toList() as List<T>;
+    } else {
+      return [];
     }
   }
 
@@ -357,7 +336,7 @@ class EventManager {
 
   void notifySessionClosed() {
     logger.i('Notifying session closed');
-    _sessionHandler.onSessionClosed();
+    _sessionHandler?.onSessionClosed();
   }
 
   // UserEvent

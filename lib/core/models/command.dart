@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
@@ -13,51 +12,55 @@ import 'package:sendbird_sdk/core/models/meta_array.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 
 import 'package:uuid/uuid.dart';
 
 part 'command.g.dart';
 
-@JsonSerializable(nullable: true)
+@JsonSerializable()
 class Command {
   String cmd;
 
   @JsonKey(name: 'ts')
-  final int timestamp;
+  final int? timestamp;
 
   @JsonKey(name: 'code')
-  final int errorCode;
+  final int? errorCode;
 
   @JsonKey(name: 'message')
-  final String errorMessage;
+  final String? errorMessage;
 
-  final bool requireAuth;
+  final bool? requireAuth;
 
   @JsonKey(name: 'req_id')
-  String requestId;
+  String? requestId;
 
   @JsonKey(ignore: true)
   Map<String, dynamic> payload = {};
 
   Command({
-    this.cmd,
+    required this.cmd,
     this.requestId,
     this.timestamp,
     this.requireAuth,
     this.errorCode,
     this.errorMessage,
-    this.payload,
+    this.payload = const {},
   }) {
-    if (payload != null) {
-      requestId = requestId ?? Uuid().v1();
+    if (payload.isNotEmpty) {
+      requestId ??= Uuid().v1();
       payload['req_id'] = requestId;
       payload.removeWhere((key, value) => value == null);
     }
   }
 
-  factory Command.fromJson(Map<String, dynamic> json) =>
-      _$CommandFromJson(json);
+  factory Command.fromJson(Map<String, dynamic> json, String cmd) {
+    json['cmd'] = cmd;
+    return _$CommandFromJson(json);
+  }
+
   Map<String, dynamic> toJson() => _$CommandToJson(this);
 
   String encode() {
@@ -71,7 +74,7 @@ class Command {
       cmd == CommandType.exit ||
       cmd == CommandType.read;
 
-  bool get hasError => payload != null && payload['error'] != null;
+  bool get hasError => payload['error'] != null;
 
   bool get isSessionExpired => cmd == CommandType.sessionExpired;
 
@@ -134,7 +137,7 @@ class Command {
   ) {
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
-      'message': params.message ?? '',
+      'message': params.message,
       'data': params.data,
       'custom_type': params.customType
     };
@@ -154,9 +157,9 @@ class Command {
     }
 
     payload['created_at'] = DateTime.now().millisecondsSinceEpoch;
-    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson())?.toList();
+    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson()).toList();
 
-    if (params.parentMessageId > 0) {
+    if (params.parentMessageId != null) {
       payload['parent_message_id'] = params.parentMessageId;
       payload['root_message_id'] = params.parentMessageId;
     }
@@ -187,11 +190,11 @@ class Command {
   }
 
   static Command buildFileMessage({
-    @required String channelUrl,
-    @required FileMessageParams params,
-    String requestId,
-    List<dynamic> thumbnails,
-    bool requireAuth,
+    required String channelUrl,
+    required FileMessageParams params,
+    required String? requestId,
+    List<dynamic>? thumbnails,
+    bool? requireAuth,
   }) {
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
@@ -215,9 +218,9 @@ class Command {
 
     payload['thumbnails'] = thumbnails;
     payload['created_at'] = DateTime.now().millisecondsSinceEpoch;
-    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson())?.toList();
+    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson()).toList();
 
-    if (params.parentMessageId > 0) {
+    if (params.parentMessageId != null) {
       payload['parent_message_id'] = params.parentMessageId;
       payload['root_message_id'] = params.parentMessageId;
     }
@@ -249,10 +252,10 @@ class Command {
       List<MessageMetaArray> metaArrays,
       MetaArrayUpdateMode updateMode,
       bool upsert) {
-    if (message == null || message.messageId <= 0) {
+    if (message.messageId <= 0) {
       throw InvalidParameterError();
     }
-    if (metaArrays == null || metaArrays.isEmpty) {
+    if (metaArrays.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -313,12 +316,12 @@ class Command {
     );
   }
 
-  static Command buildLOGIUpdateSessionKey(String token) {
+  static Command buildLOGIUpdateSessionKey(String? token) {
     final hasCallback = SendbirdSdk()
-            .getInternal()
-            .eventManager
-            .getHandlers(EventType.session) !=
-        null;
+        .getInternal()
+        .eventManager
+        .getHandlers<SessionEventHandler>()
+        .isNotEmpty;
     return Command(
       cmd: CommandType.login,
       payload: {

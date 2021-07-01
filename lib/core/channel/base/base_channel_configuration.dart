@@ -8,7 +8,7 @@ extension BaseChannelConfiguration on BaseChannel {
   /// [ChannelEventHandler.onChannelOperatorsUpdated] will be invoked.
   /// Operator only
   Future<void> addOperators(List<String> userIds) async {
-    if (userIds == null || userIds.isEmpty) {
+    if (userIds.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -25,7 +25,7 @@ extension BaseChannelConfiguration on BaseChannel {
   /// [ChannelEventHandler.onChannelOperatorsUpdated] will be invoked.
   /// Operator only
   Future<void> removeOperators(List<String> userIds) async {
-    if (userIds == null || userIds.isEmpty) {
+    if (userIds.isEmpty) {
       throw InvalidParameterError();
     }
 

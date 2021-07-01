@@ -9,8 +9,9 @@ part of 'delivery_status.dart';
 DeliveryStatus _$DeliveryStatusFromJson(Map<String, dynamic> json) {
   return DeliveryStatus(
     channelUrl: json['channel_url'] as String,
-    updatedDeliveryReceipt: (json['updated'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(k, e as int),
-    ),
+    updatedDeliveryReceipt: (json['updated'] as Map<String, dynamic>?)?.map(
+          (k, e) => MapEntry(k, e as int),
+        ) ??
+        {},
   );
 }

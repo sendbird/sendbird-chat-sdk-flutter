@@ -15,12 +15,11 @@ class UserEvent implements BaseEvent {
 
   int ts;
 
-  List<User> get friendDiscoveries =>
-      data != null ? data['friend_discoveries'] : null;
-  User get blocker => data != null ? User.fromJson(data['blocker']) : null;
-  User get blockee => data != null ? User.fromJson(data['blockee']) : null;
+  List<User> get friendDiscoveries => data['friend_discoveries'];
+  User get blocker => User.fromJson(data['blocker']);
+  User get blockee => User.fromJson(data['blockee']);
 
-  UserEvent({this.category, this.data, this.ts});
+  UserEvent({required this.category, required this.data, required this.ts});
 
   static UserEvent fromJson(Map<String, dynamic> json) =>
       _$UserEventFromJson(json);

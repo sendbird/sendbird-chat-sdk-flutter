@@ -8,23 +8,24 @@ class CachedDataMap<T> implements Cacheable, Evictable {
   String _channelUrl;
 
   @override
-  EvictionPolicy policy;
+  late EvictionPolicy policy;
 
   Map<String, CachedData<T>> _cachedDataMap = {};
 
   CachedDataMap({
-    ChannelType channelType,
-    String channelUrl,
+    required ChannelType channelType,
+    required String channelUrl,
     Map<String, T> data = const {},
-    int timestamp,
+    int? timestamp,
   })  : _channelType = channelType,
         _channelUrl = channelUrl {
     policy = PeriodEviction(periodInSeconds: 180, evict: evict);
 
     data.forEach((key, value) {
-      final data = CachedData<T>()
-        ..value = value
-        ..ts = timestamp;
+      final data = CachedData<T>(
+        value: value,
+        ts: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+      );
       _cachedDataMap[key] = data;
     });
   }
@@ -33,14 +34,14 @@ class CachedDataMap<T> implements Cacheable, Evictable {
   void evict() {
     final keys = _cachedDataMap.keys.toList();
     keys.forEach((key) {
-      final data = _cachedDataMap[key];
+      final data = _cachedDataMap[key]!;
       final diff = DateTime.now().millisecondsSinceEpoch - data.ts;
       if (data.isRemoved && diff > 180) _cachedDataMap.remove(key);
     });
   }
 
   @override
-  bool dirty;
+  bool dirty = false;
 
   @override
   void copyWith(others) {
@@ -48,31 +49,33 @@ class CachedDataMap<T> implements Cacheable, Evictable {
   }
 
   @override
-  String get key => null;
+  String get key => '';
 
   @override
   String get primaryKey => _channelUrl;
 
-  T getWithKey(String key) {
-    if (key == null) return null;
+  T? getWithKey(String key) {
     final data = _cachedDataMap[key];
     if (data == null || data.isRemoved) return null;
     return data.value;
   }
 
-  Map<String, T> getWithKeys(List<String> keys) {
-    if (keys == null || keys.isEmpty) return {};
+  Map<String, T?> getWithKeys(List<String> keys) {
+    if (keys.isEmpty) return {};
     return {for (var key in keys) key: getWithKey(key)};
   }
 
   Map<String, T> getAll() {
-    final cached = {for (var key in _cachedDataMap.keys) key: getWithKey(key)};
-    cached.removeWhere((key, value) => value == null);
+    final cached = <String, T>{};
+    for (var key in _cachedDataMap.keys) {
+      final validValue = getWithKey(key);
+      if (validValue != null) cached[key] = validValue;
+    }
     return cached;
   }
 
   void addWithKey(String key, T value, int ts) {
-    if (key == null || value == null) return;
+    if (value == null) return;
     final existData = _cachedDataMap[key];
     if (existData == null) {
       final newData = CachedData<T>(value: value, ts: ts);
@@ -85,25 +88,26 @@ class CachedDataMap<T> implements Cacheable, Evictable {
     if (_cachedDataMap.length == 1) (policy as PeriodEviction).start();
   }
 
-  void addMap(Map<String, T> dataMap, int ts) {
-    if (dataMap == null || dataMap.isEmpty) return;
-    dataMap.forEach((k, v) => addWithKey(k, v, ts));
+  void addMap(Map<String, T> dataMap, int? ts) {
+    if (dataMap.isEmpty) return;
+    final time = ts ?? DateTime.now().millisecondsSinceEpoch;
+    dataMap.forEach((k, v) => addWithKey(k, v, time));
   }
 
-  void removeWithKey(String key, int ts) {
-    if (key == null) return;
+  void removeWithKey(String key, int? ts) {
     final existData = _cachedDataMap[key];
-    if (existData != null && existData.ts < ts) {
+    final time = ts ?? DateTime.now().millisecondsSinceEpoch;
+    if (existData != null && existData.ts < time) {
       existData
         ..isRemoved = true
-        ..ts = ts;
+        ..ts = time;
     }
 
     if (_cachedDataMap.isEmpty) (policy as PeriodEviction).stop();
   }
 
-  void removeWithKeys(List<String> keys, int ts) {
-    if (keys == null || keys.isEmpty) return;
+  void removeWithKeys(List<String> keys, int? ts) {
+    if (keys.isEmpty) return;
     keys.forEach((k) => removeWithKey(k, ts));
   }
 

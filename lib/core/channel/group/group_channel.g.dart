@@ -11,51 +11,60 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) {
     lastMessage: json['last_message'] == null
         ? null
         : BaseMessage.fromJson(json['last_message'] as Map<String, dynamic>),
-    isSuper: json['is_super'] as bool,
-    isStrict: json['is_strict'] as bool ?? false,
-    isBroadcast: json['is_broadcast'] as bool,
-    isPublic: json['is_public'] as bool,
-    isDistinct: json['is_distinct'] as bool,
-    isDiscoverable: json['is_discoverable'] as bool,
-    accessCodeRequired: json['access_code_required'] as bool,
-    unreadMessageCount: json['unread_message_count'] as int,
-    unreadMentionCount: json['unread_mention_count'] as int,
-    members: (json['members'] as List)
-        ?.map((e) =>
-            e == null ? null : Member.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    memberCount: json['member_count'] as int,
-    joinedMemberCount: json['joined_member_count'] as int,
+    isSuper: json['is_super'] as bool? ?? false,
+    isStrict: json['is_strict'] as bool? ?? false,
+    isBroadcast: json['is_broadcast'] as bool? ?? false,
+    isPublic: json['is_public'] as bool? ?? false,
+    isDistinct: json['is_distinct'] as bool? ?? false,
+    isDiscoverable: json['is_discoverable'] as bool? ?? false,
+    accessCodeRequired: json['access_code_required'] as bool? ?? false,
+    unreadMessageCount: json['unread_message_count'] as int? ?? 0,
+    unreadMentionCount: json['unread_mention_count'] as int? ?? 0,
+    members: (json['members'] as List<dynamic>?)
+            ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [],
+    memberCount: json['member_count'] as int? ?? 0,
+    joinedMemberCount: json['joined_member_count'] as int? ?? 0,
+    joinedAt: json['joined_ts'] as int? ?? 0,
     myPushTriggerOption: _$enumDecodeNullable(
-        _$GroupChannelPushTriggerOptionEnumMap, json['push_trigger_option']),
+            _$GroupChannelPushTriggerOptionEnumMap,
+            json['push_trigger_option']) ??
+        GroupChannelPushTriggerOption.global,
     myMemberState:
-        _$enumDecodeNullable(_$MemberStateEnumMap, json['member_state']),
+        _$enumDecodeNullable(_$MemberStateEnumMap, json['member_state']) ??
+            MemberState.none,
     myRole: _$enumDecodeNullable(_$RoleEnumMap, json['my_role'],
-        unknownValue: Role.none),
-    myMutedState: booltoMuteState(json['is_muted'] as bool),
+            unknownValue: Role.none) ??
+        Role.none,
+    myMutedState: booltoMuteState(json['is_muted'] as bool?),
     myCountPreference: _$enumDecodeNullable(
-        _$CountPreferenceEnumMap, json['count_preference']),
-    invitedAt: json['invited_at'] as int,
-    isHidden: json['is_hidden'] as bool,
+            _$CountPreferenceEnumMap, json['count_preference']) ??
+        CountPreference.all,
+    invitedAt: json['invited_at'] as int? ?? 0,
+    inviter: json['inviter'] == null
+        ? null
+        : Member.fromJson(json['inviter'] as Map<String, dynamic>),
+    isHidden: json['is_hidden'] as bool? ?? false,
     hiddenState: _$enumDecodeNullable(
-        _$GroupChannelHiddenStateEnumMap, json['hidden_state']),
-    myLastRead: json['user_last_read'] as int,
-    messageOffsetTimestamp: json['ts_message_offset'] as int,
-    messageSurvivalSeconds: json['message_survival_seconds'] as int,
+            _$GroupChannelHiddenStateEnumMap, json['hidden_state'],
+            unknownValue: GroupChannelHiddenState.unhidden) ??
+        GroupChannelHiddenState.unhidden,
+    myLastRead: json['user_last_read'] as int? ?? 0,
+    messageOffsetTimestamp: json['ts_message_offset'] as int?,
+    messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
     channelUrl: json['channel_url'] as String,
-    name: json['name'] as String,
-    coverUrl: json['cover_url'] as String,
+    name: json['name'] as String?,
+    coverUrl: json['cover_url'] as String?,
     creator: json['creator'] == null
         ? null
         : User.fromJson(json['creator'] as Map<String, dynamic>),
-    createdAt: json['created_at'] as int,
-    data: json['data'] as String,
-    customType: json['custom_type'] as String,
-    isFrozen: json['freeze'] as bool,
-    isEphemeral: json['is_ephemeral'] as bool,
-  )..inviter = json['inviter'] == null
-      ? null
-      : Member.fromJson(json['inviter'] as Map<String, dynamic>);
+    createdAt: json['created_at'] as int?,
+    data: json['data'] as String?,
+    customType: json['custom_type'] as String?,
+    isFrozen: json['freeze'] as bool? ?? false,
+    isEphemeral: json['is_ephemeral'] as bool? ?? false,
+  );
 }
 
 Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
@@ -79,7 +88,7 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'access_code_required': instance.accessCodeRequired,
       'unread_message_count': instance.unreadMessageCount,
       'unread_mention_count': instance.unreadMentionCount,
-      'members': instance.members?.map((e) => e?.toJson())?.toList(),
+      'members': instance.members.map((e) => e.toJson()).toList(),
       'member_count': instance.memberCount,
       'joined_member_count': instance.joinedMemberCount,
       'push_trigger_option':
@@ -90,6 +99,7 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'count_preference': _$CountPreferenceEnumMap[instance.myCountPreference],
       'inviter': instance.inviter?.toJson(),
       'invited_at': instance.invitedAt,
+      'joined_ts': instance.joinedAt,
       'is_hidden': instance.isHidden,
       'hidden_state': _$GroupChannelHiddenStateEnumMap[instance.hiddenState],
       'user_last_read': instance.myLastRead,
@@ -97,36 +107,41 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'message_survival_seconds': instance.messageSurvivalSeconds,
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
   dynamic source, {
-  T unknownValue,
+  K? unknownValue,
 }) {
   if (source == null) {
     return null;
   }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$GroupChannelPushTriggerOptionEnumMap = {

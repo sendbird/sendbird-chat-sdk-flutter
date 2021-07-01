@@ -14,10 +14,10 @@ class MessageSearchQuery extends QueryBase {
   String keyword;
 
   /// Channel url
-  String channelUrl;
+  String? channelUrl;
 
   /// Channel custom type to filter
-  String channelCustomType;
+  String? channelCustomType;
 
   /// Determines whether to sort the retrieved messages in reverse
   /// order.
@@ -26,33 +26,33 @@ class MessageSearchQuery extends QueryBase {
   bool reverse = false;
 
   /// `true` to be exact match for keyword
-  bool exactMatch;
+  bool exactMatch = false;
 
   /// Timestamp for search from
-  int messageTimestampFrom;
+  int? messageTimestampFrom;
 
   /// Timestamp for search to
-  int messageTimestampTo;
+  int? messageTimestampTo;
 
   /// Index for search before
-  String beforeIndex;
+  String? beforeIndex;
 
   /// Index for search after
-  String afterIndex;
+  String? afterIndex;
 
   /// List of user ids to filter out resultda
-  List<String> targetUserIds;
+  List<String> targetUserIds = [];
 
   /// True if keyword contains advanced query style text
-  bool advancedQuery;
+  bool advancedQuery = false;
 
   /// List of strings to look up message's data field to get matched
-  List<String> targetFields;
+  List<String> targetFields = [];
 
   /// Message search result sort order
-  MessageSearchQueryOrder order = MessageSearchQueryOrder.timestamp;
+  MessageSearchQueryOrder order = MessageSearchQueryOrder.score;
 
-  MessageSearchQuery();
+  MessageSearchQuery({required this.keyword});
 
   @override
   Future<List<BaseMessage>> loadNext() async {

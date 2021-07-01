@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:collection/collection.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
@@ -45,7 +46,7 @@ class CommandManager with SdkAccessor {
     clearCompleters();
   }
 
-  void clearCompleters({Error error}) {
+  void clearCompleters({Error? error}) {
     _completers.forEach((key, value) {
       if (error != null) {
         value.completeError(error);
@@ -56,16 +57,17 @@ class CommandManager with SdkAccessor {
     _completers.removeWhere((key, value) => true);
   }
 
-  Future<Command> sendCommand(Command cmd) async {
+  Future<Command?> sendCommand(Command cmd) async {
     if (appState.currentUser == null) {
       //NOTE: some test cases execute async socket data
       logger.e('sendCommand: connection is requred');
       throw ConnectionRequiredError();
     }
-    if (cmd == null) {
-      logger.e('sendCommand: command parameter is null');
-      throw InvalidParameterError();
-    }
+
+    // if (!webSocket.isConnected()) {
+    //   logger.e('sendCommand: Websocket connection is closed');
+    //   throw WebSocketConnectionClosedError();
+    // }
 
     try {
       await ConnectionManager.readyToExecuteWSRequest();
@@ -75,7 +77,7 @@ class CommandManager with SdkAccessor {
     }
 
     try {
-      webSocket.send(cmd.encode());
+      webSocket?.send(cmd.encode());
     } catch (e) {
       _ackTimers.remove(cmd.requestId)?.cancel();
       rethrow;
@@ -86,15 +88,16 @@ class CommandManager with SdkAccessor {
     //   throw WebSocketError();
     // }
 
-    if (cmd.isAckRequired) {
+    final reqId = cmd.requestId;
+    if (cmd.isAckRequired && reqId != null) {
       final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
         logger.e('sendCommand: did not receive ack in time');
         throw AckTimeoutError();
       });
-      _ackTimers[cmd.requestId] = timer;
+      _ackTimers[reqId] = timer;
 
       final completer = Completer<Command>();
-      _completers[cmd.requestId] = completer;
+      _completers[reqId] = completer;
       return completer.future;
     } else {
       return null;
@@ -112,13 +115,13 @@ class CommandManager with SdkAccessor {
       _ackTimers.remove(cmd.requestId)?.cancel();
       final completer = _completers.remove(cmd.requestId);
       if (cmd.isError || cmd.hasError) {
-        completer.completeError(SBError(
+        completer?.completeError(SBError(
           code: cmd.errorCode,
           message: cmd.errorMessage,
         ));
         return;
       } else {
-        completer.complete(cmd);
+        completer?.complete(cmd);
       }
     }
 
@@ -127,7 +130,7 @@ class CommandManager with SdkAccessor {
     final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
     logger.i('Processing Socket event\n$cmdString\n$payloadString');
 
-    Function(Command) fnc;
+    Future Function(Command)? fnc;
     if (cmd.isError || cmd.hasError) {
       fnc = _processError;
     } else if (cmd.isLogin && cmd.requestId != null) {
@@ -164,7 +167,7 @@ class CommandManager with SdkAccessor {
     }
   }
 
-  void _updateSubscribedUnreadCountInfo(UnreadCountInfo info) {
+  void _updateSubscribedUnreadCountInfo(UnreadCountInfo? info) {
     if (info == null) return;
     if (sdk.state.unreadCountInfo.ts > info.ts) return;
 
@@ -185,8 +188,8 @@ class CommandManager with SdkAccessor {
   Future<void> _processLogin(Command cmd) async {
     final event = LoginEvent.fromJson(cmd.payload);
 
-    sdk.webSocket.setInterval(event.pingInterval);
-    sdk.webSocket.setWatchdogInterval(event.watchdogInterval);
+    sdk.webSocket?.setInterval(event.pingInterval);
+    sdk.webSocket?.setWatchdogInterval(event.watchdogInterval);
 
     final user = event.user;
     final wasReconnecting = sdk.state.reconnecting;
@@ -222,7 +225,7 @@ class CommandManager with SdkAccessor {
 
       //enter previously cached open channel
       final channels = sdk.cache.findAll<OpenChannel>();
-      channels.forEach((channel) async {
+      channels?.forEach((channel) async {
         channel.enter().then((value) {}).catchError((error) {
           sdk.cache.delete(channelKey: channel.channelUrl);
         });
@@ -242,6 +245,8 @@ class CommandManager with SdkAccessor {
 
     try {
       final message = await parseMessage(cmd);
+      if (message == null) throw UnrecognizedMessageTypeError();
+
       if (event.requestId != null) {
         //if sent by api then added id to cache -> done
         if (message.channelType == ChannelType.group) {
@@ -257,9 +262,7 @@ class CommandManager with SdkAccessor {
         message.channelUrl,
       );
 
-      if (event.requestId == null) {
-        eventManager.notifyMessageReceived(channel, message);
-      }
+      var shouldCallChannelChanged = false;
 
       if (channel is GroupChannel) {
         if (channel.hiddenState == GroupChannelHiddenState.allowAutoUnhide) {
@@ -269,7 +272,6 @@ class CommandManager with SdkAccessor {
 
         channel.updateMember(event.sender);
 
-        var shouldCallChannelChanged = false;
         if (channel.shouldUpdateLastMessage(message, message.sender)) {
           shouldCallChannelChanged = true;
           channel.lastMessage = message;
@@ -278,15 +280,19 @@ class CommandManager with SdkAccessor {
         if (channel.fromCache && channel.updateUnreadCount(message)) {
           shouldCallChannelChanged = true;
         }
+      }
 
-        if (shouldCallChannelChanged) {
-          eventManager.notifyChannelChanged(channel);
-        }
+      if (event.requestId == null) {
+        eventManager.notifyMessageReceived(channel, message);
       }
 
       final currentUser = appState.currentUser;
       if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
         eventManager.notifyMentionReceived(channel, message);
+      }
+
+      if (shouldCallChannelChanged) {
+        eventManager.notifyChannelChanged(channel);
       }
     } catch (e) {
       logger.w('Aborted ${cmd.cmd} ' + e.toString());
@@ -298,11 +304,14 @@ class CommandManager with SdkAccessor {
 
     try {
       final message = await parseMessage(cmd);
-      final currentUser = appState.currentUser;
+      if (message == null) throw UnrecognizedMessageTypeError();
+
+      final currentUser = appState.currentUser!;
       final channel = await BaseChannel.getBaseChannel(
         message.channelType,
         message.channelUrl,
       );
+
       if (channel is OpenChannel) {
         eventManager.notifyMessageUpdate(channel, message);
       } else if (channel is GroupChannel) {
@@ -317,7 +326,7 @@ class CommandManager with SdkAccessor {
         final timestamp = channel.myReadReceipt();
 
         if (message.hasUpdatedLaterThan(timestamp) &&
-            !event.sender.isCurrentUser &&
+            event.sender?.isCurrentUser == false &&
             !message.isSilent) {
           if (event.hasChangedMentionType() == MentionType.channel &&
               event.previousMentionedContains(currentUser)) {
@@ -335,11 +344,12 @@ class CommandManager with SdkAccessor {
 
         eventManager.notifyMessageUpdate(channel, message);
 
-        if (shouldCallChannelChanged) {
-          eventManager.notifyChannelChanged(channel);
-        }
         if (shouldCallMentionReceived) {
           eventManager.notifyMentionReceived(channel, message);
+        }
+
+        if (shouldCallChannelChanged) {
+          eventManager.notifyChannelChanged(channel);
         }
       }
     } catch (e) {
@@ -420,7 +430,7 @@ class CommandManager with SdkAccessor {
       final status = DeliveryStatus.fromJson(cmd.payload);
 
       final channel = await GroupChannel.getChannel(status.channelUrl);
-      final currUserId = appState.currentUser.userId;
+      final currUserId = appState.userId;
       var shouldCallDelivery = true;
       if (status.updatedDeliveryReceipt.length == 1 &&
           status.updatedDeliveryReceipt[currUserId] != null) {
@@ -468,13 +478,14 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processError(Command cmd) async {
-    logger.e('Error ${cmd.cmd} ' + cmd.errorMessage);
+    logger.e('Error ${cmd.cmd} ' + (cmd.errorMessage ?? ''));
     sdk.state.reconnecting = false;
     throw WebSocketError(code: cmd.errorCode, message: cmd.errorMessage);
   }
 
   // System
   Future<void> _processSystemEvent(Command cmd) async {
+    logger.i('ChannelEvent ${cmd.payload}');
     final event = ChannelEvent.fromJson(cmd.payload);
 
     switch (event.category) {
@@ -584,7 +595,7 @@ class CommandManager with SdkAccessor {
             //has to be checked by ts
             channel.updateMemberCounts(event);
           } else {
-            channel.removeMember(event.user.userId);
+            channel.removeMember(event.user?.userId);
           }
 
           if (user.isCurrentUser) {
@@ -618,7 +629,7 @@ class CommandManager with SdkAccessor {
         }
 
         final member =
-            channel.members.firstWhere((e) => e.userId == user.userId);
+            channel.members.firstWhereOrNull((e) => e.userId == user.userId);
         member?.isMuted = muted;
       }
 
@@ -707,7 +718,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyInvitationReceived(
         channel,
         event.invitees,
-        event.inviter,
+        event.inviter!,
       );
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
@@ -720,10 +731,10 @@ class CommandManager with SdkAccessor {
       if (channel.isSuper) {
         channel.updateMemberCounts(event);
       } else {
-        channel.removeMember(event.invitee.userId);
+        channel.removeMember(event.invitee?.userId);
       }
 
-      if (event.invitee != null && event.invitee.isCurrentUser) {
+      if (event.invitee?.isCurrentUser == true) {
         channel.myMemberState = MemberState.none;
         channel.invitedAt = 0;
 
@@ -734,8 +745,8 @@ class CommandManager with SdkAccessor {
 
       eventManager.notifyInvitationDeclied(
         channel,
-        event.invitee,
-        event.inviter,
+        event.invitee!,
+        event.inviter!,
       );
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
@@ -745,13 +756,16 @@ class CommandManager with SdkAccessor {
   Future<void> _processChannelEnter(ChannelEvent event, bool entered) async {
     try {
       final channel = await OpenChannel.getChannel(event.channelUrl);
+      final user = event.user;
+      if (user == null) throw MalformedError();
+
       channel.participantCount = event.participantCount;
 
       if (entered) {
-        eventManager.notifyUserEntered(channel, event.user);
+        eventManager.notifyUserEntered(channel, user);
         eventManager.notifyChannelParticiapntCountChanged([channel]);
       } else {
-        eventManager.notifyUserExited(channel, event.user);
+        eventManager.notifyUserExited(channel, user);
         eventManager.notifyChannelParticiapntCountChanged([channel]);
       }
     } catch (e) {
@@ -779,13 +793,13 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processChannelHidden(
     ChannelEvent event,
-    int actionOffset,
+    int? messageOffset,
     bool hidden,
   ) async {
     try {
       final channel = await GroupChannel.getChannel(event.channelUrl);
       if (hidden) {
-        channel.messageOffsetTimestamp = actionOffset;
+        channel.messageOffsetTimestamp = messageOffset;
 
         if (event.hidePreviousMessage) {
           channel.clearUnreadCount();
@@ -921,7 +935,7 @@ class CommandManager with SdkAccessor {
   void _processBlock(UserEvent event) {
     final sdk = SendbirdSdk().getInternal();
     final channels = sdk.cache.findAll<GroupChannel>();
-    channels.forEach((e) => e.setBlockedByMe(
+    channels?.forEach((e) => e.setBlockedByMe(
           targetId: event.blockee.userId,
           blocked: true,
         ));
@@ -930,7 +944,7 @@ class CommandManager with SdkAccessor {
   void _processUnblock(UserEvent event) {
     final sdk = SendbirdSdk().getInternal();
     final channels = sdk.cache.findAll<GroupChannel>();
-    channels.forEach((e) => e.setBlockedByMe(
+    channels?.forEach((e) => e.setBlockedByMe(
           targetId: event.blockee.userId,
           blocked: false,
         ));

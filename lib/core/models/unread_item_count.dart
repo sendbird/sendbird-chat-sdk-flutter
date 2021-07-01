@@ -6,31 +6,31 @@ part 'unread_item_count.g.dart';
 @JsonSerializable(createToJson: false)
 class UnreadItemCount {
   /// Count of invitation of all group channels
-  final int groupChannelInvitationCount;
+  final int? groupChannelInvitationCount;
 
   /// Count of unread mention in all of group channels
-  final int groupChannelUnreadMentionCount;
+  final int? groupChannelUnreadMentionCount;
 
   /// Count of unread message in all of group channels
-  final int groupChannelUnreadMessageCount;
+  final int? groupChannelUnreadMessageCount;
 
   /// Count of invitation of all non super group channels
-  final int nonSuperGroupChannelInvitationCount;
+  final int? nonSuperGroupChannelInvitationCount;
 
   /// Count of unread mention in all of non super group channels
-  final int nonSuperGroupChannelUnreadMentionCount;
+  final int? nonSuperGroupChannelUnreadMentionCount;
 
   /// Count of unread message in all of non super group channels
-  final int nonSuperGroupChannelUnreadMessageCount;
+  final int? nonSuperGroupChannelUnreadMessageCount;
 
   /// Count of invitation of all super group channels
-  final int superGroupChannelInvitationCount;
+  final int? superGroupChannelInvitationCount;
 
   /// count of unread mention in all of super group channels
-  final int superGroupChannelUnreadMentionCount;
+  final int? superGroupChannelUnreadMentionCount;
 
   /// Count of unread message in all of non super group channels
-  final int superGroupChannelUnreadMessageCount;
+  final int? superGroupChannelUnreadMessageCount;
 
   UnreadItemCount({
     this.groupChannelInvitationCount,

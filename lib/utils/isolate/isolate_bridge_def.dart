@@ -15,15 +15,15 @@ enum IsoBridgeStatus {
 typedef IsolateBridgeEntryFunc = void Function(IsoactionInternalInit action);
 
 class IsoactionInternalInit {
-  SendPort port;
+  late SendPort port;
 }
 
 class IsoactionInternalPing {
-  int count;
+  late int count;
 }
 
 class IsoactionInternalError {
-  bool exec;
-  DateTime stamp;
-  String action;
+  late bool exec;
+  late DateTime stamp;
+  late String action;
 }

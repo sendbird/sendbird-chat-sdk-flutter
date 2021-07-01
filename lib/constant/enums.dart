@@ -13,8 +13,6 @@ enum MessageSendingStatus { none, pending, failed, succeeded, canceled }
 /// Represents the type of channel
 enum ChannelType { group, open }
 
-enum EventType { channel, connection, session, userEvent }
-
 extension ChannelTypeExtension on ChannelType {
   String get urlString {
     switch (this) {
@@ -22,8 +20,6 @@ extension ChannelTypeExtension on ChannelType {
         return 'group_channels';
       case ChannelType.open:
         return 'open_channels';
-      default:
-        return null;
     }
   }
 }
@@ -194,16 +190,14 @@ const countPreferenceEnumMap = <CountPreference, String>{
 T enumDecode<T>(
   Map<T, dynamic> enumValues,
   dynamic source, {
-  T unknownValue,
+  required T unknownValue,
 }) {
   if (source == null) {
     throw ArgumentError('A value must be provided. Supported values: '
         '${enumValues.values.join(', ')}');
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
+  final value = enumValues.entries.singleWhere((e) => e.value == source).key;
 
   if (value == null && unknownValue == null) {
     throw ArgumentError('`$source` is not one of the supported values: '
@@ -299,7 +293,7 @@ const groupChannelListQuerySearchFieldEnumMap =
 
 List<String> stringFromSearchFields(
     List<GroupChannelListQuerySearchField> fields) {
-  if (fields == null || fields.isEmpty) {
+  if (fields.isEmpty) {
     return [];
   }
 
@@ -340,7 +334,7 @@ enum ConnectionState { connecting, open, closed }
 enum PushTokenRegistrationStatus { success, pending, error }
 
 /// Represents push token type
-enum PushTokenType { none, fcm, apns }
+enum PushTokenType { none, hms, fcm, apns }
 
 /// Represents unread item key filter
 enum UnreadItemKey {

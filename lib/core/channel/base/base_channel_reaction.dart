@@ -8,11 +8,11 @@ extension Reactions on BaseChannel {
   /// event after completion, and you should apply the event to the message by
   /// calling [BaseMessage.applyReactionEvent]
   Future<ReactionEvent> addReaction(BaseMessage message, String key) async {
-    if (message == null || message.channelUrl != channelUrl) {
+    if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
 
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -33,11 +33,11 @@ extension Reactions on BaseChannel {
   /// event after completion, and you should apply the event to the message by
   /// calling [BaseMessage.applyReactionEvent]
   Future<ReactionEvent> deleteReaction(BaseMessage message, String key) async {
-    if (message == null || message.channelUrl != channelUrl) {
+    if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
 
-    if (key == null || key.isEmpty) {
+    if (key.isEmpty) {
       throw InvalidParameterError();
     }
 

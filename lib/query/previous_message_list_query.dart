@@ -27,11 +27,11 @@ class PreviousMessageListQuery extends QueryBase {
 
   /// Restricts the search scope only to retrieve the messages with the
   /// specified custom message type.
-  List<String> customTypesFilter;
+  List<String> customTypesFilter = [];
 
   /// Restricts the search scope only to retrieve the messages sent by
   /// the users with the specified user IDs.
-  List<String> senderIdsFilter;
+  List<String> senderIdsFilter = [];
 
   /// Determines whether to include the metaarray information of the
   /// messages in the results. default value is false
@@ -60,15 +60,15 @@ class PreviousMessageListQuery extends QueryBase {
   /// Partitioning. This property is only working for [OpenChannel]
   bool showSubChannelMessagesOnly = false;
 
-  int _timestamp = double.maxFinite.round();
+  int? _timestamp = double.maxFinite.round();
 
-  PreviousMessageListQuery();
+  PreviousMessageListQuery({
+    required this.channelType,
+    required this.channelUrl,
+  });
 
   @override
   Future<List<BaseMessage>> loadNext() async {
-    if (channelUrl == null || channelType == null) {
-      throw InvalidParameterError();
-    }
     if (loading) throw QueryInProgressError();
     if (!hasNext) return [];
 

@@ -7,7 +7,7 @@ part 'group_channel_filters.g.dart';
 @JsonSerializable()
 class GroupChannelFilter {
   /// Sets the member state filter
-  MemberStateFilter memberStateFilter;
+  MemberStateFilter memberStateFilter = MemberStateFilter.all;
 
   /// Sets to filter super channel. Default is `all`
   SuperChannelFilter superMode = SuperChannelFilter.all;
@@ -16,27 +16,27 @@ class GroupChannelFilter {
   PublicChannelFilter publicMode = PublicChannelFilter.all;
 
   /// Sets to filter channels by custom type that starts with
-  String customTypeStartswith;
+  String? customTypeStartswith;
 
   /// Sets the custom type filter.
-  List<String> customTypes;
+  List<String>? customTypes;
 
   /// Sets the filter with nickname. Query result will contains
   /// channels that any one of member contains given nickname
-  String membersNicknameContains;
+  String? membersNicknameContains;
 
   /// Sets the filter with user IDs that query result will return
   /// if any one of user id matches with channel's members
   @JsonKey(ignore: true)
-  List<String> membersIncludeIn;
+  List<String>? membersIncludeIn;
 
   /// Sets the filter with user IDs that query result will return
   /// only if channel's members are exactly matched with this property
-  List<String> membersExactlyIn;
+  List<String>? membersExactlyIn;
 
   /// Sets a filter to return only channels that contains the
   /// specified group channel name
-  String nameContains;
+  String? nameContains;
 
   /// Sets to filter channels by the unread messages.
   /// The default value is `all`
@@ -45,13 +45,14 @@ class GroupChannelFilter {
   /// Sets a key for ordering by value in the metadata.
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
   @JsonKey(ignore: true)
-  String metadataOrderKey;
+  String? metadataOrderKey;
 
   /// Sets to filter channels by the hidden state.
   /// The default value is `unhiddenOnly`
   ChannelHiddenStateFilter hiddenMode = ChannelHiddenStateFilter.unhiddenOnly;
 
-  PublicGroupChannelMembershipFilter publicMembershipFilter;
+  PublicGroupChannelMembershipFilter publicMembershipFilter =
+      PublicGroupChannelMembershipFilter.all;
 
   Map<String, dynamic> toJson() => _$GroupChannelFilterToJson(this);
 }

@@ -12,14 +12,15 @@ class UserMessageParams extends BaseMessageParams {
   List<String> targetLanguages;
 
   UserMessageParams({
-    this.message,
-    List<String> targetLanguages,
-    String data,
-    String customType,
-    PushNotificationDeliveryOption pushOption,
-    MentionType mentionType,
-    List<String> mentionedUserIds,
-    List<MessageMetaArray> metaArrays,
+    required this.message,
+    List<String>? targetLanguages,
+    String? data,
+    String? customType,
+    PushNotificationDeliveryOption pushOption =
+        PushNotificationDeliveryOption.normal,
+    MentionType? mentionType,
+    List<String>? mentionedUserIds,
+    List<MessageMetaArray>? metaArrays,
   })  : targetLanguages = targetLanguages ?? [],
         super(
           data: data,
@@ -30,9 +31,9 @@ class UserMessageParams extends BaseMessageParams {
           metaArrays: metaArrays,
         );
 
-  UserMessageParams.withMessage(UserMessage userMessage, {bool deepCopy})
+  UserMessageParams.withMessage(UserMessage userMessage, {bool? deepCopy})
       : message = userMessage.message,
-        targetLanguages = userMessage.translations?.keys?.toList() ?? [],
+        targetLanguages = userMessage.translations.keys.toList(),
         super.withMessage(userMessage, deepCopy: deepCopy);
 
   @override

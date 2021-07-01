@@ -17,7 +17,7 @@ extension OpenChannelOperations on OpenChannel {
   Future<void> exit() async {
     final cmd = Command.buildExitChannel(this);
     final result = await _sdk.cmdManager.sendCommand(cmd);
-    participantCount = result.payload['participant_count'];
+    participantCount = result?.payload['participant_count'] ?? 0;
     entered = false;
     removeFromCache();
   }

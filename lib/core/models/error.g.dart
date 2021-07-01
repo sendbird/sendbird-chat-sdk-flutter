@@ -8,8 +8,8 @@ part of 'error.dart';
 
 SBError _$SBErrorFromJson(Map<String, dynamic> json) {
   return SBError(
-    message: json['message'] as String,
-    code: json['code'] as int,
+    message: json['message'] as String?,
+    code: json['code'] as int?,
   );
 }
 

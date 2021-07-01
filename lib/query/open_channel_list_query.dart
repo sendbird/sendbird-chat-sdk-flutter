@@ -10,14 +10,14 @@ part 'open_channel_list_query.g.dart';
 /// A query object to retrieve list of open channel.
 @JsonSerializable()
 class OpenChannelListQuery extends QueryBase {
-  /// Channel url
-  String channelUrl;
+  /// Channel url contains
+  String? channelUrl;
 
-  /// Channel name
-  String channelName;
+  /// Channel name contains
+  String? channelName;
 
   /// Filters channel custom type
-  String customType;
+  String? customType;
 
   /// Query result includes frozen channels if `true`
   /// default value is `true`

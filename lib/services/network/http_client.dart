@@ -22,14 +22,16 @@ enum Method {
 
 class HttpClient {
   Map<String, String> headers = {};
-  String baseUrl;
-  int port;
-  String appId;
-  String sessionKey;
-  String token;
+  String? baseUrl;
+  int? port;
+
+  String? appId;
+  String? sessionKey;
+  String? token;
 
   bool isLocal = false;
   bool bypassAuth = false;
+
   StreamController errorController =
       StreamController<SBError>.broadcast(sync: true);
 
@@ -41,7 +43,7 @@ class HttpClient {
     this.appId,
     this.sessionKey,
     this.token,
-    this.headers,
+    this.headers = const {},
   });
 
   void cleanUp() {
@@ -49,18 +51,18 @@ class HttpClient {
     token = null;
     headers = {};
     uploadRequests = {};
-    errorController?.close();
+    errorController.close();
   }
 
   //form commom headers
   Map<String, String> commonHeaders() {
-    final commonHeaders = {
+    final commonHeaders = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       if (sessionKey != null)
-        'Session-Key': sessionKey
+        'Session-Key': sessionKey!
       else if (token != null)
-        'Api-Token': token
+        'Api-Token': token!
     };
     if (headers.isNotEmpty) {
       commonHeaders.addAll(headers);
@@ -70,9 +72,9 @@ class HttpClient {
   }
 
   Future<dynamic> get({
-    String url,
-    Map<String, dynamic> queryParams,
-    Map<String, String> headers = const {},
+    required String url,
+    Map<String, dynamic>? queryParams,
+    Map<String, String>? headers,
   }) async {
     await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
@@ -86,7 +88,7 @@ class HttpClient {
 
     final request = http.Request('GET', uri);
     request.headers.addAll(commonHeaders());
-    request.headers.addAll(headers);
+    request.headers.addAll(headers ?? {});
 
     final res = await request.send();
     final result = await http.Response.fromStream(res);
@@ -94,8 +96,8 @@ class HttpClient {
   }
 
   Future<dynamic> post({
-    String url,
-    Map<String, dynamic> queryParams,
+    required String url,
+    Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
@@ -119,8 +121,8 @@ class HttpClient {
   }
 
   Future<dynamic> put({
-    String url,
-    Map<String, dynamic> queryParams,
+    required String url,
+    Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
@@ -145,8 +147,8 @@ class HttpClient {
   }
 
   Future<dynamic> delete({
-    String url,
-    Map<String, dynamic> queryParams,
+    required String url,
+    Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
@@ -170,12 +172,12 @@ class HttpClient {
   }
 
   Future<dynamic> multipartRequest({
-    Method method,
-    String url,
-    Map<String, dynamic> body,
-    Map<String, dynamic> queryParams,
-    Map<String, String> headers,
-    OnUploadProgressCallback progress,
+    required Method method,
+    required String url,
+    Map<String, dynamic>? body,
+    Map<String, dynamic>? queryParams,
+    Map<String, String>? headers,
+    OnUploadProgressCallback? progress,
   }) async {
     await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
@@ -186,19 +188,19 @@ class HttpClient {
         host: baseUrl,
         port: port,
         path: url,
-        queryParameters: _convertQueryParams(queryParams),
+        queryParameters: _convertQueryParams(queryParams ?? {}),
       ),
       onProgress: progress,
     );
 
-    body.forEach((key, value) {
+    body?.forEach((key, value) {
       if (value is FileInfo) {
         final part = http.MultipartFile(
           key,
-          value.file.openRead(),
-          value.file.lengthSync(),
+          value.file!.openRead(),
+          value.file!.lengthSync(),
           filename: value.name,
-          contentType: MediaType.parse(value.mimeType),
+          contentType: MediaType.parse(value.mimeType!),
         );
         request.files.add(part);
       } else if (value is List<String>) {
@@ -216,8 +218,8 @@ class HttpClient {
     request.headers.addAll(commonHeaders());
     if (headers != null && headers.isNotEmpty) request.headers.addAll(headers);
 
-    String reqId = body['request_id'];
-    uploadRequests[reqId] = request;
+    String? reqId = body?['request_id'];
+    if (reqId != null) uploadRequests[reqId] = request;
 
     final res = await request.send();
     final result = await http.Response.fromStream(res);
@@ -251,10 +253,10 @@ class HttpClient {
         response.statusCode >= 400 && response.statusCode < 500;
     final log = hasErrorCode ? logger.e : logger.i;
     log('HTTP request ' +
-        response.request.url.toString() +
+        response.request!.url.toString() +
         '\nHTTP response ' +
         resString +
-        '\nHeaders: ${encoder.convert(response.request.headers)}');
+        '\nHeaders: ${encoder.convert(response.request?.headers)}');
 
     if (response.statusCode >= 400 && response.statusCode < 500) {
       final err = SBError(message: res['message'], code: res['code']);
@@ -289,7 +291,7 @@ class HttpClient {
     }
   }
 
-  Map<String, dynamic> _convertQueryParams(Map<String, dynamic> q) {
+  Map<String, dynamic> _convertQueryParams(Map<String, dynamic>? q) {
     if (q == null) return {};
     final result = <String, dynamic>{};
     q.forEach((key, value) {
@@ -317,7 +319,7 @@ class MultipartRequest extends http.MultipartRequest {
     this.onProgress,
   }) : super(method, url);
 
-  final void Function(int bytes, int totalBytes) onProgress;
+  final void Function(int bytes, int totalBytes)? onProgress;
 
   void cancel() => client.close();
 
@@ -361,7 +363,9 @@ class MultipartRequest extends http.MultipartRequest {
     final t = StreamTransformer.fromHandlers(
       handleData: (List<int> data, EventSink<List<int>> sink) {
         bytes += data.length;
-        if (onProgress != null) onProgress(bytes, total);
+        if (onProgress != null) {
+          onProgress!(bytes, total);
+        }
         sink.add(data);
       },
     );

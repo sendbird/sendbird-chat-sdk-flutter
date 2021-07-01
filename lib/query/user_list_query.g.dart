@@ -8,16 +8,16 @@ part of 'user_list_query.dart';
 
 UserListQuery _$UserListQueryFromJson(Map<String, dynamic> json) {
   return UserListQuery(
-    queryType:
-        _$enumDecodeNullable(_$UserListQueryTypeEnumMap, json['query_type']),
+    queryType: _$enumDecode(_$UserListQueryTypeEnumMap, json['query_type']),
     channelType:
         _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type']),
-    channelUrl: json['channel_url'] as String,
-    userIds: (json['user_ids'] as List)?.map((e) => e as String)?.toList(),
+    channelUrl: json['channel_url'] as String?,
+    userIds:
+        (json['user_ids'] as List<dynamic>?)?.map((e) => e as String).toList(),
   )
     ..loading = json['loading'] as bool
     ..hasNext = json['has_next'] as bool
-    ..token = json['token'] as String
+    ..token = json['token'] as String?
     ..limit = json['limit'] as int;
 }
 
@@ -33,36 +33,30 @@ Map<String, dynamic> _$UserListQueryToJson(UserListQuery instance) =>
       'user_ids': instance.userIds,
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
 const _$UserListQueryTypeEnumMap = {
@@ -73,6 +67,17 @@ const _$UserListQueryTypeEnumMap = {
   UserListQueryType.filtered: 'filtered',
 };
 
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
@@ -81,20 +86,22 @@ const _$ChannelTypeEnumMap = {
 ApplicationUserListQuery _$ApplicationUserListQueryFromJson(
     Map<String, dynamic> json) {
   return ApplicationUserListQuery(
-    metaDataKey: json['meta_data_key'] as String,
-    metaDataValues:
-        (json['meta_data_values'] as List)?.map((e) => e as String)?.toList(),
+    metaDataKey: json['meta_data_key'] as String?,
+    metaDataValues: (json['meta_data_values'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList(),
+    nicknameStartsWith: json['nickname_starts_with'] as String?,
   )
     ..loading = json['loading'] as bool
     ..hasNext = json['has_next'] as bool
-    ..token = json['token'] as String
+    ..token = json['token'] as String?
     ..limit = json['limit'] as int
     ..channelType =
         _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type'])
-    ..channelUrl = json['channel_url'] as String
-    ..queryType =
-        _$enumDecodeNullable(_$UserListQueryTypeEnumMap, json['query_type'])
-    ..userIds = (json['user_ids'] as List)?.map((e) => e as String)?.toList();
+    ..channelUrl = json['channel_url'] as String?
+    ..queryType = _$enumDecode(_$UserListQueryTypeEnumMap, json['query_type'])
+    ..userIds =
+        (json['user_ids'] as List<dynamic>?)?.map((e) => e as String).toList();
 }
 
 Map<String, dynamic> _$ApplicationUserListQueryToJson(
@@ -110,4 +117,5 @@ Map<String, dynamic> _$ApplicationUserListQueryToJson(
       'user_ids': instance.userIds,
       'meta_data_key': instance.metaDataKey,
       'meta_data_values': instance.metaDataValues,
+      'nickname_starts_with': instance.nicknameStartsWith,
     };

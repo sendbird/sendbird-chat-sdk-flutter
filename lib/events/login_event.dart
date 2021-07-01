@@ -12,32 +12,33 @@ class LoginEvent extends SessionEvent {
   @JsonKey(name: 'login_ts')
   final int loginTimestamp;
 
-  final int maxUnreadCountOnSuperGroup;
+  final int? maxUnreadCountOnSuperGroup;
 
   @JsonKey(name: 'reconnect')
   final ReconnectConfiguration reconnectConfiguration;
 
+  @JsonKey(defaultValue: 15)
   final int pingInterval;
 
   @JsonKey(name: 'pong_timeout')
   final int watchdogInterval;
 
   @JsonKey(ignore: true)
-  AppInfo appInfo;
+  late AppInfo appInfo;
 
   @JsonKey(ignore: true)
-  User user;
+  late User user;
 
   LoginEvent({
-    String ekey,
-    int expiresIn,
-    String newKey,
-    String key,
-    this.loginTimestamp,
+    String? ekey,
+    int? expiresIn,
+    String? newKey,
+    String? key,
+    required this.loginTimestamp,
+    required this.reconnectConfiguration,
+    required this.pingInterval,
+    required this.watchdogInterval,
     this.maxUnreadCountOnSuperGroup,
-    this.reconnectConfiguration,
-    this.pingInterval,
-    this.watchdogInterval,
   }) : super(
           ekey: ekey,
           newKey: newKey,

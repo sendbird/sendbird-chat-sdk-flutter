@@ -12,67 +12,68 @@ part 'group_channel_list_query.g.dart';
 @JsonSerializable()
 class GroupChannelListQuery extends QueryBase {
   /// Order of the query result
-  GroupChannelListOrder order;
+  GroupChannelListOrder order = GroupChannelListOrder.latestLastMessage;
 
   /// Sets query type user Id filter, it only will work when `includeMemberList` is true
-  GroupChannelListQueryType queryType;
+  GroupChannelListQueryType queryType = GroupChannelListQueryType.or;
 
   /// Sets filter channel urls.
   ///
   /// It will return a list containing only and exactly matched
   /// with given urls. This filter does not cooperate with other filters.
-  List<String> channelUrls;
+  List<String> channelUrls = [];
 
   /// Sets the member state filter
-  MemberStateFilter memberStateFilter;
+  MemberStateFilter memberStateFilter = MemberStateFilter.all;
 
   /// Sets to filter super channel. Default is `all`
-  SuperChannelFilter superChannelFilter;
+  SuperChannelFilter superChannelFilter = SuperChannelFilter.all;
 
   /// Sets to filter public channel. Default is `all`
-  PublicChannelFilter publicChannelFilter;
+  PublicChannelFilter publicChannelFilter = PublicChannelFilter.all;
 
   /// Sets to filter channels by the unread messages.
   /// The default value is `all`
-  UnreadChannelFilter unreadChannelFilter;
+  UnreadChannelFilter unreadChannelFilter = UnreadChannelFilter.all;
 
   /// Sets to filter channels by the hidden state.
   /// The default value is `unhiddenOnly`
-  ChannelHiddenStateFilter channelHiddenStateFilter;
+  ChannelHiddenStateFilter channelHiddenStateFilter =
+      ChannelHiddenStateFilter.unhiddenOnly;
 
   /// Sets to filter channels by custom type that starts with
-  String customTypeStartWith;
+  String? customTypeStartWith;
 
   /// Sets the custom type filter.
-  List<String> customTypes;
+  List<String> customTypes = [];
 
   /// Sets the filter with nickname.
   ///
   /// Query result will contains
   /// channels that any one of member contains given nickname
-  String nicknameContains;
+  String? nicknameContains;
 
   /// Sets the filter with user IDs
   ///
   /// Query result will return if any one of user id matches with channel's members
-  List<String> userIdsIncludeIn;
+  List<String> userIdsIncludeIn = [];
 
   /// Sets the filter with user IDs
   ///
   /// Query result will return only if channel's members are exactly matched
   /// with this property
-  List<String> userIdsExactlyIn;
+  List<String> userIdsExactlyIn = [];
 
   /// Sets a filter to return only channels that contains the
   /// specified group channel name
-  String channelNameContains;
+  String? channelNameContains;
 
   /// Sets a key for ordering by value in the metadata.
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  String metaDataOrderKey;
+  String? metaDataOrderKey;
 
-  String searchQuery;
-  List<GroupChannelListQuerySearchField> searchFields;
+  String? searchQuery;
+  List<GroupChannelListQuerySearchField> searchFields = [];
 
   /// Query result includes empty (message) channel if `true`.
   /// default value is `true`
@@ -87,14 +88,14 @@ class GroupChannelListQuery extends QueryBase {
   bool includeMemberList = true;
 
   /// Query result of channel object contains meta data if `true`.
-  /// deault value is `false`
+  /// deault value is `true`
   bool includeMetaData = true;
 
   GroupChannelListQuery();
 
   void setUserIdsExactFilter(List<String> userIds) {
     nicknameContains = null;
-    userIdsIncludeIn = null;
+    userIdsIncludeIn = [];
     userIdsExactlyIn = userIds;
     queryType = GroupChannelListQueryType.and;
   }
@@ -102,14 +103,14 @@ class GroupChannelListQuery extends QueryBase {
   void setUserIdsIncludeFilter(
       List<String> userIds, GroupChannelListQueryType type) {
     nicknameContains = null;
-    userIdsExactlyIn = null;
+    userIdsExactlyIn = [];
     userIdsIncludeIn = userIds;
     queryType = type;
   }
 
   void setNicknameContainsFilter(String nickname) {
-    userIdsIncludeIn = null;
-    userIdsExactlyIn = null;
+    userIdsIncludeIn = [];
+    userIdsExactlyIn = [];
     nicknameContains = nickname;
   }
 
@@ -120,9 +121,9 @@ class GroupChannelListQuery extends QueryBase {
   }
 
   void setChannelUrlsFilter(List<String> channelUrls) {
-    userIdsExactlyIn = null;
-    userIdsIncludeIn = null;
-    searchFields = null;
+    userIdsExactlyIn = [];
+    userIdsIncludeIn = [];
+    searchFields = [];
     searchQuery = null;
     nicknameContains = null;
     channelUrls = channelUrls;
@@ -160,7 +161,7 @@ class GroupChannelListQuery extends QueryBase {
 
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.getMyGroupChannels(
-      userId: sdk.state.currentUser.userId,
+      userId: sdk.state.userId ?? '',
       order: order,
       queryType: queryType,
       token: token,

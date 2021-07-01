@@ -13,10 +13,10 @@ class TypingStatus implements Cacheable {
   bool dirty = false;
 
   TypingStatus({
-    this.channelType,
-    this.channelUrl,
-    this.user,
-    this.timestamp,
+    required this.channelType,
+    required this.channelUrl,
+    required this.user,
+    required this.timestamp,
   });
 
   @override

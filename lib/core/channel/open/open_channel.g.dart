@@ -9,21 +9,21 @@ part of 'open_channel.dart';
 OpenChannel _$OpenChannelFromJson(Map<String, dynamic> json) {
   return OpenChannel(
     participantCount: json['participant_count'] as int,
-    operators: (json['operators'] as List)
-        ?.map(
-            (e) => e == null ? null : User.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    operators: (json['operators'] as List<dynamic>?)
+            ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [],
     channelUrl: json['channel_url'] as String,
-    name: json['name'] as String,
-    coverUrl: json['cover_url'] as String,
+    name: json['name'] as String?,
+    coverUrl: json['cover_url'] as String?,
     creator: json['creator'] == null
         ? null
         : User.fromJson(json['creator'] as Map<String, dynamic>),
-    createdAt: json['created_at'] as int,
-    data: json['data'] as String,
-    customType: json['custom_type'] as String,
-    isFrozen: json['freeze'] as bool,
-    isEphemeral: json['is_ephemeral'] as bool,
+    createdAt: json['created_at'] as int?,
+    data: json['data'] as String?,
+    customType: json['custom_type'] as String?,
+    isFrozen: json['freeze'] as bool? ?? false,
+    isEphemeral: json['is_ephemeral'] as bool? ?? false,
   );
 }
 
@@ -39,5 +39,5 @@ Map<String, dynamic> _$OpenChannelToJson(OpenChannel instance) =>
       'freeze': instance.isFrozen,
       'is_ephemeral': instance.isEphemeral,
       'participant_count': instance.participantCount,
-      'operators': instance.operators?.map((e) => e?.toJson())?.toList(),
+      'operators': instance.operators.map((e) => e.toJson()).toList(),
     };

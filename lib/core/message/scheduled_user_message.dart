@@ -32,56 +32,60 @@ class ScheduledUserMessage extends BaseMessage {
   /// Push notification delivery option that determines how to deliver the
   /// push notification when sending a user or a file message. The default
   /// value is `normal`
-  @JsonKey(unknownEnumValue: PushNotificationDeliveryOption.normal)
+  @JsonKey(
+    defaultValue: PushNotificationDeliveryOption.normal,
+    unknownEnumValue: PushNotificationDeliveryOption.normal,
+  )
   final PushNotificationDeliveryOption pushOption;
 
   /// Error
   //@JsonKey(name: "error")
-  final SBError error;
+  final SBError? error;
 
   /// Target languages that the message will be translated into
   @JsonKey(name: 'translation_target_langs')
   final List<String> targetLanguages;
 
   ScheduledUserMessage({
-    this.scheduledId,
-    this.scheduledDateTimeString,
-    this.scheduledTimezone,
-    this.status,
-    this.pushOption,
+    required this.scheduledId,
+    required this.scheduledDateTimeString,
+    required this.scheduledTimezone,
+    required this.status,
+    this.pushOption = PushNotificationDeliveryOption.normal,
     this.error,
-    this.targetLanguages,
-    String requestId,
-    int messageId,
-    String message,
-    MessageSendingStatus sendingStatus,
-    Sender sender,
-    String channelUrl,
-    ChannelType channelType,
-    List<User> mentionedUsers,
-    MentionType mentionType,
-    List<String> requestedMentionUserIds,
-    int createdAt,
-    int updatedAt,
-    int parentMessageId,
-    String parentMessageText,
-    ThreadInfo threadInfo,
-    List<MessageMetaArray> metaArrays,
-    String customType,
-    int messageSurvivalSeconds,
-    bool forceUpdateLastMessage,
-    bool isSilent,
-    int errorCode,
-    bool isOperatorMessage,
-    String data,
-    OGMetaData ogMetaData,
-    List<Reaction> reactions,
+    this.targetLanguages = const [],
+    String? requestId,
+    required int messageId,
+    required String message,
+    MessageSendingStatus? sendingStatus,
+    required Sender sender,
+    required String channelUrl,
+    required ChannelType channelType,
+    List<User> mentionedUsers = const [],
+    MentionType? mentionType,
+    List<String>? requestedMentionUserIds,
+    int createdAt = 0,
+    int updatedAt = 0,
+    int? parentMessageId,
+    String? parentMessageText,
+    ThreadInfo? threadInfo,
+    List<MessageMetaArray>? metaArrays,
+    String? customType,
+    int? messageSurvivalSeconds,
+    bool forceUpdateLastMessage = false,
+    bool isSilent = false,
+    int? errorCode,
+    bool isOperatorMessage = false,
+    String? data,
+    OGMetaData? ogMetaData,
+    List<Reaction>? reactions,
   }) : super(
           requestId: requestId,
           messageId: messageId,
           message: message,
           sendingStatus: sendingStatus,
           sender: sender,
+          channelUrl: channelUrl,
           channelType: channelType,
           mentionedUsers: mentionedUsers,
           mentionType: mentionType,

@@ -14,21 +14,22 @@ import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 /// Set of functionality for internal usage to update a channel
 extension GroupChannelInternal on GroupChannel {
-  bool shouldUpdateLastMessage(BaseMessage message, Sender sender) {
+  bool shouldUpdateLastMessage(BaseMessage message, Sender? sender) {
     if (sender == null) {
       return false;
     }
 
+    final lm = lastMessage;
     if (!message.isSilent ||
         sender.isCurrentUser ||
         message.forceUpdateLastMessage) {
-      if (lastMessage == null) {
+      if (lm == null) {
         return true;
-      } else if (lastMessage.createdAt < message.createdAt) {
+      } else if (lm.createdAt < message.createdAt) {
         return true;
-      } else if (lastMessage.createdAt == message.createdAt &&
-          lastMessage.messageId == message.messageId &&
-          lastMessage.updatedAt < message.updatedAt) {
+      } else if (lm.createdAt == message.createdAt &&
+          lm.messageId == message.messageId &&
+          lm.updatedAt < message.updatedAt) {
         return true;
       }
     }
@@ -36,12 +37,10 @@ extension GroupChannelInternal on GroupChannel {
   }
 
   bool updateUnreadCount(BaseMessage message) {
-    if (message == null) return false;
-
     final currentUser = SendbirdSdk().currentUser;
 
     if (!message.isSilent) {
-      if (!message.sender.isCurrentUser) {
+      if (message.sender?.isCurrentUser == false) {
         increaseUnreadMessageCount();
         return true;
       }
@@ -55,7 +54,7 @@ extension GroupChannelInternal on GroupChannel {
     return false;
   }
 
-  void setBlockedByMe({String targetId, bool blocked}) {
+  void setBlockedByMe({required String targetId, required bool blocked}) {
     members.forEach((member) {
       if (member.userId == targetId) {
         member.isBlockedByMe = blocked;
@@ -103,7 +102,9 @@ extension GroupChannelInternal on GroupChannel {
     unreadMessageCount = 0;
   }
 
-  void addMember(Member newMember) {
+  void addMember(Member? newMember) {
+    if (newMember == null) return;
+
     removeMember(newMember.userId);
     newMember.state = MemberState.joined;
     members.add(newMember);
@@ -127,12 +128,14 @@ extension GroupChannelInternal on GroupChannel {
     _refreshMemberCounts();
   }
 
-  void removeMember(String userId) {
+  void removeMember(String? userId) {
+    if (userId == null) return;
+
     members.removeWhere((element) => element.userId == userId);
     _refreshMemberCounts();
   }
 
-  void updateMember(User user) {
+  void updateMember(User? user) {
     if (user == null) return;
 
     final index = members.indexWhere((e) => e.userId == user.userId);
@@ -150,7 +153,7 @@ extension GroupChannelInternal on GroupChannel {
         .length;
   }
 
-  void updateTypingStatus(Member member, {bool typing}) {
+  void updateTypingStatus(Member? member, {bool typing = false}) {
     if (member == null) return;
 
     final typingStatus = TypingStatus(

@@ -19,10 +19,10 @@ class ReconnectConfiguration {
   bool get enabledInfinitelyRetry => maximumRetryCount < 0;
 
   ReconnectConfiguration({
-    this.interval,
-    this.maxInterval,
-    this.multiplier,
-    this.maximumRetryCount,
+    required this.interval,
+    required this.maxInterval,
+    required this.multiplier,
+    required this.maximumRetryCount,
   });
 
   factory ReconnectConfiguration.fromJson(Map<String, dynamic> json) =>

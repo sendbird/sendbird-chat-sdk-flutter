@@ -6,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'user.g.dart';
 
@@ -16,13 +17,14 @@ class User {
   String userId;
 
   /// User nickname
+  @JsonKey(defaultValue: '')
   String nickname;
 
   /// Profile image url
-  String profileUrl;
+  String? profileUrl;
 
   /// Profile image url with auth
-  String get secureProfileUrl {
+  String? get secureProfileUrl {
     final sdk = SendbirdSdk().getInternal();
     if (requireAuth &&
         sdk.sessionManager.getEKey() != null &&
@@ -34,53 +36,57 @@ class User {
   }
 
   /// This user's connection status
-  @JsonKey(unknownEnumValue: UserConnectionStatus.notAvailable)
+  @JsonKey(
+    name: 'is_online',
+    fromJson: boolToConnectionStatus,
+    toJson: connectionStatusToBool,
+  )
   UserConnectionStatus connectionStatus;
 
   /// The lastest time when the user became offline
-  int lastSeenAt;
+  int? lastSeenAt;
 
   /// True if this user is activated. This property is changed by the
   /// [Platform API](https://docs.sendbird.com/platform#user_3_update_a_user)
-  bool isActive;
+  bool? isActive;
 
   /// User's preferred language. Used for translating messages.
-  List<String> preferredLanguages;
+  List<String>? preferredLanguages;
 
-  String friendDiscoveryKey;
+  String? friendDiscoveryKey;
 
-  String friendName;
+  String? friendName;
 
-  List<String> discoveryKeys;
+  List<String>? discoveryKeys;
 
   @JsonKey(defaultValue: {}, name: 'metadata')
   Map<String, String> metaData;
 
-  @JsonKey(name: 'require_auth_for_profile_image')
+  @JsonKey(defaultValue: false, name: 'require_auth_for_profile_image')
   bool requireAuth;
 
-  String sessionToken;
+  String? sessionToken;
 
   User({
-    this.userId,
-    this.nickname,
+    required this.userId,
+    required this.nickname,
     this.profileUrl,
-    this.connectionStatus,
+    this.connectionStatus = UserConnectionStatus.notAvailable,
     this.lastSeenAt,
-    this.isActive,
+    this.isActive = true,
     this.preferredLanguages,
     this.friendDiscoveryKey,
     this.friendName,
     this.discoveryKeys,
-    this.metaData,
-    this.requireAuth,
+    this.metaData = const {},
+    this.requireAuth = false,
     this.sessionToken,
   });
 
   Future<Map<String, String>> createMetaData(
     Map<String, String> metaDataMap,
   ) async {
-    if (metaDataMap == null || metaDataMap.isEmpty) {
+    if (metaDataMap.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -93,7 +99,7 @@ class User {
 
   Future<Map<String, String>> updateMetaData(
       Map<String, String> metaDataMap) async {
-    if (metaDataMap == null || metaDataMap.isEmpty) {
+    if (metaDataMap.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -108,7 +114,7 @@ class User {
   }
 
   Future<void> deleteMetaData(String key) async {
-    if (key == null || key == '') {
+    if (key.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -132,7 +138,7 @@ class User {
     if (json['session_tokens'] != null &&
         (json['session_tokens'] as List).isNotEmpty) {
       final tokens = List<Map>.from(json['session_tokens'] as List);
-      json['session_token'] = tokens?.first['session_token'];
+      json['session_token'] = tokens.first['session_token'];
     }
     if (json['is_online'] != null) {
       bool isOnline = json['is_online'];

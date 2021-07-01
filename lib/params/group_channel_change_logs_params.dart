@@ -2,7 +2,7 @@
 class GroupChannelChangeLogsParams {
   /// Sets the custom types filter.
   /// The property filters channels which have one of custom types.
-  List<String> customTypes;
+  List<String> customTypes = [];
 
   /// Determines whether to include members property in each channel.
   bool includeMemberList = true;

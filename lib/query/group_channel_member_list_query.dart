@@ -14,21 +14,21 @@ class GroupChannelMemberListQuery extends QueryBase {
   String channelUrl;
 
   /// Filters nickname that starts with
-  String nicknameStartsWith;
+  String? nicknameStartsWith;
 
   /// Filters with member's role
-  OperatorFilter operatorFilter;
+  OperatorFilter operatorFilter = OperatorFilter.all;
 
   /// Filters with member's muted state
-  MutedMemberFilter mutedMemberFilter;
+  MutedMemberFilter mutedMemberFilter = MutedMemberFilter.all;
 
   /// Filters with member's member state
-  MemberStateFilter memberStateFilter;
+  MemberStateFilter memberStateFilter = MemberStateFilter.all;
 
   /// Defines query result's order
-  MemberListOrder order;
+  MemberListOrder order = MemberListOrder.nicknameAlphabetical;
 
-  GroupChannelMemberListQuery();
+  GroupChannelMemberListQuery({required this.channelUrl});
 
   @override
   Future<List<User>> loadNext() async {

@@ -8,24 +8,25 @@ part of 'group_channel_filters.dart';
 
 GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) {
   return GroupChannelFilter()
-    ..memberStateFilter = _$enumDecodeNullable(
-        _$MemberStateFilterEnumMap, json['member_state_filter'])
-    ..superMode =
-        _$enumDecodeNullable(_$SuperChannelFilterEnumMap, json['super_mode'])
+    ..memberStateFilter =
+        _$enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
+    ..superMode = _$enumDecode(_$SuperChannelFilterEnumMap, json['super_mode'])
     ..publicMode =
-        _$enumDecodeNullable(_$PublicChannelFilterEnumMap, json['public_mode'])
-    ..customTypeStartswith = json['custom_type_startswith'] as String
-    ..customTypes =
-        (json['custom_types'] as List)?.map((e) => e as String)?.toList()
-    ..membersNicknameContains = json['members_nickname_contains'] as String
-    ..membersExactlyIn =
-        (json['members_exactly_in'] as List)?.map((e) => e as String)?.toList()
-    ..nameContains = json['name_contains'] as String
-    ..unreadFilter = _$enumDecodeNullable(
-        _$UnreadChannelFilterEnumMap, json['unread_filter'])
-    ..hiddenMode = _$enumDecodeNullable(
-        _$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
-    ..publicMembershipFilter = _$enumDecodeNullable(
+        _$enumDecode(_$PublicChannelFilterEnumMap, json['public_mode'])
+    ..customTypeStartswith = json['custom_type_startswith'] as String?
+    ..customTypes = (json['custom_types'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..membersNicknameContains = json['members_nickname_contains'] as String?
+    ..membersExactlyIn = (json['members_exactly_in'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..nameContains = json['name_contains'] as String?
+    ..unreadFilter =
+        _$enumDecode(_$UnreadChannelFilterEnumMap, json['unread_filter'])
+    ..hiddenMode =
+        _$enumDecode(_$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
+    ..publicMembershipFilter = _$enumDecode(
         _$PublicGroupChannelMembershipFilterEnumMap,
         json['public_membership_filter']);
 }
@@ -47,36 +48,30 @@ Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
           instance.publicMembershipFilter],
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
 const _$MemberStateFilterEnumMap = {

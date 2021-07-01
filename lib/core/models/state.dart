@@ -6,26 +6,26 @@ import 'package:sendbird_sdk/core/models/unread_count_info.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 
 class SendbirdState {
-  String appId;
-  String userId;
-  User currentUser;
-  String sessionKey;
+  String? appId;
+  String? userId;
+  User? currentUser;
+  String? sessionKey;
 
   bool connected = false;
   bool connecting = false;
   bool reconnecting = false;
-  int lastConnectedAt;
+  int? lastConnectedAt;
 
-  String apiHost;
-  String wsHost;
+  String? apiHost;
+  String? wsHost;
 
-  String pushToken;
-  PushTokenType pushTokenType;
-  AppInfo appInfo;
-  int maxUnreadCountOnSuperGroup;
+  String? pushToken;
+  PushTokenType? pushTokenType;
+  AppInfo? appInfo;
+  int? maxUnreadCountOnSuperGroup;
 
-  ReconnectTask reconnectTask;
-  ReconnectConfiguration reconnectConfig;
+  ReconnectTask? reconnectTask;
+  ReconnectConfiguration? reconnectConfig;
 
   UnreadCountInfo unreadCountInfo =
       UnreadCountInfo(all: 0, customTypes: {}, ts: 0);
@@ -34,6 +34,9 @@ class SendbirdState {
   bool get hasActiveUser => currentUser != null;
 
   void resetReconnectTask() {
-    reconnectTask = ReconnectTask(reconnectConfig);
+    final config = reconnectConfig;
+    if (config != null) {
+      reconnectTask = ReconnectTask(config);
+    }
   }
 }

@@ -10,9 +10,9 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage sendUserMessageWithText(
     String text, {
-    OnUserMessageCallback onCompleted,
+    OnUserMessageCallback? onCompleted,
   }) {
-    final params = UserMessageParams()..message = text;
+    final params = UserMessageParams(message: text);
     return sendUserMessage(
       params,
       onCompleted: onCompleted,
@@ -27,9 +27,9 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage sendUserMessage(
     UserMessageParams params, {
-    OnUserMessageCallback onCompleted,
+    OnUserMessageCallback? onCompleted,
   }) {
-    if (params.message == null || params.message.isEmpty) {
+    if (params.message.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -41,7 +41,8 @@ extension Messages on BaseChannel {
     final pending = BaseMessage.msgFromJson<UserMessage>(
       cmd.payload,
       channelType: channelType,
-    ); //UserMessage.fromJson(cmd.payload);
+      type: cmd.cmd,
+    )!;
 
     if (!_sdk.state.hasActiveUser) {
       final error = ConnectionRequiredError();
@@ -55,13 +56,16 @@ extension Messages on BaseChannel {
     pending.sendingStatus = MessageSendingStatus.pending;
     pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
 
-    _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-      final msg = BaseMessage.msgFromJson<UserMessage>(cmdResult.payload);
-      if (onCompleted != null) onCompleted(msg, null);
+    _sdk.cmdManager.sendCommand(cmd).then((result) {
+      if (result == null) return;
+      final msg = BaseMessage.msgFromJson<UserMessage>(
+        result.payload,
+        type: result.cmd,
+      );
+      if (onCompleted != null && msg != null) onCompleted(msg, null);
     }).catchError((e) {
-      // pending.errorCode = e?.code ?? ErrorCode.unknownError;
       pending
-        ..errorCode = e.code
+        ..errorCode = e?.code ?? ErrorCode.unknownError
         ..sendingStatus = MessageSendingStatus.failed;
       if (onCompleted != null) onCompleted(pending, e);
     });
@@ -77,10 +81,9 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   UserMessage resendUserMessage(
     UserMessage message, {
-    OnUserMessageCallback onCompleted,
+    OnUserMessageCallback? onCompleted,
   }) {
-    if (message == null ||
-        message.sendingStatus != MessageSendingStatus.failed) {
+    if (message.sendingStatus != MessageSendingStatus.failed) {
       throw InvalidParameterError();
     }
     if (message.channelUrl != channelUrl) {
@@ -100,10 +103,7 @@ extension Messages on BaseChannel {
   /// Updates [UserMessage] on this channel with [messageId] and [params].
   Future<UserMessage> updateUserMessage(
       int messageId, UserMessageParams params) async {
-    if (messageId == null || messageId <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
+    if (messageId <= 0) {
       throw InvalidParameterError();
     }
 
@@ -115,8 +115,14 @@ extension Messages on BaseChannel {
 
     try {
       final res = await _sdk.cmdManager.sendCommand(cmd);
-      final msg = BaseMessage.msgFromJson<UserMessage>(res.payload);
-      return msg;
+      if (res != null) {
+        return BaseMessage.msgFromJson<UserMessage>(
+          res.payload,
+          type: cmd.cmd,
+        )!; //mark!
+      } else {
+        throw WebSocketError();
+      }
     } catch (e) {
       rethrow;
     }
@@ -130,20 +136,16 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   FileMessage sendFileMessage(
     FileMessageParams params, {
-    OnFileMessageCallback onCompleted,
-    OnUploadProgressCallback progress,
+    OnFileMessageCallback? onCompleted,
+    OnUploadProgressCallback? progress,
   }) {
-    if (params == null) {
+    if (!params.uploadFile.hasSource) {
       throw InvalidParameterError();
     }
 
-    if (params.uploadFile == null || !params.uploadFile.hasSource) {
-      throw InvalidParameterError();
-    }
-
-    UploadResponse upload;
-    int fileSize;
-    String url;
+    UploadResponse? upload;
+    int? fileSize;
+    String? url;
 
     final pending = FileMessage.fromParams(params: params, channel: this);
     pending.sendingStatus = MessageSendingStatus.pending;
@@ -157,7 +159,7 @@ extension Messages on BaseChannel {
             upload = await _sdk.api
                 .uploadFile(
                     channelUrl: channelUrl,
-                    requestId: pending.requestId,
+                    requestId: pending.requestId!,
                     params: params,
                     progress: progress)
                 .timeout(
@@ -173,14 +175,15 @@ extension Messages on BaseChannel {
                     ),
                   );
                 }
-                return;
+                //
+                throw SBError(code: ErrorCode.fileUploadTimeout);
               },
             );
             if (upload == null) {
               throw SBError(code: ErrorCode.fileUploadTimeout);
             }
-            fileSize = upload.fileSize;
-            url = upload.url;
+            fileSize = upload?.fileSize;
+            url = upload?.url;
           } catch (e) {
             rethrow;
           }
@@ -200,7 +203,8 @@ extension Messages on BaseChannel {
         final msgFromPayload = BaseMessage.msgFromJson<FileMessage>(
           cmd.payload,
           channelType: channelType,
-        );
+          type: cmd.cmd,
+        )!;
 
         if (!_sdk.state.hasActiveUser) {
           final error = ConnectionRequiredError();
@@ -211,13 +215,16 @@ extension Messages on BaseChannel {
           return msgFromPayload;
         }
 
-        _sdk.cmdManager.sendCommand(cmd).then((cmdResult) {
-          final msg = BaseMessage.msgFromJson<FileMessage>(cmdResult.payload);
-          if (onCompleted != null) onCompleted(msg, null);
+        _sdk.cmdManager.sendCommand(cmd).then((result) {
+          if (result == null) return;
+          final msg = BaseMessage.msgFromJson<FileMessage>(
+            result.payload,
+            type: result.cmd,
+          );
+          if (onCompleted != null && msg != null) onCompleted(msg, null);
         }).catchError((e) {
-          // pending.errorCode = e?.code ?? ErrorCode.unknownError;
           pending
-            ..errorCode = e.code
+            ..errorCode = e?.code ?? ErrorCode.unknownError
             ..sendingStatus = MessageSendingStatus.failed;
           if (onCompleted != null) onCompleted(pending, e);
         });
@@ -228,14 +235,15 @@ extension Messages on BaseChannel {
     );
 
     queue.enqueue(task);
-    _sdk.setUploadTask(pending.requestId, task);
+
+    _sdk.setUploadTask(pending.requestId!, task);
     _sdk.setMsgQueue(channelUrl, queue);
 
     return pending;
   }
 
   bool cancelUploadingFileMessage(String requestId) {
-    if (requestId == null || requestId == '') {
+    if (requestId.isEmpty) {
       throw InvalidParameterError();
     }
     final task = _sdk.getUploadTask(requestId);
@@ -256,12 +264,11 @@ extension Messages on BaseChannel {
   /// on all other members' end.
   FileMessage resendFileMessage(
     FileMessage message, {
-    @required FileMessageParams params,
-    OnFileMessageCallback onCompleted,
-    OnUploadProgressCallback progress,
+    required FileMessageParams params,
+    OnFileMessageCallback? onCompleted,
+    OnUploadProgressCallback? progress,
   }) {
-    if (message == null ||
-        message.sendingStatus != MessageSendingStatus.failed) {
+    if (message.sendingStatus != MessageSendingStatus.failed) {
       throw InvalidParameterError();
     }
     if (message.channelUrl != channelUrl) {
@@ -281,10 +288,7 @@ extension Messages on BaseChannel {
   /// Updates [FileMessage] on this channel with [messageId] and [params].
   Future<FileMessage> updateFileMessage(
       int messageId, FileMessageParams params) async {
-    if (messageId == null || messageId <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
+    if (messageId <= 0) {
       throw InvalidParameterError();
     }
 
@@ -296,8 +300,14 @@ extension Messages on BaseChannel {
 
     try {
       final res = await _sdk.cmdManager.sendCommand(cmd);
-      final msg = BaseMessage.msgFromJson<FileMessage>(res.payload);
-      return msg;
+      if (res != null) {
+        return BaseMessage.msgFromJson<FileMessage>(
+          res.payload,
+          type: cmd.cmd,
+        )!; //mark!
+      } else {
+        throw WebSocketError();
+      }
     } catch (e) {
       rethrow;
     }
@@ -308,7 +318,7 @@ extension Messages on BaseChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onMessageDeleted] will be invoked.
   Future<void> deleteMessage(int messageId) async {
-    if (messageId == null || messageId <= 0) {
+    if (messageId <= 0) {
       throw InvalidParameterError();
     }
 
@@ -327,10 +337,10 @@ extension Messages on BaseChannel {
     UserMessage message,
     List<String> targetLanguages,
   ) async {
-    if (message == null || message.messageId <= 0) {
+    if (message.messageId <= 0) {
       throw InvalidParameterError();
     }
-    if (targetLanguages == null || targetLanguages.isEmpty) {
+    if (targetLanguages.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -352,12 +362,8 @@ extension Messages on BaseChannel {
   BaseMessage copyMessage(
     BaseMessage message,
     BaseChannel targetChannel, {
-    OnMessageCallback onCompleted,
+    OnMessageCallback? onCompleted,
   }) {
-    if (message == null || targetChannel == null) {
-      throw InvalidParameterError();
-    }
-
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterError();
     }
@@ -384,10 +390,7 @@ extension Messages on BaseChannel {
     int timestamp,
     MessageListParams params,
   ) async {
-    if (timestamp == null || timestamp <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
+    if (timestamp <= 0) {
       throw InvalidParameterError();
     }
 
@@ -408,10 +411,7 @@ extension Messages on BaseChannel {
     int messageId,
     MessageListParams params,
   ) async {
-    if (messageId == null || messageId <= 0) {
-      throw InvalidParameterError();
-    }
-    if (params == null) {
+    if (messageId <= 0) {
       throw InvalidParameterError();
     }
 
@@ -429,14 +429,10 @@ extension Messages on BaseChannel {
 
   /// Retreieve massage change logs with [timestamp] or [token] and [params].
   Future<MessageChangeLogsResponse> getMessageChangeLogs({
-    int timestamp,
-    String token,
-    MessageChangeLogParams params,
+    int? timestamp,
+    String? token,
+    required MessageChangeLogParams params,
   }) async {
-    if (params == null) {
-      throw InvalidParameterError();
-    }
-
     return _sdk.api.getMessageChangeLogs(
       channelType: channelType,
       channelUrl: channelUrl,

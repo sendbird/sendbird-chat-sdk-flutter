@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
 import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
@@ -12,25 +11,25 @@ class MemoryCacheStorage implements CacheStorage {
   Map<String, ChannelCacheUnit> _cacheMap = {};
 
   @override
-  List<T> findAll<T extends Cacheable>({String channelKey}) {
+  List<T>? findAll<T extends Cacheable>({String? channelKey}) {
     //find channels only support atm
     if (T == OpenChannel || T == GroupChannel) {
       return _cacheMap.values
           .where((e) => e.channel is T)
           .map((e) => e.channel as T)
           .toList();
-    } else if (T == ReadStatus) {
-      return _cacheMap[channelKey].readStatus.values.toList() as List<T>;
+    } else if (T == ReadStatus && channelKey != null) {
+      return _cacheMap[channelKey]?.readStatus.values.toList() as List<T>;
     } else if (T == TypingStatus) {
-      return _cacheMap[channelKey].typingStatus.values.toList() as List<T>;
+      return _cacheMap[channelKey]?.typingStatus.values.toList() as List<T>;
     } else if (T == DeliveryStatus) {
-      return [_cacheMap[channelKey].deliveryStatus] as List<T>;
+      return [_cacheMap[channelKey]?.deliveryStatus] as List<T>;
     }
     return null;
   }
 
   @override
-  void insert({@required Cacheable data, @required String channelKey}) {
+  void insert({required Cacheable data, required String channelKey}) {
     var unit = _cacheMap[channelKey];
     if (unit == null) {
       unit = ChannelCacheUnit();
@@ -43,9 +42,9 @@ class MemoryCacheStorage implements CacheStorage {
 
   @override
   void delete<T extends Cacheable>(
-      {@required String channelKey, String key, Cacheable data}) {
+      {required String channelKey, String? key, Cacheable? data}) {
     final unit = _cacheMap[channelKey];
-    if (key != null) {
+    if (key != null && unit != null) {
       unit.delete<T>(key: key, data: data);
     } else {
       _cacheMap.remove(channelKey);
@@ -58,7 +57,10 @@ class MemoryCacheStorage implements CacheStorage {
   }
 
   @override
-  T find<T extends Cacheable>({@required String channelKey, String key}) {
+  T? find<T extends Cacheable>({
+    required String? channelKey,
+    String? key,
+  }) {
     final unit = _cacheMap[channelKey];
     return unit?.find<T>(key: key);
   }
@@ -70,20 +72,20 @@ class MemoryCacheStorage implements CacheStorage {
 }
 
 class ChannelCacheUnit implements CacheUnit {
-  BaseChannel channel;
-  DeliveryStatus deliveryStatus;
+  BaseChannel? channel;
+  DeliveryStatus? deliveryStatus;
   Map<String, TypingStatus> typingStatus = {}; //userid key
   Map<String, ReadStatus> readStatus = {}; //userid key
-  CachedDataMap<String> cachedMetaData;
+  CachedDataMap<String>? cachedMetaData;
 
   @override
-  void delete<T extends Cacheable>({String key, Cacheable data}) {
+  void delete<T extends Cacheable>({String? key, Cacheable? data}) {
     if (T == DeliveryStatus || data is DeliveryStatus) {
       deliveryStatus = null;
     } else if (T == TypingStatus || data is TypingStatus) {
-      typingStatus?.remove(key);
+      typingStatus.remove(key);
     } else if (T == ReadStatus || data is ReadStatus) {
-      readStatus?.remove(key);
+      readStatus.remove(key);
     } else if (T == CachedDataMap || data is CachedDataMap) {
       cachedMetaData = null;
     }
@@ -95,9 +97,9 @@ class ChannelCacheUnit implements CacheUnit {
   void insert(Cacheable data) {
     if (data is GroupChannel || data is OpenChannel) {
       if (channel != null) {
-        channel.copyWith(data);
+        channel?.copyWith(data);
       } else {
-        channel = data;
+        channel = data as BaseChannel;
       }
     } else if (data is ReadStatus) {
       final existData = readStatus[data.key];
@@ -108,7 +110,7 @@ class ChannelCacheUnit implements CacheUnit {
       }
     } else if (data is DeliveryStatus) {
       if (deliveryStatus != null) {
-        deliveryStatus.copyWith(data);
+        deliveryStatus!.copyWith(data);
       } else {
         deliveryStatus = data;
       }
@@ -119,9 +121,9 @@ class ChannelCacheUnit implements CacheUnit {
       } else {
         typingStatus[data.key] = data;
       }
-    } else if (data is CachedDataMap) {
+    } else if (data is CachedDataMap<String>) {
       if (cachedMetaData != null) {
-        cachedMetaData.merge(data);
+        cachedMetaData?.merge(data);
       } else {
         cachedMetaData = data;
       }
@@ -129,25 +131,25 @@ class ChannelCacheUnit implements CacheUnit {
   }
 
   @override
-  Cacheable find<T extends Cacheable>({String key}) {
+  T? find<T extends Cacheable>({String? key}) {
     if (T == GroupChannel || T == OpenChannel) {
-      return channel;
+      return channel as T?;
     } else if (T == ReadStatus) {
-      return readStatus != null ? readStatus[key] : null;
+      return readStatus[key] as T?;
     } else if (T == TypingStatus) {
-      return typingStatus != null ? typingStatus[key] : null;
+      return typingStatus[key] as T?;
     } else if (T == DeliveryStatus) {
-      return deliveryStatus;
+      return deliveryStatus as T?;
     } else if (T == CachedDataMap) {
-      return cachedMetaData;
+      return cachedMetaData as T?;
     }
     return null;
   }
 
   @override
   void markAsDirty() {
-    channel.dirty = true;
-    deliveryStatus.dirty = true;
+    channel?.dirty = true;
+    deliveryStatus?.dirty = true;
     readStatus.values.forEach((element) => element.dirty = true);
   }
 }

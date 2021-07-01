@@ -5,8 +5,8 @@ part 'error.g.dart';
 
 @JsonSerializable()
 class SBError extends Error {
-  String message;
-  int code;
+  String? message;
+  int? code;
 
   SBError({this.message, this.code = 1});
 
@@ -41,8 +41,12 @@ class ConnectionRequiredError extends SBError {
 
 class ConnectionClosedError extends SBError {}
 
+class ConnectionFailedError extends SBError {}
+
+class MisConfigurationError extends SBError {}
+
 class WebSocketError extends SBError {
-  WebSocketError({int code, String message})
+  WebSocketError({int? code, String? message})
       : super(code: code, message: message);
 }
 
@@ -79,17 +83,17 @@ class MalformedError extends SBError {
 }
 
 class BadRequestError extends SBError {
-  BadRequestError({String message, int code})
+  BadRequestError({String? message, int? code})
       : super(message: message, code: code);
 }
 
 class UnauthorizeError extends SBError {
-  UnauthorizeError({String message, int code})
+  UnauthorizeError({String? message, int? code})
       : super(message: message, code: code);
 }
 
 class InternalServerError extends SBError {
-  InternalServerError({String message, int code})
+  InternalServerError({String? message, int? code})
       : super(message: message, code: code);
 }
 
@@ -112,6 +116,10 @@ class InvalidAccessTokenError extends SBError {
   @override
   int get code => ErrorCode.passedInvalidAccessToken;
 }
+
+class UnrecognizedTypeError extends SBError {}
+
+class UnrecognizedMessageTypeError extends SBError {}
 
 class UnknownError extends SBError {}
 

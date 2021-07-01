@@ -1,22 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
 abstract class CacheStorage {
-  void insert({@required Cacheable data, @required String channelKey});
-  void delete<T extends Cacheable>({@required String channelKey, String key});
-  void deleteAll();
-  T find<T extends Cacheable>({
-    @required String channelKey,
-    String key,
+  void insert({required Cacheable data, required String channelKey});
+  void delete<T extends Cacheable>({
+    required String channelKey,
+    String? key,
+    Cacheable? data,
   });
-  List<T> findAll<T extends Cacheable>({String channelKey});
+  void deleteAll();
+  T? find<T extends Cacheable>({
+    required String channelKey,
+    required String key,
+  });
+  List<T>? findAll<T extends Cacheable>({String? channelKey});
   void markAsDirtyAll();
 }
 
 abstract class CacheUnit {
-  Cacheable find<T extends Cacheable>({String key});
-  void delete<T extends Cacheable>({String key});
+  T? find<T extends Cacheable>({required String key});
+  void delete<T extends Cacheable>({String? key});
   void insert(Cacheable data);
   void markAsDirty();
 }
@@ -24,7 +27,7 @@ abstract class CacheUnit {
 abstract class Cacheable {
   String get key;
   String get primaryKey;
-  bool dirty;
+  bool dirty = false;
   void copyWith(others);
 }
 

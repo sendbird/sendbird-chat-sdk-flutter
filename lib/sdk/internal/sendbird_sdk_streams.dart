@@ -6,15 +6,31 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 
 class StreamManager {
-  StreamController<int> _totalUnreadCountController;
-  StreamController<ChannelMessageResponse> _messageUpdateStreamController;
-  StreamController<ChannelMessageResponse> _messageReceiveStreamController;
-  StreamController<ChannelMessageResponse> _messageDeleteStreamController;
-  StreamController<BaseChannel> _channelChangedStreamController;
-  StreamController<GroupChannel> _readStreamController;
-  StreamController<GroupChannel> _deliveryStreamController;
-  StreamController<GroupChannel> _usersTypingStreamController;
-  StreamController<ConnectionEventType> _connectionStreamController;
+  late StreamController<int> _totalUnreadCountController;
+  late StreamController<ChannelMessageResponse> _messageUpdateStreamController;
+  late StreamController<ChannelMessageResponse> _messageReceiveStreamController;
+  late StreamController<ChannelMessageResponse> _messageDeleteStreamController;
+  late StreamController<BaseChannel> _channelChangedStreamController;
+  late StreamController<GroupChannel> _readStreamController;
+  late StreamController<GroupChannel> _deliveryStreamController;
+  late StreamController<GroupChannel> _usersTypingStreamController;
+  late StreamController<ConnectionEventType> _connectionStreamController;
+
+  StreamManager() {
+    _totalUnreadCountController = StreamController<int>.broadcast();
+    _messageUpdateStreamController =
+        StreamController<ChannelMessageResponse>.broadcast();
+    _messageReceiveStreamController =
+        StreamController<ChannelMessageResponse>.broadcast();
+    _messageDeleteStreamController =
+        StreamController<ChannelMessageResponse>.broadcast();
+    _channelChangedStreamController = StreamController<BaseChannel>.broadcast();
+    _readStreamController = StreamController<GroupChannel>.broadcast();
+    _deliveryStreamController = StreamController<GroupChannel>.broadcast();
+    _usersTypingStreamController = StreamController<GroupChannel>.broadcast();
+    _connectionStreamController =
+        StreamController<ConnectionEventType>.broadcast();
+  }
 
   StreamController<int> get unread => _totalUnreadCountController;
   StreamController<ChannelMessageResponse> get msgUpdated =>
@@ -32,15 +48,15 @@ class StreamManager {
       _connectionStreamController;
 
   void reset() {
-    _totalUnreadCountController?.close();
-    _messageReceiveStreamController?.close();
-    _messageUpdateStreamController?.close();
-    _messageDeleteStreamController?.close();
-    _readStreamController?.close();
-    _deliveryStreamController?.close();
-    _channelChangedStreamController?.close();
-    _usersTypingStreamController?.close();
-    _connectionStreamController?.close();
+    _totalUnreadCountController.close();
+    _messageReceiveStreamController.close();
+    _messageUpdateStreamController.close();
+    _messageDeleteStreamController.close();
+    _readStreamController.close();
+    _deliveryStreamController.close();
+    _channelChangedStreamController.close();
+    _usersTypingStreamController.close();
+    _connectionStreamController.close();
 
     _totalUnreadCountController = StreamController<int>.broadcast();
     _messageUpdateStreamController =

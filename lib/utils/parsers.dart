@@ -11,17 +11,16 @@ Command parseCommandData(String data) {
   final cmdData = data.substring(0, 4);
   final payloadData = data.substring(4);
   final payload = jsonDecode(payloadData);
-  final cmd = Command.fromJson(payload);
-  cmd.cmd = cmdData;
+  final cmd = Command.fromJson(payload, cmdData);
   cmd.payload = payload;
   return cmd;
 }
 
-Future<BaseMessage> parseMessage(Command data) async {
+Future<BaseMessage?> parseMessage(Command data) async {
   return compute(parseMessageFromCommand, data);
 }
 
-BaseMessage parseMessageFromCommand(Command command) {
+BaseMessage? parseMessageFromCommand(Command command) {
   final payload = command.payload;
   return BaseMessage.msgFromJson(payload, type: command.cmd);
 }

@@ -15,26 +15,28 @@ class OGImage implements OGMedia, OGDisplayable {
   final String secureUrl;
 
   /// Image type
-  final String type;
+  final String? type;
 
   /// Description of what's in this image
-  final String alt;
+  final String? alt;
 
   /// Image width
   @override
+  @JsonKey(defaultValue: 0)
   final int width;
 
   /// Image height
   @override
+  @JsonKey(defaultValue: 0)
   final int height;
 
   OGImage({
-    this.url,
-    this.secureUrl,
+    required this.url,
+    this.secureUrl = '',
     this.type,
     this.alt,
-    this.width,
-    this.height,
+    this.width = 0,
+    this.height = 0,
   });
 
   factory OGImage.fromJson(Map<String, dynamic> json) =>

@@ -7,7 +7,7 @@ extension Moderations on BaseChannel {
     return _sdk.api.getMuteInfo(
       channelType: channelType,
       channelUrl: channelUrl,
-      userId: _sdk.state.currentUser.userId,
+      userId: _sdk.state.currentUser?.userId,
     );
   }
 
@@ -16,11 +16,11 @@ extension Moderations on BaseChannel {
   /// Provides [seconds] to set how long the user should be banned. `-1`
   /// indicates to ban the user parmanently.
   Future<void> banUser({
-    @required String userId,
+    required String userId,
     int seconds = -1,
-    String description,
+    String? description,
   }) async {
-    if (userId == null || userId.isEmpty) {
+    if (userId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -34,8 +34,8 @@ extension Moderations on BaseChannel {
   }
 
   /// Unbans a user from this channel
-  Future<void> unbanUser({@required String userId}) async {
-    if (userId == null || userId.isEmpty) {
+  Future<void> unbanUser({required String userId}) async {
+    if (userId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -51,11 +51,11 @@ extension Moderations on BaseChannel {
   /// Provides [seconds] to set how long the user should be muted. `-1`
   /// indicates to mute the user parmanently.
   Future<void> muteUser({
-    @required String userId,
+    required String userId,
     int seconds = -1,
-    String description,
+    String? description,
   }) async {
-    if (userId == null || userId.isEmpty) {
+    if (userId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -69,8 +69,8 @@ extension Moderations on BaseChannel {
   }
 
   /// Unmutes user from this channel.
-  Future<void> unmuteUser({@required String userId}) async {
-    if (userId == null || userId.isEmpty) {
+  Future<void> unmuteUser({required String userId}) async {
+    if (userId.isEmpty) {
       throw InvalidParameterError();
     }
 
@@ -83,13 +83,9 @@ extension Moderations on BaseChannel {
 
   /// Reports this channel with [category] and [description] (optional)
   Future<void> reportChannel({
-    @required ReportCategory category,
-    String description,
+    required ReportCategory category,
+    String? description,
   }) async {
-    if (category == null) {
-      throw InvalidParameterError();
-    }
-
     await _sdk.api.reportChannel(
       channelType: channelType,
       channelUrl: channelUrl,
@@ -99,21 +95,18 @@ extension Moderations on BaseChannel {
 
   /// Reports [message] with [category] and [description] (optional)
   Future<void> reportMessage({
-    @required BaseMessage message,
-    @required ReportCategory category,
-    String description,
+    required BaseMessage message,
+    required ReportCategory category,
+    String? description,
   }) async {
-    if (message == null) {
-      throw InvalidParameterError();
-    }
-
-    if (category == null) {
+    final senderId = message.sender?.userId;
+    if (senderId == null || senderId.isEmpty) {
       throw InvalidParameterError();
     }
 
     await _sdk.api.reportMessage(
       messageId: message.messageId,
-      senderId: message.sender.userId,
+      senderId: senderId,
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
@@ -122,24 +115,15 @@ extension Moderations on BaseChannel {
 
   /// Reports a [User] with [category] and [description] (optional)
   Future<void> reportUser({
-    @required String userId,
-    @required ReportCategory category,
-    String description,
+    required String userId,
+    required ReportCategory category,
+    String? description,
   }) async {
-    if (userId == null) {
-      throw InvalidParameterError();
-    }
-
-    if (category == null) {
-      throw InvalidParameterError();
-    }
-
     await _sdk.api.reportUser(
       userId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
-      reporterId: _sdk.state.userId,
     );
   }
 }

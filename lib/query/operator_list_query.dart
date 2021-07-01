@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
@@ -17,15 +16,12 @@ class OperatorListQuery extends QueryBase {
   String channelUrl;
 
   OperatorListQuery({
-    @required this.channelType,
-    @required this.channelUrl,
+    required this.channelType,
+    required this.channelUrl,
   });
 
   @override
   Future<List> loadNext() async {
-    if (channelUrl == null || channelType == null) {
-      throw InvalidParameterError();
-    }
     if (loading) throw QueryInProgressError();
     if (!hasNext) return [];
 

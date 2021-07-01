@@ -11,39 +11,39 @@ GroupChannelListQuery _$GroupChannelListQueryFromJson(
   return GroupChannelListQuery()
     ..loading = json['loading'] as bool
     ..hasNext = json['has_next'] as bool
-    ..token = json['token'] as String
+    ..token = json['token'] as String?
     ..limit = json['limit'] as int
-    ..order =
-        _$enumDecodeNullable(_$GroupChannelListOrderEnumMap, json['order'])
-    ..queryType = _$enumDecodeNullable(
-        _$GroupChannelListQueryTypeEnumMap, json['query_type'])
+    ..order = _$enumDecode(_$GroupChannelListOrderEnumMap, json['order'])
+    ..queryType =
+        _$enumDecode(_$GroupChannelListQueryTypeEnumMap, json['query_type'])
     ..channelUrls =
-        (json['channel_urls'] as List)?.map((e) => e as String)?.toList()
-    ..memberStateFilter = _$enumDecodeNullable(
-        _$MemberStateFilterEnumMap, json['member_state_filter'])
-    ..superChannelFilter = _$enumDecodeNullable(
-        _$SuperChannelFilterEnumMap, json['super_channel_filter'])
-    ..publicChannelFilter = _$enumDecodeNullable(
+        (json['channel_urls'] as List<dynamic>).map((e) => e as String).toList()
+    ..memberStateFilter =
+        _$enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
+    ..superChannelFilter =
+        _$enumDecode(_$SuperChannelFilterEnumMap, json['super_channel_filter'])
+    ..publicChannelFilter = _$enumDecode(
         _$PublicChannelFilterEnumMap, json['public_channel_filter'])
-    ..unreadChannelFilter = _$enumDecodeNullable(
+    ..unreadChannelFilter = _$enumDecode(
         _$UnreadChannelFilterEnumMap, json['unread_channel_filter'])
-    ..channelHiddenStateFilter = _$enumDecodeNullable(
+    ..channelHiddenStateFilter = _$enumDecode(
         _$ChannelHiddenStateFilterEnumMap, json['channel_hidden_state_filter'])
-    ..customTypeStartWith = json['custom_type_start_with'] as String
+    ..customTypeStartWith = json['custom_type_start_with'] as String?
     ..customTypes =
-        (json['custom_types'] as List)?.map((e) => e as String)?.toList()
-    ..nicknameContains = json['nickname_contains'] as String
-    ..userIdsIncludeIn =
-        (json['user_ids_include_in'] as List)?.map((e) => e as String)?.toList()
-    ..userIdsExactlyIn =
-        (json['user_ids_exactly_in'] as List)?.map((e) => e as String)?.toList()
-    ..channelNameContains = json['channel_name_contains'] as String
-    ..metaDataOrderKey = json['meta_data_order_key'] as String
-    ..searchQuery = json['search_query'] as String
-    ..searchFields = (json['search_fields'] as List)
-        ?.map((e) =>
-            _$enumDecodeNullable(_$GroupChannelListQuerySearchFieldEnumMap, e))
-        ?.toList()
+        (json['custom_types'] as List<dynamic>).map((e) => e as String).toList()
+    ..nicknameContains = json['nickname_contains'] as String?
+    ..userIdsIncludeIn = (json['user_ids_include_in'] as List<dynamic>)
+        .map((e) => e as String)
+        .toList()
+    ..userIdsExactlyIn = (json['user_ids_exactly_in'] as List<dynamic>)
+        .map((e) => e as String)
+        .toList()
+    ..channelNameContains = json['channel_name_contains'] as String?
+    ..metaDataOrderKey = json['meta_data_order_key'] as String?
+    ..searchQuery = json['search_query'] as String?
+    ..searchFields = (json['search_fields'] as List<dynamic>)
+        .map((e) => _$enumDecode(_$GroupChannelListQuerySearchFieldEnumMap, e))
+        .toList()
     ..includeEmptyChannel = json['include_empty_channel'] as bool
     ..includeFrozenChannel = json['include_frozen_channel'] as bool
     ..includeMemberList = json['include_member_list'] as bool
@@ -79,44 +79,38 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
       'meta_data_order_key': instance.metaDataOrderKey,
       'search_query': instance.searchQuery,
       'search_fields': instance.searchFields
-          ?.map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e])
-          ?.toList(),
+          .map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e])
+          .toList(),
       'include_empty_channel': instance.includeEmptyChannel,
       'include_frozen_channel': instance.includeFrozenChannel,
       'include_member_list': instance.includeMemberList,
       'include_meta_data': instance.includeMetaData,
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
 const _$GroupChannelListOrderEnumMap = {

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/string_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,18 +12,18 @@ import 'package:encrypt/encrypt.dart';
 
 /// Represents a object that responsible to handle session
 class SessionManager with SdkAccessor {
-  String _sessionKey;
-  String _eKey;
-  String _userId;
-  String _accessToken;
-  String _sessionKeyPath;
-  String _userIdKeyPath;
-  int _sessionExpiresIn;
+  String? _sessionKey;
+  String? _eKey;
+  String? _userId;
+  String? _accessToken;
+  late String _sessionKeyPath;
+  late String _userIdKeyPath;
+  int _sessionExpiresIn = 0;
 
   bool isRefreshingKey = false;
 
-  Future Function(String) successFunc;
-  Function errorFunc;
+  late Future Function(String) successFunc;
+  late Function errorFunc;
 
   SessionManager() {
     _userIdKeyPath = 'com.sendbird.sdk.messaging.userid';
@@ -32,9 +32,9 @@ class SessionManager with SdkAccessor {
     errorFunc = _sessionErrorHandler;
   }
 
-  String get accessToken => _accessToken;
+  String? get accessToken => _accessToken;
 
-  void setAccessToken(String accessToken) {
+  void setAccessToken(String? accessToken) {
     logger.i('Setting access token $accessToken');
     _accessToken = accessToken;
   }
@@ -51,8 +51,8 @@ class SessionManager with SdkAccessor {
     _userIdKeyPath = path;
   }
 
-  void setSessionExpiresIn(int timestamp) {
-    _sessionExpiresIn = timestamp;
+  void setSessionExpiresIn(int? timestamp) {
+    _sessionExpiresIn = timestamp ?? 0;
   }
 
   int get sessionExpiresIn => _sessionExpiresIn;
@@ -60,13 +60,13 @@ class SessionManager with SdkAccessor {
   /// Set a `sessionKey` that will be used for SDK globally
   ///
   /// This method will also encrypt this key and store in prefs
-  Future<void> setSessionKey(String sessionKey) async {
+  Future<void> setSessionKey(String? sessionKey) async {
     _sessionKey = sessionKey;
     await _encryptedSessionKey(sessionKey);
   }
 
   /// Get current `sessionKey` from prefs
-  Future<String> getSessionKey() async {
+  Future<String?> getSessionKey() async {
     if (_sessionKey != null) return _sessionKey;
     final decryptedKey = await _decryptedSessionKey();
     _sessionKey ??= decryptedKey;
@@ -75,7 +75,7 @@ class SessionManager with SdkAccessor {
 
   /// Set a `eKey` that will be used to access file url where
   /// authorization is required
-  void setEKey(String eKey) {
+  void setEKey(String? eKey) {
     _eKey = eKey;
   }
 
@@ -83,7 +83,7 @@ class SessionManager with SdkAccessor {
   ///
   /// This is only existed in memory and will not be stored in
   /// persistent storage
-  String getEKey() {
+  String? getEKey() {
     return _eKey;
   }
 
@@ -93,12 +93,12 @@ class SessionManager with SdkAccessor {
   }
 
   /// Get `userId` associate with this user session
-  String getUserId() {
+  String? getUserId() {
     return _userId;
   }
 
   // Decrypts session key
-  Future<String> _decryptedSessionKey() async {
+  Future<String?> _decryptedSessionKey() async {
     final prefs = await SharedPreferences.getInstance();
     final encryptedUserId = prefs.getString(_userIdKeyPath);
 
@@ -112,11 +112,12 @@ class SessionManager with SdkAccessor {
     final encrypter = Encrypter(AES(key));
     // final encryptedSessionKey = sessionPath;
     final encryptedSessionKey = prefs.getString(_sessionKeyPath);
+    if (encryptedSessionKey == null) throw UnknownError();
     return encrypter.decrypt(Encrypted.fromBase64(encryptedSessionKey), iv: iv);
   }
 
   // Encrypts session key
-  Future<void> _encryptedSessionKey(String sessionKey) async {
+  Future<void> _encryptedSessionKey(String? sessionKey) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionKey == null) {
       logger.e('Session key set to null, all paths will be removed');
@@ -125,16 +126,17 @@ class SessionManager with SdkAccessor {
       throw InvalidParameterError();
     }
 
-    if (_userId == null) {
+    final userId = _userId;
+    if (userId == null) {
       logger.e('userId is required to encrypt session');
       throw InvalidParameterError();
     }
 
     var id = '';
-    if (_userId.length >= 24) {
-      id = _userId.substring(0, 24);
+    if (userId.length >= 24) {
+      id = userId.substring(0, 24);
     } else {
-      id = _userId + getRandomString(24 - _userId.length);
+      id = userId + getRandomString(24 - userId.length);
     }
     final userIdData = utf8.encode(id);
     final base64UserId = base64.encode(userIdData);
@@ -158,16 +160,21 @@ class SessionManager with SdkAccessor {
       return false;
     }
 
+    final appId = sdk.state.appId;
+    final accessToken = _accessToken;
+
+    if (appId == null || accessToken == null) throw UnauthorizeError();
+
     final hasSessionHandler =
-        sdk.eventManager.getHandler(type: EventType.session) != null;
+        sdk.eventManager.getHandler<SessionEventHandler>() != null;
 
     isRefreshingKey = true;
 
     logger.i('Updating session with $_accessToken');
     try {
       final res = await sdk.api.updateSessionKey(
-        appId: sdk.state.appId,
-        accessToken: _accessToken,
+        appId: appId,
+        accessToken: accessToken,
         expiringSession: hasSessionHandler,
       );
       isRefreshingKey = false;
@@ -208,7 +215,7 @@ class SessionManager with SdkAccessor {
   Future<void> _sessionSuccessHandler(String token) async {
     setAccessToken(token);
 
-    if (token != null || token != '') {
+    if (token.isEmpty) {
       await updateSession();
     } else {
       final error = InvalidAccessTokenError();
