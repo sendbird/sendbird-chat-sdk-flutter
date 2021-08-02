@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:sendbird_sdk/constant/contants.dart' as constants;
@@ -84,13 +84,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   Completer<User>? get loginCompleter => _loginCompleter;
   Options get options => _options;
   void setOptions(Options options) => _options = options;
-  AsyncQueue getMsgQueue(String channelUrl) =>
-      _messageQueues[channelUrl] ?? AsyncQueue();
-  void setMsgQueue(String channelUrl, AsyncQueue queue) =>
-      _messageQueues[channelUrl] = queue;
+  AsyncQueue getMsgQueue(String channelUrl) => _messageQueues[channelUrl] ?? AsyncQueue();
+  void setMsgQueue(String channelUrl, AsyncQueue queue) => _messageQueues[channelUrl] = queue;
   AsyncSimpleTask? getUploadTask(String requestId) => _uploads[requestId];
-  void setUploadTask(String requestId, AsyncSimpleTask task) =>
-      _uploads[requestId] = task;
+  void setUploadTask(String requestId, AsyncSimpleTask task) => _uploads[requestId] = task;
 
   // socket callbacks
 
@@ -113,8 +110,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     if (data.runtimeType == String) {
       stringCommand = (data as String);
     } else {
-      stringCommand =
-          Utf8Decoder(allowMalformed: true).convert(data as List<int>);
+      stringCommand = Utf8Decoder(allowMalformed: true).convert(data as List<int>);
     }
 
     if (stringCommand.isEmpty) {
@@ -174,9 +170,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       }
 
       // is already in progress to connect
-      if (_state.connecting &&
-          _state.userId == userId &&
-          _loginCompleter != null) {
+      if (_state.connecting && _state.userId == userId && _loginCompleter != null) {
         return _loginCompleter!.future;
       }
     } else {
@@ -205,10 +199,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _sessionManager.setAccessToken(accessToken);
 
-    final apiHostUrl =
-        reconnect ? _state.apiHost! : apiHost ?? _getDefaultApiHost();
-    final wsHostUrl =
-        reconnect ? _state.wsHost! : wsHost ?? _getDefaultWsHost();
+    final apiHostUrl = reconnect ? _state.apiHost! : apiHost ?? _getDefaultApiHost();
+    final wsHostUrl = reconnect ? _state.wsHost! : wsHost ?? _getDefaultWsHost();
 
     _state
       ..reconnecting = reconnect
@@ -217,8 +209,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _api.initialize(baseUrl: apiHostUrl, headers: {
       'SB-User-Agent': _sbUserAgent,
-      'User-Agent':
-          '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
+      'User-Agent': '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
     });
 
     var params = {
@@ -229,28 +220,22 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       'sv': sdk_version,
       'ai': _state.appId,
       if (nickname != null && nickname != '') 'nickname': nickname,
-      if (reconnect && sessionKey != null)
-        'key': sessionKey
-      else
-        'user_id': userId,
+      if (reconnect && sessionKey != null) 'key': sessionKey else 'user_id': userId,
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
-      'expiring_session':
-          _eventManager.getHandler<SessionEventHandler>() != null ? '1' : '0',
+      'expiring_session': _eventManager.getHandler<SessionEventHandler>() != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
     final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
     await _webSocket?.connect(fullWsHost);
-    final user = await _loginCompleter!.future
-        .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
+    final user = await _loginCompleter!.future.timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
       logout();
       throw LoginTimeoutError();
     });
 
-    ConnectionManager.flushCompleters(
-        error: reconnect ? null : ConnectionClosedError());
+    ConnectionManager.flushCompleters(error: reconnect ? null : ConnectionClosedError());
 
     _loginCompleter = null;
     _reconnectTimer = null;
@@ -347,17 +332,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     //NOTE: do not run connectivity on test
     final isTest = Platform.environment['FLUTTER_TEST'] == 'true';
     if (!isTest) {
-      _connectionSub = Connectivity()
-          .onConnectivityChanged
-          .listen((ConnectivityResult result) {
+      _connectionSub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
         switch (result) {
           case ConnectivityResult.none:
             logger.i('connection has been lost');
             break;
           case ConnectivityResult.mobile:
           case ConnectivityResult.wifi:
-            if (_connectionResult == ConnectivityResult.none &&
-                _state.sessionKey != null) {
+            if (_connectionResult == ConnectivityResult.none && _state.sessionKey != null) {
               reconnect(reset: true);
             }
         }
@@ -386,8 +368,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void addVersionExtension(String key, String version) {
-    if (key != constants.sbExtensionKeyUIKit ||
-        key != constants.sbExtensionKeySyncManager) {
+    if (key != constants.sbExtensionKeyUIKit || key != constants.sbExtensionKeySyncManager) {
       return;
     }
     _extensions[key] = version;
