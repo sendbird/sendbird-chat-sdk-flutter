@@ -172,8 +172,7 @@ Finally, send a message to the channel. There are three types of [messages](http
 
 ```dart
 try {
-  final params = UserMessageParams()
-    ..message = MESSAGE
+  final params = UserMessageParams(message: MESSAGE)
     ..data = DATA
     ..customType = CUSTOM_TYPE;
   

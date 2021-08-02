@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:sendbird_sdk/constant/contants.dart' as constants;
@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.0';
+const sdk_version = '3.1.1';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -361,6 +361,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
               reconnect(reset: true);
             }
         }
+        _connectionResult = result;
       });
     }
   }

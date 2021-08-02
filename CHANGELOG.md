@@ -1,3 +1,7 @@
+## [3.1.1] - Jul 27, 2021
+* Fixed a bug that connectivity is not working properly when nternet connection becomes on after off
+* Changed `connectivity` dependency to `connectivity_plus`
+
 ## [3.1.0] - Jul 7, 2021
 
 ### Breaking changes
