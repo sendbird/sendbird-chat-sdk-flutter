@@ -6,9 +6,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
-import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
 import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
@@ -17,8 +14,27 @@ import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
+import 'package:sendbird_sdk/features/delivery/read_status.dart';
+import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/params/group_channel_params.dart';
 import 'package:sendbird_sdk/params/scheduled_user_message_params.dart';
+import 'package:sendbird_sdk/request/channel/group_channel_create_request.dart';
+import 'package:sendbird_sdk/request/channel/group_channel_delete_request.dart';
+import 'package:sendbird_sdk/request/channel/group_channel_refresh_request.dart';
+import 'package:sendbird_sdk/request/channel/group_channel_update_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_accept_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_decline_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_invite_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_join_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_leave_request.dart';
+import 'package:sendbird_sdk/request/channel_operation/group_channel_reset_history_request.dart';
+import 'package:sendbird_sdk/request/channel_preference/group_channel_count_preference_request.dart';
+import 'package:sendbird_sdk/request/channel_preference/group_channel_freeze_request.dart';
+import 'package:sendbird_sdk/request/channel_preference/group_channel_hide_request.dart';
+import 'package:sendbird_sdk/request/channel_preference/group_channel_push_trigger_option_request.dart';
+import 'package:sendbird_sdk/request/channel_preference/group_channel_screen_shot_request.dart';
+import 'package:sendbird_sdk/request/messages/schedule_message_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_utils.dart';
@@ -26,7 +42,7 @@ import 'package:sendbird_sdk/services/db/cache_service.dart';
 import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
 part 'group_channel.g.dart';
-part 'group_channel_operations.dart';
+part 'group_channel_operation.dart';
 part 'group_channel_typing.dart';
 part 'group_channel_read.dart';
 part 'group_channel_configuration.dart';
@@ -235,18 +251,19 @@ class GroupChannel extends BaseChannel {
   /// Refreshes an [GroupChannel] with given [channelUrl]
   static Future<GroupChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
-    final result = await sdk.api.getChannel<GroupChannel>(
-      channelType: ChannelType.group,
-      channelUrl: channelUrl,
-      passive: false,
-      options: [
-        ChannelQueryIncludeOption.deliveryReceipt,
-        ChannelQueryIncludeOption.readReceipt,
-        ChannelQueryIncludeOption.memberList,
-        ChannelQueryIncludeOption.metaData,
-      ],
+
+    return sdk.api.send<GroupChannel>(
+      GroupChannelRefreshRequest(
+        channelUrl,
+        options: [
+          ChannelQueryIncludeOption.deliveryReceipt,
+          ChannelQueryIncludeOption.readReceipt,
+          ChannelQueryIncludeOption.memberList,
+          ChannelQueryIncludeOption.metaData,
+        ],
+        passive: false,
+      ),
     );
-    return result;
   }
 
   /// Gets an [GroupChannel] with given [channelUrl]
@@ -279,7 +296,8 @@ class GroupChannel extends BaseChannel {
     } else if (!params.userIds.contains(currentUserId)) {
       params.userIds.add(currentUserId);
     }
-    return sdk.api.createGroupChannel(params, progress: progress);
+    return sdk.api.send<GroupChannel>(
+        GroupChannelCreateRequest(params, onProgress: progress));
   }
 
   /// Updates this channel with given [params] and optional [progress].
@@ -298,7 +316,8 @@ class GroupChannel extends BaseChannel {
       throw InvalidParameterError();
     }
 
-    return _sdk.api.updateGroupChannel(params, progress: progress);
+    return _sdk.api.send<GroupChannel>(
+        GroupChannelUpdateRequest(params, onProgress: progress));
   }
 
   /// Deletes this channel.
@@ -306,21 +325,18 @@ class GroupChannel extends BaseChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onChannelDeleted] will be invoked
   Future<void> deleteChannel() async {
-    await _sdk.api.deleteChannel(
-      channelType: channelType,
-      channelUrl: channelUrl,
-    );
+    _sdk.api.send(GroupChannelDeleteRequest(channelUrl));
     if (!isPublic) removeFromCache();
   }
 
   /// Registers a [ScheduledUserMessage] with given [params].
   Future<ScheduledUserMessage> registerScheduledUserMessage(
       ScheduledUserMessageParams params) async {
-    return _sdk.api.registerScheduleUserMessage(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params,
-      userId: _sdk.state.userId,
+    return _sdk.api.send<ScheduledUserMessage>(
+      GroupChannelScheduledMessageSendRequest(
+        channelUrl: channelUrl,
+        params: params,
+      ),
     );
   }
 

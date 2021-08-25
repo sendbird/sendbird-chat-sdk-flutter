@@ -4,10 +4,11 @@ part of 'base_channel.dart';
 extension Moderations on BaseChannel {
   /// Gets current user's mute information
   Future<MuteInfoResponse> getMyMuteInfo() async {
-    return _sdk.api.getMuteInfo(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      userId: _sdk.state.currentUser?.userId,
+    return _sdk.api.send(
+      ChannelMyMuteInfoGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+      ),
     );
   }
 
@@ -24,13 +25,13 @@ extension Moderations on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.banUser(
-      userId: userId,
+    await _sdk.api.send(ChannelUserBanRequest(
+      targetId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
       description: description,
       seconds: seconds,
-    );
+    ));
   }
 
   /// Unbans a user from this channel
@@ -39,11 +40,11 @@ extension Moderations on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.unbanUser(
-      userId: userId,
+    await _sdk.api.send(ChannelUserUnbanRequest(
+      targetId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
-    );
+    ));
   }
 
   /// Mutes a user from this channel.
@@ -59,13 +60,13 @@ extension Moderations on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.muteUser(
-      userId: userId,
+    await _sdk.api.send(ChannelUserMuteRequest(
+      targetId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
       description: description,
       seconds: seconds,
-    );
+    ));
   }
 
   /// Unmutes user from this channel.
@@ -74,11 +75,11 @@ extension Moderations on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.unmuteUser(
-      userId: userId,
+    await _sdk.api.send(ChannelUserUnmuteRequest(
+      targetId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
-    );
+    ));
   }
 
   /// Reports this channel with [category] and [description] (optional)
@@ -86,11 +87,11 @@ extension Moderations on BaseChannel {
     required ReportCategory category,
     String? description,
   }) async {
-    await _sdk.api.reportChannel(
+    await _sdk.api.send(ChannelReportRequest(
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
-    );
+    ));
   }
 
   /// Reports [message] with [category] and [description] (optional)
@@ -104,13 +105,13 @@ extension Moderations on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.reportMessage(
+    await _sdk.api.send(MessageReportRequest(
       messageId: message.messageId,
       senderId: senderId,
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
-    );
+    ));
   }
 
   /// Reports a [User] with [category] and [description] (optional)
@@ -119,11 +120,11 @@ extension Moderations on BaseChannel {
     required ReportCategory category,
     String? description,
   }) async {
-    await _sdk.api.reportUser(
-      userId: userId,
+    await _sdk.api.send(UserReportRequest(
+      targetId: userId,
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
-    );
+    ));
   }
 }

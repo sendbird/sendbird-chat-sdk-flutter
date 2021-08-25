@@ -229,14 +229,19 @@ class MessageSearchQueryResponse extends BaseResponse {
       _$MessageSearchQueryResponseFromJson(json);
 }
 
+abstract class Serializable {
+  Serializable();
+  Serializable.fromJson(Map<String, dynamic> json);
+}
+
 @JsonSerializable(createToJson: false)
-class MetaDataResponse extends BaseResponse {
+class MetaDataResponse extends Serializable {
   @JsonKey(defaultValue: {})
   Map<String, String> metadata;
 
   int? ts;
 
-  MetaDataResponse({this.metadata = const {}, this.ts});
+  MetaDataResponse({this.metadata = const {}, this.ts}) : super();
 
   factory MetaDataResponse.fromJson(Map<String, dynamic> json) =>
       _$MetaDataResponseFromJson(json);

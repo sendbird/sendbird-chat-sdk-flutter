@@ -16,11 +16,13 @@ extension Reactions on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final res = await _sdk.api.addReaction(
-      channelType: message.channelType,
-      channelUrl: message.channelUrl,
-      messageId: message.messageId,
-      key: key,
+    final res = await _sdk.api.send<ReactionEvent>(
+      ChannelReactionAddRequest(
+        channelType: message.channelType,
+        channelUrl: message.channelUrl,
+        messageId: message.messageId,
+        key: key,
+      ),
     );
 
     res.messageId = message.messageId;
@@ -41,11 +43,13 @@ extension Reactions on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final res = await _sdk.api.deleteReaction(
-      channelType: message.channelType,
-      channelUrl: message.channelUrl,
-      messageId: message.messageId,
-      key: key,
+    final res = await _sdk.api.send<ReactionEvent>(
+      ChannelReactionDeleteRequest(
+        channelType: message.channelType,
+        channelUrl: message.channelUrl,
+        messageId: message.messageId,
+        key: key,
+      ),
     );
 
     res.messageId = message.messageId;

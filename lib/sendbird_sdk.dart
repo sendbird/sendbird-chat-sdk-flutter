@@ -6,7 +6,6 @@ export 'constant/error_code.dart';
 
 export 'core/channel/base/base_channel.dart';
 export 'core/channel/group/group_channel.dart';
-export 'core/channel/group/features/thread_info.dart';
 export 'core/channel/open/open_channel.dart';
 export 'core/message/base_message.dart';
 export 'core/message/user_message.dart';
@@ -19,12 +18,13 @@ export 'core/models/member.dart';
 export 'core/models/meta_array.dart';
 export 'core/models/file_info.dart';
 export 'core/models/options.dart';
-export 'core/models/reaction.dart';
 export 'core/models/sender.dart';
 export 'core/models/user.dart';
 
-export 'events/reaction_event.dart';
-export 'events/thread_info_update_event.dart';
+export 'features/reaction/reaction.dart';
+export 'features/reaction/reaction_event.dart';
+export 'features/threading/thread_info.dart';
+export 'features/threading/thread_info_update_event.dart';
 
 export 'handlers/authenticate_event_handler.dart';
 export 'handlers/channel_event_handler.dart';
@@ -44,13 +44,13 @@ export 'params/scheduled_user_message_params.dart';
 export 'params/threaded_message_list_params.dart';
 export 'params/user_message_params.dart';
 
-export 'query/message_search_query.dart';
-export 'query/group_channel_list_query.dart';
-export 'query/group_channel_member_list_query.dart';
-export 'query/open_channel_list_query.dart';
-export 'query/operator_list_query.dart';
-export 'query/previous_message_list_query.dart';
-export 'query/public_group_channel_list_query.dart';
-export 'query/user_list_query.dart';
+export 'query/search/message_search_query.dart';
+export 'query/channel_list/group_channel_list_query.dart';
+export 'query/channel_list/open_channel_list_query.dart';
+export 'query/message_list/previous_message_list_query.dart';
+export 'query/channel_list/public_group_channel_list_query.dart';
+export 'query/user_list/group_channel_member_list_query.dart';
+export 'query/user_list/operator_list_query.dart';
+export 'query/user_list/user_list_query.dart';
 
 export 'sdk/sendbird_sdk_api.dart';

@@ -29,9 +29,10 @@ ScheduledUserMessage _$ScheduledUserMessageFromJson(Map<String, dynamic> json) {
         _$MessageSendingStatusEnumMap, json['sending_status']),
     sender: Sender.fromJson(json['user'] as Map<String, dynamic>),
     channelUrl: json['channel_url'] as String,
-    channelType:
-        _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type']) ??
-            ChannelType.group,
+    channelType: _$enumDecodeNullable(
+            _$ChannelTypeEnumMap, json['channel_type'],
+            unknownValue: ChannelType.group) ??
+        ChannelType.group,
     mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
             ?.map((e) => User.fromJson(e as Map<String, dynamic>))
             .toList() ??

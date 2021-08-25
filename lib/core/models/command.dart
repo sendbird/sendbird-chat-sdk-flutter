@@ -21,6 +21,8 @@ part 'command.g.dart';
 
 @JsonSerializable()
 class Command {
+  // @JsonKey(fromJson: _toEnum)
+  // CommandType cmd;
   String cmd;
 
   @JsonKey(name: 'ts')
@@ -56,8 +58,7 @@ class Command {
     }
   }
 
-  factory Command.fromJson(Map<String, dynamic> json, String cmd) {
-    json['cmd'] = cmd;
+  factory Command.fromJson(Map<String, dynamic> json) {
     return _$CommandFromJson(json);
   }
 
@@ -68,52 +69,52 @@ class Command {
   }
 
   bool get isAckRequired =>
-      CommandType.isUserMessage(cmd) ||
-      CommandType.isFileMessage(cmd) ||
-      cmd == CommandType.enter ||
-      cmd == CommandType.exit ||
-      cmd == CommandType.read;
+      CommandString.isUserMessage(cmd) ||
+      CommandString.isFileMessage(cmd) ||
+      cmd == CommandString.enter ||
+      cmd == CommandString.exit ||
+      cmd == CommandString.read;
 
   bool get hasError => payload['error'] != null;
 
-  bool get isSessionExpired => cmd == CommandType.sessionExpired;
+  bool get isSessionExpired => cmd == CommandString.sessionExpired;
 
-  bool get isLogin => cmd == CommandType.login;
+  bool get isLogin => cmd == CommandString.login;
 
   bool get isNewMessage =>
-      cmd == CommandType.userMessage ||
-      cmd == CommandType.fileMessage ||
-      cmd == CommandType.adminMessage ||
-      cmd == CommandType.broadcastMessage;
+      cmd == CommandString.userMessage ||
+      cmd == CommandString.fileMessage ||
+      cmd == CommandString.adminMessage ||
+      cmd == CommandString.broadcastMessage;
 
   bool get isUpdatedMessage =>
-      cmd == CommandType.userMessageUpdate ||
-      cmd == CommandType.fileMessageUpdate ||
-      cmd == CommandType.adminMessageUpdate;
+      cmd == CommandString.userMessageUpdate ||
+      cmd == CommandString.fileMessageUpdate ||
+      cmd == CommandString.adminMessageUpdate;
 
-  bool get isMemberCountChange => cmd == CommandType.memberCountChange;
+  bool get isMemberCountChange => cmd == CommandString.memberCountChange;
 
-  bool get isDeletedMessage => cmd == CommandType.deleteMessage;
+  bool get isDeletedMessage => cmd == CommandString.deleteMessage;
 
-  bool get isRead => cmd == CommandType.read;
+  bool get isRead => cmd == CommandString.read;
 
-  bool get isDelivery => cmd == CommandType.delivery;
+  bool get isDelivery => cmd == CommandString.delivery;
 
-  bool get isThread => cmd == CommandType.thread;
+  bool get isThread => cmd == CommandString.thread;
 
-  bool get isReaction => cmd == CommandType.reaction;
+  bool get isReaction => cmd == CommandString.reaction;
 
-  bool get isSystemEvent => cmd == CommandType.systemEvent;
+  bool get isSystemEvent => cmd == CommandString.systemEvent;
 
-  bool get isUserEvent => cmd == CommandType.userEvent;
+  bool get isUserEvent => cmd == CommandString.userEvent;
 
-  bool get isError => cmd == CommandType.error;
+  bool get isError => cmd == CommandString.error;
 
   // builders
 
   static Command buildEnterChannel(BaseChannel channel) {
     return Command(
-      cmd: CommandType.enter,
+      cmd: CommandString.enter,
       payload: {
         'channel_url': channel.channelUrl,
         'last_ts': DateTime.now().millisecondsSinceEpoch,
@@ -123,7 +124,7 @@ class Command {
 
   static Command buildExitChannel(BaseChannel channel) {
     return Command(
-      cmd: CommandType.exit,
+      cmd: CommandString.exit,
       payload: {
         'channel_url': channel.channelUrl,
       },
@@ -165,7 +166,7 @@ class Command {
     }
 
     return Command(
-      cmd: CommandType.userMessage,
+      cmd: CommandString.userMessage,
       payload: payload,
       requestId: requestId,
     );
@@ -186,7 +187,7 @@ class Command {
       'mentioned_user_ids': params.mentionedUserIds
     };
     payload.removeWhere((key, value) => value == null);
-    return Command(cmd: CommandType.userMessageUpdate, payload: payload);
+    return Command(cmd: CommandString.userMessageUpdate, payload: payload);
   }
 
   static Command buildFileMessage({
@@ -227,7 +228,7 @@ class Command {
 
     payload.removeWhere((key, value) => value == null);
     return Command(
-      cmd: CommandType.fileMessage,
+      cmd: CommandString.fileMessage,
       payload: payload,
       requestId: requestId,
     );
@@ -244,7 +245,7 @@ class Command {
       'mentioned_user_ids': params.mentionedUserIds
     };
     payload.removeWhere((key, value) => value == null);
-    return Command(cmd: CommandType.fileMessageUpdate, payload: payload);
+    return Command(cmd: CommandString.fileMessageUpdate, payload: payload);
   }
 
   static Command buildUpdateMessageMetaArray(
@@ -261,9 +262,9 @@ class Command {
 
     String type;
     if (message is UserMessage) {
-      type = CommandType.userMessageUpdate;
+      type = CommandString.userMessageUpdate;
     } else if (message is FileMessage) {
-      type = CommandType.fileMessageUpdate;
+      type = CommandString.fileMessageUpdate;
     } else {
       throw InvalidParameterError();
     }
@@ -281,25 +282,25 @@ class Command {
 
   static Command buildPing() {
     return Command(
-        cmd: CommandType.ping,
+        cmd: CommandString.ping,
         payload: {'id': DateTime.now().millisecondsSinceEpoch});
   }
 
   static Command buildStartTyping(String channelUrl, int startAt) {
     return Command(
-        cmd: CommandType.typingStart,
+        cmd: CommandString.typingStart,
         payload: {'channel_url': channelUrl, 'time': startAt});
   }
 
   static Command buildEndTyping(String channelUrl, int endAt) {
     return Command(
-        cmd: CommandType.typingEnd,
+        cmd: CommandString.typingEnd,
         payload: {'channel_url': channelUrl, 'time': endAt});
   }
 
   static Command buildRead(String channelUrl) {
     return Command(
-      cmd: CommandType.read,
+      cmd: CommandString.read,
       payload: {
         'channel_url': channelUrl,
       },
@@ -308,7 +309,7 @@ class Command {
 
   static Command buildMessageMACK(String channelUrl, int messageId) {
     return Command(
-      cmd: CommandType.mack,
+      cmd: CommandString.mack,
       payload: {
         'channel_url': channelUrl,
         'msg_id': messageId,
@@ -323,7 +324,7 @@ class Command {
         .getHandlers<SessionEventHandler>()
         .isNotEmpty;
     return Command(
-      cmd: CommandType.login,
+      cmd: CommandString.login,
       payload: {
         if (token != null) 'token': token,
         'expiring_session': hasCallback,

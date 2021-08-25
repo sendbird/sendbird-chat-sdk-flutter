@@ -70,13 +70,35 @@ enum MemberStateFilter {
   invitedByNonFriend,
 }
 
-const memberStateFilterEnumMap = <MemberStateFilter, String>{
-  MemberStateFilter.all: 'all',
-  MemberStateFilter.invited: 'invited',
-  MemberStateFilter.joined: 'joined',
-  MemberStateFilter.invitedByFriend: 'invited_by_friend',
-  MemberStateFilter.invitedByNonFriend: 'invited_by_non_friend',
-};
+String memberStateFilterEnumForQuery(MemberStateFilter filter) {
+  switch (filter) {
+    case MemberStateFilter.all:
+      return 'all';
+    case MemberStateFilter.invited:
+      return 'invited_only';
+    case MemberStateFilter.joined:
+      return 'joined_only';
+    case MemberStateFilter.invitedByFriend:
+      return 'invited_by_friend';
+    case MemberStateFilter.invitedByNonFriend:
+      return 'invited_by_non_friend';
+  }
+}
+
+String memberStateFilterEnumForGroupCount(MemberStateFilter filter) {
+  switch (filter) {
+    case MemberStateFilter.all:
+      return 'all';
+    case MemberStateFilter.invited:
+      return 'invited';
+    case MemberStateFilter.joined:
+      return 'joined';
+    case MemberStateFilter.invitedByFriend:
+      return 'invited_by_friend';
+    case MemberStateFilter.invitedByNonFriend:
+      return 'invited_by_non_friend';
+  }
+}
 
 /// Represents a filter for public group channel member state
 enum PublicGroupChannelMembershipFilter {
@@ -106,16 +128,26 @@ enum SuperChannelFilter {
 
   @JsonValue('nonsuper')
   nonsuperChannel,
+
+  @JsonValue('broadcast_only')
+  broadcastOnly,
+}
+
+String groupChannelSuperFilterEnum(SuperChannelFilter filter) {
+  switch (filter) {
+    case SuperChannelFilter.all:
+      return 'all';
+    case SuperChannelFilter.superChannel:
+      return 'super';
+    case SuperChannelFilter.nonsuperChannel:
+      return 'nonsuper';
+    case SuperChannelFilter.broadcastOnly:
+      return 'broadcast_only';
+  }
 }
 
 /// Represents a filter for group channel visibilty
 enum PublicChannelFilter { all, public, private }
-
-const groupChannelSuperFilterEnumMap = <SuperChannelFilter, String>{
-  SuperChannelFilter.all: 'all',
-  SuperChannelFilter.superChannel: 'super',
-  SuperChannelFilter.nonsuperChannel: 'nonsuper',
-};
 
 const groupChannelPublicFilterEnumMap = <PublicChannelFilter, String>{
   PublicChannelFilter.all: 'all',

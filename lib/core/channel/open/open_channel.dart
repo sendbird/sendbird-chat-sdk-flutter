@@ -8,6 +8,10 @@ import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/params/open_channel_params.dart';
+import 'package:sendbird_sdk/request/channel/open_channel_create_request.dart';
+import 'package:sendbird_sdk/request/channel/open_channel_delete_request.dart';
+import 'package:sendbird_sdk/request/channel/open_channel_refresh_request.dart';
+import 'package:sendbird_sdk/request/channel/open_channel_update_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
@@ -94,11 +98,12 @@ class OpenChannel extends BaseChannel {
   /// Refreshes an [OpenChannel] with given [channelUrl]
   static Future<OpenChannel> refresh(String channelUrl) async {
     final sdk = SendbirdSdk().getInternal();
-    final channel = await sdk.api.getChannel<OpenChannel>(
-      channelType: ChannelType.open,
-      channelUrl: channelUrl,
-      passive: false,
-      options: [ChannelQueryIncludeOption.metaData],
+    final channel = await sdk.api.send<OpenChannel>(
+      OpenChannelRefreshRequest(
+        channelUrl: channelUrl,
+        options: [ChannelQueryIncludeOption.metaData],
+        passive: false,
+      ),
     );
     return channel;
   }
@@ -109,7 +114,8 @@ class OpenChannel extends BaseChannel {
     OnUploadProgressCallback? progress,
   }) async {
     final sdk = SendbirdSdk().getInternal();
-    return sdk.api.createOpenChannel(params, progress: progress);
+    return sdk.api.send<OpenChannel>(
+        OpenChannelCreateRequest(params, onProgress: progress));
   }
 
   /// Updates an [OpenChannel] with given [params] and optional [progress].
@@ -125,15 +131,13 @@ class OpenChannel extends BaseChannel {
       throw InvalidParameterError();
     }
 
-    return _sdk.api.updateOpenChannel(params, progress: progress);
+    return _sdk.api.send<OpenChannel>(
+        OpenChannelUpdateRequest(params, onProgress: progress));
   }
 
   /// Deletes this channel
   Future<void> deleteChannel() async {
-    await _sdk.api.deleteChannel(
-      channelType: channelType,
-      channelUrl: channelUrl,
-    );
+    _sdk.api.send(OpenChannelDeleteRequest(channelUrl));
     removeFromCache();
   }
 

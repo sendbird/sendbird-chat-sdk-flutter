@@ -12,11 +12,11 @@ extension BaseChannelConfiguration on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.addOperators(
+    await _sdk.api.send(ChannelOperatorsAddRequest(
       channelType: channelType,
       channelUrl: channelUrl,
       userIds: userIds,
-    );
+    ));
   }
 
   /// Removes operators on this channel with given [userIds].
@@ -29,11 +29,11 @@ extension BaseChannelConfiguration on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.removeOperators(
+    await _sdk.api.send(ChannelOperatorsRemoveRequest(
       channelType: channelType,
       channelUrl: channelUrl,
       userIds: userIds,
-    );
+    ));
   }
 
   /// Removes all operators on this channel.
@@ -42,9 +42,10 @@ extension BaseChannelConfiguration on BaseChannel {
   /// [ChannelEventHandler.onChannelOperatorsUpdated] will be invoked.
   /// Operator only
   Future<void> removeAllOperators() async {
-    await _sdk.api.removeAllOperators(
+    await _sdk.api.send(ChannelOperatorsRemoveRequest(
       channelType: channelType,
       channelUrl: channelUrl,
-    );
+      removeAll: true,
+    ));
   }
 }

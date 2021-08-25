@@ -1,7 +1,4 @@
 import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
@@ -9,19 +6,18 @@ import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/message/base_message_internal.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/events/channel_event.dart';
+import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
+import 'package:sendbird_sdk/features/delivery/read_status.dart';
+import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 /// Set of functionality for internal usage to update a channel
 extension GroupChannelInternal on GroupChannel {
   bool shouldUpdateLastMessage(BaseMessage message, Sender? sender) {
-    if (sender == null) {
-      return false;
-    }
-
     final lm = lastMessage;
     if (!message.isSilent ||
-        sender.isCurrentUser ||
+        sender?.isCurrentUser == true ||
         message.forceUpdateLastMessage) {
       if (lm == null) {
         return true;
@@ -106,7 +102,6 @@ extension GroupChannelInternal on GroupChannel {
     if (newMember == null) return;
 
     removeMember(newMember.userId);
-    newMember.state = MemberState.joined;
     members.add(newMember);
     members.sort((a, b) => a.nickname.compareTo(b.nickname));
 
@@ -128,11 +123,16 @@ extension GroupChannelInternal on GroupChannel {
     _refreshMemberCounts();
   }
 
-  void removeMember(String? userId) {
-    if (userId == null) return;
+  Member? removeMember(String? userId) {
+    if (userId == null) return null;
 
-    members.removeWhere((element) => element.userId == userId);
-    _refreshMemberCounts();
+    final index = members.indexWhere((element) => element.userId == userId);
+    if (index != -1) {
+      final member = members.removeAt(index);
+      _refreshMemberCounts();
+      return member;
+    }
+    return null;
   }
 
   void updateMember(User? user) {
@@ -172,5 +172,10 @@ extension GroupChannelInternal on GroupChannel {
   void updateMemberCounts(ChannelEvent event) {
     memberCount = event.memberCount;
     joinedMemberCount = event.joinedMemberCount;
+  }
+
+  void updateWithSystemEventData(Map<String, dynamic> data) {
+    memberCount = data['member_count'] ?? 0;
+    joinedMemberCount = data['joined_member_count'] ?? 0;
   }
 }

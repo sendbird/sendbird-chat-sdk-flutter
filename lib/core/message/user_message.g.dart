@@ -15,9 +15,10 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) {
     messageId: json['message_id'] as int? ?? 0,
     message: json['message'] as String,
     channelUrl: json['channel_url'] as String,
-    channelType:
-        _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type']) ??
-            ChannelType.group,
+    channelType: _$enumDecodeNullable(
+            _$ChannelTypeEnumMap, json['channel_type'],
+            unknownValue: ChannelType.group) ??
+        ChannelType.group,
     sender: json['user'] == null
         ? null
         : Sender.fromJson(json['user'] as Map<String, dynamic>),

@@ -7,7 +7,6 @@ import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/file_info.dart';
-import 'package:sendbird_sdk/managers/connection_manager.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
@@ -23,7 +22,6 @@ enum Method {
 class HttpClient {
   Map<String, String> headers = {};
   String? baseUrl;
-  int? port;
 
   String? appId;
   String? sessionKey;
@@ -37,9 +35,10 @@ class HttpClient {
 
   Map<String, MultipartRequest> uploadRequests = {};
 
+  MultipartRequest? request;
+
   HttpClient({
     this.baseUrl,
-    this.port,
     this.appId,
     this.sessionKey,
     this.token,
@@ -76,17 +75,40 @@ class HttpClient {
     Map<String, dynamic>? queryParams,
     Map<String, String>? headers,
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
-      port: port,
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
 
     final request = http.Request('GET', uri);
+    request.headers.addAll(commonHeaders());
+    request.headers.addAll(headers ?? {});
+
+    final res = await request.send();
+    final result = await http.Response.fromStream(res);
+    return _response(result);
+  }
+
+  Future<dynamic> patch({
+    required String url,
+    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+
+    final uri = Uri(
+      scheme: isLocal ? 'http' : 'https',
+      host: baseUrl,
+      path: url,
+      queryParameters: _convertQueryParams(queryParams),
+    );
+
+    final request = http.Request('PATCH', uri);
     request.headers.addAll(commonHeaders());
     request.headers.addAll(headers ?? {});
 
@@ -101,15 +123,15 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
-      port: port,
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
+
     final request = http.Request('POST', uri);
     request.body = jsonEncode(body);
     request.headers.addAll(commonHeaders());
@@ -126,12 +148,11 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
-      port: port,
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
@@ -152,12 +173,11 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final uri = Uri(
       scheme: isLocal ? 'http' : 'https',
       host: baseUrl,
-      port: port,
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
@@ -179,19 +199,19 @@ class HttpClient {
     Map<String, String>? headers,
     OnUploadProgressCallback? progress,
   }) async {
-    await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
+    // await ConnectionManager.readyToExecuteAPIRequest(force: bypassAuth);
 
     final request = MultipartRequest(
       method.asString().toUpperCase(),
       Uri(
         scheme: isLocal ? 'http' : 'https',
         host: baseUrl,
-        port: port,
         path: url,
         queryParameters: _convertQueryParams(queryParams ?? {}),
       ),
       onProgress: progress,
     );
+    this.request = request;
 
     body?.forEach((key, value) {
       if (value is FileInfo) {
@@ -226,6 +246,11 @@ class HttpClient {
 
     uploadRequests.remove(reqId);
     return _response(result);
+  }
+
+  void cacnel() {
+    //currently only support multipart request
+    request?.cancel();
   }
 
   bool cancelUploadRequest(String requestId) {

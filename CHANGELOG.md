@@ -1,3 +1,9 @@
+## [3.1.2] - Aug 25, 2021
+* Added `broadcastOnly` option for super group filter in group list query
+* Fixed last message update for admin message
+* Fixed member state when a user was invited to group channel
+* Refactored api architecture
+
 ## [3.1.1] - Jul 27, 2021
 * Fixed a bug that connectivity is not working properly when nternet connection becomes on after off
 * Changed `connectivity` dependency to `connectivity_plus`

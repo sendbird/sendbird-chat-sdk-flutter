@@ -42,7 +42,7 @@ class ConnectionManager {
     final sdk = SendbirdSdk().getInternal();
     final sessionKey = await sdk.sessionManager.getSessionKey();
     final hasValidSession = sessionKey != null && sessionKey.isNotEmpty;
-    final hasToken = sdk.api.token != null;
+    final hasToken = sdk.state.token != null;
     if (hasValidSession || hasToken) {
       return;
     }

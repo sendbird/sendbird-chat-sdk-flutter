@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/request/general/session_key_update_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
@@ -172,11 +173,11 @@ class SessionManager with SdkAccessor {
 
     logger.i('Updating session with $_accessToken');
     try {
-      final res = await sdk.api.updateSessionKey(
+      final res = await sdk.api.send(AppSessionKeyUpdateRequest(
         appId: appId,
         accessToken: accessToken,
         expiringSession: hasSessionHandler,
-      );
+      ));
       isRefreshingKey = false;
       logger.i('Updated session $res');
       _applyRefreshedSessionKey(res);

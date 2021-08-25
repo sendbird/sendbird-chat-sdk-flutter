@@ -7,9 +7,11 @@ part 'group_channel_filters.g.dart';
 @JsonSerializable()
 class GroupChannelFilter {
   /// Sets the member state filter
+  @JsonKey(toJson: memberStateFilterEnumForQuery)
   MemberStateFilter memberStateFilter = MemberStateFilter.all;
 
   /// Sets to filter super channel. Default is `all`
+  @JsonKey(toJson: groupChannelSuperFilterEnum)
   SuperChannelFilter superMode = SuperChannelFilter.all;
 
   /// Sets to filter public channel. Default is `all`

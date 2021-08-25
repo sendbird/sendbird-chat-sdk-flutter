@@ -34,8 +34,8 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
     <String, dynamic>{
       'member_state_filter':
-          _$MemberStateFilterEnumMap[instance.memberStateFilter],
-      'super_mode': _$SuperChannelFilterEnumMap[instance.superMode],
+          memberStateFilterEnumForQuery(instance.memberStateFilter),
+      'super_mode': groupChannelSuperFilterEnum(instance.superMode),
       'public_mode': _$PublicChannelFilterEnumMap[instance.publicMode],
       'custom_type_startswith': instance.customTypeStartswith,
       'custom_types': instance.customTypes,
@@ -86,6 +86,7 @@ const _$SuperChannelFilterEnumMap = {
   SuperChannelFilter.all: 'all',
   SuperChannelFilter.superChannel: 'super',
   SuperChannelFilter.nonsuperChannel: 'nonsuper',
+  SuperChannelFilter.broadcastOnly: 'broadcast_only',
 };
 
 const _$PublicChannelFilterEnumMap = {

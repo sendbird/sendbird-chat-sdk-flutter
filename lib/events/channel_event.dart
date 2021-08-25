@@ -51,28 +51,37 @@ class ChannelEvent implements BaseEvent {
   int get participantCount => data['participant_count'] ?? 0;
   bool? get allowAutoUnhide => data['allow_auto_unhide'];
   bool get hidePreviousMessage => data['hide_previous_messages'];
-  Member? get inviter =>
-      data['inviter'] != null ? Member.fromJson(data['inviter']) : null;
+  Member? get inviter {
+    if (data['inviter'] != null) {
+      final user = Member.fromJson(data['inviter']);
+      user.state = MemberState.joined;
+      return user;
+    }
+    return null;
+  }
+
   Member? get invitee =>
       data['invitee'] != null ? Member.fromJson(data['invitee']) : null;
   List<Member> get invitees {
     if (data['invitees'] == null) return [];
     final dics = data['invitees'] as List;
     final members = dics.map((e) => Member.fromJson(e)).toList();
-    // members.forEach((e) => e.state = MemberState.invited);
+    members.forEach((e) => e.state = MemberState.invited);
     return members;
   }
 
   User? get user => data.isEmpty ? null : User.fromJson(data);
 
-  List<Member> get users {
+  List<Member> get joinedMembers {
     if (data['users'] != null) {
       final dics = data['users'] as List<Map<String, dynamic>>;
       final users = dics.map((e) => Member.fromJson(e)).toList();
-      // users.forEach((e) => e.state = MemberState.invited);
+      users.forEach((e) => e.state = MemberState.joined);
       return users;
     } else {
-      return [Member.fromJson(data)];
+      final user = Member.fromJson(data);
+      user.state = MemberState.joined;
+      return [user];
     }
   }
 

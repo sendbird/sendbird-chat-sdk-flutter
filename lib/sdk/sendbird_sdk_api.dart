@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
-import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/app_info.dart';
@@ -14,12 +13,34 @@ import 'package:sendbird_sdk/core/models/options.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/unread_item_count.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
 import 'package:sendbird_sdk/handlers/session_event_handler.dart';
 import 'package:sendbird_sdk/handlers/user_event_handler.dart';
 import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
 import 'package:sendbird_sdk/params/group_channel_total_unread_message_count_params.dart';
+import 'package:sendbird_sdk/request/channel/group_channel_change_log_request.dart';
+import 'package:sendbird_sdk/request/feature/group_channel_delivery_request.dart';
+import 'package:sendbird_sdk/request/feature/group_channel_read_request.dart';
+import 'package:sendbird_sdk/request/general/emoji_category_request.dart';
+import 'package:sendbird_sdk/request/general/emoji_container_request.dart';
+import 'package:sendbird_sdk/request/general/emoji_request.dart';
+import 'package:sendbird_sdk/request/user/block/user_block_request.dart';
+import 'package:sendbird_sdk/request/user/block/user_unblock_request.dart';
+import 'package:sendbird_sdk/request/user/count/group_channel_count_request.dart';
+import 'package:sendbird_sdk/request/user/count/unread_channel_count_request.dart';
+import 'package:sendbird_sdk/request/user/count/unread_item_count_request.dart';
+import 'package:sendbird_sdk/request/user/count/unread_message_count_request.dart';
+import 'package:sendbird_sdk/request/user/info_update_request.dart';
+import 'package:sendbird_sdk/request/user/preference/channel_invitation_preference_request.dart';
+import 'package:sendbird_sdk/request/user/preference/do_not_disturb_request.dart';
+import 'package:sendbird_sdk/request/user/preference/push_sound_request.dart';
+import 'package:sendbird_sdk/request/user/preference/push_template_request.dart';
+import 'package:sendbird_sdk/request/user/preference/push_trigger_option_request.dart';
+import 'package:sendbird_sdk/request/user/preference/snooze_request.dart';
+import 'package:sendbird_sdk/request/user/push/push_register_request.dart';
+import 'package:sendbird_sdk/request/user/push/push_unregister_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 
@@ -36,7 +57,10 @@ class SendbirdSdk {
     String? apiToken,
     Options? options,
   }) {
-    if ((appId == null || appId == _instance._int.state.appId)) {
+    if (appId == null ||
+        (appId == _instance._int.state.appId &&
+            apiToken == null &&
+            options == null)) {
       return _instance;
     }
 
@@ -228,24 +252,28 @@ class SendbirdSdk {
     List<String>? preferredLanguages,
     OnUploadProgressCallback? progress,
   }) async {
-    final user = await _int.api.updateUser(
-      userId: _int.state.userId ?? '',
+    if (nickname == null && fileInfo == null && preferredLanguages == null) {
+      throw InvalidParameterError();
+    }
+
+    final user = await _int.api.send<User>(UserInfoUpdateRequest(
+      // userId: _int.state.userId ?? '',
       nickname: nickname,
       fileInfo: fileInfo,
       preferredLanguages: preferredLanguages,
-      progress: progress,
-    );
+      onProgress: progress,
+    ));
     _int.state.currentUser?.copyWith(user);
   }
 
   /// Blocks a user with [userId].
   Future<User> blockUser(String userId) async {
-    return _int.api.blockUser(userId);
+    return _int.api.send<User>(UserBlockRequest(targetId: userId));
   }
 
   /// Unblocks a user with [userId].
   Future<void> unblockUser(String userId) async {
-    return _int.api.unblockUser(userId);
+    await _int.api.send(UserUnblockRequest(targetId: userId));
   }
 
   /// Sets channel invitation preference with [autoAccept]. Default is `true`
@@ -253,12 +281,12 @@ class SendbirdSdk {
   /// If [autoAccept] has been set to `false`, then current user won't be
   /// automatically joined to channels when get invited from other users
   Future<void> setChannelInvitationPreference(bool autoAccept) async {
-    return _int.api.setAutoAcceptInvitation(autoAccept);
+    await _int.api.send(ChannelInvitationPreferenceSetRequest(autoAccept));
   }
 
   /// Returns `true` if channel invitation preference is set as auto accepted
   Future<bool> getChannelInvitationPreference() async {
-    return _int.api.getAutoAcceptInvitation();
+    return _int.api.send<bool>(ChannelInvitationPreferenceGetRequest());
   }
 
   /// Returns pending push token
@@ -277,13 +305,13 @@ class SendbirdSdk {
     bool alwaysPush = false,
     bool unique = false,
   }) async {
-    //if not connected return pending
-    return _int.api.registerPushToken(
+    return _int.api
+        .send<PushTokenRegistrationStatus>(UserPushTokenRegisterRequest(
       type: type,
       token: token,
       alwaysPush: alwaysPush,
       unique: unique,
-    );
+    ));
   }
 
   /// Unregisters push [token] with [type].
@@ -294,12 +322,15 @@ class SendbirdSdk {
     required PushTokenType type,
     required String token,
   }) async {
-    return _int.api.unregisterPushToken(type: type, token: token);
+    return _int.api.send(UserPushTokenUnregisterRequest(
+      type: type,
+      token: token,
+    ));
   }
 
-  /// Unregisters all push token with given [type].
-  Future<void> unregisterAllPushToken(PushTokenType type) async {
-    return _int.api.unregisterAllPushToken(type);
+  /// Unregisters all push token
+  Future<void> unregisterAllPushToken() async {
+    return _int.api.send(UserPushTokenUnregisterAllRequest());
   }
 
   /// Sets do not disturb mode [enable] with given start and end time.
@@ -322,19 +353,19 @@ class SendbirdSdk {
       throw InvalidParameterError();
     }
 
-    return _int.api.setDoNotDisturb(
+    return _int.api.send(UserDoNotDisturbSetRequest(
       enable: enable,
       startHour: startHour,
       startMin: startMin,
       endHour: endHour,
       endMin: endMin,
       timezone: timezone,
-    );
+    ));
   }
 
   /// Returns current do not disturb mode
   Future<DoNotDisturbResponse> getDoNotDisturb() async {
-    return _int.api.getDoNotDisturb();
+    return _int.api.send<DoNotDisturbResponse>(UserDoNotDisturbGetRequest());
   }
 
   /// Sets snooze period [enable] with start and end date.
@@ -352,46 +383,48 @@ class SendbirdSdk {
         throw InvalidParameterError();
       }
     }
-    return _int.api.setSnoozePeriod(
+    return _int.api.send(UserSnoozePeriodSetRequest(
       enable: enable,
       startDate: startDate,
       endDate: endDate,
-    );
+    ));
   }
 
   /// Returns current snooze period.
   Future<SnoozeResponse> getSnoozePeriod() async {
-    return _int.api.getSnoozePeriod();
+    return _int.api.send<SnoozeResponse>(UserSnoozePeriodGetRequest());
   }
 
   /// Sets push trigger [option] for current user.
   Future<void> setPushTriggerOption(PushTriggerOption option) async {
-    await _int.api.setPushTriggerOption(option);
+    await _int.api.send(UserPushTriggerOptionSetRequest(option));
   }
 
   /// Returns [PushTriggerOption] of current user.
   Future<PushTriggerOption> getPushTriggerOption() async {
-    return _int.api.getPushTriggerOption();
+    return _int.api.send<PushTriggerOption>(UserPushTriggerOptionGetRequest());
   }
 
   /// Sets push [sound].
   Future<void> setPushSound(String sound) async {
-    return _int.api.setPushSound(sound);
+    if (sound.isEmpty) throw InvalidParameterError();
+    return _int.api.send(UserPushSoundSetRequest(sound));
   }
 
   /// Returns push sound in `String`
   Future<String> getPushSound() async {
-    return _int.api.getPushSound();
+    return _int.api.send<String>(UserPushSoundGetRequest());
   }
 
   /// Sets push template with [name]
   Future<void> setPushTemplate(String name) async {
-    return _int.api.setPushTemplate(name);
+    if (name.isEmpty) throw InvalidParameterError();
+    return _int.api.send(UserPushTemplateSetRequest(name));
   }
 
   /// Get push template
   Future<String> getPushTemplate() async {
-    return _int.api.getPushTemplate();
+    return _int.api.send<String>(UserPushTemplateGetRequest());
   }
 
   // TBD
@@ -411,26 +444,28 @@ class SendbirdSdk {
     String? token,
     int? timestamp,
   }) async {
-    return _int.api.getGroupChannelChangeLogs(
-      params: params,
-      userId: _int.state.userId,
-      token: token,
-      timestamp: timestamp,
+    return _int.api.send<ChannelChangeLogsResponse>(
+      GroupChannelChangeLogsGetRequest(
+        params,
+        token: token,
+        timestamp: timestamp,
+      ),
     );
   }
 
   /// Mark current user's all group channels as read.
   Future<void> markAsReadAll() async {
-    await _int.api.markAsRead(userId: _int.state.userId);
+    await _int.api
+        .send(GroupChannelMarkAsReadApiRequest(userId: _int.state.userId));
   }
 
   /// Mark list of group channels with [channelUrls] as read.
   Future<void> markAsRead({required List<String> channelUrls}) async {
     if (channelUrls.isEmpty) throw InvalidParameterError();
-    await _int.api.markAsRead(
+    await _int.api.send(GroupChannelMarkAsReadApiRequest(
       channelUrls: channelUrls,
       userId: _int.state.userId,
-    );
+    ));
   }
 
   /// Mark a message as delivered with given payload from push notification
@@ -461,7 +496,12 @@ class SendbirdSdk {
 
       _int.sessionManager.setUserId(_int.state.userId ?? userId);
       _int.sessionManager.setSessionKey(sessionKey);
-      await _int.api.markAsDelivered(channelUrl: channelUrl, userId: userId);
+
+      await _int.api.send(GroupChannelMarkAsDeliveredRequest(
+        channelUrl: channelUrl,
+        userId: userId,
+        timestamp: createdAt,
+      ));
     } else {
       throw InvalidParameterError();
     }
@@ -469,15 +509,12 @@ class SendbirdSdk {
 
   /// Returns number of group channel with given [filter].
   Future<int> getGroupChannelCount(MemberStateFilter filter) async {
-    return _int.api.getGroupChannelCount(
-      memberFilter: filter,
-      userId: _int.state.userId,
-    );
+    return _int.api.send<int>(UserGroupChannelCountGetRequest(filter));
   }
 
   /// Returns total number of group channels that contains unread messages.
   Future<int> getTotalUnreadChannelCount() async {
-    return _int.api.getTotalUnreadChannelCount(userId: _int.state.userId);
+    return _int.api.send<int>(UserTotalUnreadChannelCountGetRequest());
   }
 
   /// Returns total number of unrad messages.
@@ -490,10 +527,8 @@ class SendbirdSdk {
   /// Returns total number of unread messages with given [params].
   Future<int> getTotalUnreadMessageCountWithParams(
       GroupChannelTotalUnreadMessageCountParams params) async {
-    return _int.api.getTotalUnreadMessageCount(
-      customTypes: params.customTypes,
-      filter: params.superChannelFilter,
-    );
+    return _int.api
+        .send<int>(UserTotalUnreadMessageCountGetRequest(params: params));
   }
 
   /// Returns [UnreadItemCount] with given [keys].
@@ -501,7 +536,7 @@ class SendbirdSdk {
   /// [UnreadItemCount] will only contain values that associated with [keys],
   /// otherwise null.
   Future<UnreadItemCount> getUnreadItemCount(List<UnreadItemKey> keys) async {
-    return _int.api.getUnreadItemCount(keys: keys, userId: _int.state.userId);
+    return _int.api.send<UnreadItemCount>(UserUnreadItemCountGetRequest(keys));
   }
 
   /// Returns total unread message count for subscribed
@@ -648,19 +683,19 @@ class SendbirdSdk {
 
   /// Returns [EmojiContainer] which contains all available [Emoji]
   Future<EmojiContainer> getAllEmojis() {
-    return _int.api.getAllEmojis();
+    return _int.api.send<EmojiContainer>(EmojiContainerGetRequest());
   }
 
   /// Returns an [Emoji] with given [key]
   Future<Emoji> getEmoji(String key) {
     if (key.isEmpty) throw InvalidParameterError();
-    return _int.api.getEmoji(key);
+    return _int.api.send<Emoji>(EmojiGetRequest(key));
   }
 
   /// Return an [EmojiCategory] with given [categoryId]
   Future<EmojiCategory> getEmojiCategory(int categoryId) {
     if (categoryId <= 0) throw InvalidParameterError();
-    return _int.api.getEmojiCategory(categoryId);
+    return _int.api.send<EmojiCategory>(EmojiCategoryGetRequest(categoryId));
   }
 
   // -- internal

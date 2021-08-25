@@ -33,6 +33,41 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
+    // final req = ChannelUserMessageSendRequest(
+    //   channelType: channelType,
+    //   channelUrl: channelUrl,
+    //   params: params,
+    // );
+
+    // final pending = req.pending;
+
+    // if (!_sdk.state.hasActiveUser) {
+    //   final error = ConnectionRequiredError();
+    //   pending
+    //     ..errorCode = error.code
+    //     ..sendingStatus = MessageSendingStatus.failed;
+    //   if (onCompleted != null) onCompleted(pending, error);
+    //   return pending;
+    // }
+
+    // pending.sendingStatus = MessageSendingStatus.pending;
+    // pending.sender = Sender.fromUser(_sdk.state.currentUser, this);
+
+    // _sdk.cmdManager.send(req).then((result) {
+    //   if (result == null) return;
+    //   final msg = BaseMessage.msgFromJson<UserMessage>(
+    //     result.payload,
+    //     type: result.cmd,
+    //   );
+    //   if (onCompleted != null && msg != null) onCompleted(msg, null);
+    // }).catchError((e) {
+    //   // pending.errorCode = e?.code ?? ErrorCode.unknownError;
+    //   pending
+    //     ..errorCode = e.code
+    //     ..sendingStatus = MessageSendingStatus.failed;
+    //   if (onCompleted != null) onCompleted(pending, e);
+    // });
+
     final cmd = Command.buildUserMessage(
       channelUrl,
       params,
@@ -42,7 +77,7 @@ extension Messages on BaseChannel {
       cmd.payload,
       channelType: channelType,
       type: cmd.cmd,
-    )!;
+    )!; //UserMessage.fromJson(cmd.payload);
 
     if (!_sdk.state.hasActiveUser) {
       final error = ConnectionRequiredError();
@@ -157,11 +192,11 @@ extension Messages on BaseChannel {
         if (params.uploadFile.hasBinary) {
           try {
             upload = await _sdk.api
-                .uploadFile(
+                .send<UploadResponse>(ChannelFileUploadRequest(
                     channelUrl: channelUrl,
                     requestId: pending.requestId!,
                     params: params,
-                    progress: progress)
+                    onProgress: progress))
                 .timeout(
               Duration(seconds: _sdk.options.fileTransferTimeout),
               onTimeout: () {
@@ -322,11 +357,11 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-    await _sdk.api.deleteMessage(
+    await _sdk.api.send(ChannelMessageDeleteRequest(
       channelType: channelType,
       channelUrl: channelUrl,
       messageId: messageId,
-    );
+    ));
   }
 
   /// Translates a [message] with given list of [targetLanguages].
@@ -344,11 +379,13 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-    return _sdk.api.translateUserMessage(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      messageId: message.messageId,
-      targetLanguages: targetLanguages,
+    return _sdk.api.send<UserMessage>(
+      ChannelMessageTranslateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        messageId: message.messageId,
+        targetLanguages: targetLanguages,
+      ),
     );
   }
 
@@ -398,11 +435,13 @@ extension Messages on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return _sdk.api.getMessages(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params.toJson(),
-      timestamp: timestamp,
+    return _sdk.api.send<List<BaseMessage>>(
+      ChannelMessagesGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        params: params.toJson(),
+        timestamp: timestamp,
+      ),
     );
   }
 
@@ -419,11 +458,13 @@ extension Messages on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return _sdk.api.getMessages(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params.toJson(),
-      messageId: messageId,
+    return _sdk.api.send<List<BaseMessage>>(
+      ChannelMessagesGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        params: params.toJson(),
+        messageId: messageId,
+      ),
     );
   }
 
@@ -433,12 +474,14 @@ extension Messages on BaseChannel {
     String? token,
     required MessageChangeLogParams params,
   }) async {
-    return _sdk.api.getMessageChangeLogs(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params,
-      token: token,
-      timestamp: timestamp ?? double.maxFinite.round(),
+    return _sdk.api.send(
+      ChannelMessageChangeLogGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        params: params,
+        token: token,
+        timestamp: timestamp ?? double.maxFinite.round(),
+      ),
     );
   }
 }

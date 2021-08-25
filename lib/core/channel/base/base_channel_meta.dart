@@ -13,10 +13,12 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final result = await _sdk.api.createChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaData: metaData,
+    final result = await _sdk.api.send<MetaDataResponse>(
+      ChannelMetaDataCreateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaData: metaData,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -37,10 +39,12 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final result = await _sdk.api.getChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      keys: keys,
+    final result = await _sdk.api.send<MetaDataResponse>(
+      ChannelMetaDataGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        keys: keys,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -57,9 +61,11 @@ extension Meta on BaseChannel {
 
   /// Retrieves all metaData from this channel.
   Future<Map<String, String>> getAllMetaData() async {
-    final result = await _sdk.api.getChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
+    final result = await _sdk.api.send<MetaDataResponse>(
+      ChannelMetaDataGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -85,10 +91,12 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final result = await _sdk.api.updateChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaData: metaData,
+    final result = await _sdk.api.send<MetaDataResponse>(
+      ChannelMetaDataUpdateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaData: metaData,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -112,10 +120,12 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    final ts = await _sdk.api.deleteChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      key: key,
+    final ts = await _sdk.api.send<int>(
+      ChannelMetaDataDeleteRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        key: key,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -133,9 +143,11 @@ extension Meta on BaseChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onMetaDataDeleted] will be invoked.
   Future<void> deleteAllMetaData() async {
-    final ts = await _sdk.api.deleteAllChannelMetaData(
-      channelType: channelType,
-      channelUrl: channelUrl,
+    final ts = await _sdk.api.send<int>(
+      ChannelMetaDataDeleteAllRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+      ),
     );
 
     final cached = _sdk.cache.find<CachedDataMap>(channelKey: channelUrl) ??
@@ -158,10 +170,13 @@ extension Meta on BaseChannel {
     if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
-    return _sdk.api.createChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaCounters: metaCounters,
+
+    return _sdk.api.send(
+      ChannelMetaCounterCreateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaCounter: metaCounters,
+      ),
     );
   }
 
@@ -171,18 +186,22 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    return _sdk.api.getChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      keys: keys,
+    return _sdk.api.send(
+      ChannelMetaCounterGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        keys: keys,
+      ),
     );
   }
 
   /// Retrieves all meta counters from this channel.
   Future<Map<String, int>> getAllMetaCounters() async {
-    return _sdk.api.getChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
+    return _sdk.api.send(
+      ChannelMetaCounterGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+      ),
     );
   }
 
@@ -210,11 +229,13 @@ extension Meta on BaseChannel {
       throw InvalidParameterError();
     }
 
-    return _sdk.api.updateChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaCounters: metaCounters,
-      mode: MetaCounterMode.set,
+    return _sdk.api.send(
+      ChannelMetaCounterUpdateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaCounter: metaCounters,
+        mode: MetaCounterMode.set,
+      ),
     );
   }
 
@@ -241,11 +262,13 @@ extension Meta on BaseChannel {
     if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
-    return _sdk.api.updateChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaCounters: metaCounters,
-      mode: MetaCounterMode.increase,
+    return _sdk.api.send(
+      ChannelMetaCounterUpdateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaCounter: metaCounters,
+        mode: MetaCounterMode.increase,
+      ),
     );
   }
 
@@ -272,11 +295,13 @@ extension Meta on BaseChannel {
     if (metaCounters.isEmpty) {
       throw InvalidParameterError();
     }
-    return _sdk.api.updateChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      metaCounters: metaCounters,
-      mode: MetaCounterMode.decrease,
+    return _sdk.api.send(
+      ChannelMetaCounterUpdateRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        metaCounter: metaCounters,
+        mode: MetaCounterMode.decrease,
+      ),
     );
   }
 
@@ -285,18 +310,22 @@ extension Meta on BaseChannel {
     if (key.isEmpty) {
       throw InvalidParameterError();
     }
-    return _sdk.api.deleteChannelMetaCounter(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      key: key,
+    return _sdk.api.send(
+      ChannelMetaCounterDeleteRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        key: key,
+      ),
     );
   }
 
   /// Deletes all meta counters
   Future<void> deleteAllMetaCounters() async {
-    await _sdk.api.deleteAllChannelMetaCounters(
-      channelType: channelType,
-      channelUrl: channelUrl,
+    return _sdk.api.send(
+      ChannelMetaCounterDeleteAllRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+      ),
     );
   }
 

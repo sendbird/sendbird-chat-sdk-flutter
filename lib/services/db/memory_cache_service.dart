@@ -1,9 +1,9 @@
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
-import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
+import 'package:sendbird_sdk/features/delivery/read_status.dart';
+import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
 

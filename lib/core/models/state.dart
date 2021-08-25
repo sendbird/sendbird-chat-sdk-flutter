@@ -10,6 +10,7 @@ class SendbirdState {
   String? userId;
   User? currentUser;
   String? sessionKey;
+  String? token;
 
   bool connected = false;
   bool connecting = false;
@@ -23,6 +24,7 @@ class SendbirdState {
   PushTokenType? pushTokenType;
   AppInfo? appInfo;
   int? maxUnreadCountOnSuperGroup;
+  int uploadSizeLimit = 0;
 
   ReconnectTask? reconnectTask;
   ReconnectConfiguration? reconnectConfig;
@@ -38,5 +40,24 @@ class SendbirdState {
     if (config != null) {
       reconnectTask = ReconnectTask(config);
     }
+  }
+
+  void cleanUp() {
+    userId = null;
+    currentUser = null;
+    sessionKey = null;
+    token = null;
+
+    connected = false;
+    connecting = false;
+    reconnecting = false;
+    lastConnectedAt = null;
+
+    apiHost = null;
+    wsHost = null;
+
+    pushToken = null;
+    pushTokenType = null;
+    appInfo = null;
   }
 }

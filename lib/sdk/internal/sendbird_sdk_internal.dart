@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.1';
+const sdk_version = '3.1.2';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -64,8 +64,11 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     String? apiToken,
     Options? options,
   }) {
-    _api.initialize(appId: appId, token: apiToken);
-    _state.appId = appId;
+    // _api.initialize(appId: appId, token: apiToken);
+    _state
+      ..appId = appId
+      ..token = apiToken;
+
     _options = options ?? Options();
     WidgetsBinding.instance?.addObserver(this);
     _listenConnectionEvents();
@@ -273,14 +276,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _commandQueue.cleanUp();
     _messageQueues.forEach((key, q) => q.cleanUp());
     _messageQueues = {};
-    _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
+    // _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
     _uploads = {};
     _loginCompleter = null;
 
-    _api = ApiClient();
-    _api.initialize(appId: _state.appId);
+    // _api = ApiClient();
+    // _api.initialize(appId: _state.appId);
 
-    _state = SendbirdState()..appId = _state.appId;
+    _state.cleanUp();
     _webSocket?.close();
     _webSocket = null;
 

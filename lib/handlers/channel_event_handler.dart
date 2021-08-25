@@ -4,8 +4,8 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/events/reaction_event.dart';
-import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
+import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/managers/event_manager.dart';
 
 /// Represents a class to notify various channel event.
@@ -53,11 +53,11 @@ class ChannelEventHandler implements EventHandler {
 
   /// Informs when users are invited by [inviter]
   void onUserReceivedInvitation(
-      GroupChannel channel, List<User> invitees, User inviter) {}
+      GroupChannel channel, List<User> invitees, User? inviter) {}
 
   /// Informs when a user declined invitation from [inviter]
   void onUserDeclinedInvitation(
-      GroupChannel channel, User invitee, User inviter) {}
+      GroupChannel channel, User invitee, User? inviter) {}
 
   /// Informs when a [user] joined to group [channel]
   void onUserJoined(GroupChannel channel, User user) {}

@@ -6,8 +6,8 @@ import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/events/reaction_event.dart';
-import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
+import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
 import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
 import 'package:sendbird_sdk/handlers/session_event_handler.dart';
@@ -181,7 +181,7 @@ class EventManager {
   void notifyInvitationReceived(
     GroupChannel channel,
     List<User> invitees,
-    User inviter,
+    User? inviter,
   ) {
     _channelHandlers.values.forEach((element) {
       element.onUserReceivedInvitation(channel, invitees, inviter);
@@ -191,7 +191,7 @@ class EventManager {
   void notifyInvitationDeclied(
     GroupChannel channel,
     User invitee,
-    User inviter,
+    User? inviter,
   ) {
     _channelHandlers.values.forEach((element) {
       element.onUserDeclinedInvitation(channel, invitee, inviter);

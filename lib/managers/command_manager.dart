@@ -4,9 +4,6 @@ import 'package:collection/collection.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
-import 'package:sendbird_sdk/core/channel/group/features/delivery_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/read_status.dart';
-import 'package:sendbird_sdk/core/channel/group/features/typing_status.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
@@ -21,11 +18,16 @@ import 'package:sendbird_sdk/events/channel_event.dart';
 import 'package:sendbird_sdk/events/login_event.dart';
 import 'package:sendbird_sdk/events/mcnt_event.dart';
 import 'package:sendbird_sdk/events/message_event.dart';
-import 'package:sendbird_sdk/events/reaction_event.dart';
 import 'package:sendbird_sdk/events/session_event.dart';
-import 'package:sendbird_sdk/events/thread_info_update_event.dart';
 import 'package:sendbird_sdk/events/user_event.dart';
+import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
+import 'package:sendbird_sdk/features/delivery/read_status.dart';
+import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
+import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
+import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/managers/connection_manager.dart';
+import 'package:sendbird_sdk/request/abstract/ws_event.dart';
+import 'package:sendbird_sdk/request/abstract/ws_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
@@ -38,6 +40,7 @@ import 'package:sendbird_sdk/utils/parsers.dart';
 class CommandManager with SdkAccessor {
   final Map<String, Timer> _ackTimers = {};
   final Map<String, Completer<Command>> _completers = {};
+  final Map<String, Completer<WsEvent>> _completers2 = {};
   final AsyncQueue _queue = AsyncQueue<Command>();
 
   void cleanUp() {
@@ -55,6 +58,43 @@ class CommandManager with SdkAccessor {
       }
     });
     _completers.removeWhere((key, value) => true);
+  }
+
+  Future<WsEvent?> send(WsRequest request) async {
+    if (appState.currentUser == null) {
+      //NOTE: some test cases execute async socket data
+      logger.e('sendCommand: connection is requred');
+      throw ConnectionRequiredError();
+    }
+
+    try {
+      await ConnectionManager.readyToExecuteWSRequest();
+    } catch (e) {
+      _ackTimers.remove(request.requestId)?.cancel();
+      rethrow;
+    }
+
+    try {
+      webSocket?.send(request.encoded);
+    } catch (e) {
+      _ackTimers.remove(request.requestId)?.cancel();
+      rethrow;
+    }
+
+    final reqId = request.requestId;
+    if (request.isAckRequired && reqId != null) {
+      final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
+        logger.e('sendCommand: did not receive ack in time');
+        throw AckTimeoutError();
+      });
+      _ackTimers[reqId] = timer;
+
+      final completer = Completer<WsEvent>();
+      _completers2[reqId] = completer;
+      return completer.future;
+    } else {
+      return null;
+    }
   }
 
   Future<Command?> sendCommand(Command cmd) async {
@@ -114,14 +154,21 @@ class CommandManager with SdkAccessor {
     if (cmd.requestId != null) {
       _ackTimers.remove(cmd.requestId)?.cancel();
       final completer = _completers.remove(cmd.requestId);
+      // final completer2 = _completers2.remove(cmd.requestId);
+
       if (cmd.isError || cmd.hasError) {
         completer?.completeError(SBError(
           code: cmd.errorCode,
           message: cmd.errorMessage,
         ));
+        // completer2?.completeError(SBError(
+        //   code: cmd.errorCode,
+        //   message: cmd.errorMessage,
+        // ));
         return;
       } else {
         completer?.complete(cmd);
+        // completer2?.complete(cmd.event);
       }
     }
 
@@ -129,6 +176,12 @@ class CommandManager with SdkAccessor {
     final encoder = JsonEncoder.withIndent('  ');
     final payloadString = '-- Payload: ${encoder.convert(cmd.payload)}';
     logger.i('Processing Socket event\n$cmdString\n$payloadString');
+
+    // cmd.event?.handleEvent();
+    // final handler = cmd.event?.handleEvent;
+    // if (handler != null) {
+    //   _queue.enqueue(AsyncSimpleTask(handler));
+    // }
 
     Future Function(Command)? fnc;
     if (cmd.isError || cmd.hasError) {
@@ -204,21 +257,22 @@ class CommandManager with SdkAccessor {
       ..userId = user.userId
       ..sessionKey = event.sessionKey
       ..lastConnectedAt = event.loginTimestamp
+      ..uploadSizeLimit = event.appInfo.uploadSizeLimit
       ..connected = true
       ..connecting = false
       ..reconnecting = false;
-
-    sdk.sessionManager
-      ..setUserId(user.userId)
-      ..setEKey(event.ekey)
-      ..setSessionKey(event.sessionKey)
-      ..setSessionExpiresIn(event.expiresIn);
 
     sdk.api.currentUserId = user.userId;
     sdk.api.initialize(
       sessionKey: event.sessionKey,
       uploadSizeLimit: event.appInfo.uploadSizeLimit,
     );
+
+    sdk.sessionManager
+      ..setUserId(user.userId)
+      ..setEKey(event.ekey)
+      ..setSessionKey(event.sessionKey)
+      ..setSessionExpiresIn(event.expiresIn);
 
     if (wasReconnecting) {
       eventManager.notifyReconnectionSucceeded();
@@ -485,7 +539,6 @@ class CommandManager with SdkAccessor {
 
   // System
   Future<void> _processSystemEvent(Command cmd) async {
-    logger.i('ChannelEvent ${cmd.payload}');
     final event = ChannelEvent.fromJson(cmd.payload);
 
     switch (event.category) {
@@ -650,8 +703,10 @@ class CommandManager with SdkAccessor {
         channel.updateMemberCounts(event);
       }
 
+      final members = event.joinedMembers;
+
       if (joined) {
-        for (final member in event.users) {
+        for (final member in members) {
           if (!channel.isSuper) {
             channel.addMember(member);
           }
@@ -690,21 +745,22 @@ class CommandManager with SdkAccessor {
   Future<void> _processChannelInvite(ChannelEvent event) async {
     try {
       final channel = await GroupChannel.getChannel(event.channelUrl);
+      final invitees = event.invitees;
+      final inviter = event.inviter;
+
       if (channel.isSuper) {
         channel.updateMemberCounts(event);
-      } else if (event.inviter != null) {
-        channel.addMember(event.inviter);
+      } else if (inviter != null) {
+        channel.addMember(inviter);
       }
 
-      for (final member in event.invitees) {
+      for (final member in invitees) {
         if (!channel.isSuper) {
           channel.addMember(member);
         }
 
         if (member.isCurrentUser) {
-          if (channel.myMemberState != MemberState.joined) {
-            channel.myMemberState = MemberState.invited;
-          }
+          channel.myMemberState = MemberState.invited;
 
           if (channel.hiddenState == GroupChannelHiddenState.allowAutoUnhide) {
             channel.isHidden = false;
@@ -717,8 +773,8 @@ class CommandManager with SdkAccessor {
 
       eventManager.notifyInvitationReceived(
         channel,
-        event.invitees,
-        event.inviter!,
+        invitees,
+        inviter,
       );
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());
@@ -746,7 +802,7 @@ class CommandManager with SdkAccessor {
       eventManager.notifyInvitationDeclied(
         channel,
         event.invitee!,
-        event.inviter!,
+        event.inviter,
       );
     } catch (e) {
       logger.w('Aborted ${event.category.toString()} ' + e.toString());

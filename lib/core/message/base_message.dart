@@ -4,22 +4,24 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
-import 'package:sendbird_sdk/core/channel/group/features/thread_info.dart';
 import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
-import 'package:sendbird_sdk/core/models/og_meta_data.dart';
-import 'package:sendbird_sdk/core/models/reaction.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/events/reaction_event.dart';
-import 'package:sendbird_sdk/events/thread_info_update_event.dart';
+import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
+import 'package:sendbird_sdk/features/reaction/reaction.dart';
+import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
+import 'package:sendbird_sdk/features/threading/thread_info.dart';
+import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/params/message_retrieval_params.dart';
 import 'package:sendbird_sdk/params/threaded_message_list_params.dart';
+import 'package:sendbird_sdk/request/messages/message_get_request.dart';
+import 'package:sendbird_sdk/request/messages/messages_get_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
@@ -51,7 +53,7 @@ class BaseMessage {
   final String channelUrl;
 
   /// Channel type of this message
-  @JsonKey(defaultValue: ChannelType.group)
+  @JsonKey(defaultValue: ChannelType.group, unknownEnumValue: ChannelType.group)
   ChannelType channelType;
 
   /// The list of users who was mentioned together with this message.
@@ -243,11 +245,13 @@ class BaseMessage {
     }
 
     final sdk = SendbirdSdk().getInternal();
-    return sdk.api.getMessage(
-      channelType: params.channelType,
-      channelUrl: params.channelUrl,
-      messageId: params.messageId,
-      params: params,
+    return sdk.api.send<BaseMessage>(
+      ChannelMessageGetRequest(
+        channelType: params.channelType,
+        channelUrl: params.channelUrl,
+        messageId: params.messageId,
+        params: params,
+      ),
     );
   }
 
@@ -258,12 +262,14 @@ class BaseMessage {
     ThreadedMessageListParams params,
   ) async {
     final sdk = SendbirdSdk().getInternal();
-    final result = await sdk.api.getMessages(
-      channelType: channelType,
-      channelUrl: channelUrl,
-      params: params.toJson(),
-      timestamp: timestamp,
-      parentMessageId: messageId,
+    final result = await sdk.api.send<List<BaseMessage>>(
+      ChannelMessagesGetRequest(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        params: params.toJson(),
+        timestamp: timestamp,
+        parentMessageId: messageId,
+      ),
     );
 
     return ThreadedMessageResponse(
@@ -352,11 +358,11 @@ class BaseMessage {
     //manually insert type if channel is provided
     if (channelType != null) json['channel_type'] = channelType.asString();
 
-    if (T == UserMessage || CommandType.isUserMessage(cmd)) {
+    if (T == UserMessage || CommandString.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json) as T;
-    } else if (T == FileMessage || CommandType.isFileMessage(cmd)) {
+    } else if (T == FileMessage || CommandString.isFileMessage(cmd)) {
       msg = FileMessage.fromJson(json) as T;
-    } else if (T == AdminMessage || CommandType.isAdminMessage(cmd)) {
+    } else if (T == AdminMessage || CommandString.isAdminMessage(cmd)) {
       msg = AdminMessage.fromJson(json) as T;
     } else {
       return null;
@@ -393,11 +399,11 @@ class BaseMessage {
     if (json['ts'] != null) json['created_at'] = json['ts'];
     if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
 
-    if (CommandType.isUserMessage(cmd)) {
+    if (CommandString.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json);
-    } else if (CommandType.isFileMessage(cmd)) {
+    } else if (CommandString.isFileMessage(cmd)) {
       msg = FileMessage.fromJson(json);
-    } else if (CommandType.isAdminMessage(cmd)) {
+    } else if (CommandString.isAdminMessage(cmd)) {
       msg = AdminMessage.fromJson(json);
     } else {
       throw UnrecognizedMessageTypeError();

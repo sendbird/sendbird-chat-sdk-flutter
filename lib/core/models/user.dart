@@ -5,6 +5,9 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/request/user_meta_data/create_request.dart';
+import 'package:sendbird_sdk/request/user_meta_data/delete_request.dart';
+import 'package:sendbird_sdk/request/user_meta_data/update_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
@@ -84,14 +87,13 @@ class User {
   });
 
   Future<Map<String, String>> createMetaData(
-    Map<String, String> metaDataMap,
-  ) async {
+      Map<String, String> metaDataMap) async {
     if (metaDataMap.isEmpty) {
       throw InvalidParameterError();
     }
 
     final sdk = SendbirdSdk().getInternal();
-    final result = await sdk.api.createUserMetaData(metaData: metaDataMap);
+    final result = await sdk.api.send(UserMetaDataCreateRequest(metaDataMap));
     final map = Map<String, String>.from(result);
     metaData.addAll(map);
     return map;
@@ -104,10 +106,8 @@ class User {
     }
 
     final sdk = SendbirdSdk().getInternal();
-    final result = await sdk.api.updateUserMetaData(
-      metaData: metaDataMap,
-      upsert: true,
-    );
+    final result = await sdk.api
+        .send(UserMetaDataUpdateRequest(metaDataMap, upsert: true));
     final map = Map<String, String>.from(result);
     metaData.addAll(map);
     return map;
@@ -119,13 +119,13 @@ class User {
     }
 
     final sdk = SendbirdSdk().getInternal();
-    await sdk.api.deleteUserMetaData(key);
+    await sdk.api.send(UserMetaDataDeleteRequest(key));
     metaData.remove(key);
   }
 
   Future<void> deleteAllMetaData() async {
     final sdk = SendbirdSdk().getInternal();
-    await sdk.api.deleteAllUserMetaData();
+    await sdk.api.send(UserMetaDataDeleteAllRequest());
     metaData.removeWhere((key, value) => true);
   }
 

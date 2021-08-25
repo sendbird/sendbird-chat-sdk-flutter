@@ -11,9 +11,10 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
     messageId: json['message_id'] as int? ?? 0,
     message: json['message'] as String,
     channelUrl: json['channel_url'] as String,
-    channelType:
-        _$enumDecodeNullable(_$ChannelTypeEnumMap, json['channel_type']) ??
-            ChannelType.group,
+    channelType: _$enumDecodeNullable(
+            _$ChannelTypeEnumMap, json['channel_type'],
+            unknownValue: ChannelType.group) ??
+        ChannelType.group,
     sendingStatus: _$enumDecodeNullable(
         _$MessageSendingStatusEnumMap, json['sending_status']),
     requestId: json['request_id'] as String?,

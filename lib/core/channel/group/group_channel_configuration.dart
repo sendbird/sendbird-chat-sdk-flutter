@@ -10,13 +10,13 @@ extension GroupChannelConfiguration on GroupChannel {
     bool hidePreviousMessage = false,
     bool allowAutoUnhide = true,
   }) async {
-    final offset = await _sdk.api.hideGroupChannel(
-      channelUrl: channelUrl,
+    final res = await _sdk.api.send(GroupChannelHideRequest(
+      channelUrl,
       hidePreviousMessages: hidePreviousMessage,
       allowAutoUnhide: allowAutoUnhide,
-    );
+    ));
 
-    if (offset != null) messageOffsetTimestamp = offset;
+    messageOffsetTimestamp = res?['ts_message_offset'] as int?;
     if (hidePreviousMessage) clearUnreadCount();
 
     isHidden = true;
@@ -27,32 +27,38 @@ extension GroupChannelConfiguration on GroupChannel {
 
   /// Unhides this channel
   Future<void> unhideChannel() async {
-    await _sdk.api.unhideGroupChannel(channelUrl: channelUrl);
+    await _sdk.api.send(GroupChannelUnhideRequest(channelUrl: channelUrl));
     isHidden = false;
     hiddenState = GroupChannelHiddenState.unhidden;
   }
 
   /// Returns current user's [GroupChannelPushTriggerOption] on this channel.
   Future<GroupChannelPushTriggerOption> getMyPushTriggerOption() async {
-    return _sdk.api.getGroupChannelPushTriggerOption(channelUrl);
+    return _sdk.api.send<GroupChannelPushTriggerOption>(
+      GroupChannelPushTriggerOptionGetRequest(channelUrl: channelUrl),
+    );
   }
 
   /// Sets current user's push trigger [option] on this channel.
   Future<void> setMyPushTriggerOption(
     GroupChannelPushTriggerOption option,
   ) async {
-    final result = await _sdk.api.setGroupChannelPushTriggerOption(
-      channelUrl: channelUrl,
-      option: option,
+    final res = await _sdk.api.send<GroupChannelPushTriggerOption>(
+      GroupChannelPushTriggerOptionSetRequest(
+        channelUrl: channelUrl,
+        option: option,
+      ),
     );
-    myPushTriggerOption = result;
+    myPushTriggerOption = res;
   }
 
   /// Sets current user's count preference with [countPreference].
   Future<void> setMyCountPreference(CountPreference countPreference) async {
-    final result = await _sdk.api.setCountPreference(
-      channelUrl: channelUrl,
-      prefs: countPreference,
+    final result = await _sdk.api.send<CountPreference>(
+      GroupChannelCountReferenceRequest(
+        channelUrl: channelUrl,
+        prefs: countPreference,
+      ),
     );
     myCountPreference = result;
     if (canChangeUnreadMessageCount) unreadMessageCount = 0;
@@ -64,11 +70,10 @@ extension GroupChannelConfiguration on GroupChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onChannelFrozen] will be invoked. Operator only
   Future<void> freeze() async {
-    return _sdk.api.freezeChannel(
-      channelType: channelType,
+    await _sdk.api.send(GroupChannelFreezeSetRequest(
       channelUrl: channelUrl,
       freeze: true,
-    );
+    ));
   }
 
   /// Unfreezes this channel.
@@ -76,15 +81,14 @@ extension GroupChannelConfiguration on GroupChannel {
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onChannelUnfrozen] will be invoked. Operator only
   Future<void> unfreeze() async {
-    return _sdk.api.freezeChannel(
-      channelType: channelType,
+    await _sdk.api.send(GroupChannelFreezeSetRequest(
       channelUrl: channelUrl,
       freeze: false,
-    );
+    ));
   }
 
   /// Notifies screenshot was taken on this channel.
   Future<void> notifyScreenshotWasTaken() async {
-    return _sdk.api.notifyScreenshotWasTaken(channelUrl);
+    await _sdk.api.send(GroupChannelScreenshotRequest(channelUrl: channelUrl));
   }
 }

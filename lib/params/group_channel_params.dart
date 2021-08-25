@@ -1,7 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/models/file_info.dart';
 
+part 'group_channel_params.g.dart';
+
 /// An object consists a set of parameters to create/update group channel.
+@JsonSerializable()
 class GroupChannelParams {
   /// Determine a channel is super channel or not. default is `false`
   bool isSuper = false;
@@ -50,12 +54,14 @@ class GroupChannelParams {
   /// Name for a channel
   String? name;
 
+  @JsonKey(ignore: true)
   FileInfo? coverImage;
 
   /// List of user id who will get invited
   List<String> userIds = [];
 
   /// List of user id who are operator
+  @JsonKey(name: 'operator_ids')
   List<String> operatorUserIds = [];
 
   //TBD
@@ -67,5 +73,19 @@ class GroupChannelParams {
     isPublic = channel.isPublic;
     isDiscoverable = channel.isDiscoverable;
     isDistinct = channel.isDistinct;
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = _$GroupChannelParamsToJson(this);
+    if (coverImage != null && coverImage!.hasBinary) {
+      json['cover_file'] = coverImage;
+    } else {
+      json['cover_url'] = coverImage?.url;
+    }
+    if (json['is_public'] == false) {
+      json.remove('is_discoverable');
+    }
+    json.removeWhere((key, value) => value == null);
+    return json;
   }
 }
