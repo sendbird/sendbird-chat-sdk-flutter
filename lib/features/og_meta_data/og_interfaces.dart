@@ -1,6 +1,6 @@
 abstract class OGMedia {
   final String url = '';
-  final String secureUrl = '';
+  final String? secureUrl = '';
 }
 
 abstract class OGDisplayable {

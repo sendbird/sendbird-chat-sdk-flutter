@@ -44,6 +44,19 @@ class PublicGroupChannelListQuery extends QueryBase {
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
   String? metaDataOrderKeyFilter;
 
+  /// Searches for group channels with metadata containing an item with the
+  /// specified value as its key
+  String? metaDataKeyFilter;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey
+  List<String>? metaDataValuesFilter;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey and the values of that item start with
+  /// the specified value
+  String? metaDataValueStartWithFilter;
+
   /// Query result includes empty (message) channel if `true`
   /// default value is `true`
   bool includeEmptyChannel = true;
@@ -61,6 +74,18 @@ class PublicGroupChannelListQuery extends QueryBase {
   bool includeMetaData = true;
 
   PublicGroupChannelListQuery();
+
+  void setMetaDataFilterWithValues(String key, List<String> values) {
+    metaDataKeyFilter = key;
+    metaDataValuesFilter = values;
+    metaDataValueStartWithFilter = null;
+  }
+
+  void setMetaDataFilterWithStartWith(String key, String startWith) {
+    metaDataKeyFilter = key;
+    metaDataValuesFilter = null;
+    metaDataValueStartWithFilter = startWith;
+  }
 
   @override
   Future<List<GroupChannel>> loadNext() async {
@@ -85,6 +110,9 @@ class PublicGroupChannelListQuery extends QueryBase {
       ..superMode = superChannelFilter
       ..publicMembershipFilter = membershipFilter
       ..metadataOrderKey = metaDataOrderKeyFilter
+      ..metaDataKey = metaDataKeyFilter
+      ..metaDataValues = metaDataValuesFilter
+      ..metaDataValueStartWithFilter = metaDataValueStartWithFilter
       ..publicMode = PublicChannelFilter.public;
 
     final sdk = SendbirdSdk().getInternal();

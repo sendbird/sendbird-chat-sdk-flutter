@@ -1,3 +1,9 @@
+## [3.1.3] - Sep 3, 2021
+* Added metaData related filters for `GroupChannelListQuery` and `PublicGroupChannelListQuery`
+* Fixed behavior when app life cylce state has changed
+* Fixed message parsing when it has a link
+* Improved stabilities
+
 ## [3.1.2] - Aug 25, 2021
 * Added `broadcastOnly` option for super group filter in group list query
 * Fixed last message update for admin message

@@ -14,8 +14,8 @@ class PublicGroupChannelListRequest extends ApiRequest {
     String? token,
     int limit = 30,
     List<String>? channelUrls,
-    List<ChannelQueryIncludeOption>? options,
-    GroupChannelFilter? filter,
+    List<ChannelQueryIncludeOption> options = const [],
+    required GroupChannelFilter filter,
     String? userId,
   }) : super(userId: userId) {
     url = 'group_channels';
@@ -29,13 +29,15 @@ class PublicGroupChannelListRequest extends ApiRequest {
       'limit': limit,
     };
 
-    queryParams.addAll(options?.toJson() ?? {});
-    queryParams.addAll(filter?.toJson() ?? {});
+    queryParams.addAll(options.toJson());
+    queryParams.addAll(filter.toJson());
 
     if (order == PublicGroupChannelListOrder.channelMetaDataValueAlphabetical &&
-        filter?.metadataOrderKey != null) {
-      queryParams['metadata_order_key'] = filter?.metadataOrderKey;
+        filter.metadataOrderKey != null) {
+      queryParams['metadata_order_key'] = filter.metadataOrderKey;
     }
+
+    queryParams.removeWhere((key, value) => value == null);
   }
 
   @override

@@ -29,6 +29,12 @@ PublicGroupChannelListQuery _$PublicGroupChannelListQueryFromJson(
     ..channelNameContainsFilter =
         json['channel_name_contains_filter'] as String?
     ..metaDataOrderKeyFilter = json['meta_data_order_key_filter'] as String?
+    ..metaDataKeyFilter = json['meta_data_key_filter'] as String?
+    ..metaDataValuesFilter = (json['meta_data_values_filter'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..metaDataValueStartWithFilter =
+        json['meta_data_value_start_with_filter'] as String?
     ..includeEmptyChannel = json['include_empty_channel'] as bool
     ..includeFrozenChannel = json['include_frozen_channel'] as bool
     ..includeMemberList = json['include_member_list'] as bool
@@ -52,6 +58,10 @@ Map<String, dynamic> _$PublicGroupChannelListQueryToJson(
       'custom_types_filter': instance.customTypesFilter,
       'channel_name_contains_filter': instance.channelNameContainsFilter,
       'meta_data_order_key_filter': instance.metaDataOrderKeyFilter,
+      'meta_data_key_filter': instance.metaDataKeyFilter,
+      'meta_data_values_filter': instance.metaDataValuesFilter,
+      'meta_data_value_start_with_filter':
+          instance.metaDataValueStartWithFilter,
       'include_empty_channel': instance.includeEmptyChannel,
       'include_frozen_channel': instance.includeFrozenChannel,
       'include_member_list': instance.includeMemberList,

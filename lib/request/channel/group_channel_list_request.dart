@@ -2,7 +2,6 @@ import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
-import 'package:sendbird_sdk/query/channel_list/group_channel_list_query.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';
 import 'package:sendbird_sdk/services/network/http_client.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
@@ -11,45 +10,32 @@ class GroupChannelListRequest extends ApiRequest {
   @override
   final method = Method.get;
 
-  GroupChannelListRequest(GroupChannelListQuery query, {String? userId})
-      : super(userId: userId) {
+  GroupChannelListRequest({
+    required GroupChannelListOrder order,
+    String? token,
+    int limit = 30,
+    List<String>? channelUrls,
+    String? searchQuery,
+    required GroupChannelListQueryType queryType,
+    List<GroupChannelListQuerySearchField> searchFields = const [],
+    List<ChannelQueryIncludeOption> options = const [],
+    required GroupChannelFilter filter,
+    String? userId,
+  }) : super(userId: userId) {
     url = 'users/${userId ?? state.userId}/my_group_channels';
 
-    final searchFieldStrings = stringFromSearchFields(query.searchFields);
+    final searchFieldStrings = stringFromSearchFields(searchFields);
     queryParams = {
-      'user_id': userId,
-      'token': query.token,
-      'limit': query.limit,
-      'channelUrls': query.channelUrls,
-      'order': groupChannelListOrderEnumMap[query.order],
+      if (userId != null) 'user_id': userId,
+      if (token != null) 'token': token,
+      'limit': limit,
+      if (channelUrls != null) 'channelUrls': channelUrls,
+      'order': groupChannelListOrderEnumMap[order],
       if (searchFieldStrings.isNotEmpty) 'search_field': searchFieldStrings,
-      if (searchFieldStrings.isNotEmpty) 'search_query': query.searchQuery,
+      if (searchFieldStrings.isNotEmpty) 'search_query': searchQuery,
       'distinct_mode': 'all',
       'show_member': true,
     };
-
-    final filter = GroupChannelFilter()
-      ..customTypeStartswith = query.customTypeStartWith
-      ..customTypes = query.customTypes
-      ..memberStateFilter = query.memberStateFilter
-      ..membersExactlyIn = query.userIdsExactlyIn
-      ..membersIncludeIn = query.userIdsIncludeIn
-      ..membersNicknameContains = query.nicknameContains
-      ..nameContains = query.channelNameContains
-      ..superMode = query.superChannelFilter
-      ..publicMode = query.publicChannelFilter
-      ..unreadFilter = query.unreadChannelFilter
-      ..metadataOrderKey = query.metaDataOrderKey
-      ..hiddenMode = query.channelHiddenStateFilter;
-
-    final options = [
-      if (query.includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
-      if (query.includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
-      if (query.includeMemberList) ChannelQueryIncludeOption.memberList,
-      if (query.includeMetaData) ChannelQueryIncludeOption.metaData,
-      ChannelQueryIncludeOption.readReceipt,
-      ChannelQueryIncludeOption.deliveryReceipt,
-    ];
 
     queryParams.addAll(options.toJson());
     queryParams.addAll(filter.toJson());
@@ -57,10 +43,10 @@ class GroupChannelListRequest extends ApiRequest {
     if (filter.membersIncludeIn != null &&
         filter.membersIncludeIn!.isNotEmpty) {
       queryParams['members_include_in'] = filter.membersIncludeIn;
-      queryParams['query_type'] = query.queryType.asString();
+      queryParams['query_type'] = queryType.asString();
     }
 
-    if (query.order == GroupChannelListOrder.channelMetaDataValueAlphabetical &&
+    if (order == GroupChannelListOrder.channelMetaDataValueAlphabetical &&
         filter.metadataOrderKey != null) {
       queryParams['metadata_order_key'] = filter.metadataOrderKey;
     }

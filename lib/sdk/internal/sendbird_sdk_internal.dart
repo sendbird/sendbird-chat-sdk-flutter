@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.2';
+const sdk_version = '3.1.3';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -58,6 +58,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     constants.sbExtraDataEmojiHash,
   ];
 
+  bool registered = false;
+
   //should only keep one instance
   SendbirdSdkInternal({
     String? appId,
@@ -70,7 +72,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       ..token = apiToken;
 
     _options = options ?? Options();
-    WidgetsBinding.instance?.addObserver(this);
+
     _listenConnectionEvents();
   }
 
@@ -255,6 +257,11 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     ConnectionManager.flushCompleters(
         error: reconnect ? null : ConnectionClosedError());
 
+    if (!registered) {
+      WidgetsBinding.instance?.addObserver(this);
+      registered = true;
+    }
+
     _loginCompleter = null;
     _reconnectTimer = null;
     return user;
@@ -288,6 +295,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _webSocket = null;
 
     WidgetsBinding.instance?.removeObserver(this);
+    registered = false;
     _connectionSub?.cancel();
 
     ConnectionManager.flushCompleters(error: ConnectionClosedError());

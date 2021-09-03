@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/group_channel_filters.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/query/base_query.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_list_request.dart';
@@ -73,7 +74,20 @@ class GroupChannelListQuery extends QueryBase {
 
   /// Sets a key for ordering by value in the metadata.
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  String? metaDataOrderKey;
+  String? metaDataOrderKeyFilter;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// specified value as its key
+  String? metaDataKeyFilter;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey
+  List<String>? metaDataValuesFilter;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey and the values of that item start with
+  /// the specified value
+  String? metaDataValueStartWithFilter;
 
   String? searchQuery;
   List<GroupChannelListQuerySearchField> searchFields = [];
@@ -132,6 +146,18 @@ class GroupChannelListQuery extends QueryBase {
     channelUrls = channelUrls;
   }
 
+  void setMetaDataFilterWithValues(String key, List<String> values) {
+    metaDataKeyFilter = key;
+    metaDataValuesFilter = values;
+    metaDataValueStartWithFilter = null;
+  }
+
+  void setMetaDataFilterWithStartWith(String key, String startWith) {
+    metaDataKeyFilter = key;
+    metaDataValuesFilter = null;
+    metaDataValueStartWithFilter = startWith;
+  }
+
   @override
   Future<List<GroupChannel>> loadNext() async {
     if (loading) throw QueryInProgressError();
@@ -139,9 +165,45 @@ class GroupChannelListQuery extends QueryBase {
 
     loading = true;
 
+    final filter = GroupChannelFilter()
+      ..customTypeStartswith = customTypeStartWith
+      ..customTypes = customTypes
+      ..memberStateFilter = memberStateFilter
+      ..membersExactlyIn = userIdsExactlyIn
+      ..membersIncludeIn = userIdsIncludeIn
+      ..membersNicknameContains = nicknameContains
+      ..nameContains = channelNameContains
+      ..superMode = superChannelFilter
+      ..publicMode = publicChannelFilter
+      ..unreadFilter = unreadChannelFilter
+      ..metadataOrderKey = metaDataOrderKeyFilter
+      ..hiddenMode = channelHiddenStateFilter
+      ..metaDataKey = metaDataKeyFilter
+      ..metaDataValues = metaDataValuesFilter
+      ..metaDataValueStartWithFilter = metaDataValueStartWithFilter;
+
+    final options = [
+      if (includeFrozenChannel) ChannelQueryIncludeOption.frozenChannel,
+      if (includeEmptyChannel) ChannelQueryIncludeOption.emptyChannel,
+      if (includeMemberList) ChannelQueryIncludeOption.memberList,
+      if (includeMetaData) ChannelQueryIncludeOption.metaData,
+      ChannelQueryIncludeOption.readReceipt,
+      ChannelQueryIncludeOption.deliveryReceipt,
+    ];
+
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.send<ChannelListQueryResponse<GroupChannel>>(
-      GroupChannelListRequest(this),
+      GroupChannelListRequest(
+        filter: filter,
+        options: options,
+        queryType: queryType,
+        token: token,
+        limit: limit,
+        order: order,
+        channelUrls: channelUrls,
+        searchFields: searchFields,
+        searchQuery: searchQuery,
+      ),
     );
 
     loading = false;

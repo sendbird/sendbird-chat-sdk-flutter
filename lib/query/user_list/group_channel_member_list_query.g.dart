@@ -38,7 +38,7 @@ Map<String, dynamic> _$GroupChannelMemberListQueryToJson(
       'muted_member_filter':
           _$MutedMemberFilterEnumMap[instance.mutedMemberFilter],
       'member_state_filter':
-          _$MemberStateFilterEnumMap[instance.memberStateFilter],
+          memberStateFilterEnumForQuery(instance.memberStateFilter),
       'order': _$MemberListOrderEnumMap[instance.order],
     };
 

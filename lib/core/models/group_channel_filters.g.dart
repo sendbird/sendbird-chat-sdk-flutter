@@ -28,7 +28,13 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) {
         _$enumDecode(_$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
     ..publicMembershipFilter = _$enumDecode(
         _$PublicGroupChannelMembershipFilterEnumMap,
-        json['public_membership_filter']);
+        json['public_membership_filter'])
+    ..metaDataKey = json['metadata_key'] as String?
+    ..metaDataValues = (json['metadata_values'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..metaDataValueStartWithFilter =
+        json['metadata_value_startswith'] as String?;
 }
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
@@ -46,6 +52,9 @@ Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
       'hidden_mode': _$ChannelHiddenStateFilterEnumMap[instance.hiddenMode],
       'public_membership_filter': _$PublicGroupChannelMembershipFilterEnumMap[
           instance.publicMembershipFilter],
+      'metadata_key': instance.metaDataKey,
+      'metadata_values': instance.metaDataValues,
+      'metadata_value_startswith': instance.metaDataValueStartWithFilter,
     };
 
 K _$enumDecode<K, V>(

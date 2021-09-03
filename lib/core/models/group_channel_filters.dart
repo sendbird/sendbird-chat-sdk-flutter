@@ -56,5 +56,28 @@ class GroupChannelFilter {
   PublicGroupChannelMembershipFilter publicMembershipFilter =
       PublicGroupChannelMembershipFilter.all;
 
-  Map<String, dynamic> toJson() => _$GroupChannelFilterToJson(this);
+  /// Searches for group channels with metadata containing an item with the
+  /// specified value as its key
+  @JsonKey(name: 'metadata_key')
+  String? metaDataKey;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey
+  @JsonKey(name: 'metadata_values')
+  List<String>? metaDataValues;
+
+  /// Searches for group channels with metadata containing an item with the
+  /// key specified by the metaDataKey and the values of that item start with
+  /// the specified value
+  @JsonKey(name: 'metadata_value_startswith')
+  String? metaDataValueStartWithFilter;
+
+  Map<String, dynamic> toJson() {
+    final json = _$GroupChannelFilterToJson(this);
+    if (json['metadata_key'] == null) {
+      json.remove('metadata_values');
+      json.remove('metadata_value_startswith');
+    }
+    return json;
+  }
 }

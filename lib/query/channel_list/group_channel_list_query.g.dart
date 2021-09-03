@@ -39,7 +39,13 @@ GroupChannelListQuery _$GroupChannelListQueryFromJson(
         .map((e) => e as String)
         .toList()
     ..channelNameContains = json['channel_name_contains'] as String?
-    ..metaDataOrderKey = json['meta_data_order_key'] as String?
+    ..metaDataOrderKeyFilter = json['meta_data_order_key_filter'] as String?
+    ..metaDataKeyFilter = json['meta_data_key_filter'] as String?
+    ..metaDataValuesFilter = (json['meta_data_values_filter'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList()
+    ..metaDataValueStartWithFilter =
+        json['meta_data_value_start_with_filter'] as String?
     ..searchQuery = json['search_query'] as String?
     ..searchFields = (json['search_fields'] as List<dynamic>)
         .map((e) => _$enumDecode(_$GroupChannelListQuerySearchFieldEnumMap, e))
@@ -76,7 +82,11 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
       'user_ids_include_in': instance.userIdsIncludeIn,
       'user_ids_exactly_in': instance.userIdsExactlyIn,
       'channel_name_contains': instance.channelNameContains,
-      'meta_data_order_key': instance.metaDataOrderKey,
+      'meta_data_order_key_filter': instance.metaDataOrderKeyFilter,
+      'meta_data_key_filter': instance.metaDataKeyFilter,
+      'meta_data_values_filter': instance.metaDataValuesFilter,
+      'meta_data_value_start_with_filter':
+          instance.metaDataValueStartWithFilter,
       'search_query': instance.searchQuery,
       'search_fields': instance.searchFields
           .map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e])

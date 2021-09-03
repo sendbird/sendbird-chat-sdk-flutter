@@ -12,7 +12,7 @@ class OGImage implements OGMedia, OGDisplayable {
 
   /// Image secure url
   @override
-  final String secureUrl;
+  final String? secureUrl;
 
   /// Image type
   final String? type;
@@ -32,7 +32,7 @@ class OGImage implements OGMedia, OGDisplayable {
 
   OGImage({
     required this.url,
-    this.secureUrl = '',
+    this.secureUrl,
     this.type,
     this.alt,
     this.width = 0,
