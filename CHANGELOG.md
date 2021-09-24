@@ -1,3 +1,7 @@
+## [3.1.4] - Sep 24, 2021
+* Fixed HMS push token registration
+* Improved stability 
+
 ## [3.1.3] - Sep 3, 2021
 * Added metaData related filters for `GroupChannelListQuery` and `PublicGroupChannelListQuery`
 * Fixed behavior when app life cylce state has changed

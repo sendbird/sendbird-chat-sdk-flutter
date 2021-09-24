@@ -368,6 +368,19 @@ enum PushTokenRegistrationStatus { success, pending, error }
 /// Represents push token type
 enum PushTokenType { none, hms, fcm, apns }
 
+String? pushTokenToString(PushTokenType type) {
+  switch (type) {
+    case PushTokenType.apns:
+      return 'apns';
+    case PushTokenType.fcm:
+      return 'gcm';
+    case PushTokenType.hms:
+      return 'huawei';
+    default:
+      return null;
+  }
+}
+
 /// Represents unread item key filter
 enum UnreadItemKey {
   @JsonValue('non_super_group_channel_unread_message_count')

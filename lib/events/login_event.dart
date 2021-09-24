@@ -31,7 +31,6 @@ class LoginEvent extends SessionEvent {
 
   LoginEvent({
     String? ekey,
-    int? expiresIn,
     String? newKey,
     String? key,
     required this.loginTimestamp,
@@ -43,7 +42,6 @@ class LoginEvent extends SessionEvent {
           ekey: ekey,
           newKey: newKey,
           key: key,
-          expiresIn: expiresIn,
         );
 
   factory LoginEvent.fromJson(Map<String, dynamic> json) {

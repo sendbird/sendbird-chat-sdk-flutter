@@ -271,8 +271,7 @@ class CommandManager with SdkAccessor {
     sdk.sessionManager
       ..setUserId(user.userId)
       ..setEKey(event.ekey)
-      ..setSessionKey(event.sessionKey)
-      ..setSessionExpiresIn(event.expiresIn);
+      ..setSessionKey(event.sessionKey);
 
     if (wasReconnecting) {
       eventManager.notifyReconnectionSucceeded();
@@ -528,7 +527,7 @@ class CommandManager with SdkAccessor {
   Future<void> _processSessionRefresh(Command cmd) async {
     final event = SessionEvent.fromJson(cmd.payload);
     sdk.sessionManager.setSessionKey(event.sessionKey);
-    sdk.sessionManager.setSessionExpiresIn(event.expiresIn);
+    sdk.sessionManager.setSessionExpiresAt(event.expiresAt);
   }
 
   Future<void> _processError(Command cmd) async {

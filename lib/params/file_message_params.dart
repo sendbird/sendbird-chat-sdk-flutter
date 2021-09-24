@@ -22,11 +22,8 @@ class FileMessageParams extends BaseMessageParams {
         ),
         super.withMessage(fileMessage, deepCopy: deepCopy);
 
-  FileMessageParams.withFile(
-    File file, {
-    String? name,
-    FileMessage? fileMessage,
-  }) : uploadFile = FileInfo.fromData(
+  FileMessageParams.withFile(File file, {String? name})
+      : uploadFile = FileInfo.fromData(
           name: name ?? 'my_file',
           file: file,
           mimeType: lookupMimeType(file.path),

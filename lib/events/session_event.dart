@@ -7,7 +7,7 @@ part 'session_event.g.dart';
 @JsonSerializable(createToJson: false)
 class SessionEvent extends BaseEvent {
   @JsonKey(defaultValue: 0)
-  final int? expiresIn;
+  final int? expiresAt;
 
   final String? newKey;
 
@@ -17,7 +17,7 @@ class SessionEvent extends BaseEvent {
 
   String get sessionKey => key ?? newKey ?? '';
 
-  SessionEvent({this.expiresIn, this.newKey, this.ekey, this.key});
+  SessionEvent({this.expiresAt, this.newKey, this.ekey, this.key});
 
   factory SessionEvent.fromJson(Map<String, dynamic> json) =>
       _$SessionEventFromJson(json);

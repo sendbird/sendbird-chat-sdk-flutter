@@ -14,7 +14,11 @@ class UserPushTokenRegisterRequest extends ApiRequest {
     bool unique = false,
     String? userId,
   }) : super(userId: userId) {
-    final typeUrl = type == PushTokenType.fcm ? 'gcm' : type.asString();
+    final typeUrl = pushTokenToString(type);
+    if (typeUrl == null) {
+      return;
+    }
+
     url = 'users/${userId ?? state.userId}/push/$typeUrl';
 
     body = {

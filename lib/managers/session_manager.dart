@@ -19,7 +19,7 @@ class SessionManager with SdkAccessor {
   String? _accessToken;
   late String _sessionKeyPath;
   late String _userIdKeyPath;
-  int _sessionExpiresIn = 0;
+  int _sessionExpiresAt = 0;
 
   bool isRefreshingKey = false;
 
@@ -52,11 +52,11 @@ class SessionManager with SdkAccessor {
     _userIdKeyPath = path;
   }
 
-  void setSessionExpiresIn(int? timestamp) {
-    _sessionExpiresIn = timestamp ?? 0;
+  void setSessionExpiresAt(int? timestamp) {
+    _sessionExpiresAt = timestamp ?? 0;
   }
 
-  int get sessionExpiresIn => _sessionExpiresIn;
+  int get sessionExpiresAt => _sessionExpiresAt;
 
   /// Set a `sessionKey` that will be used for SDK globally
   ///
@@ -202,14 +202,12 @@ class SessionManager with SdkAccessor {
       setSessionKey(payload['new_key']);
     }
 
-    final reconnect = sessionExpiresIn <= 0;
-
-    if (payload['expires_in'] != null) {
-      setSessionExpiresIn(payload['expires_in']);
+    if (payload['expires_at'] != null) {
+      setSessionExpiresAt(payload['expires_at']);
     }
 
     eventManager.notifySessionRefreshed();
-    if (reconnect) sdk.reconnect(reset: true);
+    sdk.reconnect(reset: true);
   }
 
   // Handler for refresh session success case
@@ -231,7 +229,7 @@ class SessionManager with SdkAccessor {
 
   // Resets session manager
   void cleanUp() {
-    _sessionExpiresIn = 0;
+    _sessionExpiresAt = 0;
     _eKey = null;
     _sessionKey = null;
   }
