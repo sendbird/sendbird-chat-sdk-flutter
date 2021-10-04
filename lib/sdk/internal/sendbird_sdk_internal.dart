@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.4';
+const sdk_version = '3.1.5';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.

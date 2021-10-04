@@ -1,3 +1,7 @@
+## [3.1.5] - Sep 30, 2021
+* Fixed link in README
+* Improved stabilities
+
 ## [3.1.4] - Sep 24, 2021
 * Fixed HMS push token registration
 * Improved stability 
