@@ -62,7 +62,7 @@ class GroupChannelParams {
 
   /// List of user id who are operator
   @JsonKey(name: 'operator_ids')
-  List<String> operatorUserIds = [];
+  List<String>? operatorUserIds;
 
   //TBD
   //Int messageSurvivalSeconds;

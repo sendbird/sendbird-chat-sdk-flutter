@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/core/models/restricted_user.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/utils/json_from_parser.dart';
 
@@ -30,6 +31,10 @@ class Member extends User {
   /// Role of this member in the channel
   @JsonKey(defaultValue: Role.none, unknownEnumValue: Role.none)
   Role role;
+
+  /// Restriction information
+  @JsonKey(ignore: true)
+  RestrictionInfo? restrictionInfo;
 
   Member({
     this.state = MemberState.none,
@@ -64,7 +69,11 @@ class Member extends User {
 
   // json serialization
 
-  factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
+  factory Member.fromJson(Map<String, dynamic> json) {
+    final member = _$MemberFromJson(json);
+    member.restrictionInfo = RestrictionInfo.fromJson(json);
+    return member;
+  }
 
   @override
   Map<String, dynamic> toJson() => _$MemberToJson(this);

@@ -12,6 +12,7 @@ import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/core/models/reconnect_task.dart';
+import 'package:sendbird_sdk/core/models/restricted_user.dart';
 import 'package:sendbird_sdk/core/models/unread_count_info.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/events/channel_event.dart';
@@ -263,10 +264,7 @@ class CommandManager with SdkAccessor {
       ..reconnecting = false;
 
     sdk.api.currentUserId = user.userId;
-    sdk.api.initialize(
-      sessionKey: event.sessionKey,
-      uploadSizeLimit: event.appInfo.uploadSizeLimit,
-    );
+    sdk.api.initialize(uploadSizeLimit: event.appInfo.uploadSizeLimit);
 
     sdk.sessionManager
       ..setUserId(user.userId)
@@ -289,7 +287,8 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processSessionExpired(Command cmd) async {
-    eventManager.notifySessionExpired();
+    sdk.sessionManager.setSessionKey(null);
+    sdk.state.sessionKey = null;
     await sdk.sessionManager.updateSession();
   }
 
@@ -359,7 +358,8 @@ class CommandManager with SdkAccessor {
       final message = await parseMessage(cmd);
       if (message == null) throw UnrecognizedMessageTypeError();
 
-      final currentUser = appState.currentUser!;
+      final currentUser = appState.currentUser;
+      if (currentUser == null) return;
       final channel = await BaseChannel.getBaseChannel(
         message.channelType,
         message.channelUrl,
@@ -527,7 +527,6 @@ class CommandManager with SdkAccessor {
   Future<void> _processSessionRefresh(Command cmd) async {
     final event = SessionEvent.fromJson(cmd.payload);
     sdk.sessionManager.setSessionKey(event.sessionKey);
-    sdk.sessionManager.setSessionExpiresAt(event.expiresAt);
   }
 
   Future<void> _processError(Command cmd) async {
@@ -634,7 +633,9 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processBan(ChannelEvent event, bool banned) async {
     try {
-      final user = User.fromJson(event.data);
+      final user = banned
+          ? RestrictedUser.fromJson(event.data)
+          : User.fromJson(event.data);
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
@@ -670,7 +671,9 @@ class CommandManager with SdkAccessor {
 
   Future<void> _processMute(ChannelEvent event, bool muted) async {
     try {
-      final user = User.fromJson(event.data);
+      final user = muted
+          ? RestrictedUser.fromJson(event.data)
+          : User.fromJson(event.data);
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
@@ -682,6 +685,8 @@ class CommandManager with SdkAccessor {
 
         final member =
             channel.members.firstWhereOrNull((e) => e.userId == user.userId);
+        member?.restrictionInfo =
+            muted ? RestrictionInfo.fromJson(event.data) : null;
         member?.isMuted = muted;
       }
 

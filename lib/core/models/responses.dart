@@ -3,6 +3,8 @@ import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/core/models/restricted_user.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 
@@ -158,16 +160,17 @@ class OperatorListQueryResponse extends BaseResponse {
 }
 
 @JsonSerializable(createToJson: false)
-class UserListQueryResponse extends BaseResponse {
+class UserListQueryResponse<T extends User> extends BaseResponse {
   @JsonKey(defaultValue: [])
-  List<User> users;
+  @UserConverter()
+  List<T> users;
 
   String? next;
 
   UserListQueryResponse({this.users = const [], this.next});
 
   factory UserListQueryResponse.fromJson(Map<String, dynamic> json) =>
-      _$UserListQueryResponseFromJson(json);
+      _$UserListQueryResponseFromJson<T>(json);
 }
 
 @JsonSerializable(createToJson: false)
@@ -193,6 +196,30 @@ class ChannelConverter<T> implements JsonConverter<T, Object> {
         return OpenChannel.fromJsonAndCached(json) as T;
       } else {
         return GroupChannel.fromJsonAndCached(json) as T;
+      }
+    }
+    return json as T;
+  }
+
+  @override
+  Object toJson(T object) {
+    return object as Object;
+  }
+}
+
+class UserConverter<T> implements JsonConverter<T, Object> {
+  const UserConverter();
+
+  @override
+  T fromJson(Object json) {
+    if (json is Map<String, dynamic>) {
+      if (json.containsKey('end_at')) {
+        return RestrictedUser.fromJson(json) as T;
+      } else if (json.containsKey('muted_end_at') ||
+          json.containsKey('is_muted')) {
+        return Member.fromJson(json) as T;
+      } else {
+        return User.fromJson(json) as T;
       }
     }
     return json as T;

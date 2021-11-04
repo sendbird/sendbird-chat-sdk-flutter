@@ -19,18 +19,20 @@ class SessionManager with SdkAccessor {
   String? _accessToken;
   late String _sessionKeyPath;
   late String _userIdKeyPath;
-  int _sessionExpiresAt = 0;
 
   bool isRefreshingKey = false;
 
   late Future Function(String) successFunc;
   late Function errorFunc;
 
+  late List<Completer> sessionUpdateCompleters;
+
   SessionManager() {
     _userIdKeyPath = 'com.sendbird.sdk.messaging.userid';
     _sessionKeyPath = 'com.sendbird.sdk.messaging.sessionkey';
     successFunc = _sessionSuccessHandler;
     errorFunc = _sessionErrorHandler;
+    sessionUpdateCompleters = [];
   }
 
   String? get accessToken => _accessToken;
@@ -51,12 +53,6 @@ class SessionManager with SdkAccessor {
   void setUserIdKeyPath(String path) {
     _userIdKeyPath = path;
   }
-
-  void setSessionExpiresAt(int? timestamp) {
-    _sessionExpiresAt = timestamp ?? 0;
-  }
-
-  int get sessionExpiresAt => _sessionExpiresAt;
 
   /// Set a `sessionKey` that will be used for SDK globally
   ///
@@ -124,7 +120,7 @@ class SessionManager with SdkAccessor {
       logger.e('Session key set to null, all paths will be removed');
       prefs.remove(_userIdKeyPath);
       prefs.remove(_sessionKeyPath);
-      throw InvalidParameterError();
+      return;
     }
 
     final userId = _userId;
@@ -156,9 +152,15 @@ class SessionManager with SdkAccessor {
   }
 
   // Updates session and notify
-  Future<bool> updateSession() async {
+  Future<void> updateSession() async {
+    // add completion
+    sdk.eventManager.notifySessionExpired();
+
+    final completer = Completer();
+    sessionUpdateCompleters.add(completer);
+
     if (isRefreshingKey) {
-      return false;
+      return completer.future;
     }
 
     final appId = sdk.state.appId;
@@ -172,6 +174,7 @@ class SessionManager with SdkAccessor {
     isRefreshingKey = true;
 
     logger.i('Updating session with $_accessToken');
+
     try {
       final res = await sdk.api.send(AppSessionKeyUpdateRequest(
         appId: appId,
@@ -181,16 +184,23 @@ class SessionManager with SdkAccessor {
       isRefreshingKey = false;
       logger.i('Updated session $res');
       _applyRefreshedSessionKey(res);
-      return true;
+      return completer.future;
     } on SBError catch (err) {
-      logger.w('Failed to update session $err');
+      logger.w('Failed to update session sb $err');
       isRefreshingKey = false;
       if (err.code == ErrorCode.accessTokenNotValid) {
         sdk.eventManager.notifySessionTokenRequired();
       } else {
+        flushResultCompleters(SessionKeyRefreshFailedError());
         sdk.eventManager.notifySessionError(SessionKeyRefreshFailedError());
       }
-      return false;
+      return completer.future;
+    } catch (err) {
+      logger.w('Failed to update session $err');
+      isRefreshingKey = false;
+      flushResultCompleters(SessionKeyRefreshFailedError());
+      sdk.eventManager.notifySessionError(SessionKeyRefreshFailedError());
+      return completer.future;
     }
   }
 
@@ -202,10 +212,8 @@ class SessionManager with SdkAccessor {
       setSessionKey(payload['new_key']);
     }
 
-    if (payload['expires_at'] != null) {
-      setSessionExpiresAt(payload['expires_at']);
-    }
-
+    flushResultCompleters(SessionKeyRefreshSucceededError());
+    eventManager.notifySessionError(SessionKeyRefreshSucceededError());
     eventManager.notifySessionRefreshed();
     sdk.reconnect(reset: true);
   }
@@ -214,11 +222,20 @@ class SessionManager with SdkAccessor {
   Future<void> _sessionSuccessHandler(String token) async {
     setAccessToken(token);
 
-    if (token.isEmpty) {
-      await updateSession();
-    } else {
-      final error = InvalidAccessTokenError();
-      sdk.eventManager.notifySessionError(error);
+    final hasSessionHandler =
+        sdk.eventManager.getHandler<SessionEventHandler>() != null;
+
+    try {
+      final res = await sdk.api.send(AppSessionKeyUpdateRequest(
+        appId: sdk.state.appId ?? '',
+        accessToken: token,
+        expiringSession: hasSessionHandler,
+      ));
+      logger.i('Updated session $res');
+      _applyRefreshedSessionKey(res);
+    } catch (error) {
+      sdk.eventManager.notifySessionError(InvalidAccessTokenError());
+      flushResultCompleters(SessionKeyRefreshFailedError());
     }
   }
 
@@ -227,10 +244,22 @@ class SessionManager with SdkAccessor {
     sdk.eventManager.notifySessionError(error);
   }
 
+  void flushResultCompleters(SBError error) {
+    logger.v('Flush result with $error');
+    sessionUpdateCompleters.forEach((e) {
+      e.completeError(error);
+    });
+    sessionUpdateCompleters = [];
+  }
+
   // Resets session manager
   void cleanUp() {
-    _sessionExpiresAt = 0;
     _eKey = null;
     _sessionKey = null;
+    isRefreshingKey = false;
+    sessionUpdateCompleters.forEach((e) {
+      e.completeError(SBError());
+    });
+    sessionUpdateCompleters = [];
   }
 }

@@ -606,3 +606,8 @@ const memberListOrderEnumMap = <MemberListOrder, String>{
   MemberListOrder.operatorThenMemberNicknameAlphabetical:
       'operator_then_member_alphabetical',
 };
+
+enum RestrictionType {
+  muted,
+  banned,
+}

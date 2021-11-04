@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.5';
+const sdk_version = '3.1.6';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -37,7 +37,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   CommandManager _cmdManager = CommandManager();
   StreamManager _streamManager = StreamManager();
 
-  ApiClient _api = ApiClient();
+  late ApiClient _api;
   WebSocketClient? _webSocket;
   Completer<User>? _loginCompleter;
 
@@ -72,6 +72,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       ..token = apiToken;
 
     _options = options ?? Options();
+    _api = ApiClient(state: _state, appId: appId, token: apiToken);
 
     _listenConnectionEvents();
   }

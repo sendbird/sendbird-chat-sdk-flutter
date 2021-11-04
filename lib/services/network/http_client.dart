@@ -7,6 +7,7 @@ import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/file_info.dart';
+import 'package:sendbird_sdk/core/models/state.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
@@ -24,7 +25,6 @@ class HttpClient {
   String? baseUrl;
 
   String? appId;
-  String? sessionKey;
   String? token;
 
   bool isLocal = false;
@@ -37,16 +37,10 @@ class HttpClient {
 
   MultipartRequest? request;
 
-  HttpClient({
-    this.baseUrl,
-    this.appId,
-    this.sessionKey,
-    this.token,
-    this.headers = const {},
-  });
+  SendbirdState? state;
+  HttpClient(this.state);
 
   void cleanUp() {
-    sessionKey = null;
     token = null;
     headers = {};
     uploadRequests = {};
@@ -55,11 +49,12 @@ class HttpClient {
 
   //form commom headers
   Map<String, String> commonHeaders() {
+    final sessionKey = state?.sessionKey;
     final commonHeaders = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       if (sessionKey != null)
-        'Session-Key': sessionKey!
+        'Session-Key': sessionKey
       else if (token != null)
         'Api-Token': token!
     };
@@ -288,13 +283,14 @@ class HttpClient {
       errorController.sink.add(err);
       //NOTE: is this best way to do?..
       if (err.code == ErrorCode.sessionKeyExpired) {
-        sessionKey = null;
-        final result =
-            await SendbirdSdk().getInternal().sessionManager.updateSession();
-        if (result) {
-          throw SessionKeyRefreshSucceededError();
-        } else {
-          throw SessionKeyRefreshFailedError();
+        log('Attempting to update session due to expired');
+        // TODO: refactor
+        SendbirdSdk().getInternal().state.sessionKey = null;
+        SendbirdSdk().getInternal().sessionManager.setSessionKey(null);
+        try {
+          await SendbirdSdk().getInternal().sessionManager.updateSession();
+        } catch (e) {
+          rethrow;
         }
       }
     }
@@ -303,7 +299,8 @@ class HttpClient {
       case 200:
         return res;
       case 400:
-        logger.e('Bad request: ${res['message']}');
+        logger.e(
+            'Bad request: ${res['message']} for ${response.request!.url.toString()}');
         throw BadRequestError(message: res['message'], code: res['code']);
       case 401:
       case 403:

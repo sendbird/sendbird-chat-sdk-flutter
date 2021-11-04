@@ -1,8 +1,9 @@
+import 'package:sendbird_sdk/core/models/state.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';
 import 'package:sendbird_sdk/services/network/http_client.dart';
 
 class ApiClient {
-  HttpClient client = HttpClient();
+  late HttpClient client;
   String? currentUserId; //inject userid whenever current user status changes
 
   String? appId;
@@ -11,23 +12,26 @@ class ApiClient {
   String? token;
   int uploadSizeLimit = 30;
 
+  SendbirdState? state;
+
+  ApiClient({this.state, this.appId, this.token}) {
+    client = HttpClient(state);
+  }
+
   void initialize({
     String? appId,
-    String? sessionKey,
     String? token,
     String? baseUrl,
     int? uploadSizeLimit,
     Map<String, String>? headers,
   }) {
     if (appId != null) this.appId = appId;
-    if (sessionKey != null) this.sessionKey = sessionKey;
     if (token != null) this.token = token;
     if (baseUrl != null) this.baseUrl = baseUrl;
     if (uploadSizeLimit != null) this.uploadSizeLimit = uploadSizeLimit;
 
     client
       ..appId = appId ?? this.appId
-      ..sessionKey = sessionKey ?? this.sessionKey
       ..token = token ?? this.token
       ..baseUrl = baseUrl ?? this.baseUrl
       ..headers = headers ?? {};

@@ -83,11 +83,11 @@ OperatorListQueryResponse _$OperatorListQueryResponseFromJson(
   );
 }
 
-UserListQueryResponse _$UserListQueryResponseFromJson(
+UserListQueryResponse<T> _$UserListQueryResponseFromJson<T extends User>(
     Map<String, dynamic> json) {
-  return UserListQueryResponse(
+  return UserListQueryResponse<T>(
     users: (json['users'] as List<dynamic>?)
-            ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => UserConverter<T>().fromJson(e as Object))
             .toList() ??
         [],
     next: json['next'] as String?,

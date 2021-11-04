@@ -1,3 +1,8 @@
+## [3.1.6] - Nov 3, 2021
+* Added `RestrictedUser` for callback mute/ban feature
+* Fixed session related issue
+* Fixed group channel updates not to apply unset `operator_ids` in `GroupChannelParams` 
+
 ## [3.1.5] - Sep 30, 2021
 * Fixed link in README
 * Improved stabilities
