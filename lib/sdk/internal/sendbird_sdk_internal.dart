@@ -99,7 +99,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       _uploads[requestId] = task;
 
   // socket callbacks
-
   /// Callback to handle socket connect
   void _onWebSocketConnect() {}
 
@@ -173,35 +172,36 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     userId = userId.trim();
     String? sessionKey;
 
-    if (!reconnect) {
-      // already connected
-      if (_state.connected && _state.userId == userId) {
-        return _state.currentUser!;
-      }
+    // already connected
+    if (_state.connected && _state.userId == userId && !reconnect) {
+      return _state.currentUser!;
+    }
 
-      // is already in progress to connect
-      if (_state.connecting &&
-          _state.userId == userId &&
-          _loginCompleter != null) {
-        return _loginCompleter!.future;
-      }
-    } else {
+    // is already in progress to connect
+    if ((_state.connecting || _state.reconnecting) &&
+        _state.userId == userId &&
+        _loginCompleter != null) {
+      return _loginCompleter!.future;
+    }
+
+    if (reconnect) {
       sessionKey = await _sessionManager.getSessionKey();
       if (sessionKey == null || sessionKey.isEmpty) {
         ConnectionManager.flushCompleters(error: ConnectionRequiredError());
         _eventManager.notifyReconnectionFailed();
         throw ConnectionFailedError();
       }
-      if (!_state.reconnecting) _eventManager.notifyReconnectionStarted();
+      _eventManager.notifyReconnectionStarted();
+    } else {
+      // start from clean slate
+      await logout();
     }
+
+    await _webSocket?.close();
 
     _state.userId = userId;
     _state.connecting = true;
 
-    _streamManager.reset();
-    _loginCompleter = Completer();
-
-    _webSocket?.close();
     _webSocket = WebSocketClient(
       onConnect: _onWebSocketConnect,
       onDisconnect: _onWebSocketDisconnect,
@@ -248,10 +248,18 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
-    await _webSocket?.connect(fullWsHost);
-    final user = await _loginCompleter!.future
-        .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
-      logout();
+    try {
+      await _webSocket?.connect(fullWsHost);
+    } catch (e) {
+      _state.connecting = false;
+      _state.reconnecting = false;
+      rethrow;
+    }
+
+    _loginCompleter = Completer();
+    final user = await _loginCompleter!.future.timeout(
+        Duration(seconds: options.connectionTimeout), onTimeout: () async {
+      await logout();
       throw LoginTimeoutError();
     });
 
@@ -268,7 +276,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     return user;
   }
 
-  void logout() {
+  Future<void> logout() async {
     logger.i('logout');
 
     if (state.reconnecting) {
@@ -277,7 +285,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _sessionManager = SessionManager();
     _cache = MemoryCacheStorage();
-    _eventManager = EventManager();
     _cmdManager = CommandManager();
     _streamManager.reset();
 
@@ -286,13 +293,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _messageQueues = {};
     // _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
     _uploads = {};
+
     _loginCompleter = null;
 
     // _api = ApiClient();
     // _api.initialize(appId: _state.appId);
 
     _state.cleanUp();
-    _webSocket?.close();
+    await _webSocket?.close();
     _webSocket = null;
 
     WidgetsBinding.instance?.removeObserver(this);
@@ -325,8 +333,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     task.increaseRetryCount();
     _state.reconnecting = true;
 
-    _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () {
-      connect(
+    _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () async {
+      await connect(
         reconnect: true,
         userId: _state.userId ?? '',
         accessToken: _sessionManager.accessToken,
@@ -351,7 +359,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
   void _handleEnterForeground() async {
     if (_state.userId != null) {
-      await connect(userId: _state.userId!, reconnect: true);
+      reconnect();
     }
   }
 

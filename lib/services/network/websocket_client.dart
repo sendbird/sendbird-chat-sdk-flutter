@@ -78,7 +78,8 @@ class WebSocketClient {
     );
   }
 
-  bool close({int code = WebSocketStatus.normalClosure, String reason = ''}) {
+  Future<bool> close(
+      {int code = WebSocketStatus.normalClosure, String reason = ''}) async {
     if (!_connected) {
       return true;
     }
@@ -95,7 +96,7 @@ class WebSocketClient {
     try {
       //This should trigger callback for Done()
       //And set _connected to false before returning from close
-      _socket?.close(code, reason);
+      await _socket?.close(code, reason);
       _subscription?.cancel();
       _socket = null;
       logger.i('Socket closed ' + reason);

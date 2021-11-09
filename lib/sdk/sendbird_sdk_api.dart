@@ -118,8 +118,8 @@ class SendbirdSdk {
   }
 
   /// Disconnects from Sendbird server
-  void disconnect() {
-    _int.logout();
+  Future<void> disconnect() async {
+    await _int.logout();
   }
 
   /// Reconnects if previously connected and disconnect due to any reasons.
