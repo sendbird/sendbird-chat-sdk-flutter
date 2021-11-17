@@ -299,11 +299,14 @@ class SendbirdSdk {
   /// In order to make push notification work with sendbird, [token] has to be
   /// registered with specific [PushTokenType] such as fcm or apns. If [unique]
   /// is `true` then only one push token will be keep tracked
+  ///
+  /// If [userId] is null, the current connected one will be used.
   Future<PushTokenRegistrationStatus> registerPushToken({
     required PushTokenType type,
     required String token,
     bool alwaysPush = false,
     bool unique = false,
+    String? userId,
   }) async {
     return _int.api
         .send<PushTokenRegistrationStatus>(UserPushTokenRegisterRequest(
@@ -311,6 +314,7 @@ class SendbirdSdk {
       token: token,
       alwaysPush: alwaysPush,
       unique: unique,
+      userId: userId,
     ));
   }
 
@@ -318,13 +322,17 @@ class SendbirdSdk {
   ///
   /// Once [token] has been unregistered from sendbird server, associated device
   /// will not receive any push notification from sendbird.
+  ///
+  /// If [userId] is null, the current connected one will be used.
   Future<void> unregisterPushToken({
     required PushTokenType type,
     required String token,
+    String? userId,
   }) async {
     return _int.api.send(UserPushTokenUnregisterRequest(
       type: type,
       token: token,
+      userId: userId,
     ));
   }
 
