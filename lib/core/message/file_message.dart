@@ -33,7 +33,7 @@ class FileMessage extends BaseMessage {
       //final urlString = url.replaceAll('https://', 'http://');
       return '$url?auth=$eKey';
     }
-    return null;
+    return url;
   }
 
   /// Name of this file message

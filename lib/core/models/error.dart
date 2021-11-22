@@ -39,6 +39,11 @@ class ConnectionRequiredError extends SBError {
   int get code => ErrorCode.connectionRequired;
 }
 
+class ConnectionCancelError extends SBError {
+  @override
+  int get code => ErrorCode.connectionCanceled;
+}
+
 class ConnectionClosedError extends SBError {}
 
 class ConnectionFailedError extends SBError {}

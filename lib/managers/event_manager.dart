@@ -26,68 +26,52 @@ class EventManager {
 
   SendbirdSdkInternal get sdk => SendbirdSdk().getInternal();
 
-  void addHandler(String identifier, EventHandler handler) {
-    if (handler is ChannelEventHandler) {
-      _channelHandlers[identifier] = handler;
-    } else if (handler is ConnectionEventHandler) {
-      _connectionHandlers[identifier] = handler;
-    } else if (handler is SessionEventHandler) {
-      _sessionHandler = handler;
-    } else if (handler is UserEventHandler) {
-      _userHandlers[identifier] = handler;
-    }
+  void addChannelHandler(String identifier, ChannelEventHandler handler) {
+    _channelHandlers[identifier] = handler;
   }
 
-  void removeHandler<T extends EventHandler>(String identifier) {
-    if (T == ChannelEventHandler) {
-      _channelHandlers.remove(identifier);
-    } else if (T == ConnectionEventHandler) {
-      _connectionHandlers.remove(identifier);
-    } else if (T == SessionEventHandler) {
-      _sessionHandler = null;
-    } else if (T == UserEventHandler) {
-      _userHandlers.remove(identifier);
-    }
+  void addConnectionHandler(String identifier, ConnectionEventHandler handler) {
+    _connectionHandlers[identifier] = handler;
   }
 
-  void removeAll<T extends EventHandler>() {
-    if (T == ChannelEventHandler) {
-      _channelHandlers = {};
-    } else if (T == ConnectionEventHandler) {
-      _connectionHandlers = {};
-    } else if (T == SessionEventHandler) {
-      _sessionHandler = null;
-    } else if (T == UserEventHandler) {
-      _userHandlers = {};
-    }
+  void addSessionHandler(SessionEventHandler handler) {
+    _sessionHandler = handler;
   }
 
-  T? getHandler<T extends EventHandler>({String? identifier}) {
-    if (T == ChannelEventHandler) {
-      return _channelHandlers[identifier] as T?;
-    } else if (T == ConnectionEventHandler) {
-      return _connectionHandlers[identifier] as T?;
-    } else if (T == SessionEventHandler) {
-      return _sessionHandler as T?;
-    } else if (T == UserEventHandler) {
-      return _userHandlers[identifier] as T?;
-    } else {
-      return null;
-    }
+  void addUserHandler(String identifier, UserEventHandler handler) {
+    _userHandlers[identifier] = handler;
   }
 
-  List<T> getHandlers<T extends EventHandler>() {
-    if (T == ChannelEventHandler) {
-      return _channelHandlers.values.toList() as List<T>;
-    } else if (T == ConnectionEventHandler) {
-      return _connectionHandlers.values.toList() as List<T>;
-    } else if (T == SessionEventHandler) {
-      return _sessionHandler != null ? [_sessionHandler] as List<T> : [];
-    } else if (T == UserEventHandler) {
-      return _userHandlers.values.toList() as List<T>;
-    } else {
-      return [];
-    }
+  void removeChannelHandler(String identifier) {
+    _channelHandlers.remove(identifier);
+  }
+
+  void removeConnectionHandler(String identifier) {
+    _connectionHandlers.remove(identifier);
+  }
+
+  void removeUserHandler(String identifier) {
+    _userHandlers.remove(identifier);
+  }
+
+  void removeSessionHandler() {
+    _sessionHandler = null;
+  }
+
+  ChannelEventHandler? getChannelHandler(String identifier) {
+    return _channelHandlers[identifier];
+  }
+
+  ConnectionEventHandler? getConnectionHandler(String identifier) {
+    return _connectionHandlers[identifier];
+  }
+
+  UserEventHandler? getUserHandler(String identifier) {
+    return _userHandlers[identifier];
+  }
+
+  SessionEventHandler? getSessionHandler() {
+    return _sessionHandler;
   }
 
   void cleanUp() {

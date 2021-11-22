@@ -173,7 +173,9 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     String? sessionKey;
 
     // already connected
-    if (_state.connected && _state.userId == userId && !reconnect) {
+    if (_state.connected &&
+        _state.userId == userId &&
+        _state.currentUser != null) {
       return _state.currentUser!;
     }
 
@@ -241,8 +243,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         'user_id': userId,
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
-      'expiring_session':
-          _eventManager.getHandler<SessionEventHandler>() != null ? '1' : '0',
+      'expiring_session': _eventManager.getSessionHandler() != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
@@ -259,7 +260,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _loginCompleter = Completer();
     final user = await _loginCompleter!.future.timeout(
         Duration(seconds: options.connectionTimeout), onTimeout: () async {
-      await logout();
       throw LoginTimeoutError();
     });
 
@@ -294,6 +294,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     // _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
     _uploads = {};
 
+    // if previously existed completer with different userId then cancel out
+    _loginCompleter?.completeError(ConnectionCancelError());
     _loginCompleter = null;
 
     // _api = ApiClient();
@@ -343,23 +345,23 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) _handleEnterBackground();
     if (state == AppLifecycleState.resumed) _handleEnterForeground();
   }
 
-  void _handleEnterBackground() {
+  void _handleEnterBackground() async {
     _cache.markAsDirtyAll();
     //clear all timers
     _state.connected = false;
     _state.connecting = false;
     _state.reconnecting = false;
-    _webSocket?.close();
+    await _webSocket?.close();
   }
 
-  void _handleEnterForeground() async {
-    if (_state.userId != null) {
-      reconnect();
+  void _handleEnterForeground() {
+    if (_state.userId != null && !_state.connected) {
+      reconnect(reset: true);
     }
   }
 

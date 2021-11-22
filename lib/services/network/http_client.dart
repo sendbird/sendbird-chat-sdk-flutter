@@ -83,6 +83,8 @@ class HttpClient {
     request.headers.addAll(commonHeaders());
     request.headers.addAll(headers ?? {});
 
+    logger.d('API request $url with headers ${request.headers}');
+
     final res = await request.send();
     final result = await http.Response.fromStream(res);
     return _response(result);

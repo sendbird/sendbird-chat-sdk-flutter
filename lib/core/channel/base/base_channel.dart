@@ -32,6 +32,7 @@ import 'package:sendbird_sdk/request/channel_meta_data/get_request.dart';
 import 'package:sendbird_sdk/request/channel_meta_data/create_request.dart';
 import 'package:sendbird_sdk/request/channel_meta_data/delete_request.dart';
 import 'package:sendbird_sdk/request/channel_meta_data/update_request.dart';
+import 'package:sendbird_sdk/request/messages/file_message_send_request.dart';
 import 'package:sendbird_sdk/request/messages/message_change_log_get_request.dart';
 import 'package:sendbird_sdk/request/messages/message_delete_request.dart';
 import 'package:sendbird_sdk/request/messages/message_translate_request.dart';

@@ -130,6 +130,7 @@ class CommandManager with SdkAccessor {
     // }
 
     final reqId = cmd.requestId;
+    logger.i('Command ${cmd.cmd} Payload ${cmd.payload}');
     if (cmd.isAckRequired && reqId != null) {
       final timer = Timer(Duration(seconds: sdk.options.websocketTimeout), () {
         logger.e('sendCommand: did not receive ack in time');

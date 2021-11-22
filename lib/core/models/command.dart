@@ -318,11 +318,9 @@ class Command {
   }
 
   static Command buildLOGIUpdateSessionKey(String? token) {
-    final hasCallback = SendbirdSdk()
-        .getInternal()
-        .eventManager
-        .getHandlers<SessionEventHandler>()
-        .isNotEmpty;
+    final hasCallback =
+        SendbirdSdk().getInternal().eventManager.getSessionHandler() != null;
+
     return Command(
       cmd: CommandString.login,
       payload: {
