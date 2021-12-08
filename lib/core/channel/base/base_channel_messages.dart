@@ -156,6 +156,7 @@ extension Messages on BaseChannel {
           type: cmd.cmd,
         )!; //mark!
       } else {
+        logger.e('failed to update user message');
         throw WebSocketError();
       }
     } catch (e) {
@@ -351,6 +352,7 @@ extension Messages on BaseChannel {
           type: cmd.cmd,
         )!; //mark!
       } else {
+        logger.e('failed to update file message');
         throw WebSocketError();
       }
     } catch (e) {
