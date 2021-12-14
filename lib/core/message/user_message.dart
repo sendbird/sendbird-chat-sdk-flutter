@@ -48,7 +48,10 @@ class UserMessage extends BaseMessage {
     String? data,
     OGMetaData? ogMetaData,
     List<Reaction>? reactions,
+    Map<String, dynamic>? parentMessage,
+    bool replyToChannel = false,
   }) : super(
+          replyToChannel: replyToChannel,
           requestId: requestId,
           messageId: messageId,
           message: message,
@@ -63,6 +66,7 @@ class UserMessage extends BaseMessage {
           updatedAt: updatedAt,
           parentMessageId: parentMessageId,
           parentMessageText: parentMessageText,
+          parentMessage: parentMessage,
           threadInfo: threadInfo,
           metaArrays: metaArrays,
           customType: customType,

@@ -78,6 +78,10 @@ class BaseMessage {
   @JsonKey(defaultValue: 0)
   final int updatedAt;
 
+  /// Option to reply to channel. The default is `false`
+  @JsonKey(name: 'is_reply_to_channel', defaultValue: false)
+  bool replyToChannel;
+
   /// The unique ID of the parent message. If the message object is a parent message
   ///  or a single message without any reply, the value of this property is `0`. If
   /// the object is a reply, the value is the unique ID of its parent message.
@@ -88,6 +92,10 @@ class BaseMessage {
   /// to a parent message and the type of the parent message is [UserMessage], the value
   ///  is `message`. If it is [FileMessage], the value is the `name` of the uploaded file.
   final String? parentMessageText;
+
+  /// Retrieve current message's parent information
+  @JsonKey(name: 'parent_message_info')
+  BaseMessage? parentMessage;
 
   /// The thread info that belongs to this message object.
   ThreadInfo? threadInfo;
@@ -142,10 +150,12 @@ class BaseMessage {
     this.messageId = 0,
     this.mentionType,
     this.requestedMentionUserIds,
+    this.replyToChannel = false,
     this.createdAt = 0,
     this.updatedAt = 0,
     this.parentMessageId,
     this.parentMessageText,
+    Map<String, dynamic>? parentMessage,
     this.threadInfo,
     this.metaArrays,
     this.customType,
@@ -158,6 +168,13 @@ class BaseMessage {
     this.ogMetaData,
     this.reactions = const <Reaction>[],
   }) {
+    if (parentMessage != null && parentMessageId != null) {
+      parentMessage['message_id'] = parentMessageId;
+      parentMessage['channel_url'] = channelUrl;
+      parentMessage['channel_type'] = channelType;
+
+      this.parentMessage = BaseMessage.fromJson(parentMessage);
+    }
     if (sendingStatus == null) {
       if (messageId > 0) {
         sendingStatus = MessageSendingStatus.succeeded;
@@ -245,6 +262,7 @@ class BaseMessage {
     }
 
     final sdk = SendbirdSdk().getInternal();
+
     return sdk.api.send<BaseMessage>(
       ChannelMessageGetRequest(
         channelType: params.channelType,
@@ -355,8 +373,13 @@ class BaseMessage {
     if (json['ts'] != null) json['created_at'] = json['ts'];
     if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
     if (json['req_id'] != null) json['request_id'] = json['req_id'];
+
     //manually insert type if channel is provided
     if (channelType != null) json['channel_type'] = channelType.asString();
+    //manually insert reply_to_channel
+    if (json['reply_to_channel'] != null) {
+      json['is_reply_to_channel'] = json['reply_to_channel'];
+    }
 
     if (T == UserMessage || CommandString.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json) as T;

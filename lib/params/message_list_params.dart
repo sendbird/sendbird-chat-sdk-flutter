@@ -66,6 +66,13 @@ class MessageListParams {
   /// Partitioning. This property is only working for [OpenChannel]
   bool showSubChannelMessagesOnly = false;
 
+  /// Determines wheter to include parent message information
+  bool includeParentMessageInfo = false;
+
+  /// Determines message's reply type
+  @JsonKey(name: 'include_reply_type')
+  ReplyType replyType = ReplyType.none;
+
   Map<String, dynamic> toJson() {
     final json = _$MessageListParamsToJson(this);
     json.removeWhere((key, value) => value == null);

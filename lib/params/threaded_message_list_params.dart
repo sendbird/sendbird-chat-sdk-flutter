@@ -51,9 +51,21 @@ class ThreadedMessageListParams {
 
   /// Determines whether to include the parent message text in the results
   /// when the messages are replies in a thread. If the type of the parent
-  /// message is [UserMessage] the  value is a `message`. If it is
-  /// [FileMessage], the value is the `name` of the uploaded file.
+  /// message is `UserMessage` the  value is a `message`. If it is
+  /// `FileMessage`, the value is the `name` of the uploaded file.
+  /// default value is false
   bool includeParentMessageText = false;
+
+  /// Determines whether to include the reactions to the messages in the results.
+  /// default value is false
+  bool includeReplies = false;
+
+  /// Determines the type of the reply
+  @JsonKey(name: 'include_reply_type')
+  ReplyType replyType = ReplyType.none;
+
+  /// Determines wheter to include parent message info in the results
+  bool includeParentMessageInfo = false;
 
   Map<String, dynamic> toJson() {
     final json = _$ThreadedMessageListParamsToJson(this);

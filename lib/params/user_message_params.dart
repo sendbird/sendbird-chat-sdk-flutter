@@ -21,8 +21,10 @@ class UserMessageParams extends BaseMessageParams {
     MentionType? mentionType,
     List<String>? mentionedUserIds,
     List<MessageMetaArray>? metaArrays,
+    bool? replyToChannel,
   })  : targetLanguages = targetLanguages ?? [],
         super(
+          replyToChannel: replyToChannel ?? false,
           data: data,
           customType: customType,
           pushOption: pushOption,

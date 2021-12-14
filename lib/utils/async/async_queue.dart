@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:sendbird_sdk/utils/logger.dart';
+
 import 'async_operation.dart';
 
 class AsyncQueue<T> {
@@ -46,12 +48,15 @@ class AsyncQueue<T> {
       try {
         if (task is AsyncTask<T>) {
           final res = await task.func(task.arg);
+          logger.i('completed async task ${task.func}');
           _completers.remove(task.hashCode)?.complete(res);
         } else if (task is AsyncSimpleTask) {
           await task.func();
+          logger.i('completed async task ${task.func}');
           _completers.remove(task.hashCode)?.complete();
         }
       } catch (e) {
+        logger.e('error while processing async task $task');
         // do nothing
       }
     }

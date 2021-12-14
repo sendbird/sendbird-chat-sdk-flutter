@@ -24,7 +24,7 @@ import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 
-const sdk_version = '3.1.6';
+const sdk_version = '3.1.7';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -99,7 +99,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       _uploads[requestId] = task;
 
   // socket callbacks
-
   /// Callback to handle socket connect
   void _onWebSocketConnect() {}
 
@@ -127,9 +126,16 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       return;
     }
 
+    logger.i('receive data from ws, processing from ioslate');
+
     //NOTE: compute does not gaurantee the order of commands
     final op = AsyncTask<String>(func: parseCommand, arg: stringCommand);
     final cmd = await _commandQueue.enqueue(op);
+    if (cmd == null) {
+      logger.e('parsing command failed on isolate');
+      return;
+    }
+    logger.i('ws data parsed completed, proceed ${cmd.cmd}');
 
     runZonedGuarded(() async {
       try {
@@ -173,35 +179,45 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     userId = userId.trim();
     String? sessionKey;
 
-    if (!reconnect) {
-      // already connected
-      if (_state.connected && _state.userId == userId) {
-        return _state.currentUser!;
-      }
+    logger.i('Attempting to connecting with $userId');
+    // already connected
+    if (_state.connected &&
+        _webSocket?.isConnected() == true &&
+        _state.userId == userId &&
+        _state.currentUser != null) {
+      logger.i('already connected with $userId, return user');
+      return _state.currentUser!;
+    }
 
-      // is already in progress to connect
-      if (_state.connecting &&
-          _state.userId == userId &&
-          _loginCompleter != null) {
-        return _loginCompleter!.future;
-      }
-    } else {
+    // is already in progress to connect
+    if ((_state.connecting || _state.reconnecting) &&
+        _state.userId == userId &&
+        _loginCompleter != null) {
+      logger.i('waiting to connect previous call with $userId');
+      return _loginCompleter!.future;
+    }
+
+    if (reconnect) {
       sessionKey = await _sessionManager.getSessionKey();
       if (sessionKey == null || sessionKey.isEmpty) {
         ConnectionManager.flushCompleters(error: ConnectionRequiredError());
         _eventManager.notifyReconnectionFailed();
         throw ConnectionFailedError();
       }
-      if (!_state.reconnecting) _eventManager.notifyReconnectionStarted();
+      _eventManager.notifyReconnectionStarted();
+    } else {
+      // start from clean slate
+      logger.i('clearing out previous connection');
+      await logout();
     }
+
+    // This has to be above any await for concurrent situation
+    _loginCompleter = Completer();
+    await _webSocket?.close();
 
     _state.userId = userId;
     _state.connecting = true;
 
-    _streamManager.reset();
-    _loginCompleter = Completer();
-
-    _webSocket?.close();
     _webSocket = WebSocketClient(
       onConnect: _onWebSocketConnect,
       onDisconnect: _onWebSocketDisconnect,
@@ -241,20 +257,30 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         'user_id': userId,
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
-      'expiring_session':
-          _eventManager.getHandler<SessionEventHandler>() != null ? '1' : '0',
+      'expiring_session': _eventManager.getSessionHandler() != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
 
     final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
-    await _webSocket?.connect(fullWsHost);
-    final user = await _loginCompleter!.future
-        .timeout(Duration(seconds: options.connectionTimeout), onTimeout: () {
-      logout();
+    logger.i('websocket connecting.. ');
+    try {
+      await _webSocket?.connect(fullWsHost);
+    } catch (e) {
+      _state.connecting = false;
+      _state.reconnecting = false;
+      _loginCompleter = null;
+      rethrow;
+    }
+
+    final user = await _loginCompleter!.future.timeout(
+        Duration(seconds: options.connectionTimeout), onTimeout: () async {
+      logger.e('login timeout');
+      await logout();
       throw LoginTimeoutError();
     });
 
+    logger.i('websocket connected and get user from sendbird server');
     ConnectionManager.flushCompleters(
         error: reconnect ? null : ConnectionClosedError());
 
@@ -268,7 +294,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     return user;
   }
 
-  void logout() {
+  Future<void> logout() async {
     logger.i('logout');
 
     if (state.reconnecting) {
@@ -277,7 +303,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _sessionManager = SessionManager();
     _cache = MemoryCacheStorage();
-    _eventManager = EventManager();
     _cmdManager = CommandManager();
     _streamManager.reset();
 
@@ -286,13 +311,17 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _messageQueues = {};
     // _uploads.forEach((key, value) => _api.cancelUploadingFile(key));
     _uploads = {};
+
+    // if previously existed completer with different userId then cancel out
+    _loginCompleter?.completeError(ConnectionCancelError());
     _loginCompleter = null;
 
     // _api = ApiClient();
     // _api.initialize(appId: _state.appId);
 
     _state.cleanUp();
-    _webSocket?.close();
+    logger.i('Deleting previous websocket');
+    await _webSocket?.close();
     _webSocket = null;
 
     WidgetsBinding.instance?.removeObserver(this);
@@ -325,33 +354,38 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     task.increaseRetryCount();
     _state.reconnecting = true;
 
-    _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () {
-      connect(
+    _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () async {
+      logger.i('try to reconnect');
+      await connect(
         reconnect: true,
         userId: _state.userId ?? '',
         accessToken: _sessionManager.accessToken,
       );
+      logger.i('reconnect succeeded');
     });
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) _handleEnterBackground();
     if (state == AppLifecycleState.resumed) _handleEnterForeground();
   }
 
-  void _handleEnterBackground() {
+  void _handleEnterBackground() async {
     _cache.markAsDirtyAll();
     //clear all timers
     _state.connected = false;
     _state.connecting = false;
     _state.reconnecting = false;
-    _webSocket?.close();
+    await _webSocket?.close();
+    logger.i('going background');
   }
 
-  void _handleEnterForeground() async {
-    if (_state.userId != null) {
-      await connect(userId: _state.userId!, reconnect: true);
+  void _handleEnterForeground() {
+    logger.i('going foreground');
+    if (_state.userId != null && !_state.connected) {
+      logger.i('attempting to reconnect from foreground');
+      reconnect(reset: true);
     }
   }
 

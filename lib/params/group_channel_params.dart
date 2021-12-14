@@ -8,26 +8,26 @@ part 'group_channel_params.g.dart';
 @JsonSerializable()
 class GroupChannelParams {
   /// Determine a channel is super channel or not. default is `false`
-  bool isSuper = false;
+  bool? isSuper;
 
   /// Determine a channel is broadcast channel or not. default is `false`
-  bool isBroadcast = false;
+  bool? isBroadcast;
 
   /// Determine a channel is public channel or not. default is `false`
-  bool isPublic = false;
+  bool? isPublic;
 
   /// Determine a channel is distinct or not.
   /// If `true`, the channel which has the same users is returned.
   /// default is `false`
-  bool isDistinct = false;
+  bool? isDistinct;
 
   /// Determine a channel is ephemeral or not. default is `false`
-  bool isEphemeral = false;
+  bool? isEphemeral;
 
   /// Determine whether the public group channel is discoverable.
   /// It is only for creating or updating a public group channel.
   /// This property will be ingored if [isPublic] is `false`.
-  bool isDiscoverable = true;
+  bool? isDiscoverable = true;
 
   /// Determine whether a channel is strict or not.
   /// If you have two valid users and this property is `true`, then
@@ -36,7 +36,8 @@ class GroupChannelParams {
   /// will get an error when creating channel. However, if you have
   /// one valid user, one invalid user, and this propety is `false`,
   /// you can create a channel without errors
-  bool isStrict = false;
+  /// default is `false`
+  bool? isStrict;
 
   /// A string that allows access to the public group channel.
   /// ONLY use for public group channel.
@@ -58,7 +59,7 @@ class GroupChannelParams {
   FileInfo? coverImage;
 
   /// List of user id who will get invited
-  List<String> userIds = [];
+  List<String>? userIds;
 
   /// List of user id who are operator
   @JsonKey(name: 'operator_ids')
@@ -67,8 +68,27 @@ class GroupChannelParams {
   //TBD
   //Int messageSurvivalSeconds;
 
-  GroupChannelParams();
+  ///Constructor for [GroupChannelParams]
+  ///
+  /// Should set `isUpdate` to **false** if creating new Group Channel (*default is `false`*)
+  /// Should set `isUpdate` to **true** if updating existing group channel
+  GroupChannelParams({bool isUpdate = false}) {
+    if (!isUpdate) {
+      isSuper = false;
+      isBroadcast = false;
+      isPublic = false;
+      isDistinct = false;
+      isEphemeral = false;
+      isStrict = false;
+    }
+  }
+
   GroupChannelParams.withChannel(GroupChannel channel) {
+    isSuper = channel.isSuper;
+    isBroadcast = channel.isBroadcast;
+    isEphemeral = channel.isEphemeral;
+    isDiscoverable = channel.isDiscoverable;
+    isStrict = channel.isStrict;
     channelUrl = channel.channelUrl;
     isPublic = channel.isPublic;
     isDiscoverable = channel.isDiscoverable;
@@ -82,10 +102,13 @@ class GroupChannelParams {
     } else {
       json['cover_url'] = coverImage?.url;
     }
-    if (json['is_public'] == false) {
+    if (json['is_public'] == false || json['is_public'] == null) {
       json.remove('is_discoverable');
     }
+
+    //Remove UnChanged Properties
     json.removeWhere((key, value) => value == null);
+
     return json;
   }
 }

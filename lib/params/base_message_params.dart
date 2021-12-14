@@ -34,6 +34,9 @@ class BaseMessageParams {
   /// parent message.
   int? parentMessageId;
 
+  /// Allow Reply to Channel The default is `false`
+  bool replyToChannel = false;
+
   BaseMessageParams({
     this.data,
     this.customType,
@@ -42,6 +45,7 @@ class BaseMessageParams {
     this.mentionType,
     this.mentionedUserIds,
     this.parentMessageId,
+    this.replyToChannel = false,
   });
 
   BaseMessageParams.withMessage(BaseMessage message, {bool? deepCopy}) {
@@ -65,6 +69,7 @@ class BaseMessageParams {
       if (pushOption == PushNotificationDeliveryOption.suppress)
         'push_option': pushOption.asString(),
       if (parentMessageId != null) 'parent_message_id': parentMessageId,
+      'reply_to_channel': replyToChannel
     };
 
     ret.removeWhere((key, value) => value == null);

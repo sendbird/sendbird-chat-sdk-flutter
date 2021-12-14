@@ -15,7 +15,7 @@ class ChannelReactionAddRequest extends ApiRequest {
     String? userId,
   }) : super(userId: userId) {
     url = '${channelType.urlString}/$channelUrl/messages/$messageId/reactions';
-    body = {'reaction': key};
+    body = {'reaction': key, 'user_id': userId};
   }
 
   @override

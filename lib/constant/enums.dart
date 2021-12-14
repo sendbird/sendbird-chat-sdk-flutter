@@ -7,6 +7,16 @@ extension EnumTransform on List {
   }
 }
 
+/// Represents message's reply type
+enum ReplyType {
+  @JsonValue('NONE')
+  none,
+  @JsonValue('ALL')
+  all,
+  @JsonValue('ONLY_REPLY_TO_CHANNEL')
+  only_reply_to_channel
+}
+
 /// Represents message's sending status
 enum MessageSendingStatus { none, pending, failed, succeeded, canceled }
 

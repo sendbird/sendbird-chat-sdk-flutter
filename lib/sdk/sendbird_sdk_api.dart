@@ -118,8 +118,8 @@ class SendbirdSdk {
   }
 
   /// Disconnects from Sendbird server
-  void disconnect() {
-    _int.logout();
+  Future<void> disconnect() async {
+    await _int.logout();
   }
 
   /// Reconnects if previously connected and disconnect due to any reasons.
@@ -146,71 +146,67 @@ class SendbirdSdk {
 
   /// Add [ChannelEventHandler] with [identifier] to SDK.
   void addChannelEventHandler(String identifier, ChannelEventHandler handler) {
-    _int.eventManager.addHandler(identifier, handler);
+    _int.eventManager.addChannelHandler(identifier, handler);
   }
 
   /// Returns [ChannelEventHandler] with given [identifier].
   ///
   /// null if handler is not found with [identifier]
   ChannelEventHandler? getChannelEventHandler(String identifier) {
-    return _int.eventManager.getHandler<ChannelEventHandler>(
-      identifier: identifier,
-    );
+    return _int.eventManager.getChannelHandler(identifier);
   }
 
   /// Removes [ChannelEventHandler] with [identifier] from SDK.
   void removeChannelEventHandler(String identifier) {
-    _int.eventManager.removeHandler<ChannelEventHandler>(identifier);
+    _int.eventManager.removeChannelHandler(identifier);
   }
 
   /// Adds [ConnectionEventHandler] with [identifier] to SDK.
   void addConnectionEventHandler(
       String identifier, ConnectionEventHandler handler) {
-    _int.eventManager.addHandler(identifier, handler);
+    _int.eventManager.addConnectionHandler(identifier, handler);
   }
 
   /// Returns [ConnectionEventHandler] with [identifier] from SDK.
   ///
   /// null if the handler is not found with [identifier]
   ConnectionEventHandler? getConnectionEventHandler(String identifier) {
-    return _int.eventManager
-        .getHandler<ConnectionEventHandler>(identifier: identifier);
+    return _int.eventManager.getConnectionHandler(identifier);
   }
 
   /// Removes [ConnectionEventHandler] with [identifier] from SDK.
   void removeConnectionEventHandler(String identifier) {
-    _int.eventManager.removeHandler<ConnectionEventHandler>(identifier);
+    _int.eventManager.removeConnectionHandler(identifier);
   }
 
   /// Adds [SessionEventHandler] to SDK.
   void addSessionEventHandler(SessionEventHandler handler) {
-    _int.eventManager.addHandler('', handler);
+    _int.eventManager.addSessionHandler(handler);
   }
 
   /// Returns [SessionEventHandler] if registered
   SessionEventHandler? getSessionEventHandler() {
-    return _int.eventManager.getHandler<SessionEventHandler>();
+    return _int.eventManager.getSessionHandler();
   }
 
   /// Removes [SessionEventHandler] from SDK.
   void removeSessionEventHandler() {
-    _int.eventManager.removeHandler<SessionEventHandler>('');
+    _int.eventManager.removeSessionHandler();
   }
 
   /// Adds [UserEventHandler] with [identifier] to SDK.
   void addUserEventHandler(String identifier, UserEventHandler handler) {
-    _int.eventManager.addHandler(identifier, handler);
+    _int.eventManager.addUserHandler(identifier, handler);
   }
 
   /// Returns [UserEventHandler] with [identifier] from SDK.
   UserEventHandler? getUserEventHandler(String identifier) {
-    return _int.eventManager
-        .getHandler<UserEventHandler>(identifier: identifier);
+    return _int.eventManager.getUserHandler(identifier);
   }
 
   /// Removes [UserEventHandler] with [identifier] from SDK.
   void removeUserEventHandler(String identifier) {
-    _int.eventManager.removeHandler<UserEventHandler>(identifier);
+    _int.eventManager.removeUserHandler(identifier);
   }
 
   /// Returns current SDK version as `String`.

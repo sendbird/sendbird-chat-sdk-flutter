@@ -1,3 +1,14 @@
+## [3.1.7] - Dec 14, 2021
+* Introduced new feature `Reply to channel` 
+* Added `ReplyType` enum for loading messages with respect to message's reply messages
+* Added `includeParentMessageInfo`, `replyType` in `MessageChangeLogsParams`, `MessageListParams`, `PreviousMessageListQuery`
+* Deprecated `includeReplies`, `includeParentMessageText` in `MessageChangeLogsParams`, `MessageListParams`, `PreviousMessageListQuery`
+* Added `parentMessage`, `isReplyToChannel` in `BaseMessage`
+* Deprecated `parentMessageText` in `BaseMessage`
+* Added `replyToChannel` to `BaseMessageParams`
+* Updated `GroupChannelParams` constructor to take `isUpdate` parameter for update channel
+* Fixed connection issue when `LoginTimeout` occurs 
+
 ## [3.1.6] - Nov 3, 2021
 * Added `RestrictedUser` for callback mute/ban feature
 * Fixed session related issue

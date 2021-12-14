@@ -79,7 +79,9 @@ class ScheduledUserMessage extends BaseMessage {
     String? data,
     OGMetaData? ogMetaData,
     List<Reaction>? reactions,
+    Map<String, dynamic>? parentMessage,
   }) : super(
+          parentMessage: parentMessage,
           requestId: requestId,
           messageId: messageId,
           message: message,

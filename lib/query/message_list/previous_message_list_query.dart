@@ -49,6 +49,9 @@ class PreviousMessageListQuery extends QueryBase {
   /// default value is false
   bool includeParentMessageText = false;
 
+  /// Determines whether to include current message's parent information
+  bool includeParentMessageInfo = false;
+
   /// Determines whether to include the reactions to the messages in the results.
   /// default value is false
   bool includeReplies = false;
@@ -82,9 +85,9 @@ class PreviousMessageListQuery extends QueryBase {
       ..messageType = messageTypeFilter
       ..senderIds = senderIdsFilter
       ..includeMetaArray = includeMetaArray
+      ..includeParentMessageInfo = includeParentMessageInfo
       ..includeParentMessageText = includeParentMessageText
       ..includeReactions = includeReactions
-      ..includeReplies = includeReplies
       ..includeThreadInfo = includeThreadInfo
       ..showSubChannelMessagesOnly = showSubChannelMessagesOnly;
 

@@ -31,7 +31,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
     createdAt: json['created_at'] as int? ?? 0,
     updatedAt: json['updated_at'] as int? ?? 0,
     parentMessageId: json['parent_message_id'] as int?,
-    parentMessageText: json['parent_message_text'] as String?,
+    parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
     threadInfo: json['thread_info'] == null
         ? null
         : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
@@ -52,6 +52,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) {
             ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
+    replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
   )..sender = json['user'] == null
       ? null
       : Sender.fromJson(json['user'] as Map<String, dynamic>);
@@ -72,8 +73,9 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'requested_mention_user_ids': instance.requestedMentionUserIds,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'is_reply_to_channel': instance.replyToChannel,
       'parent_message_id': instance.parentMessageId,
-      'parent_message_text': instance.parentMessageText,
+      'parent_message_info': instance.parentMessage?.toJson(),
       'thread_info': instance.threadInfo?.toJson(),
       'sorted_metaarray': instance.metaArrays?.map((e) => e.toJson()).toList(),
       'custom_type': instance.customType,

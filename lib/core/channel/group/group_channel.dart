@@ -291,10 +291,10 @@ class GroupChannel extends BaseChannel {
   }) async {
     final sdk = SendbirdSdk().getInternal();
     final currentUserId = sdk.state.userId ?? '';
-    if (params.userIds.isEmpty) {
+    if (params.userIds?.isEmpty ?? true) {
       params.userIds = [currentUserId];
-    } else if (!params.userIds.contains(currentUserId)) {
-      params.userIds.add(currentUserId);
+    } else if (params.userIds?.contains(currentUserId) == false) {
+      params.userIds?.add(currentUserId);
     }
     return sdk.api.send<GroupChannel>(
         GroupChannelCreateRequest(params, onProgress: progress));

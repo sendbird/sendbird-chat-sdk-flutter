@@ -33,7 +33,7 @@ class FileMessage extends BaseMessage {
       //final urlString = url.replaceAll('https://', 'http://');
       return '$url?auth=$eKey';
     }
-    return null;
+    return url;
   }
 
   /// Name of this file message
@@ -88,7 +88,11 @@ class FileMessage extends BaseMessage {
     String? data,
     OGMetaData? ogMetaData,
     List<Reaction>? reactions,
+    bool replyToChannel = false,
+    Map<String, dynamic>? parentMessage,
   }) : super(
+          parentMessage: parentMessage,
+          replyToChannel: replyToChannel,
           requestId: requestId,
           messageId: messageId,
           message: message ?? '',
@@ -144,6 +148,7 @@ class FileMessage extends BaseMessage {
       mentionType: params.mentionType,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
+      replyToChannel: params.replyToChannel,
     );
     return msg;
   }

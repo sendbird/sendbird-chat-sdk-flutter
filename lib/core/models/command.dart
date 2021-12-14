@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
@@ -14,9 +13,7 @@ import 'package:sendbird_sdk/params/user_message_params.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
-
 import 'package:uuid/uuid.dart';
-
 part 'command.g.dart';
 
 @JsonSerializable()
@@ -39,6 +36,10 @@ class Command {
   @JsonKey(name: 'req_id')
   String? requestId;
 
+  /// Retrieve whether the option includes reply to channel The Default value is `false`
+  @JsonKey(defaultValue: false)
+  bool replyToChannel;
+
   @JsonKey(ignore: true)
   Map<String, dynamic> payload = {};
 
@@ -49,11 +50,13 @@ class Command {
     this.requireAuth,
     this.errorCode,
     this.errorMessage,
+    this.replyToChannel = false,
     this.payload = const {},
   }) {
     if (payload.isNotEmpty) {
       requestId ??= Uuid().v1();
       payload['req_id'] = requestId;
+      replyToChannel = payload['reply_to_channel'] ?? replyToChannel;
       payload.removeWhere((key, value) => value == null);
     }
   }
@@ -140,7 +143,8 @@ class Command {
       'channel_url': channelUrl,
       'message': params.message,
       'data': params.data,
-      'custom_type': params.customType
+      'custom_type': params.customType,
+      'reply_to_channel': params.replyToChannel
     };
 
     if (params.targetLanguages.isNotEmpty) {
@@ -206,6 +210,7 @@ class Command {
       'size': params.uploadFile.fileSize,
       'custom': params.data,
       'custom_type': params.customType,
+      'reply_to_channel': params.replyToChannel,
     };
 
     if (params.pushOption == PushNotificationDeliveryOption.suppress) {
@@ -318,11 +323,9 @@ class Command {
   }
 
   static Command buildLOGIUpdateSessionKey(String? token) {
-    final hasCallback = SendbirdSdk()
-        .getInternal()
-        .eventManager
-        .getHandlers<SessionEventHandler>()
-        .isNotEmpty;
+    final hasCallback =
+        SendbirdSdk().getInternal().eventManager.getSessionHandler() != null;
+
     return Command(
       cmd: CommandString.login,
       payload: {

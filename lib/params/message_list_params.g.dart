@@ -26,7 +26,9 @@ MessageListParams _$MessageListParamsFromJson(Map<String, dynamic> json) {
     ..includeReplies = json['include_replies'] as bool
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..showSubChannelMessagesOnly =
-        json['show_sub_channel_messages_only'] as bool;
+        json['show_sub_channel_messages_only'] as bool
+    ..includeParentMessageInfo = json['include_parent_message_info'] as bool
+    ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['include_reply_type']);
 }
 
 Map<String, dynamic> _$MessageListParamsToJson(MessageListParams instance) =>
@@ -45,6 +47,8 @@ Map<String, dynamic> _$MessageListParamsToJson(MessageListParams instance) =>
       'include_replies': instance.includeReplies,
       'include_thread_info': instance.includeThreadInfo,
       'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,
+      'include_parent_message_info': instance.includeParentMessageInfo,
+      'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
     };
 
 K _$enumDecode<K, V>(
@@ -78,4 +82,10 @@ const _$MessageTypeFilterEnumMap = {
   MessageTypeFilter.user: 'MESG',
   MessageTypeFilter.file: 'FILE',
   MessageTypeFilter.admin: 'ADMN',
+};
+
+const _$ReplyTypeEnumMap = {
+  ReplyType.none: 'NONE',
+  ReplyType.all: 'ALL',
+  ReplyType.only_reply_to_channel: 'ONLY_REPLY_TO_CHANNEL',
 };

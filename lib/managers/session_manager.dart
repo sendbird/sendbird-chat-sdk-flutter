@@ -168,8 +168,7 @@ class SessionManager with SdkAccessor {
 
     if (appId == null || accessToken == null) throw UnauthorizeError();
 
-    final hasSessionHandler =
-        sdk.eventManager.getHandler<SessionEventHandler>() != null;
+    final hasSessionHandler = sdk.eventManager.getSessionHandler() != null;
 
     isRefreshingKey = true;
 
@@ -222,8 +221,7 @@ class SessionManager with SdkAccessor {
   Future<void> _sessionSuccessHandler(String token) async {
     setAccessToken(token);
 
-    final hasSessionHandler =
-        sdk.eventManager.getHandler<SessionEventHandler>() != null;
+    final hasSessionHandler = sdk.eventManager.getSessionHandler() != null;
 
     try {
       final res = await sdk.api.send(AppSessionKeyUpdateRequest(

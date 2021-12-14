@@ -156,6 +156,7 @@ extension Messages on BaseChannel {
           type: cmd.cmd,
         )!; //mark!
       } else {
+        logger.e('failed to update user message');
         throw WebSocketError();
       }
     } catch (e) {
@@ -249,20 +250,30 @@ extension Messages on BaseChannel {
           if (onCompleted != null) onCompleted(msgFromPayload, error);
           return msgFromPayload;
         }
-
-        _sdk.cmdManager.sendCommand(cmd).then((result) {
-          if (result == null) return;
-          final msg = BaseMessage.msgFromJson<FileMessage>(
-            result.payload,
-            type: result.cmd,
+        if (_sdk.webSocket == null || _sdk.webSocket?.isConnected() == false) {
+          final request = ChannelFileMessageSendApiRequest(
+            channelType: channelType,
+            channelUrl: channelUrl,
+            params: params,
+            requireAuth: cmd.requireAuth ?? false,
           );
-          if (onCompleted != null && msg != null) onCompleted(msg, null);
-        }).catchError((e) {
-          pending
-            ..errorCode = e?.code ?? ErrorCode.unknownError
-            ..sendingStatus = MessageSendingStatus.failed;
-          if (onCompleted != null) onCompleted(pending, e);
-        });
+          final msg = await _sdk.api.send<FileMessage>(request);
+          if (onCompleted != null) onCompleted(msg, null);
+        } else {
+          _sdk.cmdManager.sendCommand(cmd).then((result) {
+            if (result == null) return;
+            final msg = BaseMessage.msgFromJson<FileMessage>(
+              result.payload,
+              type: result.cmd,
+            );
+            if (onCompleted != null && msg != null) onCompleted(msg, null);
+          }).catchError((e) {
+            pending
+              ..errorCode = e?.code ?? ErrorCode.unknownError
+              ..sendingStatus = MessageSendingStatus.failed;
+            if (onCompleted != null) onCompleted(pending, e);
+          });
+        }
       },
       onCancel: () {
         if (onCompleted != null) onCompleted(pending, OperationCancelError());
@@ -341,6 +352,7 @@ extension Messages on BaseChannel {
           type: cmd.cmd,
         )!; //mark!
       } else {
+        logger.e('failed to update file message');
         throw WebSocketError();
       }
     } catch (e) {

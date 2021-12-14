@@ -28,6 +28,7 @@ PreviousMessageListQuery _$PreviousMessageListQueryFromJson(
     ..includeMetaArray = json['include_meta_array'] as bool
     ..includeReactions = json['include_reactions'] as bool
     ..includeParentMessageText = json['include_parent_message_text'] as bool
+    ..includeParentMessageInfo = json['include_parent_message_info'] as bool
     ..includeReplies = json['include_replies'] as bool
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..showSubChannelMessagesOnly =
@@ -51,6 +52,7 @@ Map<String, dynamic> _$PreviousMessageListQueryToJson(
       'include_meta_array': instance.includeMetaArray,
       'include_reactions': instance.includeReactions,
       'include_parent_message_text': instance.includeParentMessageText,
+      'include_parent_message_info': instance.includeParentMessageInfo,
       'include_replies': instance.includeReplies,
       'include_thread_info': instance.includeThreadInfo,
       'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,

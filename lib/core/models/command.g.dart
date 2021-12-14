@@ -14,6 +14,7 @@ Command _$CommandFromJson(Map<String, dynamic> json) {
     requireAuth: json['require_auth'] as bool?,
     errorCode: json['code'] as int?,
     errorMessage: json['message'] as String?,
+    replyToChannel: json['reply_to_channel'] as bool? ?? false,
   );
 }
 
@@ -24,4 +25,5 @@ Map<String, dynamic> _$CommandToJson(Command instance) => <String, dynamic>{
       'message': instance.errorMessage,
       'require_auth': instance.requireAuth,
       'req_id': instance.requestId,
+      'reply_to_channel': instance.replyToChannel,
     };

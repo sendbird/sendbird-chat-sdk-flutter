@@ -67,7 +67,8 @@ ScheduledUserMessage _$ScheduledUserMessageFromJson(Map<String, dynamic> json) {
             ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
-  );
+    parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
+  )..replyToChannel = json['is_reply_to_channel'] as bool? ?? false;
 }
 
 Map<String, dynamic> _$ScheduledUserMessageToJson(
@@ -86,8 +87,10 @@ Map<String, dynamic> _$ScheduledUserMessageToJson(
       'requested_mention_user_ids': instance.requestedMentionUserIds,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'is_reply_to_channel': instance.replyToChannel,
       'parent_message_id': instance.parentMessageId,
       'parent_message_text': instance.parentMessageText,
+      'parent_message_info': instance.parentMessage?.toJson(),
       'thread_info': instance.threadInfo?.toJson(),
       'sorted_metaarray': instance.metaArrays?.map((e) => e.toJson()).toList(),
       'custom_type': instance.customType,
