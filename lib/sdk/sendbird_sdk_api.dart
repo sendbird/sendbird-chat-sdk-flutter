@@ -95,6 +95,9 @@ class SendbirdSdk {
     initLogger(level);
   }
 
+  void setAppVersion(String version) {
+    _int.state.appVersion = version;
+  }
   // public
 
   /// Connects to Sendbird server with given parameters. If previously connected

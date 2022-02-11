@@ -42,7 +42,10 @@ class UserMessageParams extends BaseMessageParams {
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
     ret['message'] = message;
-    ret['translation_target_langs'] = targetLanguages;
+    ret['target_langs'] = targetLanguages;
+    if (targetLanguages.isNotEmpty) {
+      ret['translations'] = {for (var e in targetLanguages) e: ''};
+    }
     ret.removeWhere((key, value) => value == null);
     return ret;
   }

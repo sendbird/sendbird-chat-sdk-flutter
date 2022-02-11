@@ -255,7 +255,8 @@ extension Messages on BaseChannel {
             channelType: channelType,
             channelUrl: channelUrl,
             params: params,
-            requireAuth: cmd.requireAuth ?? false,
+            thumbnails: upload?.thumbnails,
+            requireAuth: upload?.requireAuth,
           );
           final msg = await _sdk.api.send<FileMessage>(request);
           if (onCompleted != null) onCompleted(msg, null);

@@ -1,6 +1,6 @@
 name: sendbird_sdk
 description: The Flutter SDK for Sendbird Chat brings modern messenger chat features to your iOS and Android deployments 
-version: 3.1.7
+version: 3.1.8
 homepage: https://www.sendbird.com
 repository: https://www.github.com/sendbird/sendbird-sdk-flutter
 documentation: https://sendbird.com/docs/chat/v3/flutter/quickstart/send-first-message
@@ -18,12 +18,12 @@ dependencies:
   encrypt: ^5.0.0
   shared_preferences: ^2.0.0
   http: ^0.13.0
-  device_info: ^2.0.0
   logger: ^1.0.0
   mime: ^1.0.0
   connectivity_plus: ^1.0.6
   meta: ^1.3.0
   http_parser: ^4.0.0
+  web_socket_channel: ^2.1.0
 
 dev_dependencies:
   test: ^1.16.0

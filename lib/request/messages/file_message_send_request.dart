@@ -1,4 +1,5 @@
 import 'package:sendbird_sdk/constant/command_type.dart';
+import 'package:sendbird_sdk/params/base_message_params.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';
 import 'package:sendbird_sdk/request/abstract/ws_request.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
@@ -59,9 +60,9 @@ class ChannelFileMessageSendApiRequest extends ApiRequest {
     required String channelUrl,
     required FileMessageParams params,
     String? senderId,
-    List<Thumbnail>? thumbnails,
+    List<dynamic>? thumbnails,
     bool markAsRead = false,
-    bool requireAuth = false,
+    bool? requireAuth,
     List<String>? additionalMentionedUserIds,
   }) : super() {
     url = '${channelType.urlString}/$channelUrl/messages';
@@ -71,8 +72,12 @@ class ChannelFileMessageSendApiRequest extends ApiRequest {
       'user_id': senderId ?? state.userId,
       'mark_as_read': markAsRead,
       'require_auth': requireAuth,
-      if (additionalMentionedUserIds != null)
-        'mentioned_user_ids': additionalMentionedUserIds,
+      'mentioned_user_ids': additionalMentionedUserIds,
+      'thumbnails': thumbnails,
+      'file_size': params.uploadFile.fileSize,
+      'file_name': params.uploadFile.name,
+      'file_type': params.uploadFile.mimeType,
+      'url': params.uploadFile.url,
     };
 
     body.addAll(params.toJson());

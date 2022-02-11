@@ -64,12 +64,13 @@ class BaseMessageParams {
       'custom_type': customType,
       'data': data,
       'mention_type': mentionType?.asString(),
-      'mentioned_user_ids': mentionedUserIds,
-      'sorted_metaarray': metaArrays?.map((e) => e.toJson()).toList(),
+      if (mentionType == MentionType.users)
+        'mentioned_user_ids': mentionedUserIds,
+      'metaarray': metaArrays?.map((e) => e.toJson()).toList(),
       if (pushOption == PushNotificationDeliveryOption.suppress)
         'push_option': pushOption.asString(),
-      if (parentMessageId != null) 'parent_message_id': parentMessageId,
-      'reply_to_channel': replyToChannel
+      'parent_message_id': parentMessageId,
+      'reply_to_channel': replyToChannel,
     };
 
     ret.removeWhere((key, value) => value == null);

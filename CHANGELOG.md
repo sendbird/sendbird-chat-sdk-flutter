@@ -1,3 +1,9 @@
+## [3.1.8] - Feb 8, 2022
+* Web support included
+* Improved stability
+* Fixed issue with retrieving `creator` property from `BaseChannel` Class
+* Fixed issue with retrieving groupchannel with `thumbnails` property
+
 ## [3.1.7] - Dec 14, 2021
 * Introduced new feature `Reply to channel` 
 * Added `ReplyType` enum for loading messages with respect to message's reply messages

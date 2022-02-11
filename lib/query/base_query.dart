@@ -13,7 +13,5 @@ abstract class QueryBase {
   int limit = 20;
 
   /// Load next items asynchronously
-  Future<List> loadNext() async {
-    throw UnimplementedError();
-  }
+  Future<List> loadNext();
 }

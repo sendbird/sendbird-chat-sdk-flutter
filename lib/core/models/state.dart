@@ -7,6 +7,7 @@ import 'package:sendbird_sdk/core/models/user.dart';
 
 class SendbirdState {
   String? appId;
+  String? appVersion;
   String? userId;
   User? currentUser;
   String? sessionKey;

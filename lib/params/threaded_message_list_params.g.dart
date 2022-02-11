@@ -22,7 +22,7 @@ ThreadedMessageListParams _$ThreadedMessageListParamsFromJson(
     ..includeReactions = json['include_reactions'] as bool
     ..includeParentMessageText = json['include_parent_message_text'] as bool
     ..includeReplies = json['include_replies'] as bool
-    ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['reply_type'])
+    ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['include_reply_type'])
     ..includeParentMessageInfo = json['include_parent_message_info'] as bool;
 }
 
@@ -40,7 +40,7 @@ Map<String, dynamic> _$ThreadedMessageListParamsToJson(
       'include_reactions': instance.includeReactions,
       'include_parent_message_text': instance.includeParentMessageText,
       'include_replies': instance.includeReplies,
-      'reply_type': _$ReplyTypeEnumMap[instance.replyType],
+      'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
       'include_parent_message_info': instance.includeParentMessageInfo,
     };
 

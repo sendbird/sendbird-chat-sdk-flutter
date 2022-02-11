@@ -45,10 +45,9 @@ class FileMessageParams extends BaseMessageParams {
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
     ret['url'] = uploadFile.url;
-    ret['file_name'] = uploadFile.name;
-    ret['file_size'] = uploadFile.fileSize;
-    ret['file_type'] = uploadFile.mimeType;
-    ret['thumbnails'] = thumbnailSizes?.map((e) => e.toString()).toList();
+    ret['name'] = uploadFile.name;
+    ret['size'] = uploadFile.fileSize;
+    ret['type'] = uploadFile.mimeType;
     ret.removeWhere((key, value) => value == null);
     return ret;
   }
