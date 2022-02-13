@@ -101,10 +101,12 @@ class PreviousMessageListQuery extends QueryBase {
       ),
     );
 
-    _timestamp = res.isNotEmpty ? res.last.createdAt : null;
+    if (res.isNotEmpty) {
+      final oldestMessage = reverse ? res.last : res.first;
+      _timestamp = oldestMessage.createdAt;
+    }
 
     loading = false;
-    token = '';
     hasNext = res.length == limit;
     return res;
   }
