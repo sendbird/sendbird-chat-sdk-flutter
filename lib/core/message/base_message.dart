@@ -303,7 +303,7 @@ class BaseMessage {
   /// applied to corresponding message in order to display threaded messages
   /// properly.
   bool applyThreadInfoUpdateEvent(ThreadInfoUpdateEvent event) {
-    if (messageId != event.rootMessageId) return false;
+    if (messageId != event.parentMessageId) return false;
     if (threadInfo == null) {
       threadInfo = event.threadInfo;
       return true;
@@ -455,11 +455,6 @@ class BaseMessage {
   }
 
   Map<String, dynamic> toJson() {
-    final object = this;
-    if (object is UserMessage ||
-        object is FileMessage ||
-        object is AdminMessage ||
-        object is ScheduledUserMessage) return object.toJson();
-    throw UnrecognizedMessageTypeError();
+    throw UnimplementedError();
   }
 }

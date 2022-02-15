@@ -77,6 +77,7 @@ class BaseChannel implements Cacheable {
   String? coverUrl;
 
   /// User who creates this channel
+  @JsonKey(name: 'created_by')
   User? creator;
 
   /// timestamp when this channel is created

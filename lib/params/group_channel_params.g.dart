@@ -21,7 +21,7 @@ GroupChannelParams _$GroupChannelParamsFromJson(Map<String, dynamic> json) {
     ..data = json['data'] as String?
     ..name = json['name'] as String?
     ..userIds =
-        (json['user_ids'] as List<dynamic>).map((e) => e as String).toList()
+        (json['user_ids'] as List<dynamic>?)?.map((e) => e as String).toList()
     ..operatorUserIds = (json['operator_ids'] as List<dynamic>?)
         ?.map((e) => e as String)
         .toList();

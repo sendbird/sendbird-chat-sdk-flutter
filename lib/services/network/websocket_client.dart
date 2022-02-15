@@ -5,6 +5,7 @@ import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef OnWSConnect = void Function();
 typedef OnWSDisconnect = void Function();
@@ -16,7 +17,7 @@ class WebSocketClient {
   bool _disconnect = true;
 
   String? _url;
-  WebSocket? _socket;
+  WebSocketChannel? _socket;
   Stream? _rx;
 
   int _lastActiveAt = 0;
@@ -56,7 +57,7 @@ class WebSocketClient {
     hdrs['Content-Type'] = 'application/json;charset=utf8';
 
     try {
-      _socket = await WebSocket.connect(url, headers: hdrs);
+      _socket = WebSocketChannel.connect(Uri.parse(url));
       _disconnect = false;
       _connected = true;
       _url = url;
@@ -69,7 +70,8 @@ class WebSocketClient {
       throw WebSocketError(message: e.toString());
     }
 
-    _rx = _socket!.asBroadcastStream();
+    _rx = _socket!.stream;
+
     _subscription = _rx?.listen(
       onReceiveData,
       onError: onReceiveError,
@@ -96,7 +98,7 @@ class WebSocketClient {
     try {
       //This should trigger callback for Done()
       //And set _connected to false before returning from close
-      await _socket?.close(code, reason);
+      await _socket?.sink.close(code, reason);
       _subscription?.cancel();
       _socket = null;
       logger.i('Socket closed ' + reason);
@@ -110,7 +112,7 @@ class WebSocketClient {
   void send(String data) {
     logger.i('Send command \n' + data);
     try {
-      _socket?.add(data);
+      _socket?.sink.add(data);
     } catch (e) {
       throw WebSocketError(message: e.toString());
     }
@@ -146,10 +148,8 @@ class WebSocketClient {
   }
 
   ConnectionState get connectionState {
-    if (_socket?.readyState == WebSocket.open) {
+    if (_connected == true) {
       return ConnectionState.open;
-    } else if (_socket?.readyState == WebSocket.connecting) {
-      return ConnectionState.connecting;
     } else {
       return ConnectionState.closed;
     }

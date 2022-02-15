@@ -16,7 +16,7 @@ class ThreadInfoUpdateEvent implements BaseEvent {
   final ThreadInfo threadInfo;
 
   /// Unique id of the message that contains threaded information
-  final int rootMessageId;
+  final int parentMessageId;
 
   /// Unique url of the channel where threaded message belongs
   final String channelUrl;
@@ -26,7 +26,7 @@ class ThreadInfoUpdateEvent implements BaseEvent {
 
   ThreadInfoUpdateEvent({
     required this.threadInfo,
-    required this.rootMessageId,
+    required this.parentMessageId,
     required this.channelType,
     required this.channelUrl,
   });

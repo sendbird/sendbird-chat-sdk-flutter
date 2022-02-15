@@ -16,9 +16,9 @@ OpenChannel _$OpenChannelFromJson(Map<String, dynamic> json) {
     channelUrl: json['channel_url'] as String,
     name: json['name'] as String?,
     coverUrl: json['cover_url'] as String?,
-    creator: json['creator'] == null
+    creator: json['created_by'] == null
         ? null
-        : User.fromJson(json['creator'] as Map<String, dynamic>),
+        : User.fromJson(json['created_by'] as Map<String, dynamic>),
     createdAt: json['created_at'] as int?,
     data: json['data'] as String?,
     customType: json['custom_type'] as String?,
@@ -32,7 +32,7 @@ Map<String, dynamic> _$OpenChannelToJson(OpenChannel instance) =>
       'channel_url': instance.channelUrl,
       'name': instance.name,
       'cover_url': instance.coverUrl,
-      'creator': instance.creator?.toJson(),
+      'created_by': instance.creator?.toJson(),
       'created_at': instance.createdAt,
       'data': instance.data,
       'custom_type': instance.customType,

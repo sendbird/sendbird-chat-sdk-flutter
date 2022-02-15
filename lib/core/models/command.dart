@@ -141,33 +141,10 @@ class Command {
   ) {
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
-      'message': params.message,
-      'data': params.data,
-      'custom_type': params.customType,
-      'reply_to_channel': params.replyToChannel
+      'created_at': DateTime.now().millisecondsSinceEpoch,
     };
 
-    if (params.targetLanguages.isNotEmpty) {
-      payload['target_langs'] = params.targetLanguages;
-      payload['translations'] = {for (var e in params.targetLanguages) e: ''};
-    }
-
-    if (params.pushOption == PushNotificationDeliveryOption.suppress) {
-      payload['push_option'] = params.pushOption.asString();
-    }
-
-    payload['mention_type'] = params.mentionType?.asString();
-    if (params.mentionType == MentionType.users) {
-      payload['mentioned_user_ids'] = params.mentionedUserIds;
-    }
-
-    payload['created_at'] = DateTime.now().millisecondsSinceEpoch;
-    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson()).toList();
-
-    if (params.parentMessageId != null) {
-      payload['parent_message_id'] = params.parentMessageId;
-      payload['root_message_id'] = params.parentMessageId;
-    }
+    payload.addAll(params.toJson());
 
     return Command(
       cmd: CommandString.userMessage,
@@ -203,33 +180,13 @@ class Command {
   }) {
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
-      if (requireAuth != null) 'require_auth': requireAuth,
-      'url': params.uploadFile.url,
-      'name': params.uploadFile.name,
-      'type': params.uploadFile.mimeType,
-      'size': params.uploadFile.fileSize,
-      'custom': params.data,
-      'custom_type': params.customType,
-      'reply_to_channel': params.replyToChannel,
+      'require_auth': requireAuth,
     };
 
-    if (params.pushOption == PushNotificationDeliveryOption.suppress) {
-      payload['push_option'] = params.pushOption.asString();
-    }
-
-    payload['mention_type'] = params.mentionType?.asString();
-    if (params.mentionType == MentionType.users) {
-      payload['mentioned_user_ids'] = params.mentionedUserIds;
-    }
+    payload.addAll(params.toJson());
 
     payload['thumbnails'] = thumbnails;
     payload['created_at'] = DateTime.now().millisecondsSinceEpoch;
-    payload['metaarray'] = params.metaArrays?.map((e) => e.toJson()).toList();
-
-    if (params.parentMessageId != null) {
-      payload['parent_message_id'] = params.parentMessageId;
-      payload['root_message_id'] = params.parentMessageId;
-    }
 
     payload.removeWhere((key, value) => value == null);
     return Command(

@@ -23,8 +23,9 @@ import 'package:sendbird_sdk/utils/async/async_operation.dart';
 import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.7';
+const sdk_version = '3.1.9';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -239,17 +240,12 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _api.initialize(baseUrl: apiHostUrl, headers: {
       'SB-User-Agent': _sbUserAgent,
+      'SendBird': _sendbirdHeader,
       'User-Agent':
-          '$platform/$sdk_version/${Platform.operatingSystem.toLowerCase()}',
+          '$platform/$sdk_version/${kIsWeb ? 'oweb' : Platform.operatingSystem.toLowerCase()}',
     });
 
     var params = {
-      'p': platform,
-      'pv': Platform.version.split(' ').first,
-      'o': Platform.operatingSystem, // os
-      'ov': Platform.operatingSystemVersion, // os version
-      'sv': sdk_version,
-      'ai': _state.appId,
       if (nickname != null && nickname != '') 'nickname': nickname,
       if (reconnect && sessionKey != null)
         'key': sessionKey
@@ -260,6 +256,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       'expiring_session': _eventManager.getSessionHandler() != null ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
+    params.addAll(_webSocketParams);
 
     final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
@@ -390,8 +387,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   }
 
   void _listenConnectionEvents() {
+    var flutterTest = const String.fromEnvironment('FLUTTER_TEST');
+    if (flutterTest.isEmpty && kIsWeb) {
+      flutterTest = '';
+    }
     //NOTE: do not run connectivity on test
-    final isTest = Platform.environment['FLUTTER_TEST'] == 'true';
+    final isTest = kIsWeb
+        ? flutterTest == 'true'
+        : Platform.environment['FLUTTER_TEST'] == 'true';
     if (!isTest) {
       _connectionSub = Connectivity()
           .onConnectivityChanged
@@ -428,8 +431,36 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final uikitVersion = _extensions[constants.sbExtensionKeyUIKit];
     final core = '/c$sdk_version';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
-    final os = '/o${Platform.operatingSystem.toLowerCase()}';
+    final os = '/o${kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase()}';
     return '$platform$core$uikit$os';
+  }
+
+  String get _sendbirdHeader {
+    var headers = [
+      platform,
+      kIsWeb ? '' : Platform.version.split(' ').first, //empty platform version
+      sdk_version,
+      state.appId ?? '',
+      state.appVersion ?? '',
+      kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase(),
+      kIsWeb ? '' : Platform.operatingSystemVersion,
+    ];
+    return headers.join(',');
+  }
+
+  Map<String, String> get _webSocketParams {
+    final appVersion = _state.appVersion;
+    final appId = _state.appId;
+
+    return {
+      'p': platform,
+      if (!kIsWeb) 'pv': Platform.version.split(' ').first,
+      'o': kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase(),
+      if (!kIsWeb) 'ov': Platform.operatingSystemVersion,
+      'sv': sdk_version,
+      if (appId != null) 'ai': appId,
+      if (appVersion != null && appVersion != '') 'av': appVersion
+    };
   }
 
   void addVersionExtension(String key, String version) {
