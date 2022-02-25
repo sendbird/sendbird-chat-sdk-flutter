@@ -1,3 +1,8 @@
+## [3.1.10] - Feb 25, 2022
+* Fix issue with timestamp on Flutter for Web
+* Fix issue with pagination in `PreviousMessageListQuery`
+* Refactored message fetch params and added deprecation annotation for `includeReplies` and `includeParentMessageText`
+
 ## [3.1.9] - Feb 8, 2022
 * Web support included
 * Improved stability

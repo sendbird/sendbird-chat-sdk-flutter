@@ -51,6 +51,7 @@ import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 import 'package:sendbird_sdk/services/db/cached_meta_data/cached_data_map.dart';
 import 'package:sendbird_sdk/utils/async/async_operation.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:uuid/uuid.dart';
 

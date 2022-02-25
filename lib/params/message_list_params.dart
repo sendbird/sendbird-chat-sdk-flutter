@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/params/base_message_fetch_params.dart';
 
 part 'message_list_params.g.dart';
 
 /// An object consists a set of parameters to retrieve list of messages.
 @JsonSerializable()
-class MessageListParams {
+class MessageListParams extends BaseMessageFetchParams {
   /// The number of messages to retrieve that were sent before the
   /// specified timestamp or message ID.
   @JsonKey(name: 'prev_limit')
@@ -38,43 +39,14 @@ class MessageListParams {
   /// the users with the specified user IDs.
   List<String>? senderIds;
 
-  /// Determines whether to include the metaarray information of the
-  /// messages in the results. default value is false
-  @JsonKey(name: 'with_sorted_meta_array')
-  bool includeMetaArray = false;
-
-  /// Determines whether to include the reactions to the messages
-  /// in the results. default value is false
-  bool includeReactions = false;
-
-  /// Determines whether to include the parent message text in the results
-  /// when the messages are replies in a thread. If the type of the parent
-  /// message is `UserMessage` the  value is a `message`. If it is
-  /// `FileMessage`, the value is the `name` of the uploaded file.
-  /// default value is false
-  bool includeParentMessageText = false;
-
-  /// Determines whether to include the reactions to the messages in the results.
-  /// default value is false
-  bool includeReplies = false;
-
-  /// Determines whether to include the thread information of the messages
-  /// in the results when the results contain root messages. default value is false
-  bool includeThreadInfo = false;
-
   /// Determines whether to retrieve sub channel messages on Dynamic
   /// Partitioning. This property is only working for [OpenChannel]
   bool showSubChannelMessagesOnly = false;
 
-  /// Determines wheter to include parent message information
-  bool includeParentMessageInfo = false;
-
-  /// Determines message's reply type
-  @JsonKey(name: 'include_reply_type')
-  ReplyType replyType = ReplyType.none;
-
+  @override
   Map<String, dynamic> toJson() {
-    final json = _$MessageListParamsToJson(this);
+    final json = super.toJson();
+    json.addAll(_$MessageListParamsToJson(this));
     json.removeWhere((key, value) => value == null);
     return json;
   }

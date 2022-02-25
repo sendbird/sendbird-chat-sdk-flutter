@@ -7,6 +7,8 @@ import 'package:sendbird_sdk/query/base_query.dart';
 import 'package:sendbird_sdk/request/user/list/banned_user_list_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 
+part 'banned_user_list_query.g.dart';
+
 @JsonSerializable()
 class BannedUserListQuery extends QueryBase {
   /// Channel type related to this query

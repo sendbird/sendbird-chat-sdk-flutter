@@ -30,6 +30,7 @@ PreviousMessageListQuery _$PreviousMessageListQueryFromJson(
     ..includeParentMessageText = json['include_parent_message_text'] as bool
     ..includeParentMessageInfo = json['include_parent_message_info'] as bool
     ..includeReplies = json['include_replies'] as bool
+    ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['include_reply_type'])
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..showSubChannelMessagesOnly =
         json['show_sub_channel_messages_only'] as bool;
@@ -54,6 +55,7 @@ Map<String, dynamic> _$PreviousMessageListQueryToJson(
       'include_parent_message_text': instance.includeParentMessageText,
       'include_parent_message_info': instance.includeParentMessageInfo,
       'include_replies': instance.includeReplies,
+      'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
       'include_thread_info': instance.includeThreadInfo,
       'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,
     };
@@ -94,4 +96,10 @@ const _$MessageTypeFilterEnumMap = {
   MessageTypeFilter.user: 'MESG',
   MessageTypeFilter.file: 'FILE',
   MessageTypeFilter.admin: 'ADMN',
+};
+
+const _$ReplyTypeEnumMap = {
+  ReplyType.none: 'NONE',
+  ReplyType.all: 'ALL',
+  ReplyType.only_reply_to_channel: 'ONLY_REPLY_TO_CHANNEL',
 };

@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'threaded_message_list_params.dart';
+part of 'base_message_fetch_params.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ThreadedMessageListParams _$ThreadedMessageListParamsFromJson(
+BaseMessageFetchParams _$BaseMessageFetchParamsFromJson(
     Map<String, dynamic> json) {
-  return ThreadedMessageListParams()
+  return BaseMessageFetchParams()
     ..includeMetaArray = json['with_sorted_meta_array'] as bool
     ..includeReactions = json['include_reactions'] as bool
     ..includeParentMessageText = json['include_parent_message_text'] as bool?
@@ -16,21 +16,11 @@ ThreadedMessageListParams _$ThreadedMessageListParamsFromJson(
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..includeParentMessageInfo = json['include_parent_message_info'] as bool
     ..replyType =
-        _$enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type'])
-    ..previousResultSize = json['prev_limit'] as int
-    ..nextResultSize = json['next_limit'] as int
-    ..isInclusive = json['include'] as bool
-    ..reverse = json['reverse'] as bool
-    ..messageType =
-        _$enumDecode(_$MessageTypeFilterEnumMap, json['message_type'])
-    ..customType = json['custom_type'] as String?
-    ..senderIds = (json['sender_ids'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList();
+        _$enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type']);
 }
 
-Map<String, dynamic> _$ThreadedMessageListParamsToJson(
-        ThreadedMessageListParams instance) =>
+Map<String, dynamic> _$BaseMessageFetchParamsToJson(
+        BaseMessageFetchParams instance) =>
     <String, dynamic>{
       'with_sorted_meta_array': instance.includeMetaArray,
       'include_reactions': instance.includeReactions,
@@ -39,13 +29,6 @@ Map<String, dynamic> _$ThreadedMessageListParamsToJson(
       'include_thread_info': instance.includeThreadInfo,
       'include_parent_message_info': instance.includeParentMessageInfo,
       'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
-      'prev_limit': instance.previousResultSize,
-      'next_limit': instance.nextResultSize,
-      'include': instance.isInclusive,
-      'reverse': instance.reverse,
-      'message_type': _$MessageTypeFilterEnumMap[instance.messageType],
-      'custom_type': instance.customType,
-      'sender_ids': instance.senderIds,
     };
 
 K _$enumDecode<K, V>(
@@ -89,11 +72,4 @@ const _$ReplyTypeEnumMap = {
   ReplyType.none: 'NONE',
   ReplyType.all: 'ALL',
   ReplyType.only_reply_to_channel: 'ONLY_REPLY_TO_CHANNEL',
-};
-
-const _$MessageTypeFilterEnumMap = {
-  MessageTypeFilter.all: null,
-  MessageTypeFilter.user: 'MESG',
-  MessageTypeFilter.file: 'FILE',
-  MessageTypeFilter.admin: 'ADMN',
 };

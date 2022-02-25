@@ -6,6 +6,7 @@ import 'package:sendbird_sdk/params/message_list_params.dart';
 import 'package:sendbird_sdk/query/base_query.dart';
 import 'package:sendbird_sdk/request/messages/messages_get_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
+import 'package:sendbird_sdk/utils/extensions.dart';
 
 part 'previous_message_list_query.g.dart';
 
@@ -19,7 +20,7 @@ class PreviousMessageListQuery extends QueryBase {
   String channelUrl;
 
   /// Determines whether to sort the retrieved messages in reverse
-  /// order. If false, the results are in ascending order.
+  /// order. If false, the results recieves the oldest messages first.
   bool reverse = false;
 
   /// Restricts the search scope only to retrieve the messages with
@@ -47,14 +48,20 @@ class PreviousMessageListQuery extends QueryBase {
   /// message is `UserMessage` the  value is a `message`. If it is
   /// `FileMessage`, the value is the `name` of the uploaded file.
   /// default value is false
-  bool includeParentMessageText = false;
+  @Deprecated('Use `includeParentMessageInfo` instead')
+  bool? includeParentMessageText;
 
   /// Determines whether to include current message's parent information
   bool includeParentMessageInfo = false;
 
   /// Determines whether to include the reactions to the messages in the results.
   /// default value is false
-  bool includeReplies = false;
+  @Deprecated('Use `replyType` instead')
+  bool? includeReplies;
+
+  /// Determines message's reply type
+  @JsonKey(name: 'include_reply_type')
+  ReplyType replyType = ReplyType.none;
 
   /// Determines whether to include the thread information of the messages
   /// in the results when the results contain root messages. default value is false
@@ -64,7 +71,8 @@ class PreviousMessageListQuery extends QueryBase {
   /// Partitioning. This property is only working for [OpenChannel]
   bool showSubChannelMessagesOnly = false;
 
-  int? _timestamp = double.maxFinite.round();
+  /// Returns the oldest message timestamp
+  int? _timestamp = ExtendedInteger.max;
 
   PreviousMessageListQuery({
     required this.channelType,
@@ -89,6 +97,8 @@ class PreviousMessageListQuery extends QueryBase {
       ..includeParentMessageText = includeParentMessageText
       ..includeReactions = includeReactions
       ..includeThreadInfo = includeThreadInfo
+      ..replyType = replyType
+      ..includeReplies = includeReplies
       ..showSubChannelMessagesOnly = showSubChannelMessagesOnly;
 
     final sdk = SendbirdSdk().getInternal();
@@ -101,10 +111,14 @@ class PreviousMessageListQuery extends QueryBase {
       ),
     );
 
-    _timestamp = res.isNotEmpty ? res.last.createdAt : null;
+    if (res.isNotEmpty) {
+      final oldestMessage = reverse ? res.last : res.first;
+      _timestamp = oldestMessage.createdAt;
+    } else {
+      _timestamp = null;
+    }
 
     loading = false;
-    token = '';
     hasNext = res.length == limit;
     return res;
   }

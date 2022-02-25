@@ -493,7 +493,7 @@ extension Messages on BaseChannel {
         channelUrl: channelUrl,
         params: params,
         token: token,
-        timestamp: timestamp ?? double.maxFinite.round(),
+        timestamp: timestamp ?? ExtendedInteger.max,
       ),
     );
   }

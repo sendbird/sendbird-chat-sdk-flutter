@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/params/base_message_fetch_params.dart';
 
 part 'threaded_message_list_params.g.dart';
 
 /// An object consists a set of parameters to retrieve list of a threaded message
 @JsonSerializable()
-class ThreadedMessageListParams {
+class ThreadedMessageListParams extends BaseMessageFetchParams {
   /// The number of messages to retrieve that were sent before the
   /// specified timestamp or message ID.
   @JsonKey(name: 'prev_limit')
@@ -40,37 +41,13 @@ class ThreadedMessageListParams {
   /// is not needed, the value should be set to `null`.
   List<String>? senderIds;
 
-  /// Determines whether to include the metaarray information of the
-  /// messages in the results.
-  @JsonKey(name: 'with_sorted_meta_array')
-  bool includeMetaArray = false;
-
-  /// Determines whether to include the reactions to the messages
-  /// in the results.
-  bool includeReactions = false;
-
-  /// Determines whether to include the parent message text in the results
-  /// when the messages are replies in a thread. If the type of the parent
-  /// message is `UserMessage` the  value is a `message`. If it is
-  /// `FileMessage`, the value is the `name` of the uploaded file.
-  /// default value is false
-  bool includeParentMessageText = false;
-
-  /// Determines whether to include the reactions to the messages in the results.
-  /// default value is false
-  bool includeReplies = false;
-
-  /// Determines the type of the reply
-  @JsonKey(name: 'include_reply_type')
-  ReplyType replyType = ReplyType.none;
-
-  /// Determines wheter to include parent message info in the results
-  bool includeParentMessageInfo = false;
-
+  @override
   Map<String, dynamic> toJson() {
-    final json = _$ThreadedMessageListParamsToJson(this);
-    json['include_replies'] = true;
-    json['include_thread_info'] = true;
+    replyType = ReplyType.all;
+    includeThreadInfo = true;
+
+    final json = super.toJson();
+    json.addAll(_$ThreadedMessageListParamsToJson(this));
     json.removeWhere((key, value) => value == null);
     return json;
   }

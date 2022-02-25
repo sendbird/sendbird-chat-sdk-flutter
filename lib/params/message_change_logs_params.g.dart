@@ -11,11 +11,12 @@ MessageChangeLogParams _$MessageChangeLogParamsFromJson(
   return MessageChangeLogParams()
     ..includeMetaArray = json['with_sorted_meta_array'] as bool
     ..includeReactions = json['include_reactions'] as bool
-    ..includeParentMessageText = json['include_parent_message_text'] as bool
-    ..includeReplies = json['include_replies'] as bool
+    ..includeParentMessageText = json['include_parent_message_text'] as bool?
+    ..includeReplies = json['include_replies'] as bool?
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..includeParentMessageInfo = json['include_parent_message_info'] as bool
-    ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['include_reply_type']);
+    ..replyType =
+        _$enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type']);
 }
 
 Map<String, dynamic> _$MessageChangeLogParamsToJson(
@@ -54,6 +55,17 @@ K _$enumDecode<K, V>(
       return MapEntry(unknownValue, enumValues.values.first);
     },
   ).key;
+}
+
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$ReplyTypeEnumMap = {
