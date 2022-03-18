@@ -19,6 +19,7 @@ import 'package:sendbird_sdk/handlers/connection_event_handler.dart';
 import 'package:sendbird_sdk/handlers/session_event_handler.dart';
 import 'package:sendbird_sdk/handlers/user_event_handler.dart';
 import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
+import 'package:sendbird_sdk/params/group_channel_total_unread_channel_count_params.dart';
 import 'package:sendbird_sdk/params/group_channel_total_unread_message_count_params.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_change_log_request.dart';
 import 'package:sendbird_sdk/request/feature/group_channel_delivery_request.dart';
@@ -43,6 +44,7 @@ import 'package:sendbird_sdk/request/user/push/push_register_request.dart';
 import 'package:sendbird_sdk/request/user/push/push_unregister_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
+
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {
@@ -514,6 +516,14 @@ class SendbirdSdk {
   /// Returns total number of group channels that contains unread messages.
   Future<int> getTotalUnreadChannelCount() async {
     return _int.api.send<int>(UserTotalUnreadChannelCountGetRequest());
+  }
+
+  /// Returns total number of group channels that contains unread messages
+  /// with given [params].
+  Future<int> getTotalUnreadChannelCountWithParams(
+      GroupChannelTotalUnreadChannelCountParams params) async {
+    return _int.api
+        .send<int>(UserTotalUnreadChannelCountGetRequest(params: params));
   }
 
   /// Returns total number of unrad messages.

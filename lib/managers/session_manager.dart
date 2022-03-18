@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/request/general/session_key_update_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
@@ -156,6 +157,20 @@ class SessionManager with SdkAccessor {
     // add completion
     sdk.eventManager.notifySessionExpired();
 
+    // If websocket exists, ws request to update session key
+    if (sdk.webSocket?.isConnected() == true) {
+      try {
+        await sdk.cmdManager
+            .sendCommand(Command.buildLOGIUpdateSessionKey(_accessToken));
+      } catch (e) {
+        logger.e('WS LOGI extend session Error: ' + e.toString());
+        throw WebSocketError(
+            message: 'LOGI extend session error: ' + e.toString());
+      } finally {
+        return;
+      }
+    }
+
     final completer = Completer();
     sessionUpdateCompleters.add(completer);
 
@@ -175,11 +190,13 @@ class SessionManager with SdkAccessor {
     logger.i('Updating session with $_accessToken');
 
     try {
-      final res = await sdk.api.send(AppSessionKeyUpdateRequest(
-        appId: appId,
-        accessToken: accessToken,
-        expiringSession: hasSessionHandler,
-      ));
+      final res = await sdk.api.send(
+        AppSessionKeyUpdateRequest(
+          appId: appId,
+          accessToken: accessToken,
+          expiringSession: hasSessionHandler,
+        ),
+      );
       isRefreshingKey = false;
       logger.i('Updated session $res');
       _applyRefreshedSessionKey(res);
@@ -204,7 +221,9 @@ class SessionManager with SdkAccessor {
   }
 
   // Applies refreshed session payload and reconnect if necessarry
-  void _applyRefreshedSessionKey(Map<String, dynamic> payload) {
+  void _applyRefreshedSessionKey(
+    Map<String, dynamic> payload,
+  ) {
     if (payload['key'] != null) {
       setSessionKey(payload['key']);
     } else if (payload['new_key'] != null) {

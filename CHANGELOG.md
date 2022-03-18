@@ -1,3 +1,10 @@
+## [3.1.11] - March 18, 2022
+* Updated to latest dependencies
+* Fix url exception issue in OGMetaData object by changing OGImage url to be nullable
+* Included `getTotalUnreadChannelCountWithParams` method where parameters include custom type and super mode filter
+* Included logic for SDK behavior when session token revoked
+
+
 ## [3.1.10] - Feb 25, 2022
 * Fix issue with timestamp on Flutter for Web
 * Fix issue with pagination in `PreviousMessageListQuery`

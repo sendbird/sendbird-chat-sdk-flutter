@@ -25,6 +25,7 @@ class ErrorCode {
   static int authUserIdTooLong = 400305;
   static int authPlanQuotaExceeded = 400306;
   static int sessionKeyExpired = 400309;
+  static int sessionTokenRevoked = 400310;
 
   static int invalidApiToken = 400401;
   static int parameterMissing = 400402;

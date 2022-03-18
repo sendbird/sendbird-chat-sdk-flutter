@@ -13,10 +13,10 @@ class UserTotalUnreadMessageCountGetRequest extends ApiRequest {
   }) : super(userId: userId) {
     url = 'users/${userId ?? state.userId}/unread_message_count';
     final customTypes = params?.customTypes ?? [];
-    final sueprFilter = params?.superChannelFilter ?? SuperChannelFilter.all;
+    final superFilter = params?.superChannelFilter ?? SuperChannelFilter.all;
     queryParams = {
       if (customTypes.isNotEmpty) 'custom_types': customTypes,
-      'super_mode': groupChannelSuperFilterEnum(sueprFilter),
+      'super_mode': groupChannelSuperFilterEnum(superFilter),
     };
   }
 

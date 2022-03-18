@@ -27,9 +27,9 @@ PreviousMessageListQuery _$PreviousMessageListQueryFromJson(
         .toList()
     ..includeMetaArray = json['include_meta_array'] as bool
     ..includeReactions = json['include_reactions'] as bool
-    ..includeParentMessageText = json['include_parent_message_text'] as bool
+    ..includeParentMessageText = json['include_parent_message_text'] as bool?
     ..includeParentMessageInfo = json['include_parent_message_info'] as bool
-    ..includeReplies = json['include_replies'] as bool
+    ..includeReplies = json['include_replies'] as bool?
     ..replyType = _$enumDecode(_$ReplyTypeEnumMap, json['include_reply_type'])
     ..includeThreadInfo = json['include_thread_info'] as bool
     ..showSubChannelMessagesOnly =

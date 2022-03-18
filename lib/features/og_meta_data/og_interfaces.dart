@@ -1,5 +1,5 @@
 abstract class OGMedia {
-  final String url = '';
+  final String? url = '';
   final String? secureUrl = '';
 }
 

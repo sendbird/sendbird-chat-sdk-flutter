@@ -1,5 +1,4 @@
 import 'package:sendbird_sdk/constant/command_type.dart';
-import 'package:sendbird_sdk/params/base_message_params.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';
 import 'package:sendbird_sdk/request/abstract/ws_request.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';

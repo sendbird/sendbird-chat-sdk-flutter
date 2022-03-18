@@ -6,7 +6,6 @@ import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
-import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';

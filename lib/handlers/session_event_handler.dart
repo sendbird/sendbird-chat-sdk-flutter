@@ -22,7 +22,7 @@ class SessionEventHandler implements EventHandler {
   /// Pass on the new (retrieved) token to SDK via `success(NEW_TOKEN)`
   /// or `fail()` if fetch failed.
   /// In case when app decides not to refresh the session for this user,
-  /// they should call `success(nil)`.
+  /// they should call `success(null)`.
   @required
   void onSessionTokenRequired(Function(String) successCb, Function failCb) {}
 

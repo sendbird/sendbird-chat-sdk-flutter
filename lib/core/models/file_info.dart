@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 /// Represents information about image that will be used to upload
 class FileInfo {

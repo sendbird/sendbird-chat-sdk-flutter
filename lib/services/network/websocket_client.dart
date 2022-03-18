@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'dart:async';
 
 import 'package:sendbird_sdk/constant/enums.dart';

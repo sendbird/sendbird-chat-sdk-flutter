@@ -5,10 +5,10 @@ part 'og_image.g.dart';
 
 /// Represents open graph image information
 @JsonSerializable()
-class OGImage implements OGMedia, OGDisplayable {
+class OGImage implements OGDisplayable, OGMedia {
   /// Image url
   @override
-  final String url;
+  final String? url;
 
   /// Image secure url
   @override
@@ -31,7 +31,7 @@ class OGImage implements OGMedia, OGDisplayable {
   final int height;
 
   OGImage({
-    required this.url,
+    this.url,
     this.secureUrl,
     this.type,
     this.alt,

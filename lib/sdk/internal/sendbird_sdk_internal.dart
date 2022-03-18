@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
@@ -25,7 +25,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.10';
+const sdk_version = '3.1.11';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
@@ -60,6 +60,10 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
   ];
 
   bool registered = false;
+  bool _forceReconnect = false;
+
+  set setForceReconnect(bool isForceReconnect) =>
+      _forceReconnect = isForceReconnect;
 
   //should only keep one instance
   SendbirdSdkInternal({
@@ -136,6 +140,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       logger.e('parsing command failed on isolate');
       return;
     }
+
     logger.i('ws data parsed completed, proceed ${cmd.cmd}');
 
     runZonedGuarded(() async {
@@ -193,7 +198,8 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     // is already in progress to connect
     if ((_state.connecting || _state.reconnecting) &&
         _state.userId == userId &&
-        _loginCompleter != null) {
+        _loginCompleter != null &&
+        !_forceReconnect) {
       logger.i('waiting to connect previous call with $userId');
       return _loginCompleter!.future;
     }
@@ -213,7 +219,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     }
 
     // This has to be above any await for concurrent situation
-    _loginCompleter = Completer();
+    if (!_forceReconnect) _loginCompleter = Completer();
     await _webSocket?.close();
 
     _state.userId = userId;
@@ -267,6 +273,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       _state.connecting = false;
       _state.reconnecting = false;
       _loginCompleter = null;
+      _forceReconnect = false;
       rethrow;
     }
 
@@ -288,6 +295,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _loginCompleter = null;
     _reconnectTimer = null;
+    _forceReconnect = false;
     return user;
   }
 
@@ -353,11 +361,16 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
     _reconnectTimer = Timer(Duration(seconds: backoffPeriod), () async {
       logger.i('try to reconnect');
-      await connect(
-        reconnect: true,
-        userId: _state.userId ?? '',
-        accessToken: _sessionManager.accessToken,
-      );
+      try {
+        await connect(
+          reconnect: true,
+          userId: _state.userId ?? '',
+          accessToken: _sessionManager.accessToken,
+        );
+      } catch (e) {
+        _state.reconnecting = false;
+        logger.e('reconnecting error: $e');
+      }
       logger.i('reconnect succeeded');
     });
   }
@@ -409,6 +422,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
                 _state.sessionKey != null) {
               reconnect(reset: true);
             }
+            break;
+          case ConnectivityResult.bluetooth:
+          case ConnectivityResult.ethernet:
+            if (_connectionResult == ConnectivityResult.none &&
+                _state.sessionKey != null) {
+              reconnect(reset: true);
+            }
+            break;
         }
         _connectionResult = result;
       });

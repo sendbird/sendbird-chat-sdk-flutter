@@ -57,7 +57,6 @@ class AsyncQueue<T> {
         }
       } catch (e) {
         logger.e('error while processing async task $task');
-        // do nothing
       }
     }
   }

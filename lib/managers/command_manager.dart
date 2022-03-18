@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
@@ -40,7 +41,7 @@ import 'package:sendbird_sdk/utils/parsers.dart';
 
 class CommandManager with SdkAccessor {
   final Map<String, Timer> _ackTimers = {};
-  final Map<String, Completer<Command>> _completers = {};
+  final Map<String, Completer<Command?>> _completers = {};
   final Map<String, Completer<WsEvent>> _completers2 = {};
   final AsyncQueue _queue = AsyncQueue<Command>();
 
@@ -159,6 +160,9 @@ class CommandManager with SdkAccessor {
       // final completer2 = _completers2.remove(cmd.requestId);
 
       if (cmd.isError || cmd.hasError) {
+        if (cmd.errorCode == ErrorCode.accessTokenNotValid) {
+          sdk.eventManager.notifySessionTokenRequired();
+        }
         completer?.completeError(SBError(
           code: cmd.errorCode,
           message: cmd.errorMessage,
@@ -218,6 +222,7 @@ class CommandManager with SdkAccessor {
 
     if (fnc != null) {
       final op = AsyncTask<Command>(func: fnc, arg: cmd);
+
       _queue.enqueue(op);
     }
   }
@@ -290,7 +295,18 @@ class CommandManager with SdkAccessor {
   Future<void> _processSessionExpired(Command cmd) async {
     sdk.sessionManager.setSessionKey(null);
     sdk.state.sessionKey = null;
-    await sdk.sessionManager.updateSession();
+    if (cmd.payload['reason'] == ErrorCode.sessionTokenRevoked) {
+      eventManager.notifySessionClosed();
+      await sdk.logout();
+    }
+    // If session token is expired, then log out
+    else if (cmd.payload['expires_in'] != null
+        ? cmd.payload['expires_in'] < 0
+        : false) {
+      await sdk.logout();
+    } else {
+      await sdk.sessionManager.updateSession();
+    }
   }
 
   Future<void> _processNewMessage(Command cmd) async {
@@ -528,12 +544,27 @@ class CommandManager with SdkAccessor {
   Future<void> _processSessionRefresh(Command cmd) async {
     final event = SessionEvent.fromJson(cmd.payload);
     sdk.sessionManager.setSessionKey(event.sessionKey);
+    eventManager.notifySessionRefreshed();
   }
 
   Future<void> _processError(Command cmd) async {
     logger.e('Error ${cmd.cmd} ' + (cmd.errorMessage ?? ''));
-    sdk.state.reconnecting = false;
-    throw WebSocketError(code: cmd.errorCode, message: cmd.errorMessage);
+    if (cmd.errorCode == ErrorCode.sessionKeyExpired) {
+      sdk.sessionManager.setSessionKey(null);
+      sdk.state.sessionKey = null;
+      sdk.state.reconnecting = false;
+      sdk.setForceReconnect = true;
+      await sdk.sessionManager.updateSession();
+    } else if (cmd.errorCode == ErrorCode.sessionTokenRevoked) {
+      sdk.state.reconnecting = false;
+      eventManager.notifySessionClosed();
+    } else if (cmd.errorCode == ErrorCode.accessTokenNotValid) {
+      sdk.state.reconnecting = false;
+      eventManager.notifySessionError(InvalidAccessTokenError());
+    } else {
+      sdk.state.reconnecting = false;
+      throw WebSocketError(code: cmd.errorCode, message: cmd.errorMessage);
+    }
   }
 
   // System
