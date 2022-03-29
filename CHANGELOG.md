@@ -1,3 +1,6 @@
+## [3.1.12] - March 29, 2022
+* Fixed issue with push notification functionality when online (always push)
+
 ## [3.1.11] - March 18, 2022
 * Updated to latest dependencies
 * Fix url exception issue in OGMetaData object by changing OGImage url to be nullable

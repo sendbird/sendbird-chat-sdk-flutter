@@ -25,7 +25,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.11';
+const sdk_version = '3.1.12';
 const platform = 'flutter';
 
 /// Internal implementation for main class. Do not directly access this class.
