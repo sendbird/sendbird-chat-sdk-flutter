@@ -7,54 +7,57 @@ part of 'group_channel_list_query.dart';
 // **************************************************************************
 
 GroupChannelListQuery _$GroupChannelListQueryFromJson(
-    Map<String, dynamic> json) {
-  return GroupChannelListQuery()
-    ..loading = json['loading'] as bool
-    ..hasNext = json['has_next'] as bool
-    ..token = json['token'] as String?
-    ..limit = json['limit'] as int
-    ..order = _$enumDecode(_$GroupChannelListOrderEnumMap, json['order'])
-    ..queryType =
-        _$enumDecode(_$GroupChannelListQueryTypeEnumMap, json['query_type'])
-    ..channelUrls =
-        (json['channel_urls'] as List<dynamic>).map((e) => e as String).toList()
-    ..memberStateFilter =
-        _$enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
-    ..superChannelFilter =
-        _$enumDecode(_$SuperChannelFilterEnumMap, json['super_channel_filter'])
-    ..publicChannelFilter = _$enumDecode(
-        _$PublicChannelFilterEnumMap, json['public_channel_filter'])
-    ..unreadChannelFilter = _$enumDecode(
-        _$UnreadChannelFilterEnumMap, json['unread_channel_filter'])
-    ..channelHiddenStateFilter = _$enumDecode(
-        _$ChannelHiddenStateFilterEnumMap, json['channel_hidden_state_filter'])
-    ..customTypeStartWith = json['custom_type_start_with'] as String?
-    ..customTypes =
-        (json['custom_types'] as List<dynamic>).map((e) => e as String).toList()
-    ..nicknameContains = json['nickname_contains'] as String?
-    ..userIdsIncludeIn = (json['user_ids_include_in'] as List<dynamic>)
-        .map((e) => e as String)
-        .toList()
-    ..userIdsExactlyIn = (json['user_ids_exactly_in'] as List<dynamic>)
-        .map((e) => e as String)
-        .toList()
-    ..channelNameContains = json['channel_name_contains'] as String?
-    ..metaDataOrderKeyFilter = json['meta_data_order_key_filter'] as String?
-    ..metaDataKeyFilter = json['meta_data_key_filter'] as String?
-    ..metaDataValuesFilter = (json['meta_data_values_filter'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList()
-    ..metaDataValueStartWithFilter =
-        json['meta_data_value_start_with_filter'] as String?
-    ..searchQuery = json['search_query'] as String?
-    ..searchFields = (json['search_fields'] as List<dynamic>)
-        .map((e) => _$enumDecode(_$GroupChannelListQuerySearchFieldEnumMap, e))
-        .toList()
-    ..includeEmptyChannel = json['include_empty_channel'] as bool
-    ..includeFrozenChannel = json['include_frozen_channel'] as bool
-    ..includeMemberList = json['include_member_list'] as bool
-    ..includeMetaData = json['include_meta_data'] as bool;
-}
+        Map<String, dynamic> json) =>
+    GroupChannelListQuery()
+      ..loading = json['loading'] as bool
+      ..hasNext = json['has_next'] as bool
+      ..token = json['token'] as String?
+      ..limit = json['limit'] as int
+      ..order = $enumDecode(_$GroupChannelListOrderEnumMap, json['order'])
+      ..queryType =
+          $enumDecode(_$GroupChannelListQueryTypeEnumMap, json['query_type'])
+      ..channelUrls = (json['channel_urls'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList()
+      ..memberStateFilter =
+          $enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
+      ..superChannelFilter =
+          $enumDecode(_$SuperChannelFilterEnumMap, json['super_channel_filter'])
+      ..publicChannelFilter = $enumDecode(
+          _$PublicChannelFilterEnumMap, json['public_channel_filter'])
+      ..unreadChannelFilter = $enumDecode(
+          _$UnreadChannelFilterEnumMap, json['unread_channel_filter'])
+      ..channelHiddenStateFilter = $enumDecode(
+          _$ChannelHiddenStateFilterEnumMap,
+          json['channel_hidden_state_filter'])
+      ..customTypeStartWith = json['custom_type_start_with'] as String?
+      ..customTypes = (json['custom_types'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList()
+      ..nicknameContains = json['nickname_contains'] as String?
+      ..userIdsIncludeIn = (json['user_ids_include_in'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList()
+      ..userIdsExactlyIn = (json['user_ids_exactly_in'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList()
+      ..channelNameContains = json['channel_name_contains'] as String?
+      ..metaDataOrderKeyFilter = json['meta_data_order_key_filter'] as String?
+      ..metaDataKeyFilter = json['meta_data_key_filter'] as String?
+      ..metaDataValuesFilter =
+          (json['meta_data_values_filter'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList()
+      ..metaDataValueStartWithFilter =
+          json['meta_data_value_start_with_filter'] as String?
+      ..searchQuery = json['search_query'] as String?
+      ..searchFields = (json['search_fields'] as List<dynamic>)
+          .map((e) => $enumDecode(_$GroupChannelListQuerySearchFieldEnumMap, e))
+          .toList()
+      ..includeEmptyChannel = json['include_empty_channel'] as bool
+      ..includeFrozenChannel = json['include_frozen_channel'] as bool
+      ..includeMemberList = json['include_member_list'] as bool
+      ..includeMetaData = json['include_meta_data'] as bool;
 
 Map<String, dynamic> _$GroupChannelListQueryToJson(
         GroupChannelListQuery instance) =>
@@ -97,32 +100,6 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
       'include_meta_data': instance.includeMetaData,
     };
 
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
 const _$GroupChannelListOrderEnumMap = {
   GroupChannelListOrder.chronological: 'chronological',
   GroupChannelListOrder.latestLastMessage: 'latest_last_message',
@@ -146,6 +123,7 @@ const _$MemberStateFilterEnumMap = {
 
 const _$SuperChannelFilterEnumMap = {
   SuperChannelFilter.all: 'all',
+  SuperChannelFilter.exclusiveOnly: 'exclusive_only',
   SuperChannelFilter.superChannel: 'super',
   SuperChannelFilter.nonsuperChannel: 'nonsuper',
   SuperChannelFilter.broadcastOnly: 'broadcast_only',
@@ -163,6 +141,7 @@ const _$UnreadChannelFilterEnumMap = {
 };
 
 const _$ChannelHiddenStateFilterEnumMap = {
+  ChannelHiddenStateFilter.all: 'all',
   ChannelHiddenStateFilter.unhiddenOnly: 'unhidden_only',
   ChannelHiddenStateFilter.hiddenOnly: 'hidden_only',
   ChannelHiddenStateFilter.hiddenAllowAutoUnhide: 'hidden_allow_auto_hide',

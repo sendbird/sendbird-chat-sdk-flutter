@@ -7,6 +7,40 @@ extension EnumTransform on List {
   }
 }
 
+/// Represents Scheduled Status
+enum ScheduledStatus {
+  pending,
+  @JsonValue('in_queue')
+  inQueue,
+  sent,
+  failed,
+  canceled,
+  removed,
+}
+
+const scheduledMessageListOrderEnumMap = <ScheduledMessageListOrder, String>{
+  ScheduledMessageListOrder.createdAt: 'created_at',
+  ScheduledMessageListOrder.scheduledAt: 'scheduled_at',
+};
+
+/// Represnts Ordering of Scheduled Message List
+enum ScheduledMessageListOrder {
+  @JsonValue('created_at')
+  createdAt,
+  @JsonValue('scheduled_at')
+  scheduledAt,
+}
+
+/// Represents poll status
+enum PollStatus {
+  @JsonValue('removed')
+  removed,
+  @JsonValue('open')
+  open,
+  @JsonValue('closed')
+  closed
+}
+
 /// Represents message's reply type
 enum ReplyType {
   @JsonValue('NONE')
@@ -44,10 +78,10 @@ enum MentionType {
 }
 
 /// Represents scheduled user message status
-enum ScheduledUserMessageStatus { scheduled, sent, canceled, failed }
+enum ScheduledUserMessageStatus { scheduled, sent, canceled, failed, pending }
 
 /// Represents push notification delivery option
-enum PushNotificationDeliveryOption { normal, suppress }
+enum PushNotificationDeliveryOption { normal, suppress, force }
 
 /// Represents meta array update mode
 enum MetaArrayUpdateMode { add, remove }
@@ -113,9 +147,32 @@ String memberStateFilterEnumForGroupCount(MemberStateFilter filter) {
 /// Represents a filter for public group channel member state
 enum PublicGroupChannelMembershipFilter {
   all,
-
   joined,
 }
+
+const messageTypeEnumMap = <MessageType, String>{
+  MessageType.admin: 'ADMN',
+  MessageType.file: 'FILE',
+  MessageType.user: 'MESG',
+};
+
+/// Represents message type
+enum MessageType {
+  @JsonValue(null)
+  all,
+  @JsonValue('MESG')
+  user,
+  @JsonValue('FILE')
+  file,
+  @JsonValue('ADMN')
+  admin
+}
+
+const messageTypeFilterEnumMap = <MessageTypeFilter, String>{
+  MessageTypeFilter.admin: 'ADMN',
+  MessageTypeFilter.file: 'FILE',
+  MessageTypeFilter.user: 'MESG',
+};
 
 /// Represents a filter for message type
 enum MessageTypeFilter {
@@ -133,6 +190,9 @@ enum MessageTypeFilter {
 enum SuperChannelFilter {
   all,
 
+  @JsonValue('exclusive_only')
+  exclusiveOnly,
+
   @JsonValue('super')
   superChannel,
 
@@ -147,6 +207,8 @@ String groupChannelSuperFilterEnum(SuperChannelFilter filter) {
   switch (filter) {
     case SuperChannelFilter.all:
       return 'all';
+    case SuperChannelFilter.exclusiveOnly:
+      return 'exclusive_only';
     case SuperChannelFilter.superChannel:
       return 'super';
     case SuperChannelFilter.nonsuperChannel:
@@ -261,6 +323,8 @@ enum GroupChannelHiddenState {
 
 /// Represents a filter for channel's visibility state
 enum ChannelHiddenStateFilter {
+  all,
+
   @JsonValue('unhidden_only')
   unhiddenOnly,
 

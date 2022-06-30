@@ -113,6 +113,10 @@ class Command {
 
   bool get isError => cmd == CommandString.error;
 
+  bool get isVote => cmd == CommandString.pollVote;
+
+  bool get isUpdatedPoll => cmd == CommandString.pollUpdate;
+
   // builders
 
   static Command buildEnterChannel(BaseChannel channel) {

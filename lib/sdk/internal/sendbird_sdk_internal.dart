@@ -6,10 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:sendbird_sdk/constant/contants.dart' as constants;
-import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/core/models/options.dart';
 import 'package:sendbird_sdk/core/models/state.dart';
-import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/managers/command_manager.dart';
 import 'package:sendbird_sdk/managers/connection_manager.dart';
 import 'package:sendbird_sdk/managers/event_manager.dart';
@@ -25,8 +22,14 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.12';
+const sdk_version = '3';
 const platform = 'flutter';
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` to support older versions of the API as well.
+T? _ambiguate<T>(T? value) => value;
 
 /// Internal implementation for main class. Do not directly access this class.
 class SendbirdSdkInternal with WidgetsBindingObserver {
@@ -79,6 +82,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _options = options ?? Options();
     _api = ApiClient(state: _state, appId: appId, token: apiToken);
 
+    _connectionResult = ConnectivityResult.none;
     _listenConnectionEvents();
   }
 
@@ -260,6 +264,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
       'expiring_session': _eventManager.getSessionHandler() != null ? '1' : '0',
+      'include_poll_details': options.includePollDetails ? '1' : '0',
       if (accessToken != null) 'access_token': accessToken,
     };
     params.addAll(_webSocketParams);
@@ -289,7 +294,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         error: reconnect ? null : ConnectionClosedError());
 
     if (!registered) {
-      WidgetsBinding.instance?.addObserver(this);
+      _ambiguate(WidgetsBinding.instance)?.addObserver(this);
       registered = true;
     }
 
@@ -329,7 +334,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     await _webSocket?.close();
     _webSocket = null;
 
-    WidgetsBinding.instance?.removeObserver(this);
+    _ambiguate(WidgetsBinding.instance)?.removeObserver(this);
     registered = false;
     _connectionSub?.cancel();
 
@@ -409,30 +414,36 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
         ? flutterTest == 'true'
         : Platform.environment['FLUTTER_TEST'] == 'true';
     if (!isTest) {
-      _connectionSub = Connectivity()
-          .onConnectivityChanged
-          .listen((ConnectivityResult result) {
-        switch (result) {
-          case ConnectivityResult.none:
-            logger.i('connection has been lost');
-            break;
-          case ConnectivityResult.mobile:
-          case ConnectivityResult.wifi:
-            if (_connectionResult == ConnectivityResult.none &&
-                _state.sessionKey != null) {
-              reconnect(reset: true);
-            }
-            break;
-          case ConnectivityResult.bluetooth:
-          case ConnectivityResult.ethernet:
-            if (_connectionResult == ConnectivityResult.none &&
-                _state.sessionKey != null) {
-              reconnect(reset: true);
-            }
-            break;
-        }
-        _connectionResult = result;
-      });
+      Connectivity().onConnectivityChanged.asBroadcastStream(
+            onCancel: (controller) => {
+              _connectionResult = ConnectivityResult.none,
+              controller.pause(),
+            },
+            onListen: (subscription) {
+              subscription.onData((data) {
+                switch (data) {
+                  case ConnectivityResult.none:
+                    logger.i('connection has been lost');
+                    break;
+                  case ConnectivityResult.mobile:
+                  case ConnectivityResult.wifi:
+                    if (_connectionResult == ConnectivityResult.none &&
+                        _state.sessionKey != null) {
+                      reconnect(reset: true);
+                    }
+                    break;
+                  case ConnectivityResult.bluetooth:
+                  case ConnectivityResult.ethernet:
+                    if (_connectionResult == ConnectivityResult.none &&
+                        _state.sessionKey != null) {
+                      reconnect(reset: true);
+                    }
+                    break;
+                }
+                _connectionResult = data;
+              });
+            },
+          );
     }
   }
 

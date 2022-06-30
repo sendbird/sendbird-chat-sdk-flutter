@@ -6,17 +6,15 @@ part of 'thread_info.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ThreadInfo _$ThreadInfoFromJson(Map<String, dynamic> json) {
-  return ThreadInfo(
-    replyCount: json['reply_count'] as int,
-    mostRepliesUsers: (json['most_replies'] as List<dynamic>?)
-            ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-            .toList() ??
-        [],
-    lastRepliedAt: json['last_replied_at'] as int,
-    updatedAt: json['updated_at'] as int?,
-  );
-}
+ThreadInfo _$ThreadInfoFromJson(Map<String, dynamic> json) => ThreadInfo(
+      replyCount: json['reply_count'] as int? ?? 0,
+      mostRepliesUsers: (json['most_replies'] as List<dynamic>?)
+              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      lastRepliedAt: json['last_replied_at'] as int? ?? 0,
+      updatedAt: json['updated_at'] as int?,
+    );
 
 Map<String, dynamic> _$ThreadInfoToJson(ThreadInfo instance) =>
     <String, dynamic>{

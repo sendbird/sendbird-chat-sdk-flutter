@@ -43,6 +43,18 @@ class MessageListParams extends BaseMessageFetchParams {
   /// Partitioning. This property is only working for [OpenChannel]
   bool showSubChannelMessagesOnly = false;
 
+  /// Determines wheter to include parent message information
+  @override
+  bool includeParentMessageInfo = false;
+
+  /// Whether to include poll representation in the response
+  bool includePollDetails = false;
+
+  /// Determines message's reply type
+  @override
+  @JsonKey(name: 'include_reply_type')
+  ReplyType? replyType = ReplyType.none;
+
   @override
   Map<String, dynamic> toJson() {
     final json = super.toJson();

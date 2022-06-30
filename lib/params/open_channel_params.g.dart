@@ -6,16 +6,15 @@ part of 'open_channel_params.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OpenChannelParams _$OpenChannelParamsFromJson(Map<String, dynamic> json) {
-  return OpenChannelParams()
-    ..channelUrl = json['channel_url'] as String?
-    ..customType = json['custom_type'] as String?
-    ..data = json['data'] as String?
-    ..name = json['name'] as String?
-    ..operatorUserIds = (json['operator_ids'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList();
-}
+OpenChannelParams _$OpenChannelParamsFromJson(Map<String, dynamic> json) =>
+    OpenChannelParams()
+      ..channelUrl = json['channel_url'] as String?
+      ..customType = json['custom_type'] as String?
+      ..data = json['data'] as String?
+      ..name = json['name'] as String?
+      ..operatorUserIds = (json['operator_ids'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList();
 
 Map<String, dynamic> _$OpenChannelParamsToJson(OpenChannelParams instance) =>
     <String, dynamic>{

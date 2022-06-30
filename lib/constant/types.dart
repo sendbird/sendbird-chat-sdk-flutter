@@ -8,3 +8,8 @@ typedef OnFileMessageCallback = void Function(
     FileMessage message, Error? error);
 typedef OnUserMessageCallback = void Function(
     UserMessage message, Error? error);
+typedef OnScheduledMessageCallback<T> = void Function(T? message, Error? error);
+typedef OnTotalScheduledMessageCountCallback = void Function(
+    int? totalCount, Error? error);
+typedef OnScheduledMessageCancelCallback = void Function(Error? error);
+typedef OnScheduledMessageSendNowCallback = void Function(Error? error);

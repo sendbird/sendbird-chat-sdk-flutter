@@ -6,6 +6,7 @@ import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
 import 'package:sendbird_sdk/features/reaction/reaction.dart';
+import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 import 'package:sendbird_sdk/features/threading/thread_info.dart';
 
 part 'admin_message.g.dart';

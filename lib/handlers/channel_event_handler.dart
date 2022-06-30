@@ -4,6 +4,8 @@ import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/poll_update_event.dart';
+import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
 import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/managers/event_manager.dart';
@@ -134,4 +136,10 @@ class ChannelEventHandler implements EventHandler {
 
   /// Informs when a thread info [event] has been updated on [channel]
   void onThreadInfoUpdated(BaseChannel channel, ThreadInfoUpdateEvent event) {}
+
+  /// Informs when a Poll is updated
+  void onPollUpdated(PollUpdateEvent event) {}
+
+  /// Informs when a Poll is voted
+  void onPollVoted(PollVoteEvent event) {}
 }

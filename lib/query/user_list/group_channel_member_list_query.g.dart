@@ -7,23 +7,22 @@ part of 'group_channel_member_list_query.dart';
 // **************************************************************************
 
 GroupChannelMemberListQuery _$GroupChannelMemberListQueryFromJson(
-    Map<String, dynamic> json) {
-  return GroupChannelMemberListQuery(
-    channelUrl: json['channel_url'] as String,
-  )
-    ..loading = json['loading'] as bool
-    ..hasNext = json['has_next'] as bool
-    ..token = json['token'] as String?
-    ..limit = json['limit'] as int
-    ..nicknameStartsWith = json['nickname_starts_with'] as String?
-    ..operatorFilter =
-        _$enumDecode(_$OperatorFilterEnumMap, json['operator_filter'])
-    ..mutedMemberFilter =
-        _$enumDecode(_$MutedMemberFilterEnumMap, json['muted_member_filter'])
-    ..memberStateFilter =
-        _$enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
-    ..order = _$enumDecode(_$MemberListOrderEnumMap, json['order']);
-}
+        Map<String, dynamic> json) =>
+    GroupChannelMemberListQuery(
+      channelUrl: json['channel_url'] as String,
+    )
+      ..loading = json['loading'] as bool
+      ..hasNext = json['has_next'] as bool
+      ..token = json['token'] as String?
+      ..limit = json['limit'] as int
+      ..nicknameStartsWith = json['nickname_starts_with'] as String?
+      ..operatorFilter =
+          $enumDecode(_$OperatorFilterEnumMap, json['operator_filter'])
+      ..mutedMemberFilter =
+          $enumDecode(_$MutedMemberFilterEnumMap, json['muted_member_filter'])
+      ..memberStateFilter =
+          $enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
+      ..order = $enumDecode(_$MemberListOrderEnumMap, json['order']);
 
 Map<String, dynamic> _$GroupChannelMemberListQueryToJson(
         GroupChannelMemberListQuery instance) =>
@@ -41,32 +40,6 @@ Map<String, dynamic> _$GroupChannelMemberListQueryToJson(
           memberStateFilterEnumForQuery(instance.memberStateFilter),
       'order': _$MemberListOrderEnumMap[instance.order],
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
 
 const _$OperatorFilterEnumMap = {
   OperatorFilter.all: 'all',

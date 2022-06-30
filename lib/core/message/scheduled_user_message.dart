@@ -1,14 +1,12 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
-import 'package:sendbird_sdk/core/models/error.dart';
+import 'package:sendbird_sdk/core/models/apple_critical_alert_options.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
 import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
 import 'package:sendbird_sdk/features/reaction/reaction.dart';
+import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 import 'package:sendbird_sdk/features/threading/thread_info.dart';
 
 part 'scheduled_user_message.g.dart';
@@ -17,17 +15,19 @@ part 'scheduled_user_message.g.dart';
 @JsonSerializable()
 class ScheduledUserMessage extends BaseMessage {
   /// Scheduled message ID
-  final int scheduledId;
+  final int scheduledMessageId;
 
-  /// Scheduled message date time. (format: "YYYY-MM-DD HH:mm")
-  @JsonKey(name: 'scheduled_dt')
-  final String scheduledDateTimeString;
+  /// The type of the message.
+  final MessageType type;
 
-  /// Scheduled message timezone. (e.g. UTC, America/Los_Angeles, etc)
-  final String scheduledTimezone;
+  /// The time to send the message, in Unix milliseconds format.
+  /// The messages are scheduled in minutes
+  /// The term between current time and scheduledAt should be between 5 minutes
+  /// (depending on the app attribute `minimum_interval_for_scheduling`) and 30 days
+  final int scheduledAt;
 
   /// Scheduled message status.
-  final ScheduledUserMessageStatus status;
+  final ScheduledUserMessageStatus scheduledStatus;
 
   /// Push notification delivery option that determines how to deliver the
   /// push notification when sending a user or a file message. The default
@@ -36,106 +36,95 @@ class ScheduledUserMessage extends BaseMessage {
     defaultValue: PushNotificationDeliveryOption.normal,
     unknownEnumValue: PushNotificationDeliveryOption.normal,
   )
-  final PushNotificationDeliveryOption pushOption;
+  final PushNotificationDeliveryOption _pushOption;
 
-  /// Error
-  //@JsonKey(name: "error")
-  final SBError? error;
+  // Determines whether to send a push notification for the message
+  // to the members of the channel (applicable to group channels only).
+  // (Default: true)
+  final bool sendPush;
 
   /// Target languages that the message will be translated into
-  @JsonKey(name: 'translation_target_langs')
-  final List<String> targetLanguages;
+  @JsonKey(name: 'target_langs')
+  final List<String> _translationTargetLanguages;
+
+  /// Determines whether to mark the message as read for the sender.
+  bool? markAsRead;
+
+  /// Sender’s ID.
+  String? senderId;
+
+  /// The unique message ID created by other system.
+  String? dedupId;
+
+  /// The bundle ID of the client app in order to send a push notification to iOS devices.
+  String? apnsBundleId;
+
+  /// Options that support Apple critical alerts and checks whether the message is a critical alert.
+  AppleCriticalAlertOptions? appleCriticalAlertOptions;
+
+  /// Additional ID which is sent from the SDK.
+  String? _reqId;
+
+  /// The sent time of the scheduled message, in Unix milliseconds format. If it is not sent yet, the value is 0.
+  int sentAt;
 
   ScheduledUserMessage({
-    required this.scheduledId,
-    required this.scheduledDateTimeString,
-    required this.scheduledTimezone,
-    required this.status,
-    this.pushOption = PushNotificationDeliveryOption.normal,
-    this.error,
-    this.targetLanguages = const [],
-    String? requestId,
-    required int messageId,
-    required String message,
-    MessageSendingStatus? sendingStatus,
-    required Sender sender,
-    required String channelUrl,
+    this.apnsBundleId,
+    this.dedupId,
+    this.appleCriticalAlertOptions,
+    required this.scheduledMessageId,
+    required this.scheduledStatus,
+    required this.type,
+    required this.scheduledAt,
+    this.markAsRead,
     required ChannelType channelType,
+    this.sendPush = true,
+    PushNotificationDeliveryOption pushOption =
+        PushNotificationDeliveryOption.normal,
+    List<String> translationTargetLanguages = const [],
+    String? reqId,
+    ScheduledInfo? scheduledInfo,
+    required String message,
+    required this.senderId,
+    required String channelUrl,
     List<User> mentionedUsers = const [],
     MentionType? mentionType,
-    List<String>? requestedMentionUserIds,
     int createdAt = 0,
-    int updatedAt = 0,
-    int? parentMessageId,
-    String? parentMessageText,
-    ThreadInfo? threadInfo,
+    this.sentAt = 0,
     List<MessageMetaArray>? metaArrays,
     String? customType,
-    int? messageSurvivalSeconds,
-    bool forceUpdateLastMessage = false,
     bool isSilent = false,
-    int? errorCode,
-    bool isOperatorMessage = false,
     String? data,
-    OGMetaData? ogMetaData,
-    List<Reaction>? reactions,
-    Map<String, dynamic>? parentMessage,
-  }) : super(
-          parentMessage: parentMessage,
-          requestId: requestId,
-          messageId: messageId,
+    MessageSendingStatus? sendingStatus,
+  })  : _translationTargetLanguages = translationTargetLanguages,
+        _pushOption = pushOption,
+        _reqId = reqId,
+        super(
+          messageId: scheduledMessageId,
           message: message,
           sendingStatus: sendingStatus,
-          sender: sender,
           channelUrl: channelUrl,
           channelType: channelType,
           mentionedUsers: mentionedUsers,
           mentionType: mentionType,
-          requestedMentionUserIds: requestedMentionUserIds,
           createdAt: createdAt,
-          updatedAt: updatedAt,
-          parentMessageId: parentMessageId,
-          parentMessageText: parentMessageText,
-          threadInfo: threadInfo,
-          metaArrays: metaArrays,
           customType: customType,
-          messageSurvivalSeconds: messageSurvivalSeconds,
-          forceUpdateLastMessage: forceUpdateLastMessage,
           isSilent: isSilent,
-          errorCode: errorCode,
-          isOperatorMessage: isOperatorMessage,
           data: data,
-          ogMetaData: ogMetaData,
-          reactions: reactions,
+          scheduledInfo: scheduledInfo,
+          metaArrays: metaArrays,
         );
 
-  factory ScheduledUserMessage.fromJson(Map<String, dynamic> json) =>
-      _$ScheduledUserMessageFromJson(json);
+  factory ScheduledUserMessage.fromJson(Map<String, dynamic> json) {
+    var sortedMetaarrayList = [];
+    if (json['sorted_metaarray'].isNotEmpty) {
+      sortedMetaarrayList.add(json['sorted_metaarray']);
+    }
+    json['sorted_metaarray'] = sortedMetaarrayList;
 
-  @override
-  Map<String, dynamic> toJson() => _$ScheduledUserMessageToJson(this);
-
-  @override
-  bool operator ==(other) {
-    if (identical(other, this)) return true;
-    if (!(super == (other))) return false;
-
-    final eq = ListEquality().equals;
-    return other is ScheduledUserMessage &&
-        other.scheduledId == scheduledId &&
-        other.scheduledDateTimeString == scheduledDateTimeString &&
-        other.status == status &&
-        other.pushOption == pushOption &&
-        eq(other.targetLanguages, targetLanguages);
+    return _$ScheduledUserMessageFromJson(json);
   }
 
   @override
-  int get hashCode => hashValues(
-        super.hashCode,
-        scheduledId,
-        scheduledDateTimeString,
-        status,
-        pushOption,
-        targetLanguages,
-      );
+  Map<String, dynamic> toJson() => _$ScheduledUserMessageToJson(this);
 }

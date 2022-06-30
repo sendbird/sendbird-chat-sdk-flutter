@@ -65,6 +65,9 @@ class GroupChannelParams {
   @JsonKey(name: 'operator_ids')
   List<String>? operatorUserIds;
 
+  /// Determines whether the channel is exclusive or not
+  bool? isExclusive;
+
   //TBD
   //Int messageSurvivalSeconds;
 
@@ -80,6 +83,7 @@ class GroupChannelParams {
       isDistinct = false;
       isEphemeral = false;
       isStrict = false;
+      isExclusive = false;
     }
   }
 
@@ -93,6 +97,7 @@ class GroupChannelParams {
     isPublic = channel.isPublic;
     isDiscoverable = channel.isDiscoverable;
     isDistinct = channel.isDistinct;
+    isExclusive = channel.isExclusive;
   }
 
   Map<String, dynamic> toJson() {

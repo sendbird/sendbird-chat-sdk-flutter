@@ -16,6 +16,44 @@ class MessageRetrievalParams extends BaseMessageFetchParams {
   /// Specifies the unique ID of a message to retrieve.
   int messageId;
 
+  /// Determine to retrieve reactions or not. default is `false`
+  @override
+  @JsonKey(name: 'include_reactions')
+  bool includeReactions = false;
+
+  /// Determines whether the metaarray of the message is included in the results.
+  @override
+  @JsonKey(name: 'with_sorted_meta_array')
+  bool includeMetaArray = false;
+
+  /// Whether to include poll representation in the response
+  bool includePollDetails = false;
+
+  /// Determines whether to include the parent message text in the results
+  /// when the messages are replies in a thread. If the type of the parent
+  /// message is `UserMessage` the  value is a `message`. If it is
+  /// `FileMessage`, the value is the `name` of the uploaded file.
+  /// default value is false
+  @override
+  bool? includeParentMessageText = false;
+
+  /// Determines whether to include the thread information of the messages
+  /// in the results when the results contain root messages. default value is false
+  @override
+  bool includeThreadInfo = false;
+
+  /// Determines whether to include the reactions to the messages in the results.
+  /// default value is false
+  @override
+  bool? includeReplies = false;
+
+  /// Determines wheter to include parent message info in the results
+  @override
+  bool includeParentMessageInfo = false;
+
+  /// Determines wheter to include option to reply to channel
+  bool replyToChannel = false;
+
   MessageRetrievalParams({
     required this.channelType,
     required this.channelUrl,

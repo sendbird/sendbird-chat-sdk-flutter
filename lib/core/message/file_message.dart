@@ -14,6 +14,7 @@ import 'package:sendbird_sdk/features/threading/thread_info.dart';
 import 'package:sendbird_sdk/params/file_message_params.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:uuid/uuid.dart';
+import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 
 part 'file_message.g.dart';
 

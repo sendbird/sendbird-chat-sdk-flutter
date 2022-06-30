@@ -1,3 +1,22 @@
+## [3.1.13] - Jun 22, 2022
+* Update G Files
+* Include Should Remove Operator Status
+* Include Scheduled User and File Message
+* Include View Scheduled Message
+* Include Cancel Scheduled Message
+* Include Total Count Scheduled MEssages
+* Include View Scheduled Message List
+* Include Scheduled Message Update
+* Include Scheduled Message Send Now
+* Include parameter `channelType` for poll request
+* Include Scheduled Message Callback
+* Include HiddenFilter All Option
+* Include Exclusive Channel
+* Changed to require MimeType FileInfo.fromData
+* Fix include scheduled_message_id to message_id
+* Fix Connection Subscription Issue
+* Fix issue with Flutter Version 3.0.0 Update
+
 ## [3.1.12] - March 29, 2022
 * Fixed issue with push notification functionality when online (always push)
 

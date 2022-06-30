@@ -7,14 +7,13 @@ part of 'reconnect_configuration.dart';
 // **************************************************************************
 
 ReconnectConfiguration _$ReconnectConfigurationFromJson(
-    Map<String, dynamic> json) {
-  return ReconnectConfiguration(
-    interval: (json['interval'] as num).toDouble(),
-    maxInterval: (json['max_interval'] as num).toDouble(),
-    multiplier: json['mul'] as int,
-    maximumRetryCount: json['retry_cnt'] as int,
-  );
-}
+        Map<String, dynamic> json) =>
+    ReconnectConfiguration(
+      interval: (json['interval'] as num).toDouble(),
+      maxInterval: (json['max_interval'] as num).toDouble(),
+      multiplier: json['mul'] as int,
+      maximumRetryCount: json['retry_cnt'] as int,
+    );
 
 Map<String, dynamic> _$ReconnectConfigurationToJson(
         ReconnectConfiguration instance) =>

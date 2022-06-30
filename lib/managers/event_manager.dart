@@ -6,6 +6,8 @@ import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/events/poll_update_event.dart';
+import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
 import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/handlers/channel_event_handler.dart';
@@ -359,6 +361,18 @@ class EventManager {
   void notifyReconnectionCanceled() {
     _connectionHandlers.values.forEach((element) {
       element.onReconnectionCanceled();
+    });
+  }
+
+  void notifyPollUpdated(PollUpdateEvent event) {
+    _channelHandlers.values.forEach((element) {
+      element.onPollUpdated(event);
+    });
+  }
+
+  void notifyPollVoted(PollVoteEvent event) {
+    _channelHandlers.values.forEach((element) {
+      element.onPollVoted(event);
     });
   }
 }

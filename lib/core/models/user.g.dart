@@ -6,30 +6,30 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) {
-  return User(
-    userId: json['user_id'] as String,
-    nickname: json['nickname'] as String? ?? '',
-    profileUrl: json['profile_url'] as String?,
-    connectionStatus: boolToConnectionStatus(json['is_online'] as bool?),
-    lastSeenAt: json['last_seen_at'] as int?,
-    isActive: json['is_active'] as bool?,
-    preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList(),
-    friendDiscoveryKey: json['friend_discovery_key'] as String?,
-    friendName: json['friend_name'] as String?,
-    discoveryKeys: (json['discovery_keys'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList(),
-    metaData: (json['metadata'] as Map<String, dynamic>?)?.map(
-          (k, e) => MapEntry(k, e as String),
-        ) ??
-        {},
-    requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
-    sessionToken: json['session_token'] as String?,
-  );
-}
+User _$UserFromJson(Map<String, dynamic> json) => User(
+      userId: json['user_id'] as String,
+      nickname: json['nickname'] as String? ?? '',
+      profileUrl: json['profile_url'] as String?,
+      connectionStatus: json['is_online'] == null
+          ? UserConnectionStatus.notAvailable
+          : boolToConnectionStatus(json['is_online'] as bool?),
+      lastSeenAt: json['last_seen_at'] as int?,
+      isActive: json['is_active'] as bool? ?? true,
+      preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      friendDiscoveryKey: json['friend_discovery_key'] as String?,
+      friendName: json['friend_name'] as String?,
+      discoveryKeys: (json['discovery_keys'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      metaData: (json['metadata'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          {},
+      requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
+      sessionToken: json['session_token'] as String?,
+    );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'user_id': instance.userId,

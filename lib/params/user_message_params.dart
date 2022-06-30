@@ -11,8 +11,16 @@ class UserMessageParams extends BaseMessageParams {
   /// The target languages that a message will be translated into
   List<String> targetLanguages;
 
+  /// Unique ID for a poll
+  int? pollId;
+
+  /// Whether to include poll representation in the response
+  bool includePollDetails = false;
+
   UserMessageParams({
     required this.message,
+    this.pollId,
+    this.includePollDetails = false,
     List<String>? targetLanguages,
     String? data,
     String? customType,
@@ -41,6 +49,8 @@ class UserMessageParams extends BaseMessageParams {
   @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
+    ret['include_poll_details'] = includePollDetails;
+    ret['poll_id'] = pollId;
     ret['message'] = message;
     ret['target_langs'] = targetLanguages;
     if (targetLanguages.isNotEmpty) {

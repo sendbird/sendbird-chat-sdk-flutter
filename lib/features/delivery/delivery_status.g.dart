@@ -6,12 +6,11 @@ part of 'delivery_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DeliveryStatus _$DeliveryStatusFromJson(Map<String, dynamic> json) {
-  return DeliveryStatus(
-    channelUrl: json['channel_url'] as String,
-    updatedDeliveryReceipt: (json['updated'] as Map<String, dynamic>?)?.map(
-          (k, e) => MapEntry(k, e as int),
-        ) ??
-        {},
-  );
-}
+DeliveryStatus _$DeliveryStatusFromJson(Map<String, dynamic> json) =>
+    DeliveryStatus(
+      channelUrl: json['channel_url'] as String,
+      updatedDeliveryReceipt: (json['updated'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as int),
+          ) ??
+          {},
+    );

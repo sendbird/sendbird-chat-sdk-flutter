@@ -6,36 +6,35 @@ part of 'group_channel_filters.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) {
-  return GroupChannelFilter()
-    ..memberStateFilter =
-        _$enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
-    ..superMode = _$enumDecode(_$SuperChannelFilterEnumMap, json['super_mode'])
-    ..publicMode =
-        _$enumDecode(_$PublicChannelFilterEnumMap, json['public_mode'])
-    ..customTypeStartswith = json['custom_type_startswith'] as String?
-    ..customTypes = (json['custom_types'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList()
-    ..membersNicknameContains = json['members_nickname_contains'] as String?
-    ..membersExactlyIn = (json['members_exactly_in'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList()
-    ..nameContains = json['name_contains'] as String?
-    ..unreadFilter =
-        _$enumDecode(_$UnreadChannelFilterEnumMap, json['unread_filter'])
-    ..hiddenMode =
-        _$enumDecode(_$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
-    ..publicMembershipFilter = _$enumDecode(
-        _$PublicGroupChannelMembershipFilterEnumMap,
-        json['public_membership_filter'])
-    ..metaDataKey = json['metadata_key'] as String?
-    ..metaDataValues = (json['metadata_values'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList()
-    ..metaDataValueStartWithFilter =
-        json['metadata_value_startswith'] as String?;
-}
+GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) =>
+    GroupChannelFilter()
+      ..memberStateFilter =
+          $enumDecode(_$MemberStateFilterEnumMap, json['member_state_filter'])
+      ..superMode = $enumDecode(_$SuperChannelFilterEnumMap, json['super_mode'])
+      ..publicMode =
+          $enumDecode(_$PublicChannelFilterEnumMap, json['public_mode'])
+      ..customTypeStartswith = json['custom_type_startswith'] as String?
+      ..customTypes = (json['custom_types'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..membersNicknameContains = json['members_nickname_contains'] as String?
+      ..membersExactlyIn = (json['members_exactly_in'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..nameContains = json['name_contains'] as String?
+      ..unreadFilter =
+          $enumDecode(_$UnreadChannelFilterEnumMap, json['unread_filter'])
+      ..hiddenMode =
+          $enumDecode(_$ChannelHiddenStateFilterEnumMap, json['hidden_mode'])
+      ..publicMembershipFilter = $enumDecode(
+          _$PublicGroupChannelMembershipFilterEnumMap,
+          json['public_membership_filter'])
+      ..metaDataKey = json['metadata_key'] as String?
+      ..metaDataValues = (json['metadata_values'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..metaDataValueStartWithFilter =
+          json['metadata_value_startswith'] as String?;
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
     <String, dynamic>{
@@ -57,32 +56,6 @@ Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
       'metadata_value_startswith': instance.metaDataValueStartWithFilter,
     };
 
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
 const _$MemberStateFilterEnumMap = {
   MemberStateFilter.all: 'all',
   MemberStateFilter.invited: 'invited',
@@ -93,6 +66,7 @@ const _$MemberStateFilterEnumMap = {
 
 const _$SuperChannelFilterEnumMap = {
   SuperChannelFilter.all: 'all',
+  SuperChannelFilter.exclusiveOnly: 'exclusive_only',
   SuperChannelFilter.superChannel: 'super',
   SuperChannelFilter.nonsuperChannel: 'nonsuper',
   SuperChannelFilter.broadcastOnly: 'broadcast_only',
@@ -110,6 +84,7 @@ const _$UnreadChannelFilterEnumMap = {
 };
 
 const _$ChannelHiddenStateFilterEnumMap = {
+  ChannelHiddenStateFilter.all: 'all',
   ChannelHiddenStateFilter.unhiddenOnly: 'unhidden_only',
   ChannelHiddenStateFilter.hiddenOnly: 'hidden_only',
   ChannelHiddenStateFilter.hiddenAllowAutoUnhide: 'hidden_allow_auto_hide',

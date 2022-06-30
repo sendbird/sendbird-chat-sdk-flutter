@@ -497,4 +497,186 @@ extension Messages on BaseChannel {
       ),
     );
   }
+
+  /// Cancels scheduled message
+  Future<void> cancelScheduledMessage(
+    int scheduledMessageId, {
+    OnScheduledMessageCancelCallback? callback,
+  }) async {
+    try {
+      return _sdk.api.send(
+        GroupChannelScheduledMessageCancelRequest(
+          channelUrl: channelUrl,
+          scheduledMessageId: scheduledMessageId,
+        ),
+      );
+    } catch (e) {
+      if (callback != null) {
+        final error = SBError(message: 'Failed Sending Request');
+        callback(error);
+      }
+    }
+  }
+
+  /// Update scheduled user message
+  Future<ScheduledUserMessage> updateScheduledUserMessage({
+    required ScheduledUserMessageUpdateParams params,
+    required int scheduledMessageid,
+    OnScheduledMessageCallback<ScheduledUserMessage>? callback,
+  }) async {
+    try {
+      final result = await _sdk.api.send(
+        GroupChannelScheduledUserMessageUpdateRequest(
+          scheduledMessageId: scheduledMessageid,
+          channelUrl: channelUrl,
+          params: params,
+        ),
+      );
+      if (callback != null) {
+        callback(result, null);
+      }
+      return result;
+    } catch (e) {
+      if (callback != null) {
+        final error = SBError(message: 'Failed Sending Request');
+        callback(null, error);
+      }
+      rethrow;
+    }
+  }
+
+  /// Update scheduled file message
+  Future<ScheduledFileMessage> updateScheduledFileMessage({
+    required ScheduledFileMessageUpdateParams params,
+    required int scheduledMessageid,
+    OnScheduledMessageCallback<ScheduledFileMessage>? callback,
+  }) async {
+    try {
+      final result = await _sdk.api.send(
+        GroupChannelScheduledFileMessageUpdateRequest(
+          scheduledMessageId: scheduledMessageid,
+          channelUrl: channelUrl,
+          params: params,
+        ),
+      );
+
+      if (callback != null) {
+        callback(result, null);
+      }
+
+      return result;
+    } catch (e) {
+      if (callback != null) {
+        final error = SBError(message: 'Failed Sending Request');
+        callback(null, error);
+      }
+      rethrow;
+    }
+  }
+
+  /// Creates scheduled user message
+  Future<ScheduledUserMessage> createScheduledUserMessage(
+    ScheduledUserMessageParams userMessageParams, {
+    OnScheduledMessageCallback<ScheduledUserMessage>? callback,
+  }) async {
+    try {
+      final result = await _sdk.api.send(
+        GroupChannelScheduledUserMessageSendRequest(
+          channelUrl: channelUrl,
+          params: userMessageParams,
+        ),
+      );
+      if (callback != null) {
+        callback(result, null);
+      }
+      return result;
+    } catch (e) {
+      if (callback != null) {
+        final error = SBError(message: 'Failed Sending Request');
+        callback(null, error);
+      }
+      rethrow;
+    }
+  }
+
+  /// Sends Scheduled Message Now
+  Future<void> sendScheduledMessageNow({
+    required int scheduledMessageId,
+    OnScheduledMessageSendNowCallback? callback,
+  }) async {
+    try {
+      return _sdk.api.send(
+        GroupChannelScheduledMessageSendNowRequest(
+          channelType: channelType,
+          channelUrl: channelUrl,
+          scheduledMessageId: scheduledMessageId,
+        ),
+      );
+    } catch (e) {
+      if (callback != null) {
+        callback(SBError(message: 'Failed Sending Request'));
+      }
+
+      rethrow;
+    }
+  }
+
+  /// Creates scheduled file message
+  Future<ScheduledFileMessage> createScheduledFileMessage(
+    ScheduledFileMessageParams fileMessageParams, {
+    OnScheduledMessageCallback<ScheduledFileMessage>? callback,
+  }) async {
+    UploadResponse? upload;
+
+    if (fileMessageParams.uploadFile.hasBinary) {
+      try {
+        upload = await _sdk.api
+            .send<UploadResponse>(
+          ChannelScheduledFileUploadRequest(
+            channelUrl: channelUrl,
+            params: fileMessageParams,
+          ),
+        )
+            .timeout(
+          Duration(seconds: _sdk.options.fileTransferTimeout),
+          onTimeout: () {
+            logger.e('upload timeout');
+            if (callback != null) {
+              callback(null, SBError(code: ErrorCode.fileUploadTimeout));
+            }
+            throw SBError(code: ErrorCode.fileUploadTimeout);
+          },
+        );
+        fileMessageParams.uploadFile
+          ..fileSize = upload.fileSize
+          ..url = upload.url;
+      } catch (e) {
+        if (callback != null) {
+          final error = SBError(message: 'Failed Sending Request');
+          callback(null, error);
+        }
+        rethrow;
+      }
+    }
+
+    try {
+      final result = await _sdk.api.send<ScheduledFileMessage>(
+        GroupChannelScheduledFileMessageSendRequest(
+          channelUrl: channelUrl,
+          params: fileMessageParams,
+        ),
+      );
+
+      if (callback != null) {
+        callback(result, null);
+      }
+      return result;
+    } catch (e) {
+      if (callback != null) {
+        final error = SBError(message: 'Failed Sending Request');
+        callback(null, error);
+      }
+      rethrow;
+    }
+  }
 }

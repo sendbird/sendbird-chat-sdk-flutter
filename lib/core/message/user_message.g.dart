@@ -6,63 +6,72 @@ part of 'user_message.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserMessage _$UserMessageFromJson(Map<String, dynamic> json) {
-  return UserMessage(
-    translations: (json['translations'] as Map<String, dynamic>?)?.map(
-          (k, e) => MapEntry(k, e as String),
-        ) ??
-        {},
-    messageId: json['message_id'] as int? ?? 0,
-    message: json['message'] as String,
-    channelUrl: json['channel_url'] as String,
-    channelType: _$enumDecodeNullable(
-            _$ChannelTypeEnumMap, json['channel_type'],
-            unknownValue: ChannelType.group) ??
-        ChannelType.group,
-    sender: json['user'] == null
+UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
+      translations: (json['translations'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          {},
+      messageId: json['message_id'] as int? ?? 0,
+      message: json['message'] as String,
+      channelUrl: json['channel_url'] as String,
+      channelType: $enumDecodeNullable(
+              _$ChannelTypeEnumMap, json['channel_type'],
+              unknownValue: ChannelType.group) ??
+          ChannelType.group,
+      sender: json['user'] == null
+          ? null
+          : Sender.fromJson(json['user'] as Map<String, dynamic>),
+      sendingStatus: $enumDecodeNullable(
+          _$MessageSendingStatusEnumMap, json['sending_status']),
+      requestId: json['request_id'] as String?,
+      mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
+              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      mentionType:
+          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
+      requestedMentionUserIds:
+          (json['requested_mention_user_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+      createdAt: json['created_at'] as int? ?? 0,
+      updatedAt: json['updated_at'] as int? ?? 0,
+      parentMessageId: json['parent_message_id'] as int?,
+      parentMessageText: json['parent_message_text'] as String?,
+      threadInfo: json['thread_info'] == null
+          ? null
+          : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
+      metaArrays: (json['sorted_metaarray'] as List<dynamic>?)
+          ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      customType: json['custom_type'] as String?,
+      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
+      forceUpdateLastMessage:
+          json['force_update_last_message'] as bool? ?? false,
+      isSilent: json['silent'] as bool? ?? false,
+      errorCode: json['error_code'] as int?,
+      isOperatorMessage: json['is_op_msg'] as bool? ?? false,
+      data: json['data'] as String?,
+      ogMetaData: json['og_tag'] == null
+          ? null
+          : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
+      reactions: (json['reactions'] as List<dynamic>?)
+              ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
+      replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
+      poll: json['poll'] == null
+          ? null
+          : Poll.fromJson(json['poll'] as Map<String, dynamic>),
+      translationTargetLanguages:
+          (json['translation_target_languages'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+    )..scheduledInfo = json['scheduled_info'] == null
         ? null
-        : Sender.fromJson(json['user'] as Map<String, dynamic>),
-    sendingStatus: _$enumDecodeNullable(
-        _$MessageSendingStatusEnumMap, json['sending_status']),
-    requestId: json['request_id'] as String?,
-    mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
-            ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-            .toList() ??
-        [],
-    mentionType:
-        _$enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
-    requestedMentionUserIds:
-        (json['requested_mention_user_ids'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList(),
-    createdAt: json['created_at'] as int? ?? 0,
-    updatedAt: json['updated_at'] as int? ?? 0,
-    parentMessageId: json['parent_message_id'] as int?,
-    parentMessageText: json['parent_message_text'] as String?,
-    threadInfo: json['thread_info'] == null
-        ? null
-        : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
-    metaArrays: (json['sorted_metaarray'] as List<dynamic>?)
-        ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
-        .toList(),
-    customType: json['custom_type'] as String?,
-    messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
-    forceUpdateLastMessage: json['force_update_last_message'] as bool? ?? false,
-    isSilent: json['silent'] as bool? ?? false,
-    errorCode: json['error_code'] as int?,
-    isOperatorMessage: json['is_op_msg'] as bool? ?? false,
-    data: json['data'] as String?,
-    ogMetaData: json['og_tag'] == null
-        ? null
-        : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),
-    reactions: (json['reactions'] as List<dynamic>?)
-            ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
-            .toList() ??
-        [],
-    parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
-    replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
-  );
-}
+        : ScheduledInfo.fromJson(
+            json['scheduled_info'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
     <String, dynamic>{
@@ -94,45 +103,11 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'data': instance.data,
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
+      'scheduled_info': instance.scheduledInfo?.toJson(),
       'translations': instance.translations,
+      'translation_target_languages': instance.translationTargetLanguages,
+      'poll': instance.poll?.toJson(),
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
 
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',

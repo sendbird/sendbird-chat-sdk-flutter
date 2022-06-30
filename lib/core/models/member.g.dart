@@ -6,39 +6,39 @@ part of 'member.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Member _$MemberFromJson(Map<String, dynamic> json) {
-  return Member(
-    state: _$enumDecodeNullable(_$MemberStateEnumMap, json['state'],
-            unknownValue: MemberState.none) ??
-        MemberState.none,
-    isBlockedByMe: json['is_blocked_by_me'] as bool? ?? false,
-    isBlockingMe: json['is_blocking_me'] as bool? ?? false,
-    isMuted: json['is_muted'] as bool? ?? false,
-    role: _$enumDecodeNullable(_$RoleEnumMap, json['role'],
-            unknownValue: Role.none) ??
-        Role.none,
-    userId: json['user_id'] as String,
-    nickname: json['nickname'] as String? ?? '',
-    profileUrl: json['profile_url'] as String?,
-    connectionStatus: boolToConnectionStatus(json['is_online'] as bool?),
-    lastSeenAt: json['last_seen_at'] as int?,
-    preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList(),
-    friendDiscoveryKey: json['friend_discovery_key'] as String?,
-    friendName: json['friend_name'] as String?,
-    discoveryKeys: (json['discovery_keys'] as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList(),
-    metaData: (json['metadata'] as Map<String, dynamic>?)?.map(
-          (k, e) => MapEntry(k, e as String),
-        ) ??
-        {},
-    requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
-  )
-    ..isActive = json['is_active'] as bool?
-    ..sessionToken = json['session_token'] as String?;
-}
+Member _$MemberFromJson(Map<String, dynamic> json) => Member(
+      state: $enumDecodeNullable(_$MemberStateEnumMap, json['state'],
+              unknownValue: MemberState.none) ??
+          MemberState.none,
+      isBlockedByMe: json['is_blocked_by_me'] as bool? ?? false,
+      isBlockingMe: json['is_blocking_me'] as bool? ?? false,
+      isMuted: json['is_muted'] as bool? ?? false,
+      role: $enumDecodeNullable(_$RoleEnumMap, json['role'],
+              unknownValue: Role.none) ??
+          Role.none,
+      userId: json['user_id'] as String,
+      nickname: json['nickname'] as String? ?? '',
+      profileUrl: json['profile_url'] as String?,
+      connectionStatus: json['is_online'] == null
+          ? UserConnectionStatus.notAvailable
+          : boolToConnectionStatus(json['is_online'] as bool?),
+      lastSeenAt: json['last_seen_at'] as int?,
+      preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      friendDiscoveryKey: json['friend_discovery_key'] as String?,
+      friendName: json['friend_name'] as String?,
+      discoveryKeys: (json['discovery_keys'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      metaData: (json['metadata'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          {},
+      requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
+    )
+      ..isActive = json['is_active'] as bool?
+      ..sessionToken = json['session_token'] as String?;
 
 Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'user_id': instance.userId,
@@ -60,43 +60,6 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'is_muted': instance.isMuted,
       'role': _$RoleEnumMap[instance.role],
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
 
 const _$MemberStateEnumMap = {
   MemberState.none: 'none',

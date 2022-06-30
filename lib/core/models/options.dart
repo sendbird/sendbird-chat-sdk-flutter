@@ -26,6 +26,9 @@ class Options {
   /// and 300 seconds (5 minutes). The default value is 10 seconds.
   int websocketTimeout;
 
+  /// option to include poll detail
+  bool includePollDetails;
+
   Options({
     this.connectionTimeout = 10,
     this.authenticationTimeout = 30,
@@ -33,5 +36,6 @@ class Options {
     this.typingIndicatorThrottle = 5,
     this.useMemeberAsMessageSender = true,
     this.websocketTimeout = 30,
+    this.includePollDetails = true,
   });
 }

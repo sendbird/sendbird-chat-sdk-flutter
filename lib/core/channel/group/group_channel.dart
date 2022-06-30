@@ -9,7 +9,6 @@ import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
 import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
-import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
@@ -18,7 +17,6 @@ import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
 import 'package:sendbird_sdk/features/delivery/read_status.dart';
 import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/params/group_channel_params.dart';
-import 'package:sendbird_sdk/params/scheduled_user_message_params.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_create_request.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_delete_request.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_refresh_request.dart';
@@ -34,7 +32,6 @@ import 'package:sendbird_sdk/request/channel_preference/group_channel_freeze_req
 import 'package:sendbird_sdk/request/channel_preference/group_channel_hide_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_push_trigger_option_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_screen_shot_request.dart';
-import 'package:sendbird_sdk/request/messages/schedule_message_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_utils.dart';
@@ -77,7 +74,7 @@ class GroupChannel extends BaseChannel {
 
   /// True if this channel is super channel
   @JsonKey(defaultValue: false)
-  final bool isSuper;
+  bool isSuper;
 
   /// True if this channel is strict
   @JsonKey(defaultValue: false)
@@ -85,7 +82,7 @@ class GroupChannel extends BaseChannel {
 
   /// True if this channel is broadcast
   @JsonKey(defaultValue: false)
-  final bool isBroadcast;
+  bool isBroadcast;
 
   /// True if this channel is public
   @JsonKey(defaultValue: false)
@@ -99,6 +96,10 @@ class GroupChannel extends BaseChannel {
   /// It is only for a public group channel.
   @JsonKey(defaultValue: false)
   bool isDiscoverable;
+
+  /// True if this channel is exclusive
+  @JsonKey(defaultValue: false)
+  bool isExclusive;
 
   /// True if this channel is required access code
   @JsonKey(defaultValue: false)
@@ -204,6 +205,7 @@ class GroupChannel extends BaseChannel {
     this.isPublic = false,
     this.isDistinct = false,
     this.isDiscoverable = false,
+    this.isExclusive = false,
     this.accessCodeRequired = false,
     this.unreadMessageCount = 0,
     this.unreadMentionCount = 0,
@@ -244,7 +246,13 @@ class GroupChannel extends BaseChannel {
           isEphemeral: isEphemeral,
           fromCache: false,
           dirty: false,
-        );
+        ) {
+    //If exclusive [isSuper] and [isBroadcast] are true
+    if (isExclusive == true) {
+      isSuper = true;
+      isBroadcast = true;
+    }
+  }
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();
 
@@ -327,17 +335,6 @@ class GroupChannel extends BaseChannel {
   Future<void> deleteChannel() async {
     _sdk.api.send(GroupChannelDeleteRequest(channelUrl));
     if (!isPublic) removeFromCache();
-  }
-
-  /// Registers a [ScheduledUserMessage] with given [params].
-  Future<ScheduledUserMessage> registerScheduledUserMessage(
-      ScheduledUserMessageParams params) async {
-    return _sdk.api.send<ScheduledUserMessage>(
-      GroupChannelScheduledMessageSendRequest(
-        channelUrl: channelUrl,
-        params: params,
-      ),
-    );
   }
 
   /// Returns [Member] with given [userId]. It will return `null` if [userId]

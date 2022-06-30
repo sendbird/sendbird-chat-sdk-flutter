@@ -25,6 +25,9 @@ class CommandString {
   static const String typingEnd = 'TPEN';
   static const String ping = 'PING';
 
+  static const String pollVote = 'VOTE';
+  static const String pollUpdate = 'PEDI';
+
   static bool isUserMessage(String cmd) {
     return CommandType.userMessage.value == cmd ||
         CommandType.userMessageUpdate.value == cmd;
@@ -67,6 +70,8 @@ enum CommandType {
   typingStart,
   typingEnd,
   ping,
+  pollVote,
+  pollUpdate,
 }
 
 //string to enum
@@ -170,6 +175,10 @@ extension CommandExtension on CommandType {
         return 'PING';
       case CommandType.error:
         return 'EROR';
+      case CommandType.pollVote:
+        return 'VOTE';
+      case CommandType.pollUpdate:
+        return 'PEDI';
     }
   }
 }

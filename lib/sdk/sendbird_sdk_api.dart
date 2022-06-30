@@ -21,12 +21,14 @@ import 'package:sendbird_sdk/handlers/user_event_handler.dart';
 import 'package:sendbird_sdk/params/group_channel_change_logs_params.dart';
 import 'package:sendbird_sdk/params/group_channel_total_unread_channel_count_params.dart';
 import 'package:sendbird_sdk/params/group_channel_total_unread_message_count_params.dart';
+import 'package:sendbird_sdk/params/scheduled_message_total_count_params.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_change_log_request.dart';
 import 'package:sendbird_sdk/request/feature/group_channel_delivery_request.dart';
 import 'package:sendbird_sdk/request/feature/group_channel_read_request.dart';
 import 'package:sendbird_sdk/request/general/emoji_category_request.dart';
 import 'package:sendbird_sdk/request/general/emoji_container_request.dart';
 import 'package:sendbird_sdk/request/general/emoji_request.dart';
+import 'package:sendbird_sdk/request/messages/scheduled_message_total_count_request.dart';
 import 'package:sendbird_sdk/request/user/block/user_block_request.dart';
 import 'package:sendbird_sdk/request/user/block/user_unblock_request.dart';
 import 'package:sendbird_sdk/request/user/count/group_channel_count_request.dart';
@@ -44,7 +46,6 @@ import 'package:sendbird_sdk/request/user/push/push_register_request.dart';
 import 'package:sendbird_sdk/request/user/push/push_unregister_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
-
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {
@@ -711,5 +712,30 @@ class SendbirdSdk {
 
   void addVersionExtension(String key, String version) {
     _int.addVersionExtension(key, version);
+  }
+
+  /// Get Total Scheduled Message Count
+  Future<int> getTotalScheduledMessageCount({
+    TotalScheduledMessageCountParams? params,
+    OnTotalScheduledMessageCountCallback? callback,
+  }) async {
+    try {
+      final result = await _int.api.send(
+        GroupChannelScheduledMessageTotalCountRequest(
+          params: params,
+        ),
+      );
+      if (callback != null) {
+        callback(result, null);
+      }
+
+      return result;
+    } catch (e) {
+      if (callback != null) {
+        callback(null, SBError(message: 'Failed Sending Request'));
+      }
+
+      rethrow;
+    }
   }
 }

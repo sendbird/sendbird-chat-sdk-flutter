@@ -4,8 +4,11 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
+import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_file_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
@@ -15,12 +18,15 @@ import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
 import 'package:sendbird_sdk/features/reaction/reaction.dart';
 import 'package:sendbird_sdk/features/reaction/reaction_event.dart';
+import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 import 'package:sendbird_sdk/features/threading/thread_info.dart';
 import 'package:sendbird_sdk/features/threading/thread_info_update_event.dart';
 import 'package:sendbird_sdk/params/message_retrieval_params.dart';
+import 'package:sendbird_sdk/params/scheduled_message_retrieval_params.dart';
 import 'package:sendbird_sdk/params/threaded_message_list_params.dart';
 import 'package:sendbird_sdk/request/messages/message_get_request.dart';
 import 'package:sendbird_sdk/request/messages/messages_get_request.dart';
+import 'package:sendbird_sdk/request/messages/scheduled_message_get_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
@@ -137,6 +143,9 @@ class BaseMessage {
   @JsonKey(defaultValue: [])
   List<Reaction>? reactions;
 
+  /// Scheduled message information
+  ScheduledInfo? scheduledInfo;
+
   /// default constructor
   BaseMessage({
     required this.message,
@@ -166,6 +175,7 @@ class BaseMessage {
     this.data,
     this.ogMetaData,
     this.reactions = const <Reaction>[],
+    this.scheduledInfo,
   }) {
     if (parentMessage != null && parentMessageId != null) {
       parentMessage['message_id'] = parentMessageId;
@@ -316,6 +326,19 @@ class BaseMessage {
     return false;
   }
 
+  /// Retrieve Scheduled Message
+  static Future<BaseMessage> getScheduledMessage(
+    ScheduledMessageRetrievalParams params, {
+    OnMessageCallback? callback,
+  }) {
+    final sdk = SendbirdSdk().getInternal();
+    return sdk.api.send<BaseMessage>(
+      ScheduledMessageGetRequest(
+        params: params,
+      ),
+    );
+  }
+
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
@@ -392,8 +415,8 @@ class BaseMessage {
 
     final metaArray = json['metaarray'];
     final metaArrayKeys = List<String>.from(json['metaarray_key_order'] ?? []);
-    //NOTE: sorted_metaarray is from API, metaarray list is local,
-    //metaarray map is from Web, so had to handle separately
+    // NOTE: sorted_metaarray is from API, metaarray list is local,
+    // metaarray map is from Web, so had to handle separately
 
     //local cmd case
     if (metaArray is List) {
@@ -421,7 +444,13 @@ class BaseMessage {
     if (json['ts'] != null) json['created_at'] = json['ts'];
     if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
 
-    if (CommandString.isUserMessage(cmd)) {
+    if (CommandString.isUserMessage(cmd) &&
+        json['scheduled_message_id'] != null) {
+      msg = ScheduledUserMessage.fromJson(json);
+    } else if (CommandString.isFileMessage(cmd) &&
+        json['scheduled_message_id'] != null) {
+      msg = ScheduledFileMessage.fromJson(json);
+    } else if (CommandString.isUserMessage(cmd)) {
       msg = UserMessage.fromJson(json);
     } else if (CommandString.isFileMessage(cmd)) {
       msg = FileMessage.fromJson(json);

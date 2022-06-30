@@ -3,9 +3,11 @@ import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
+import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/core/models/restricted_user.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
+import 'package:sendbird_sdk/features/poll/poll.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 
 part 'responses.g.dart';
@@ -160,6 +162,34 @@ class OperatorListQueryResponse extends BaseResponse {
 }
 
 @JsonSerializable(createToJson: false)
+class PollListQueryResponse extends BaseResponse {
+  @JsonKey(defaultValue: [])
+  List<Poll> polls;
+
+  String? next;
+
+  PollListQueryResponse({this.polls = const [], this.next});
+
+  factory PollListQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$PollListQueryResponseFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
+class PollVoterListQueryResponse extends BaseResponse {
+  @JsonKey(defaultValue: [])
+  List<User> voters;
+  int? voteCount;
+
+  String? next;
+
+  PollVoterListQueryResponse(
+      {this.voters = const [], this.next, this.voteCount});
+
+  factory PollVoterListQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$PollVoterListQueryResponseFromJson(json);
+}
+
+@JsonSerializable(createToJson: false)
 class UserListQueryResponse<T extends User> extends BaseResponse {
   @JsonKey(defaultValue: [])
   @UserConverter()
@@ -305,4 +335,16 @@ class ChannelMessageResponse extends BaseResponse {
   int? deletedId;
 
   ChannelMessageResponse(this.channel, {this.message, this.deletedId});
+}
+
+@JsonSerializable()
+class ScheduledMessageResponse extends BaseResponse {
+  String? next;
+  @JsonKey(defaultValue: [])
+  List<BaseMessage> scheduledMessages;
+
+  ScheduledMessageResponse({required this.scheduledMessages, this.next});
+
+  factory ScheduledMessageResponse.fromJson(Map<String, dynamic> json) =>
+      _$ScheduledMessageResponseFromJson(json);
 }

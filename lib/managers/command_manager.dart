@@ -20,6 +20,8 @@ import 'package:sendbird_sdk/events/channel_event.dart';
 import 'package:sendbird_sdk/events/login_event.dart';
 import 'package:sendbird_sdk/events/mcnt_event.dart';
 import 'package:sendbird_sdk/events/message_event.dart';
+import 'package:sendbird_sdk/events/poll_update_event.dart';
+import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/events/session_event.dart';
 import 'package:sendbird_sdk/events/user_event.dart';
 import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
@@ -218,6 +220,10 @@ class CommandManager with SdkAccessor {
       fnc = _processUserEvent;
     } else if (cmd.isSystemEvent) {
       fnc = _processSystemEvent;
+    } else if (cmd.isUpdatedPoll) {
+      fnc = _processUpdatePoll;
+    } else if (cmd.isVote) {
+      fnc = _processVote;
     } else {/*not handle command*/}
 
     if (fnc != null) {
@@ -225,6 +231,16 @@ class CommandManager with SdkAccessor {
 
       _queue.enqueue(op);
     }
+  }
+
+  Future<void> _processUpdatePoll(Command cmd) async {
+    final event = PollUpdateEvent.fromJson(cmd.payload);
+    eventManager.notifyPollUpdated(event);
+  }
+
+  Future<void> _processVote(Command cmd) async {
+    final event = PollVoteEvent.fromJson(cmd.payload);
+    eventManager.notifyPollVoted(event);
   }
 
   void _updateSubscribedUnreadCountInfo(UnreadCountInfo? info) {
