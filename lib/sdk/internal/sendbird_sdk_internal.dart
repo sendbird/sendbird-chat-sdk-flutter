@@ -22,7 +22,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3';
+const sdk_version = '3.1.14';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
@@ -426,7 +426,14 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
                     logger.i('connection has been lost');
                     break;
                   case ConnectivityResult.mobile:
+                    logger.i('connection status: mobile');
+                    if (_connectionResult == ConnectivityResult.none &&
+                        _state.sessionKey != null) {
+                      reconnect(reset: true);
+                    }
+                    break;
                   case ConnectivityResult.wifi:
+                    logger.i('connection status: wifi');
                     if (_connectionResult == ConnectivityResult.none &&
                         _state.sessionKey != null) {
                       reconnect(reset: true);
@@ -434,6 +441,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
                     break;
                   case ConnectivityResult.bluetooth:
                   case ConnectivityResult.ethernet:
+                    logger.i('connection status: ethernet');
                     if (_connectionResult == ConnectivityResult.none &&
                         _state.sessionKey != null) {
                       reconnect(reset: true);
