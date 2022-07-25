@@ -109,7 +109,7 @@ To connect to Sendbird server, a user is required to log in with a unique ID. A 
 
 ```dart
 try {
-  final user = await sendbird.connect(userId: USER_ID);
+  final user = await sendbird.connect(USER_ID);
 } catch (e) {
   // error
 }
@@ -126,7 +126,7 @@ By using Chat Platform API, you can [create a user](https://sendbird.com/docs/ch
 
 ```dart
 try {
-  final user = await sendbird.connect(userId: USER_ID, accessToken: ACCESS_TOKEN);
+  final user = await sendbird.connect(USER_ID, accessToken: ACCESS_TOKEN);
 } catch (e) {
   // error
 }
