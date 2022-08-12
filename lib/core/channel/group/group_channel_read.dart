@@ -6,7 +6,7 @@ extension GroupChannelRead on GroupChannel {
   ///
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onReadReceiptUpdated] can be invoked
-  void markAsRead() async {
+  Future<void> markAsRead() async {
     final now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastMarkAsReadTimestamp <= 1000) {
       throw MarkAsReadRateLimitExceededError();

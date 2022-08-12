@@ -17,6 +17,8 @@ class UserMessageParams extends BaseMessageParams {
   /// Whether to include poll representation in the response
   bool includePollDetails = false;
 
+  bool isChannelMention = false;
+
   UserMessageParams({
     required this.message,
     this.pollId,
@@ -26,6 +28,7 @@ class UserMessageParams extends BaseMessageParams {
     String? customType,
     PushNotificationDeliveryOption pushOption =
         PushNotificationDeliveryOption.normal,
+    this.isChannelMention = false,
     MentionType? mentionType,
     List<String>? mentionedUserIds,
     List<MessageMetaArray>? metaArrays,
@@ -36,7 +39,7 @@ class UserMessageParams extends BaseMessageParams {
           data: data,
           customType: customType,
           pushOption: pushOption,
-          mentionType: mentionType,
+          mentionType: isChannelMention ? MentionType.channel : mentionType,
           mentionedUserIds: mentionedUserIds,
           metaArrays: metaArrays,
         );

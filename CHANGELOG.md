@@ -1,3 +1,10 @@
+## [3.1.15] - Jul 20, 2022
+
+- Update License Agreement
+- Change markAsRead method to Future method
+- Fix a bug where connection status close automatically
+- Include isChannelMention parameter in UserMessageParams
+
 ## [3.1.14] - Jul 20, 2022
 
 - Fix connection subscription issue

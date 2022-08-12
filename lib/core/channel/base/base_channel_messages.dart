@@ -68,6 +68,13 @@ extension Messages on BaseChannel {
     //   if (onCompleted != null) onCompleted(pending, e);
     // });
 
+    if (params.mentionedUserIds != null) {
+      if (params.mentionedUserIds!.isNotEmpty &&
+          params.isChannelMention == false) {
+        params.mentionType = MentionType.users;
+      }
+    }
+
     final cmd = Command.buildUserMessage(
       channelUrl,
       params,
