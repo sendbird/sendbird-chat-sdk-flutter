@@ -1,3 +1,7 @@
+## [3.1.16] - Oct 27, 2022
+
+- Fixed file message issue with HEIC and HEIF files
+
 ## [3.1.15] - Jul 20, 2022
 
 - Update License Agreement
