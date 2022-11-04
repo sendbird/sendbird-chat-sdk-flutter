@@ -1,3 +1,8 @@
+## [3.1.17] - Nov 3, 2022
+
+- Updated documentation for registerPushToken
+- Updated `connectivity_plus` dependency to support Flutter 3.3.1
+
 ## [3.1.16] - Oct 27, 2022
 
 - Fixed file message issue with HEIC and HEIF files

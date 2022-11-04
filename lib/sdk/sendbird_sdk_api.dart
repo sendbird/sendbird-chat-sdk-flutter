@@ -301,6 +301,7 @@ class SendbirdSdk {
   /// In order to make push notification work with sendbird, [token] has to be
   /// registered with specific [PushTokenType] such as fcm or apns. If [unique]
   /// is `true` then only one push token will be keep tracked
+  /// Make sure to pass [token] that is for the specific PushTokenType
   Future<PushTokenRegistrationStatus> registerPushToken({
     required PushTokenType type,
     required String token,
@@ -320,6 +321,7 @@ class SendbirdSdk {
   ///
   /// Once [token] has been unregistered from sendbird server, associated device
   /// will not receive any push notification from sendbird.
+  /// Make sure to pass [token] that is for the specific PushTokenType
   Future<void> unregisterPushToken({
     required PushTokenType type,
     required String token,
