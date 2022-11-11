@@ -1,15 +1,14 @@
+import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:universal_io/io.dart';
 import 'dart:ui';
 
 import 'package:mime/mime.dart';
-import 'package:sendbird_sdk/core/message/file_message.dart';
-import 'package:sendbird_sdk/core/models/file_info.dart';
 import 'package:sendbird_sdk/params/base_message_params.dart';
 
 /// An object consists a set of parameters for file message.
 class FileMessageParams extends BaseMessageParams {
   /// Binary file data.
-  FileInfo uploadFile;
+  late FileInfo uploadFile;
 
   /// Thumbnail sizes. This parameter is the array of `Size` and works for image file only
   List<Size>? thumbnailSizes;
@@ -22,12 +21,29 @@ class FileMessageParams extends BaseMessageParams {
         ),
         super.withMessage(fileMessage, deepCopy: deepCopy);
 
-  FileMessageParams.withFile(File file, {String? name})
-      : uploadFile = FileInfo.fromData(
-          name: name ?? 'my_file',
-          file: file,
-          mimeType: lookupMimeType(file.path),
-        );
+  FileMessageParams.withFile(File file, {String? name}) {
+    String fileType;
+
+    if (lookupMimeType(file.path) == null) {
+      switch (getFileExtension(file.path)) {
+        case '.HEIC':
+          fileType = 'imgae/heic';
+          break;
+        case '.HEIF':
+          fileType = 'imgae/heif';
+          break;
+        default:
+          throw SBError(message: 'Unknown File Type');
+      }
+    } else {
+      fileType = lookupMimeType(file.path)!;
+    }
+    uploadFile = FileInfo.fromData(
+      name: name ?? 'my_file',
+      file: file,
+      mimeType: fileType,
+    );
+  }
 
   FileMessageParams.withUrl(
     String fileUrl, {
@@ -51,4 +67,8 @@ class FileMessageParams extends BaseMessageParams {
     ret.removeWhere((key, value) => value == null);
     return ret;
   }
+}
+
+String getFileExtension(String fileName) {
+  return "." + fileName.split('.').last;
 }

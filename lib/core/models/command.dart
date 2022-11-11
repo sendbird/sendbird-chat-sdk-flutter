@@ -1,16 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
-import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
-import 'package:sendbird_sdk/core/message/base_message.dart';
-import 'package:sendbird_sdk/core/message/file_message.dart';
-import 'package:sendbird_sdk/core/message/user_message.dart';
-import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/core/models/meta_array.dart';
-import 'package:sendbird_sdk/params/file_message_params.dart';
-import 'package:sendbird_sdk/params/user_message_params.dart';
-import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:uuid/uuid.dart';

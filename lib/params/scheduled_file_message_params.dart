@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:mime/mime.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/apple_critical_alert_options.dart';
+import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/file_info.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
 import 'package:universal_io/io.dart';
@@ -18,7 +19,7 @@ class ScheduledFileMessageParams {
   final int scheduledAt;
 
   /// Binary file data.
-  FileInfo uploadFile;
+  late FileInfo uploadFile;
 
   /// Thumbnail sizes. This parameter is the array of `Size` and works for image file only
   List<Size>? thumbnailSizes;
@@ -111,12 +112,30 @@ class ScheduledFileMessageParams {
     this.apnsBundleId,
     this.pushOption = PushNotificationDeliveryOption.normal,
     this.mentionType = MentionType.users,
-  })  : uploadFile = FileInfo.fromData(
-          name: name ?? 'my_file',
-          file: file,
-          mimeType: lookupMimeType(file.path),
-        ),
-        reqId = Uuid().v1();
+  }) {
+    String fileType;
+
+    if (lookupMimeType(file.path) == null) {
+      switch (getFileExtension(file.path)) {
+        case '.HEIC':
+          fileType = 'imgae/heic';
+          break;
+        case '.HEIF':
+          fileType = 'imgae/heif';
+          break;
+        default:
+          throw SBError(message: 'Unknown File Type');
+      }
+    } else {
+      fileType = lookupMimeType(file.path)!;
+    }
+    uploadFile = FileInfo.fromData(
+      name: name ?? 'my_file',
+      file: file,
+      mimeType: fileType,
+    );
+    reqId = Uuid().v1();
+  }
 
   ScheduledFileMessageParams.withUrl(
     String fileUrl, {
@@ -170,4 +189,8 @@ class ScheduledFileMessageParams {
     ret.removeWhere((key, value) => value == null);
     return ret;
   }
+}
+
+String getFileExtension(String fileName) {
+  return "." + fileName.split('.').last;
 }
