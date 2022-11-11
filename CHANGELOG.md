@@ -1,3 +1,7 @@
+## [3.1.18] - Nov 10, 2022
+
+- Fixed issue with `requireAuth` in `parentMessage`
+
 ## [3.1.17] - Nov 3, 2022
 
 - Updated documentation for registerPushToken
