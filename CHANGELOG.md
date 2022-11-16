@@ -1,3 +1,7 @@
+## [3.1.19] - Nov 15, 2022
+
+- Removed `user-agent` in http request header
+
 ## [3.1.18] - Nov 10, 2022
 
 - Fixed issue with `requireAuth` in `parentMessage`

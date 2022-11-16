@@ -22,7 +22,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.18';
+const sdk_version = '3.1.19';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
@@ -251,8 +251,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     _api.initialize(baseUrl: apiHostUrl, headers: {
       'SB-User-Agent': _sbUserAgent,
       'SendBird': _sendbirdHeader,
-      'User-Agent':
-          '$platform/$sdk_version/${kIsWeb ? 'oweb' : Platform.operatingSystem.toLowerCase()}',
     });
 
     var params = {
