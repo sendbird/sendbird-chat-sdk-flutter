@@ -81,7 +81,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'sending_status': _$MessageSendingStatusEnumMap[instance.sendingStatus],
       'user': instance.sender?.toJson(),
       'channel_url': instance.channelUrl,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'mention_type': _$MentionTypeEnumMap[instance.mentionType],

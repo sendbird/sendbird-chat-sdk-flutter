@@ -29,7 +29,7 @@ class GroupChannelListRequest extends ApiRequest {
       if (userId != null) 'user_id': userId,
       if (token != null) 'token': token,
       'limit': limit,
-      if (channelUrls != null) 'channelUrls': channelUrls,
+      if (channelUrls != null) 'channel_urls': channelUrls,
       'order': groupChannelListOrderEnumMap[order],
       if (searchFieldStrings.isNotEmpty) 'search_field': searchFieldStrings,
       if (searchFieldStrings.isNotEmpty) 'search_query': searchQuery,

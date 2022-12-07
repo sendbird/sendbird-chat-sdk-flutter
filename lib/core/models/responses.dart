@@ -46,6 +46,31 @@ class ChannelChangeLogsResponse extends BaseResponse {
 }
 
 @JsonSerializable(createToJson: false)
+class PollChangeLogsResponse extends BaseResponse {
+  @JsonKey(defaultValue: [], name: 'updated')
+  List<Poll>? updatedPolls;
+
+  @JsonKey(name: 'deleted')
+  List<double>? deletedPollIds;
+
+  @JsonKey(defaultValue: false)
+  final bool hasMore;
+
+  @JsonKey(name: 'next')
+  String? token;
+
+  static PollChangeLogsResponse fromJson(Map<String, dynamic> json) =>
+      _$PollChangeLogsResponseFromJson(json);
+
+  PollChangeLogsResponse({
+    this.updatedPolls,
+    this.deletedPollIds,
+    required this.hasMore,
+    this.token,
+  });
+}
+
+@JsonSerializable(createToJson: false)
 class MessageChangeLogsResponse extends BaseResponse {
   @JsonKey(defaultValue: [], name: 'updated')
   final List<BaseMessage> updatedMessages;
@@ -272,14 +297,14 @@ class MessageSearchQueryResponse extends BaseResponse {
   @JsonKey(defaultValue: false)
   bool hasNext;
 
-  @JsonKey(defaultValue: 0)
+  @JsonKey(defaultValue: -1)
   int totalCount;
 
   MessageSearchQueryResponse({
     this.results = const [],
     this.next,
     this.hasNext = false,
-    this.totalCount = 0,
+    this.totalCount = -1,
   });
 
   factory MessageSearchQueryResponse.fromJson(Map<String, dynamic> json) =>

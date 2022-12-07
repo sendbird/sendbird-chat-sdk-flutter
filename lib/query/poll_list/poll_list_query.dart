@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/features/poll/poll.dart';
+import 'package:sendbird_sdk/params/poll_list_query_params.dart';
 import 'package:sendbird_sdk/query/base_query.dart';
 import 'package:sendbird_sdk/request/poll/poll_list_get_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
@@ -12,13 +12,12 @@ part 'poll_list_query.g.dart';
 /// A query object to retrieve list of polls.
 @JsonSerializable()
 class PollListQuery extends QueryBase {
-  /// An unique identification for channel.
-  final String channelUrl;
+  /// Parameters for Poll List Query Request
+  final PollListQueryParams params;
 
-  /// Channel Type corresponding to channel_url parameter
-  final ChannelType channelType;
-
-  PollListQuery({required this.channelUrl, required this.channelType});
+  PollListQuery({required this.params}) : super() {
+    limit = params.limit;
+  }
 
   @override
   Future<List<Poll>> loadNext() async {
@@ -30,8 +29,8 @@ class PollListQuery extends QueryBase {
     final sdk = SendbirdSdk().getInternal();
     final res = await sdk.api.send<PollListQueryResponse>(
       PollListGetRequest(
-        channelType: channelType,
-        channelUrl: channelUrl,
+        channelType: params.channelType,
+        channelUrl: params.channelUrl,
         token: token,
         limit: limit,
       ),

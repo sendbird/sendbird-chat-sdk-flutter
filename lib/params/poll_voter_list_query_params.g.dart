@@ -1,30 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'banned_user_list_query.dart';
+part of 'poll_voter_list_query_params.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-BannedUserListQuery _$BannedUserListQueryFromJson(Map<String, dynamic> json) =>
-    BannedUserListQuery(
+PollVoterListQueryParams _$PollVoterListQueryParamsFromJson(
+        Map<String, dynamic> json) =>
+    PollVoterListQueryParams(
+      pollId: json['poll_id'] as int,
+      pollOptionId: json['poll_option_id'] as int,
       channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
       channelUrl: json['channel_url'] as String,
-    )
-      ..loading = json['loading'] as bool
-      ..hasNext = json['has_next'] as bool
-      ..token = json['token'] as String?
-      ..limit = json['limit'] as int;
+      limit: json['limit'] as int? ?? 20,
+    );
 
-Map<String, dynamic> _$BannedUserListQueryToJson(
-        BannedUserListQuery instance) =>
+Map<String, dynamic> _$PollVoterListQueryParamsToJson(
+        PollVoterListQueryParams instance) =>
     <String, dynamic>{
-      'loading': instance.loading,
-      'has_next': instance.hasNext,
-      'token': instance.token,
-      'limit': instance.limit,
+      'poll_id': instance.pollId,
+      'poll_option_id': instance.pollOptionId,
       'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'channel_url': instance.channelUrl,
+      'limit': instance.limit,
     };
 
 const _$ChannelTypeEnumMap = {

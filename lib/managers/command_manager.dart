@@ -234,8 +234,13 @@ class CommandManager with SdkAccessor {
   }
 
   Future<void> _processUpdatePoll(Command cmd) async {
-    final event = PollUpdateEvent.fromJson(cmd.payload);
-    eventManager.notifyPollUpdated(event);
+    //Check if poll is removed
+    if (cmd.payload['poll']['status'] == 'removed') {
+      eventManager.notifyPollDeleted(cmd.payload['poll']['id']);
+    } else {
+      final event = PollUpdateEvent.fromJson(cmd.payload);
+      eventManager.notifyPollUpdated(event);
+    }
   }
 
   Future<void> _processVote(Command cmd) async {

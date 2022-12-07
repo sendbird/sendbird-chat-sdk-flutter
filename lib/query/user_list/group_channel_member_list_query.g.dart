@@ -33,12 +33,12 @@ Map<String, dynamic> _$GroupChannelMemberListQueryToJson(
       'limit': instance.limit,
       'channel_url': instance.channelUrl,
       'nickname_starts_with': instance.nicknameStartsWith,
-      'operator_filter': _$OperatorFilterEnumMap[instance.operatorFilter],
+      'operator_filter': _$OperatorFilterEnumMap[instance.operatorFilter]!,
       'muted_member_filter':
-          _$MutedMemberFilterEnumMap[instance.mutedMemberFilter],
+          _$MutedMemberFilterEnumMap[instance.mutedMemberFilter]!,
       'member_state_filter':
           memberStateFilterEnumForQuery(instance.memberStateFilter),
-      'order': _$MemberListOrderEnumMap[instance.order],
+      'order': _$MemberListOrderEnumMap[instance.order]!,
     };
 
 const _$OperatorFilterEnumMap = {

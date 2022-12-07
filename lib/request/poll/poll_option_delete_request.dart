@@ -7,8 +7,8 @@ class PollOptionDeleteRequest extends ApiRequest {
 
   PollOptionDeleteRequest({
     required int pollId,
-    required int optionId,
+    required int pollOptionId,
   }) {
-    url = 'polls/$pollId/options/$optionId';
+    url = 'polls/$pollId/options/$pollOptionId';
   }
 }

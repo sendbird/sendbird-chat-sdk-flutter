@@ -66,19 +66,19 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
       'has_next': instance.hasNext,
       'token': instance.token,
       'limit': instance.limit,
-      'order': _$GroupChannelListOrderEnumMap[instance.order],
-      'query_type': _$GroupChannelListQueryTypeEnumMap[instance.queryType],
+      'order': _$GroupChannelListOrderEnumMap[instance.order]!,
+      'query_type': _$GroupChannelListQueryTypeEnumMap[instance.queryType]!,
       'channel_urls': instance.channelUrls,
       'member_state_filter':
           memberStateFilterEnumForQuery(instance.memberStateFilter),
       'super_channel_filter':
           groupChannelSuperFilterEnum(instance.superChannelFilter),
       'public_channel_filter':
-          _$PublicChannelFilterEnumMap[instance.publicChannelFilter],
+          _$PublicChannelFilterEnumMap[instance.publicChannelFilter]!,
       'unread_channel_filter':
-          _$UnreadChannelFilterEnumMap[instance.unreadChannelFilter],
+          _$UnreadChannelFilterEnumMap[instance.unreadChannelFilter]!,
       'channel_hidden_state_filter':
-          _$ChannelHiddenStateFilterEnumMap[instance.channelHiddenStateFilter],
+          _$ChannelHiddenStateFilterEnumMap[instance.channelHiddenStateFilter]!,
       'custom_type_start_with': instance.customTypeStartWith,
       'custom_types': instance.customTypes,
       'nickname_contains': instance.nicknameContains,
@@ -92,7 +92,7 @@ Map<String, dynamic> _$GroupChannelListQueryToJson(
           instance.metaDataValueStartWithFilter,
       'search_query': instance.searchQuery,
       'search_fields': instance.searchFields
-          .map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e])
+          .map((e) => _$GroupChannelListQuerySearchFieldEnumMap[e]!)
           .toList(),
       'include_empty_channel': instance.includeEmptyChannel,
       'include_frozen_channel': instance.includeFrozenChannel,

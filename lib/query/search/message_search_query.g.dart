@@ -49,7 +49,7 @@ Map<String, dynamic> _$MessageSearchQueryToJson(MessageSearchQuery instance) =>
       'target_user_ids': instance.targetUserIds,
       'advanced_query': instance.advancedQuery,
       'target_fields': instance.targetFields,
-      'order': _$MessageSearchQueryOrderEnumMap[instance.order],
+      'order': _$MessageSearchQueryOrderEnumMap[instance.order]!,
     };
 
 const _$MessageSearchQueryOrderEnumMap = {

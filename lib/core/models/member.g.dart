@@ -54,11 +54,11 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'metadata': instance.metaData,
       'require_auth_for_profile_image': instance.requireAuth,
       'session_token': instance.sessionToken,
-      'state': _$MemberStateEnumMap[instance.state],
+      'state': _$MemberStateEnumMap[instance.state]!,
       'is_blocked_by_me': instance.isBlockedByMe,
       'is_blocking_me': instance.isBlockingMe,
       'is_muted': instance.isMuted,
-      'role': _$RoleEnumMap[instance.role],
+      'role': _$RoleEnumMap[instance.role]!,
     };
 
 const _$MemberStateEnumMap = {

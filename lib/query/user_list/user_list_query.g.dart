@@ -29,7 +29,7 @@ Map<String, dynamic> _$UserListQueryToJson(UserListQuery instance) =>
       'limit': instance.limit,
       'channel_type': _$ChannelTypeEnumMap[instance.channelType],
       'channel_url': instance.channelUrl,
-      'query_type': _$UserListQueryTypeEnumMap[instance.queryType],
+      'query_type': _$UserListQueryTypeEnumMap[instance.queryType]!,
       'user_ids': instance.userIds,
     };
 
@@ -76,7 +76,7 @@ Map<String, dynamic> _$ApplicationUserListQueryToJson(
       'limit': instance.limit,
       'channel_type': _$ChannelTypeEnumMap[instance.channelType],
       'channel_url': instance.channelUrl,
-      'query_type': _$UserListQueryTypeEnumMap[instance.queryType],
+      'query_type': _$UserListQueryTypeEnumMap[instance.queryType]!,
       'user_ids': instance.userIds,
       'meta_data_key': instance.metaDataKey,
       'meta_data_values': instance.metaDataValues,

@@ -375,4 +375,10 @@ class EventManager {
       element.onPollVoted(event);
     });
   }
+
+  void notifyPollDeleted(int pollId) {
+    _channelHandlers.values.forEach((element) {
+      element.onPollDeleted(pollId);
+    });
+  }
 }

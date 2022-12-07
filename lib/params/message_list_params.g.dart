@@ -29,7 +29,6 @@ MessageListParams _$MessageListParamsFromJson(Map<String, dynamic> json) =>
       ..showSubChannelMessagesOnly =
           json['show_sub_channel_messages_only'] as bool
       ..includeParentMessageInfo = json['include_parent_message_info'] as bool
-      ..includePollDetails = json['include_poll_details'] as bool
       ..replyType =
           $enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type']);
 
@@ -50,7 +49,6 @@ Map<String, dynamic> _$MessageListParamsToJson(MessageListParams instance) =>
       'sender_ids': instance.senderIds,
       'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,
       'include_parent_message_info': instance.includeParentMessageInfo,
-      'include_poll_details': instance.includePollDetails,
       'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
     };
 

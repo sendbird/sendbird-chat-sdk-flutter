@@ -1,12 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-extension EnumTransform on List {
-  T enumFromString<T>(String value) {
-    return firstWhere((type) => type.toString().split('.').last == value,
-        orElse: () => null);
-  }
-}
-
 /// Represents Scheduled Status
 enum ScheduledStatus {
   pending,
@@ -33,8 +26,6 @@ enum ScheduledMessageListOrder {
 
 /// Represents poll status
 enum PollStatus {
-  @JsonValue('removed')
-  removed,
   @JsonValue('open')
   open,
   @JsonValue('closed')
@@ -419,6 +410,7 @@ enum UserListQueryType { blocked, participants, muted, banned, filtered }
 
 /// Represents result order for message search
 enum MessageSearchQueryOrder { score, timestamp }
+
 const messageSearchQueryOrderEnumMap = <MessageSearchQueryOrder, String>{
   MessageSearchQueryOrder.score: 'score',
   MessageSearchQueryOrder.timestamp: 'ts',
@@ -499,6 +491,7 @@ const unreadItemKeyEnumMap = <UnreadItemKey, String>{
 
 /// Represents user event that comes from socket
 enum UserEventCategory { none, unblock, block, friendDiscoveryReady }
+
 UserEventCategory userEventValueOf(int value) {
   switch (value) {
     case 20000:

@@ -17,7 +17,7 @@ ScheduledInfo _$ScheduledInfoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ScheduledInfoToJson(ScheduledInfo instance) =>
     <String, dynamic>{
       'scheduled_message_id': instance.scheduledMessageId,
-      'scheduled_status': _$ScheduledStatusEnumMap[instance.scheduledStatus],
+      'scheduled_status': _$ScheduledStatusEnumMap[instance.scheduledStatus]!,
       'scheduled_at': instance.scheduledAt,
     };
 

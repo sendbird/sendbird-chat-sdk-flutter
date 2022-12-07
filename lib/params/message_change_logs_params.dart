@@ -34,9 +34,6 @@ class MessageChangeLogParams extends BaseMessageFetchParams {
   @override
   bool includeParentMessageInfo = false;
 
-  /// Whether to include poll representation in the response
-  bool includePollDetails = false;
-
   /// Determines message's reply type
   @override
   @JsonKey(name: 'include_reply_type')

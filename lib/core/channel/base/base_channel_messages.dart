@@ -427,6 +427,11 @@ extension Messages on BaseChannel {
 
     if (message is UserMessage) {
       final params = UserMessageParams.withMessage(message, deepCopy: false);
+      if (params.pollId != null)
+        throw SBError(
+          message: 'Message with Poll can not be copied',
+          code: ErrorCode.notSupportedError,
+        );
       return targetChannel.sendUserMessage(
         params,
         onCompleted: onCompleted,
@@ -685,5 +690,171 @@ extension Messages on BaseChannel {
       }
       rethrow;
     }
+  }
+
+  /// Updates Poll
+  Future<Poll> updatePoll({
+    required int pollId,
+    required PollUpdateParams params,
+    OnPollCallback? onCompleted,
+  }) async {
+    Poll poll = await _sdk.api
+        .send(
+      PollUpdateRequest(
+        pollId: pollId,
+        params: params,
+      ),
+    )
+        .onError((error, stackTrace) {
+      if (onCompleted != null) {
+        onCompleted(null, SBError(message: 'Failed updating poll'));
+      }
+      throw SBError(message: "Failed updating poll");
+    });
+    if (onCompleted != null) {
+      onCompleted(poll, null);
+    }
+    return poll;
+  }
+
+  /// Delete Poll
+  Future<void> deletePoll({
+    required int pollId,
+    OnCompleteCallback? onCompleted,
+  }) async {
+    try {
+      await _sdk.api.send(PollDeleteRequest(pollId: pollId));
+      if (onCompleted != null) {
+        onCompleted(true, null);
+      }
+    } catch (e) {
+      if (onCompleted != null) {
+        onCompleted(false, SBError(message: 'Failed deleting Poll'));
+      }
+      throw SBError(message: e.toString());
+    }
+    return;
+  }
+
+  /// Close Poll
+  Future<Poll> closePoll({
+    required int pollId,
+    OnPollCallback? onCompleted,
+  }) async {
+    Poll poll = await _sdk.api
+        .send(PollCloseRequest(pollId: pollId))
+        .onError((error, stackTrace) {
+      if (onCompleted != null) {
+        onCompleted(null, SBError(message: 'Failed closing poll'));
+      }
+      throw SBError(message: "Failed closing poll");
+    });
+    if (onCompleted != null) {
+      onCompleted(poll, null);
+    }
+    return poll;
+  }
+
+  /// Add Poll Option
+  Future<Poll> addPollOption({
+    required int pollId,
+    required String optionText,
+    OnPollCallback? onCompleted,
+  }) async {
+    Poll poll = await _sdk.api
+        .send(
+      PollOptionAddRequest(
+        pollId: pollId,
+        text: optionText,
+        channelUrl: channelUrl,
+        channelType: channelType,
+      ),
+    )
+        .onError((error, stackTrace) {
+      if (onCompleted != null) {
+        onCompleted(null, SBError(message: 'Failed adding poll option'));
+      }
+      throw SBError(message: "Failed adding poll option");
+    });
+    if (onCompleted != null) {
+      onCompleted(poll, null);
+    }
+    return poll;
+  }
+
+  /// Update Poll Option
+  Future<Poll> updatePollOption({
+    required int pollId,
+    required int pollOptionId,
+    required String optionText,
+    OnPollCallback? onCompleted,
+  }) async {
+    Poll poll = await _sdk.api
+        .send(
+      PollOptionUpdateRequest(
+        pollId: pollId,
+        pollOptionId: pollOptionId,
+        text: optionText,
+      ),
+    )
+        .onError((error, stackTrace) {
+      if (onCompleted != null) {
+        onCompleted(null, SBError(message: 'Failed updating poll option'));
+      }
+      throw SBError(message: "Failed updating poll option");
+    });
+
+    if (onCompleted != null) {
+      onCompleted(poll, null);
+    }
+    return poll;
+  }
+
+  /// Delete Poll Option
+  Future<void> deletePollOption({
+    required int pollId,
+    required int pollOptionId,
+    OnCompleteCallback? onCompleted,
+  }) async {
+    try {
+      await _sdk.api.send(PollOptionDeleteRequest(
+        pollId: pollId,
+        pollOptionId: pollOptionId,
+      ));
+      if (onCompleted != null) {
+        onCompleted(true, null);
+      }
+    } catch (e) {
+      if (onCompleted != null) {
+        onCompleted(false, SBError(message: 'Failed deleting poll opiton.'));
+      }
+    }
+  }
+
+  /// Cast/ Cancel Poll Vote
+  Future<Poll> votePoll({
+    required int pollId,
+    required List<int> pollOptionIds,
+    OnPollCallback? onCompleted,
+  }) async {
+    Poll poll = await _sdk.api
+        .send(
+      PollVoteRequest(
+        pollId: pollId,
+        pollOptionIds: pollOptionIds,
+        channelUrl: channelUrl,
+        channelType: channelType,
+      ),
+    )
+        .onError((error, stackTrace) {
+      if (onCompleted != null) {
+        onCompleted(null, SBError(message: "Failed voting poll"));
+      }
+      throw SBError(message: "Failed voting poll");
+    });
+    if (onCompleted != null) {
+      onCompleted(poll, null);
+    }
+    return poll;
   }
 }

@@ -4,35 +4,38 @@ import 'package:sendbird_sdk/events/base_event.dart';
 part 'poll_vote_event.g.dart';
 
 @JsonSerializable()
-class PollUpdateVoteCount {
-  int optionId;
+class UpdatedVoteCount {
+  int pollOptionId;
   int voteCount;
 
-  PollUpdateVoteCount({
-    required this.optionId,
+  UpdatedVoteCount({
+    required this.pollOptionId,
     required this.voteCount,
   });
 
-  factory PollUpdateVoteCount.fromJson(Map<String, dynamic> json) =>
-      _$PollUpdateVoteCountFromJson(json);
+  factory UpdatedVoteCount.fromJson(Map<String, dynamic> json) =>
+      _$UpdatedVoteCountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PollUpdateVoteCountToJson(this);
+  Map<String, dynamic> toJson() => _$UpdatedVoteCountToJson(this);
 }
 
 /// Represents Poll Update event
-@JsonSerializable()
 class PollVoteEvent implements BaseEvent {
   int pollId;
-  List<PollUpdateVoteCount> updatedVoteCounts;
-  int ts;
+  int messageId;
+  Map<String, dynamic> json;
 
   PollVoteEvent({
     required this.pollId,
-    required this.ts,
-    required this.updatedVoteCounts,
+    required this.messageId,
+    required this.json,
   });
 
-  factory PollVoteEvent.fromJson(Map<String, dynamic> json) {
-    return _$PollVoteEventFromJson(json);
+  factory PollVoteEvent.fromJson(Map<String, dynamic> res) {
+    return PollVoteEvent(
+      pollId: res['poll_id'],
+      messageId: res['message_id'],
+      json: res,
+    );
   }
 }

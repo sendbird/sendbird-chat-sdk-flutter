@@ -1,26 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/events/base_event.dart';
-import 'package:sendbird_sdk/features/poll/poll.dart';
 
-part 'poll_update_event.g.dart';
-
-/// Represents Poll Update event
-@JsonSerializable()
 class PollUpdateEvent implements BaseEvent {
-  Poll poll;
-  String status;
-  int ts;
+  int pollId;
+  int messageId;
+  Map<String, dynamic> json;
 
   PollUpdateEvent({
-    required this.poll,
-    required this.status,
-    required this.ts,
+    required this.pollId,
+    required this.messageId,
+    required this.json,
   });
 
   factory PollUpdateEvent.fromJson(Map<String, dynamic> res) {
-    final status = <String, dynamic>{'status': res['poll']['status']};
-
-    res.addAll(status);
-    return _$PollUpdateEventFromJson(res);
+    return PollUpdateEvent(
+      pollId: res['poll']['id'],
+      messageId: res['poll']['message_id'],
+      json: res,
+    );
   }
 }

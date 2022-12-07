@@ -15,7 +15,6 @@ MessageChangeLogParams _$MessageChangeLogParamsFromJson(
       ..includeReplies = json['include_replies'] as bool?
       ..includeThreadInfo = json['include_thread_info'] as bool
       ..includeParentMessageInfo = json['include_parent_message_info'] as bool
-      ..includePollDetails = json['include_poll_details'] as bool
       ..replyType =
           $enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type']);
 
@@ -28,7 +27,6 @@ Map<String, dynamic> _$MessageChangeLogParamsToJson(
       'include_replies': instance.includeReplies,
       'include_thread_info': instance.includeThreadInfo,
       'include_parent_message_info': instance.includeParentMessageInfo,
-      'include_poll_details': instance.includePollDetails,
       'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
     };
 

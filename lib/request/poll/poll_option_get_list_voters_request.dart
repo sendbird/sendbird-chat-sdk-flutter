@@ -9,13 +9,13 @@ class PollOptionGetListVotersRequest extends ApiRequest {
 
   PollOptionGetListVotersRequest({
     required int pollId,
-    required int optionId,
+    required int pollOptionId,
     required String channelUrl,
     required ChannelType channelType,
     String? token,
     int limit = 100,
   }) : assert(1 <= limit && limit <= 100) {
-    url = 'polls/$pollId/options/$optionId/voters';
+    url = 'polls/$pollId/options/$pollOptionId/voters';
     queryParams = {
       'token': token,
       'channel_url': channelUrl,

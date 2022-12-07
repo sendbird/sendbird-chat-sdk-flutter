@@ -12,16 +12,12 @@ class PollRetrievalParams {
   /// Possible options for which a user can vote
   int pollId;
 
-  ///If true the option resources inside the response will have a property partial_voter_list.
-  bool showPartialVoterList;
-
   /// Channel type corresponding to channel_url parameter
   ChannelType channelType;
 
   PollRetrievalParams({
     required this.channelUrl,
     required this.pollId,
-    this.showPartialVoterList = false,
     required this.channelType,
   });
 }

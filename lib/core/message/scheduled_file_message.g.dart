@@ -22,7 +22,7 @@ ScheduledFileMessage _$ScheduledFileMessageFromJson(
       scheduledMessageId: json['scheduled_message_id'] as int,
       scheduledStatus: $enumDecode(
           _$ScheduledUserMessageStatusEnumMap, json['scheduled_status']),
-      type: $enumDecode(_$MessageTypeEnumMap, json['type']),
+      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       scheduledAt: json['scheduled_at'] as int,
       markAsRead: json['mark_as_read'] as bool?,
       channelType: $enumDecodeNullable(
@@ -79,7 +79,7 @@ Map<String, dynamic> _$ScheduledFileMessageToJson(
       'sending_status': _$MessageSendingStatusEnumMap[instance.sendingStatus],
       'user': instance.sender?.toJson(),
       'channel_url': instance.channelUrl,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'mention_type': _$MentionTypeEnumMap[instance.mentionType],
@@ -99,7 +99,7 @@ Map<String, dynamic> _$ScheduledFileMessageToJson(
       'file': instance.file.toJson(),
       'sender_id': instance.senderId,
       'scheduled_status':
-          _$ScheduledUserMessageStatusEnumMap[instance.scheduledStatus],
+          _$ScheduledUserMessageStatusEnumMap[instance.scheduledStatus]!,
       'scheduled_at': instance.scheduledAt,
       'sent_at': instance.sentAt,
       'thumbnails': instance.thumbnails?.map((e) => e.toJson()).toList(),

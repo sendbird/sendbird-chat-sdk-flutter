@@ -37,6 +37,7 @@ class ErrorCode {
   // SDK Errors
   static int unknownError = 800000;
   static int invalidInitialization = 800100;
+  static int notSupportedError = 800111;
   static int connectionRequired = 800101;
   static int connectionCanceled = 800102;
   static int invalidParameter = 800110;

@@ -42,7 +42,7 @@ Map<String, dynamic> _$PreviousMessageListQueryToJson(
       'has_next': instance.hasNext,
       'token': instance.token,
       'limit': instance.limit,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'channel_url': instance.channelUrl,
       'reverse': instance.reverse,
       'message_type_filter':
@@ -54,7 +54,7 @@ Map<String, dynamic> _$PreviousMessageListQueryToJson(
       'include_parent_message_text': instance.includeParentMessageText,
       'include_parent_message_info': instance.includeParentMessageInfo,
       'include_replies': instance.includeReplies,
-      'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
+      'include_reply_type': _$ReplyTypeEnumMap[instance.replyType]!,
       'include_thread_info': instance.includeThreadInfo,
       'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,
     };

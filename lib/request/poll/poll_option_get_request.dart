@@ -9,11 +9,11 @@ class PollOptionGetRequest extends ApiRequest {
 
   PollOptionGetRequest({
     required int pollId,
-    required int optionId,
+    required int pollOptionId,
     required String channelUrl,
     required ChannelType channelType,
   }) {
-    url = 'polls/$pollId/options/$optionId';
+    url = 'polls/$pollId/options/$pollOptionId';
     queryParams = {
       'channel_url': channelUrl,
       'channel_type': channelType.urlString,

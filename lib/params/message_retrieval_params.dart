@@ -26,9 +26,6 @@ class MessageRetrievalParams extends BaseMessageFetchParams {
   @JsonKey(name: 'with_sorted_meta_array')
   bool includeMetaArray = false;
 
-  /// Whether to include poll representation in the response
-  bool includePollDetails = false;
-
   /// Determines whether to include the parent message text in the results
   /// when the messages are replies in a thread. If the type of the parent
   /// message is `UserMessage` the  value is a `message`. If it is

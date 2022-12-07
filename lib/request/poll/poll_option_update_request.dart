@@ -8,10 +8,10 @@ class PollOptionUpdateRequest extends ApiRequest {
 
   PollOptionUpdateRequest({
     required int pollId,
-    required int optionId,
+    required int pollOptionId,
     required String text,
   }) {
-    url = 'polls/$pollId/options/$optionId';
+    url = 'polls/$pollId/options/$pollOptionId';
     body = {'text': text};
   }
 

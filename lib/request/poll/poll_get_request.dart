@@ -11,13 +11,11 @@ class PollGetRequest extends ApiRequest {
     required int pollId,
     required String channelUrl,
     required ChannelType channelType,
-    bool showPartialVoterList = false,
   }) {
     url = 'polls/$pollId';
 
     queryParams = {
       'channel_url': channelUrl,
-      'show_partial_voter_list': showPartialVoterList,
       'channel_type': channelType.urlString,
     };
   }

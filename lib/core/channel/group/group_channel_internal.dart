@@ -1,5 +1,6 @@
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
+import 'package:sendbird_sdk/core/message/admin_message.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
 import 'package:sendbird_sdk/core/models/sender.dart';
@@ -36,6 +37,11 @@ extension GroupChannelInternal on GroupChannel {
     final currentUser = SendbirdSdk().currentUser;
 
     if (!message.isSilent) {
+      if (message is AdminMessage) {
+        increaseUnreadMessageCount();
+        return true;
+      }
+
       if (message.sender?.isCurrentUser == false) {
         increaseUnreadMessageCount();
         return true;

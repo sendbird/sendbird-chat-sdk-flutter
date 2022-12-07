@@ -12,11 +12,13 @@ import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/member.dart';
+import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/features/delivery/delivery_status.dart';
 import 'package:sendbird_sdk/features/delivery/read_status.dart';
 import 'package:sendbird_sdk/features/typing/typing_status.dart';
 import 'package:sendbird_sdk/params/group_channel_params.dart';
+import 'package:sendbird_sdk/params/poll_changelogs_params.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_create_request.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_delete_request.dart';
 import 'package:sendbird_sdk/request/channel/group_channel_refresh_request.dart';
@@ -32,6 +34,7 @@ import 'package:sendbird_sdk/request/channel_preference/group_channel_freeze_req
 import 'package:sendbird_sdk/request/channel_preference/group_channel_hide_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_push_trigger_option_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_screen_shot_request.dart';
+import 'package:sendbird_sdk/request/poll/poll_changelogs_get_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_utils.dart';
@@ -255,6 +258,26 @@ class GroupChannel extends BaseChannel {
   }
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();
+
+  /// Retrieves Poll Changelogs through timestamp
+  Future<PollChangeLogsResponse> getPollChangeLogsSinceTimestamp(
+      int ts, PollChangeLogsParams params) async {
+    final sdk = SendbirdSdk().getInternal();
+
+    return sdk.api.send<PollChangeLogsResponse>(
+      PollChangelogsGetRequest(params: params, ts: ts),
+    );
+  }
+
+  /// Retrieves Poll Changelogs through token
+  Future<PollChangeLogsResponse> getPollChangeLogsSinceToken(
+      String? token, PollChangeLogsParams params) async {
+    final sdk = SendbirdSdk().getInternal();
+
+    return sdk.api.send<PollChangeLogsResponse>(
+      PollChangelogsGetRequest(params: params, token: token),
+    );
+  }
 
   /// Refreshes an [GroupChannel] with given [channelUrl]
   static Future<GroupChannel> refresh(String channelUrl) async {

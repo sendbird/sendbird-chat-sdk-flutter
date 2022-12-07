@@ -12,9 +12,6 @@ class PollUpdateParams {
   /// An additional text to accompany the poll.
   PollData? data;
 
-  /// Whether to make the votes anonymous. Default is false
-  bool? isAnonymous;
-
   /// Whether to allow user-suggested options. Default is false
   bool? allowUserSuggestion;
 
@@ -22,14 +19,14 @@ class PollUpdateParams {
   bool? allowMutipleVotes;
 
   /// Unix timestamp at which the poll will close (millisecond)
-  int? closeAt;
+  int closeAt = -1;
 
   PollUpdateParams({
     this.title,
     this.data,
-    this.isAnonymous,
     this.allowUserSuggestion,
     this.allowMutipleVotes,
+    this.closeAt = -1,
   }) : assert((title?.length ?? 0) <= 2000);
 
   Map<String, dynamic> toJson() {

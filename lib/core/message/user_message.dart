@@ -92,52 +92,6 @@ class UserMessage extends BaseMessage {
           reactions: reactions,
         );
 
-  /// Applies [PollUpdateEvent] event to this message
-  bool applyPollUpdateEvent(PollUpdateEvent event) {
-    final currentPoll = poll;
-    final eventPoll = event.poll;
-
-    if (currentPoll == null) {
-      return false;
-    }
-    final currentPollDetail = currentPoll.details;
-    final eventPollDetail = eventPoll.details;
-    if (currentPoll.id != event.poll.id) return false;
-    if (event.status == 'removed') {
-      currentPoll.details?.status = event.status;
-      return true;
-    } else if (currentPollDetail == null || eventPollDetail == null) {
-      return false;
-    } else if (currentPollDetail.updatedAt < event.ts) {
-      poll = event.poll;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /// Applies [PollVoteEvent] event to this message
-  bool applyPollVoteEvent(PollVoteEvent event) {
-    var _result = false;
-    final currentPoll = poll;
-    if (currentPoll == null) {
-      return false;
-    }
-    if (currentPoll.id != event.pollId) return false;
-    final currentPollDetail = currentPoll.details;
-    if (currentPollDetail == null) {
-      return false;
-    } else {
-      //update vote count and vote at
-      for (var option in currentPollDetail.options) {
-        if (option.applyEvent(event)) {
-          _result = true;
-        }
-      }
-      return _result;
-    }
-  }
-
   factory UserMessage.fromJson(Map<String, dynamic> res) {
     return _$UserMessageFromJson(res);
   }

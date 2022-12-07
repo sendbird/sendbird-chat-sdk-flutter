@@ -22,7 +22,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.1.19';
+const sdk_version = '3.1.20';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
@@ -262,7 +262,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
       'SB-User-Agent': _sbUserAgent,
       'include_extra_data': _extraDatas.join(','),
       'expiring_session': _eventManager.getSessionHandler() != null ? '1' : '0',
-      'include_poll_details': options.includePollDetails ? '1' : '0',
+      'include_poll_details': '1',
       if (accessToken != null) 'access_token': accessToken,
     };
     params.addAll(_webSocketParams);

@@ -14,15 +14,11 @@ class UserMessageParams extends BaseMessageParams {
   /// Unique ID for a poll
   int? pollId;
 
-  /// Whether to include poll representation in the response
-  bool includePollDetails = false;
-
   bool isChannelMention = false;
 
   UserMessageParams({
     required this.message,
     this.pollId,
-    this.includePollDetails = false,
     List<String>? targetLanguages,
     String? data,
     String? customType,
@@ -46,13 +42,13 @@ class UserMessageParams extends BaseMessageParams {
 
   UserMessageParams.withMessage(UserMessage userMessage, {bool? deepCopy})
       : message = userMessage.message,
+        pollId = userMessage.poll?.id,
         targetLanguages = userMessage.translations.keys.toList(),
         super.withMessage(userMessage, deepCopy: deepCopy);
 
   @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
-    ret['include_poll_details'] = includePollDetails;
     ret['poll_id'] = pollId;
     ret['message'] = message;
     ret['target_langs'] = targetLanguages;

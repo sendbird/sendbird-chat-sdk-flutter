@@ -8,10 +8,8 @@ part of 'poll_voter_list_query.dart';
 
 PollVoterListQuery _$PollVoterListQueryFromJson(Map<String, dynamic> json) =>
     PollVoterListQuery(
-      channelUrl: json['channel_url'] as String,
-      pollId: json['poll_id'] as int,
-      optionId: json['option_id'] as int,
-      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
+      params: PollVoterListQueryParams.fromJson(
+          json['params'] as Map<String, dynamic>),
     )
       ..loading = json['loading'] as bool
       ..hasNext = json['has_next'] as bool
@@ -24,13 +22,5 @@ Map<String, dynamic> _$PollVoterListQueryToJson(PollVoterListQuery instance) =>
       'has_next': instance.hasNext,
       'token': instance.token,
       'limit': instance.limit,
-      'channel_url': instance.channelUrl,
-      'poll_id': instance.pollId,
-      'option_id': instance.optionId,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'params': instance.params.toJson(),
     };
-
-const _$ChannelTypeEnumMap = {
-  ChannelType.group: 'group',
-  ChannelType.open: 'open',
-};

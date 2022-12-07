@@ -50,7 +50,7 @@ Map<String, dynamic> _$SenderToJson(Sender instance) => <String, dynamic>{
       'require_auth_for_profile_image': instance.requireAuth,
       'session_token': instance.sessionToken,
       'is_blocked_by_me': instance.isBlockedByMe,
-      'role': _$RoleEnumMap[instance.role],
+      'role': _$RoleEnumMap[instance.role]!,
     };
 
 const _$RoleEnumMap = {

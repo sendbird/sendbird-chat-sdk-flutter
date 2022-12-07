@@ -18,7 +18,7 @@ class ScheduledUserMessage extends BaseMessage {
   final int scheduledMessageId;
 
   /// The type of the message.
-  final MessageType type;
+  final MessageType? type;
 
   /// The time to send the message, in Unix milliseconds format.
   /// The messages are scheduled in minutes

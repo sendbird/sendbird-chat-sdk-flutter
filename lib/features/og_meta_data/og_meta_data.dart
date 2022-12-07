@@ -16,7 +16,7 @@ class OGMetaData {
 
   /// Open graph description
   @JsonKey(name: 'og:description')
-  final String? descrption;
+  final String? description;
 
   /// Open graph image
   @JsonKey(name: 'og:image')
@@ -25,7 +25,7 @@ class OGMetaData {
   OGMetaData({
     this.title,
     this.url,
-    this.descrption,
+    this.description,
     this.defaultImage,
   });
 

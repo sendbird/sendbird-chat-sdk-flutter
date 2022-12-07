@@ -22,7 +22,7 @@ Map<String, dynamic> _$OperatorListQueryToJson(OperatorListQuery instance) =>
       'has_next': instance.hasNext,
       'token': instance.token,
       'limit': instance.limit,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'channel_url': instance.channelUrl,
     };
 

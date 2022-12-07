@@ -6,32 +6,14 @@ part of 'poll_vote_event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PollUpdateVoteCount _$PollUpdateVoteCountFromJson(Map<String, dynamic> json) =>
-    PollUpdateVoteCount(
-      optionId: json['option_id'] as int,
+UpdatedVoteCount _$UpdatedVoteCountFromJson(Map<String, dynamic> json) =>
+    UpdatedVoteCount(
+      pollOptionId: json['poll_option_id'] as int,
       voteCount: json['vote_count'] as int,
     );
 
-Map<String, dynamic> _$PollUpdateVoteCountToJson(
-        PollUpdateVoteCount instance) =>
+Map<String, dynamic> _$UpdatedVoteCountToJson(UpdatedVoteCount instance) =>
     <String, dynamic>{
-      'option_id': instance.optionId,
+      'poll_option_id': instance.pollOptionId,
       'vote_count': instance.voteCount,
-    };
-
-PollVoteEvent _$PollVoteEventFromJson(Map<String, dynamic> json) =>
-    PollVoteEvent(
-      pollId: json['poll_id'] as int,
-      ts: json['ts'] as int,
-      updatedVoteCounts: (json['updated_vote_counts'] as List<dynamic>)
-          .map((e) => PollUpdateVoteCount.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$PollVoteEventToJson(PollVoteEvent instance) =>
-    <String, dynamic>{
-      'poll_id': instance.pollId,
-      'updated_vote_counts':
-          instance.updatedVoteCounts.map((e) => e.toJson()).toList(),
-      'ts': instance.ts,
     };

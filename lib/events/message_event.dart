@@ -62,7 +62,7 @@ class MessageEvent extends BaseEvent {
       return null;
     }
     final oldMentionType =
-        MentionType.values.enumFromString(oldValues?['mention_type']);
+        MentionType.values.byName(oldValues?['mention_type']);
 
     return oldMentionType != mentionType ? mentionType : null;
   }

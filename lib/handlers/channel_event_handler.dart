@@ -142,4 +142,7 @@ class ChannelEventHandler implements EventHandler {
 
   /// Informs when a Poll is voted
   void onPollVoted(PollVoteEvent event) {}
+
+  /// Informs when a Poll is deleted
+  void onPollDeleted(int pollId) {}
 }

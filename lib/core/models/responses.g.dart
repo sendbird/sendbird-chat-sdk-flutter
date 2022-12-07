@@ -21,6 +21,20 @@ ChannelChangeLogsResponse _$ChannelChangeLogsResponseFromJson(
       next: json['next'] as String?,
     );
 
+PollChangeLogsResponse _$PollChangeLogsResponseFromJson(
+        Map<String, dynamic> json) =>
+    PollChangeLogsResponse(
+      updatedPolls: (json['updated'] as List<dynamic>?)
+              ?.map((e) => Poll.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      deletedPollIds: (json['deleted'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
+          .toList(),
+      hasMore: json['has_more'] as bool? ?? false,
+      token: json['next'] as String?,
+    );
+
 MessageChangeLogsResponse _$MessageChangeLogsResponseFromJson(
         Map<String, dynamic> json) =>
     MessageChangeLogsResponse(
@@ -129,7 +143,7 @@ MessageSearchQueryResponse _$MessageSearchQueryResponseFromJson(
           [],
       next: json['end_cursor'] as String?,
       hasNext: json['has_next'] as bool? ?? false,
-      totalCount: json['total_count'] as int? ?? 0,
+      totalCount: json['total_count'] as int? ?? -1,
     );
 
 MetaDataResponse _$MetaDataResponseFromJson(Map<String, dynamic> json) =>

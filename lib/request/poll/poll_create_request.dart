@@ -7,7 +7,7 @@ class PollCreateRequest extends ApiRequest {
   @override
   final method = Method.post;
 
-  PollCreateRequest({required PollParams params}) {
+  PollCreateRequest({required PollCreateParams params}) {
     url = 'polls';
 
     body.addAll(params.toJson());

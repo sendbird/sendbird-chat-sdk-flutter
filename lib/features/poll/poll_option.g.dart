@@ -10,13 +10,10 @@ PollOption _$PollOptionFromJson(Map<String, dynamic> json) => PollOption(
       pollId: json['poll_id'] as int,
       id: json['id'] as int,
       text: json['text'] as String,
-      voteCount: json['vote_count'] as int,
+      createdBy: json['created_by'] as String?,
       createdAt: json['created_at'] as int,
+      voteCount: json['vote_count'] as int,
       updatedAt: json['updated_at'] as int,
-      partialVoters: (json['partial_voter_list'] as List<dynamic>?)
-              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
     );
 
 Map<String, dynamic> _$PollOptionToJson(PollOption instance) =>
@@ -24,9 +21,8 @@ Map<String, dynamic> _$PollOptionToJson(PollOption instance) =>
       'poll_id': instance.pollId,
       'id': instance.id,
       'text': instance.text,
-      'vote_count': instance.voteCount,
+      'created_by': instance.createdBy,
       'created_at': instance.createdAt,
+      'vote_count': instance.voteCount,
       'updated_at': instance.updatedAt,
-      'partial_voter_list':
-          instance.partialVoters.map((e) => e.toJson()).toList(),
     };

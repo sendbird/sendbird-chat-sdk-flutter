@@ -63,7 +63,7 @@ Map<String, dynamic> _$RestrictionInfoToJson(RestrictionInfo instance) =>
       'description': instance.description,
       'end_at': instance.endAt,
       'start_at': instance.startAt,
-      'type': _$RestrictionTypeEnumMap[instance.type],
+      'type': _$RestrictionTypeEnumMap[instance.type]!,
     };
 
 const _$RestrictionTypeEnumMap = {

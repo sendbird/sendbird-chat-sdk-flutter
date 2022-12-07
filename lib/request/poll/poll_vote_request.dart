@@ -9,12 +9,12 @@ class PollVoteRequest extends ApiRequest {
 
   PollVoteRequest(
       {required int pollId,
-      required List<int> optionIds,
+      required List<int> pollOptionIds,
       required String channelUrl,
       required ChannelType channelType}) {
     url = 'polls/$pollId/vote';
     body = {
-      'option_ids': optionIds,
+      'option_ids': pollOptionIds,
       'channel_url': channelUrl,
       'channel_type': channelType.urlString,
     };

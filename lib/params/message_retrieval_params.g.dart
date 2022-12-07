@@ -17,7 +17,6 @@ MessageRetrievalParams _$MessageRetrievalParamsFromJson(
           $enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type'])
       ..includeReactions = json['include_reactions'] as bool
       ..includeMetaArray = json['with_sorted_meta_array'] as bool
-      ..includePollDetails = json['include_poll_details'] as bool
       ..includeParentMessageText = json['include_parent_message_text'] as bool?
       ..includeThreadInfo = json['include_thread_info'] as bool
       ..includeReplies = json['include_replies'] as bool?
@@ -29,11 +28,10 @@ Map<String, dynamic> _$MessageRetrievalParamsToJson(
     <String, dynamic>{
       'include_reply_type': _$ReplyTypeEnumMap[instance.replyType],
       'channel_url': instance.channelUrl,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType],
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'message_id': instance.messageId,
       'include_reactions': instance.includeReactions,
       'with_sorted_meta_array': instance.includeMetaArray,
-      'include_poll_details': instance.includePollDetails,
       'include_parent_message_text': instance.includeParentMessageText,
       'include_thread_info': instance.includeThreadInfo,
       'include_replies': instance.includeReplies,

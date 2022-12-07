@@ -136,7 +136,6 @@ class ScheduledFileMessageParams {
     );
     reqId = Uuid().v1();
   }
-
   ScheduledFileMessageParams.withUrl(
     String fileUrl, {
     this.fileType,

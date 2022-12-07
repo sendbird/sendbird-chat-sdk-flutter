@@ -20,7 +20,7 @@ class ScheduledFileMessage extends BaseMessage {
   final int scheduledMessageId;
 
   /// The type of the message.
-  final MessageType type;
+  final MessageType? type;
 
   /// The information on the file in the message
   final FileInfo file;

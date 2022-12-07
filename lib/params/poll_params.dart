@@ -5,7 +5,7 @@ import 'package:sendbird_sdk/features/poll/poll_data.dart';
 part 'poll_params.g.dart';
 
 @JsonSerializable()
-class PollParams {
+class PollCreateParams {
   /// Title of a poll
   String title;
 
@@ -15,26 +15,27 @@ class PollParams {
   /// An additional text to accompany the poll.
   PollData? data;
 
-  /// Whether to make the votes anonymous. Default is false
-  bool isAnonymous = false;
-
   /// Whether to allow user-suggested options. Default is false
-  bool allowUserSuggestion = false;
+  bool? allowUserSuggestion;
 
   /// Whether to allow multiple vote casting. Default is NO
-  bool allowMutipleVotes = false;
+  bool? allowMutipleVotes;
 
   /// Unix timestamp at which the poll will close (millisecond)
   int closeAt = -1;
 
-  PollParams({
+  PollCreateParams({
     required this.title,
     required this.options,
+    this.data,
+    this.allowUserSuggestion,
+    this.allowMutipleVotes,
+    this.closeAt = -1, // Default value
   })  : assert(options.isNotEmpty && options.length <= 20),
         assert(title.length <= 2000);
 
   Map<String, dynamic> toJson() {
-    final json = _$PollParamsToJson(this);
+    final json = _$PollCreateParamsToJson(this);
     json.removeWhere((key, value) => value == null);
     return json;
   }

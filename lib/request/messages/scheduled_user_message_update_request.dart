@@ -14,7 +14,6 @@ class GroupChannelScheduledUserMessageUpdateRequest extends ApiRequest {
   }) {
     url = 'group_channels/$channelUrl/scheduled_messages/$scheduledMessageId';
 
-    //TODO CHECK TO ADD IN PARAMS OR BODY
     body.addAll(params.toJson());
   }
 

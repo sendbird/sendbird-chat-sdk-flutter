@@ -51,10 +51,10 @@ Map<String, dynamic> _$PublicGroupChannelListQueryToJson(
       'limit': instance.limit,
       'channel_urls': instance.channelUrls,
       'super_channel_filter':
-          _$SuperChannelFilterEnumMap[instance.superChannelFilter],
+          _$SuperChannelFilterEnumMap[instance.superChannelFilter]!,
       'membership_filter': _$PublicGroupChannelMembershipFilterEnumMap[
-          instance.membershipFilter],
-      'order': _$PublicGroupChannelListOrderEnumMap[instance.order],
+          instance.membershipFilter]!,
+      'order': _$PublicGroupChannelListOrderEnumMap[instance.order]!,
       'custom_type_start_with_filter': instance.customTypeStartWithFilter,
       'custom_types_filter': instance.customTypesFilter,
       'channel_name_contains_filter': instance.channelNameContainsFilter,

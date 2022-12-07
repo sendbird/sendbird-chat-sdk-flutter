@@ -1,3 +1,11 @@
+## [3.1.20] - Dec 6, 2022
+
+- Fix `GroupChannelListRequest` for `channel_urls`
+- Fix `OGMetaData` property naming
+- Include `ScheduledMessageListQueryParams`
+- Fix `EnumToString` issue
+- Fix `updateUnreadCount` for Admin Message
+
 ## [3.1.19] - Nov 15, 2022
 
 - Removed `user-agent` in http request header
