@@ -16,6 +16,12 @@ import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 part 'user_list_query.g.dart';
 part 'application_user_list_query.dart';
 
+/// #################### SECURITY TIPS ####################
+/// Before launching, you should review "Allow retrieving user list from SDK" under ⚙️ Sendbird Dashboard ->Settings -> Security.
+/// It's turned on at first to simplify running samples and implementing your first code.
+/// Most apps will want to disable "Allow retrieving user list from SDK" as that could possibly expose user information
+/// #################### SECURITY TIPS ####################
+
 /// A query object to retrieve user list
 @JsonSerializable()
 class UserListQuery extends QueryBase {
