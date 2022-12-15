@@ -309,6 +309,12 @@ class GroupChannel extends BaseChannel {
     return GroupChannel.refresh(channelUrl);
   }
 
+  ///#################### SECURITY TIPS ####################
+  /// Before launching, you should review "Allow creating group channels from SDK" under ⚙️ Sendbird Dashboard -> Settings -> Security.
+  /// It's turned on at first to simplify running samples and implementing your first code.
+  /// Most apps will want to disable "Allow creating group channels from SDK" as that could cause unwanted operations.
+  ///#################### SECURITY TIPS ####################
+
   /// Creates a channel with given [params].
   ///
   /// After this method completes successfully, channel event such as

@@ -1,3 +1,187 @@
+## [3.2.0] - Dec 14, 2022
+
+- Include Poll Feature
+- Include Scheduled Message Feature
+- Include Security Tips in ReadME
+
+## Features
+
+# Polls
+
+**Polls** is released 🎉 Here’s where we think it will be mighty.
+
+Collect feedback and customer satisfaction
+
+Drive engagement by receiving participants in preferences
+
+Run surveys and quiz shows
+
+And many more!
+
+# Scheduled messages
+
+**Scheduled messages** is released. Here’s where we think it will be advantageous.
+
+Let your users queue their messages for the future
+
+Set helpful reminders and notifications to nudge certain actions
+
+And many more!
+
+Improvements
+Please note that both Polls and Scheduled Messages are released as beta features. Thus specific parameters and properties may change to improve client’s overall experience.
+
+Stay tuned for updates as we are rolling out more exciting features and see below for exact specifications
+
+**Polls**
+Create Poll
+
+```
+Poll.create({PollCreateParams params, OnPollCallback? onCompleted})
+```
+
+Read Poll
+
+```
+Poll.get({PollRetrievalParams params, OnPollCallback? onCompleted})
+```
+
+PollListQuery
+
+```
+PollListQuery({PollListQueryParams params})
+```
+
+UserMessage.poll
+
+Update Poll
+
+```
+GroupChannel.updatePoll({int pollId, PollUpdateParams params, OnPollCallback? onCompleted})
+```
+
+Close Poll
+
+```
+GroupChannel.closePoll({ int pollId, OnPollCallback? onCompleted})
+```
+
+Delete Poll
+
+```
+GroupChannel.deletePoll({int pollId, OnCompleteCallback? onCompleted})
+```
+
+Others:
+
+Poll
+
+```
+GroupChannel.getPollChangeLogsSinceTimestamp(int ts, PollChangeLogsParams params)
+```
+
+```
+GroupChannel.getPollChangeLogsSinceToken(String? token, PollChangeLogsParams params)
+```
+
+PollData
+
+**Poll Options**
+Create Poll Option
+
+```
+GroupChannel.addPollOption({int pollId, String optionText, OnPollCallback? onCompleted})
+```
+
+Read Poll Option
+
+```
+PollOption.get(PollOptionRetrievalParams params, OnPollOptionCallback? onCompleted)
+```
+
+Poll Vote List
+
+```
+PollVoterListQuery(PollVoterListQueryParams params)
+```
+
+Update Poll Option
+
+```
+GroupChannel.updatePollOption({int pollId, int pollOptionId, String optionText, OnPollCallback? onCompleted})
+```
+
+Vote Poll
+
+```
+GroupChannel.votePoll({int pollId, List<int> pollOptionIds,OnPollCallback? onCompleted})
+```
+
+Delete Poll Option
+
+```
+GroupChannel.deletePollOption({int pollId, int pollOptionId, OnCompleteCallback? onCompleted})
+```
+
+Others:
+
+PollOption
+
+PollStatus
+
+PollVoteEvent
+
+PollUpdateEvent
+
+ChannelEventHandler - void onPollUpdated(PollUpdateEvent event) {}
+
+ChannelEventHandler - void onPollVoted(PollVoteEvent event) {}
+
+ChannelEventHandler - void onPollDeleted(int pollId) {}
+
+**Scheduled Messages**
+Create Scheduled Messages
+
+```
+GroupChannel.createScheduledUserMessage()
+GroupChannel.createScheduledFileMessage()
+```
+
+Read Scheduled Message
+
+```
+BaseMessage.getScheduledMessage()
+```
+
+ScheduledMessageListQuery
+
+ScheduledMessageRetrievalParams
+
+Update Scheduled Message
+
+```
+GroupChannel.updateScheduledUserMessage()
+GroupChannel.updateScheduledFileMessage()
+```
+
+Delete Scheduled Message
+
+```
+GroupChannel.cancelScheduledMessage()
+```
+
+Others
+
+ScheduledInfo
+
+MessageSendingStatus.scheduled
+
+BaseMessage.scheduledInfo
+
+sdk.getTotalScheduledMessageCount()
+
+TotalScheduledMessageCountParams
+
 ## [3.1.20] - Dec 6, 2022
 
 - Fix `GroupChannelListRequest` for `channel_urls`
