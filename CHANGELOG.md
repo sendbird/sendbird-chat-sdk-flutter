@@ -1,3 +1,9 @@
+## [3.2.1] - Jan 3, 2023
+
+- Fix issue with uploading prfoile with file
+- Fix issue with retrieving file messages with requireAuth
+- Fix issue with scheduled message `channel_type`
+
 ## [3.2.0] - Dec 14, 2022
 
 - Include Poll Feature
