@@ -20,7 +20,7 @@ class UserInfoUpdateRequest extends ApiRequest {
     url = 'users/${userId ?? state.userId}';
     body = {
       'nickname': nickname,
-      if (fileInfo?.file != null) 'profile_file': fileInfo?.file,
+      if (fileInfo != null) 'profile_file': fileInfo,
       if (fileInfo?.url != null) 'profile_url': fileInfo?.url,
       'discovery_keys': discoveryKeys,
       'preferred_languages': preferredLanguages,

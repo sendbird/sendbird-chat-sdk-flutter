@@ -128,7 +128,7 @@ class FileMessage extends BaseMessage {
       json['size'] = file['size'];
       json['name'] = file['name'];
       json['data'] = file['data'];
-      json['require_auth'] = file['require_auth'];
+      json['require_auth'] = json['require_auth'] ?? file['require_auth'];
     }
     return _$FileMessageFromJson(json);
   }
