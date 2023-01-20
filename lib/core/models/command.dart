@@ -159,7 +159,7 @@ class Command {
       'data': params.data,
       'custom_type': params.customType,
       'mention_type': params.mentionType,
-      'mentioned_user_ids': params.mentionedUserIds
+      'mentioned_user_ids': params.mentionedUserIds,
     };
     payload.removeWhere((key, value) => value == null);
     return Command(cmd: CommandString.userMessageUpdate, payload: payload);

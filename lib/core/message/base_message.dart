@@ -146,6 +146,11 @@ class BaseMessage {
   /// Scheduled message information
   ScheduledInfo? scheduledInfo;
 
+  /// Only featured in [GroupChannel]
+  /// Message Template used for Sendbird UI KIT
+  @JsonKey(name: "extended_message", defaultValue: {})
+  Map<String, dynamic> messageTemplate;
+
   /// default constructor
   BaseMessage({
     required this.message,
@@ -176,6 +181,7 @@ class BaseMessage {
     this.ogMetaData,
     this.reactions = const <Reaction>[],
     this.scheduledInfo,
+    this.messageTemplate = const {},
   }) {
     if (parentMessage != null && parentMessageId != null) {
       parentMessage['message_id'] = parentMessageId;

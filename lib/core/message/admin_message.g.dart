@@ -60,7 +60,9 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       ..scheduledInfo = json['scheduled_info'] == null
           ? null
           : ScheduledInfo.fromJson(
-              json['scheduled_info'] as Map<String, dynamic>);
+              json['scheduled_info'] as Map<String, dynamic>)
+      ..messageTemplate =
+          json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
     <String, dynamic>{
@@ -92,6 +94,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
+      'extended_message': instance.messageTemplate,
     };
 
 const _$ChannelTypeEnumMap = {

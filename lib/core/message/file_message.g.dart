@@ -65,10 +65,13 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
           [],
       replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
       parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
-    )..scheduledInfo = json['scheduled_info'] == null
-        ? null
-        : ScheduledInfo.fromJson(
-            json['scheduled_info'] as Map<String, dynamic>);
+    )
+      ..scheduledInfo = json['scheduled_info'] == null
+          ? null
+          : ScheduledInfo.fromJson(
+              json['scheduled_info'] as Map<String, dynamic>)
+      ..messageTemplate =
+          json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
     <String, dynamic>{
@@ -101,6 +104,7 @@ Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
+      'extended_message': instance.messageTemplate,
       'url': instance.url,
       'name': instance.name,
       'size': instance.size,

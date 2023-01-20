@@ -68,10 +68,13 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           (json['translation_target_languages'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
-    )..scheduledInfo = json['scheduled_info'] == null
-        ? null
-        : ScheduledInfo.fromJson(
-            json['scheduled_info'] as Map<String, dynamic>);
+    )
+      ..scheduledInfo = json['scheduled_info'] == null
+          ? null
+          : ScheduledInfo.fromJson(
+              json['scheduled_info'] as Map<String, dynamic>)
+      ..messageTemplate =
+          json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
     <String, dynamic>{
@@ -104,6 +107,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
+      'extended_message': instance.messageTemplate,
       'translations': instance.translations,
       'translation_target_languages': instance.translationTargetLanguages,
       'poll': instance.poll?.toJson(),

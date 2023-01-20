@@ -70,6 +70,8 @@ ScheduledFileMessage _$ScheduledFileMessageFromJson(
               ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
               .toList() ??
           []
+      ..messageTemplate =
+          json['extended_message'] as Map<String, dynamic>? ?? {}
       ..requireAuth = json['require_auth'] as bool?;
 
 Map<String, dynamic> _$ScheduledFileMessageToJson(
@@ -94,6 +96,7 @@ Map<String, dynamic> _$ScheduledFileMessageToJson(
       'data': instance.data,
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
+      'extended_message': instance.messageTemplate,
       'scheduled_message_id': instance.scheduledMessageId,
       'type': _$MessageTypeEnumMap[instance.type],
       'file': instance.file.toJson(),
