@@ -212,14 +212,28 @@ class HttpClient {
 
     body?.forEach((key, value) {
       if (value is FileInfo) {
-        final part = http.MultipartFile(
-          key,
-          value.file!.openRead(),
-          value.file!.lengthSync(),
-          filename: value.name,
-          contentType: MediaType.parse(value.mimeType!),
-        );
-        request.files.add(part);
+        if (value.fileBytes != null) {
+          //* Bytes
+          final part = http.MultipartFile.fromBytes(
+            key,
+            value.fileBytes!,
+            filename: value.name,
+            contentType: value.mimeType == null || value.mimeType == ""
+                ? null
+                : MediaType.parse(value.mimeType!),
+          );
+          request.files.add(part);
+        } else {
+          //* File
+          final part = http.MultipartFile(
+            key,
+            value.file!.openRead(),
+            value.file!.lengthSync(),
+            filename: value.name,
+            contentType: MediaType.parse(value.mimeType!),
+          );
+          request.files.add(part);
+        }
       } else if (value is List<String>) {
         request.fields[key] = value.join(',');
       } else if (value is List) {

@@ -1,6 +1,7 @@
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
+import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 
 /// Represents base class for message parameters.
@@ -26,6 +27,9 @@ class BaseMessageParams {
   /// the message will be arrived to mentioned users.
   List<String>? mentionedUserIds;
 
+  /// The list of users who was mentioned together with this message.
+  List<User>? mentionedUsers;
+
   /// The unique ID of a parent message. A parent message is a message
   /// that has a thread of replies. If the message sent through the
   /// [BaseChannel.sendUserMessage] or [BaseChannel.sendFileMessage] method
@@ -46,6 +50,7 @@ class BaseMessageParams {
     this.mentionedUserIds,
     this.parentMessageId,
     this.replyToChannel = false,
+    this.mentionedUsers,
   });
 
   BaseMessageParams.withMessage(BaseMessage message, {bool? deepCopy}) {
@@ -53,6 +58,7 @@ class BaseMessageParams {
     customType = message.customType;
     metaArrays = message.metaArrays;
     mentionType = message.mentionType;
+    mentionedUsers = message.mentionedUsers;
     mentionedUserIds = message.mentionedUsers.map((e) => e.userId).toList();
     if (deepCopy != null && deepCopy) {
       parentMessageId = message.parentMessageId;
@@ -71,6 +77,7 @@ class BaseMessageParams {
         'push_option': pushOption.asString(),
       'parent_message_id': parentMessageId,
       'reply_to_channel': replyToChannel,
+      'mentioned_users': mentionedUsers?.map((e) => e.toJson()).toList(),
     };
 
     ret.removeWhere((key, value) => value == null);

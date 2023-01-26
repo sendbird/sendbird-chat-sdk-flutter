@@ -1,3 +1,7 @@
+## [3.2.3] - Jan 26, 2023
+
+- Include `FileMessageParams.withFileBytes` to support sending file message with bytes for web
+
 ## [3.2.2] - Jan 19, 2023
 
 - Include Pending Message Mention Property

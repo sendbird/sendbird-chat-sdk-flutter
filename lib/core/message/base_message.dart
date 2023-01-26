@@ -37,7 +37,6 @@ class BaseMessage {
   final String? requestId;
 
   /// Unique message ID.
-  //or msg_id
   @JsonKey(defaultValue: 0)
   final int messageId;
 
@@ -63,11 +62,15 @@ class BaseMessage {
 
   /// The list of users who was mentioned together with this message.
   @JsonKey(defaultValue: [])
-  final List<User> mentionedUsers;
+  List<User> mentionedUsers;
 
   /// Mention type that this message uses
   @JsonKey(unknownEnumValue: null)
   final MentionType? mentionType;
+
+  /// Mention to specific users. If sends a message with this field,
+  /// the message will be arrived to mentioned users.
+  final List<String>? mentionedUserIds;
 
   /// Represents target user ids to mention when success to send this
   /// message. This value is valid only when the message is a pending
@@ -159,6 +162,7 @@ class BaseMessage {
     required this.channelType,
     this.sender,
     this.mentionedUsers = const <User>[],
+    this.mentionedUserIds = const <String>[],
     this.requestId,
     this.messageId = 0,
     this.mentionType,

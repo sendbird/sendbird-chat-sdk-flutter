@@ -33,6 +33,7 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
+
     // final req = ChannelUserMessageSendRequest(
     //   channelType: channelType,
     //   channelUrl: channelUrl,
@@ -80,11 +81,15 @@ extension Messages on BaseChannel {
       params,
       Uuid().v1(),
     );
+
     final pending = BaseMessage.msgFromJson<UserMessage>(
       cmd.payload,
       channelType: channelType,
       type: cmd.cmd,
-    )!; //UserMessage.fromJson(cmd.payload);
+    )!;
+
+    //return mentionedUsers if params include mentionedUsers
+    pending.mentionedUsers = params.mentionedUsers ?? [];
 
     if (!_sdk.state.hasActiveUser) {
       final error = ConnectionRequiredError();
@@ -100,6 +105,8 @@ extension Messages on BaseChannel {
 
     _sdk.cmdManager.sendCommand(cmd).then((result) {
       if (result == null) return;
+      result.payload['mentioned_users'] =
+          params.mentionedUsers?.map((e) => e.toJson()).toList();
       final msg = BaseMessage.msgFromJson<UserMessage>(
         result.payload,
         type: result.cmd,
@@ -270,6 +277,8 @@ extension Messages on BaseChannel {
         } else {
           _sdk.cmdManager.sendCommand(cmd).then((result) {
             if (result == null) return;
+            result.payload['mentioned_users'] =
+                params.mentionedUsers?.map((e) => e.toJson()).toList();
             final msg = BaseMessage.msgFromJson<FileMessage>(
               result.payload,
               type: result.cmd,

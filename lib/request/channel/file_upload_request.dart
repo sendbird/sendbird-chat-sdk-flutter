@@ -16,7 +16,9 @@ class ChannelFileUploadRequest extends ApiRequest {
     OnUploadProgressCallback? onProgress,
   }) : super() {
     url = 'storage/file';
-    final fileSize = params.uploadFile.file?.lengthSync() ?? 0;
+    final fileSize = params.uploadFile.file?.lengthSync() ??
+        params.uploadFile.fileBytes?.lengthInBytes ??
+        0;
     if (fileSize == 0) {
       throw InvalidParameterError();
     }
@@ -37,6 +39,7 @@ class ChannelFileUploadRequest extends ApiRequest {
             '${value.width.round()},${value.height.round()}');
 
     isMultipart = true;
+
     progress = onProgress;
   }
 

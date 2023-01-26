@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:universal_io/io.dart';
 
@@ -24,7 +25,17 @@ class FileInfo {
   @JsonKey(name: 'size')
   int? fileSize;
 
-  FileInfo({this.name, this.url, this.mimeType, this.fileSize, this.file});
+  /// file bytes
+  @JsonKey(ignore: true)
+  Uint8List? fileBytes;
+
+  FileInfo(
+      {this.name,
+      this.url,
+      this.mimeType,
+      this.fileSize,
+      this.file,
+      this.fileBytes});
 
   FileInfo.fromData({
     required this.name,
@@ -32,6 +43,13 @@ class FileInfo {
     required this.mimeType,
   })  : fileSize = file?.lengthSync(),
         url = null;
+
+  FileInfo.fromBytes({
+    required this.name,
+    required this.fileBytes,
+    required this.mimeType,
+    this.file = null,
+  }) : url = null;
 
   FileInfo.fromUrl({
     required this.url,
@@ -45,6 +63,7 @@ class FileInfo {
 
   Map<String, dynamic> toJson() => _$FileInfoToJson(this);
 
-  bool get hasBinary => file != null;
-  bool get hasSource => file != null || (url != null && url != '');
+  bool get hasBinary => file != null || fileBytes != null;
+  bool get hasSource =>
+      file != null || (url != null && url != '') || fileBytes != null;
 }

@@ -34,6 +34,9 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           (json['requested_mention_user_ids'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
+      mentionedUserIds: (json['mentioned_user_ids'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       createdAt: json['created_at'] as int? ?? 0,
       updatedAt: json['updated_at'] as int? ?? 0,
       parentMessageId: json['parent_message_id'] as int?,
@@ -88,6 +91,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'mentioned_user_ids': instance.mentionedUserIds,
       'requested_mention_user_ids': instance.requestedMentionUserIds,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,

@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:universal_io/io.dart';
 import 'dart:ui';
 
@@ -21,7 +23,13 @@ class FileMessageParams extends BaseMessageParams {
         ),
         super.withMessage(fileMessage, deepCopy: deepCopy);
 
+  /// NOTE: Not supported for Web
   FileMessageParams.withFile(File file, {String? name}) {
+    if (kIsWeb) {
+      throw SBError(
+        message: "`FileMessageParams.withFile` is not supported for web",
+      );
+    }
     String fileType;
 
     if (lookupMimeType(file.path) == null) {
@@ -45,6 +53,30 @@ class FileMessageParams extends BaseMessageParams {
     );
   }
 
+  FileMessageParams.withFileBytes(Uint8List data,
+      {String? name, String? fileExtensionType}) {
+    String fileType = "";
+    final mime = lookupMimeType('', headerBytes: data);
+
+    if (mime == null) {
+      if (fileExtensionType != null) {
+        fileType = fileExtensionType;
+      } else {
+        logger.e(StackTrace.current, "File Extension Type UNKNOWN");
+        throw Exception(
+            "File Extension Type UNKNOWN. Please include `fileExtensionType`");
+      }
+    } else {
+      fileType = mime;
+    }
+
+    uploadFile = FileInfo.fromBytes(
+      name: name ?? 'my_file',
+      fileBytes: data,
+      mimeType: fileType,
+    );
+  }
+
   FileMessageParams.withUrl(
     String fileUrl, {
     String? mimeType,
@@ -60,6 +92,15 @@ class FileMessageParams extends BaseMessageParams {
   @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
+    if (ret['mentioned_user_ids'] == null) {
+      List? result = ret['mentioned_users'];
+
+      var userList = result?.map((e) => e['user_id'].toString()).toList();
+
+      if (userList?.isNotEmpty ?? false) {
+        ret['mentioned_user_ids'] = userList;
+      }
+    }
     ret['url'] = uploadFile.url;
     ret['name'] = uploadFile.name;
     ret['size'] = uploadFile.fileSize;

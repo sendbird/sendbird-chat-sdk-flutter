@@ -53,6 +53,17 @@ class UserMessageParams extends BaseMessageParams {
   @override
   Map<String, dynamic> toJson() {
     final ret = super.toJson();
+
+    if (ret['mentioned_user_ids'] == null) {
+      List? result = ret['mentioned_users'];
+
+      var userList = result?.map((e) => e['user_id'].toString()).toList();
+
+      if (userList?.isNotEmpty ?? false) {
+        ret['mentioned_user_ids'] = userList;
+      }
+    }
+
     ret['poll_id'] = pollId;
     ret['message'] = message;
     ret['target_langs'] = targetLanguages;

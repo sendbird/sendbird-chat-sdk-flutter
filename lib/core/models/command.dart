@@ -133,9 +133,14 @@ class Command {
     UserMessageParams params,
     String requestId,
   ) {
+    List<String>? mentionedUserList;
+    if (params.mentionedUsers != null) {
+      mentionedUserList = params.mentionedUsers!.map((e) => e.userId).toList();
+    }
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
       'created_at': DateTime.now().millisecondsSinceEpoch,
+      'mentioned_user_ids': params.mentionedUserIds ?? mentionedUserList,
     };
 
     payload.addAll(params.toJson());
@@ -152,6 +157,11 @@ class Command {
     int messageId,
     UserMessageParams params,
   ) {
+    List<String>? mentionedUserList;
+    if (params.mentionedUsers != null) {
+      mentionedUserList = params.mentionedUsers!.map((e) => e.userId).toList();
+    }
+
     final payload = <String, dynamic>{
       'msg_id': messageId,
       'channel_url': channelUrl,
@@ -159,7 +169,7 @@ class Command {
       'data': params.data,
       'custom_type': params.customType,
       'mention_type': params.mentionType,
-      'mentioned_user_ids': params.mentionedUserIds,
+      'mentioned_user_ids': params.mentionedUserIds ?? mentionedUserList,
     };
     payload.removeWhere((key, value) => value == null);
     return Command(cmd: CommandString.userMessageUpdate, payload: payload);
@@ -192,13 +202,17 @@ class Command {
 
   static Command buildUpdateFileMessage(
       String channelUrl, int messageId, FileMessageParams params) {
+    List<String>? mentionedUserList;
+    if (params.mentionedUsers != null) {
+      mentionedUserList = params.mentionedUsers!.map((e) => e.userId).toList();
+    }
     final payload = <String, dynamic>{
       'channel_url': channelUrl,
       'msg_id': messageId,
       'data': params.data,
       'custom_type': params.customType,
       'mention_type': params.mentionType,
-      'mentioned_user_ids': params.mentionedUserIds
+      'mentioned_user_ids': params.mentionedUserIds ?? mentionedUserList,
     };
     payload.removeWhere((key, value) => value == null);
     return Command(cmd: CommandString.fileMessageUpdate, payload: payload);
