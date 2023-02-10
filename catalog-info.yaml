@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sendbird-chat-sdk-flutter
+  description: Flutter Chat SDK (for release)
+  annotations:
+    github.com/project-slug: sendbird/sendbird-chat-sdk-flutter
+spec:
+  type: library
+  lifecycle: production
+  owner: dep-client-platform
+  system: sendbird-chat
