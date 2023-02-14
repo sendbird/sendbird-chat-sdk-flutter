@@ -12,7 +12,16 @@ class UserPushTokenUnregisterRequest extends ApiRequest {
     required String token,
     String? userId,
   }) : super(userId: userId) {
-    final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
+    var typeString = '';
+    
+    if (type == PushTokenType.fcm) {
+      typeString = 'gcm';
+    } else if (type == PushTokenType.hms) {
+      typeString = 'huawei';
+    } else {
+      typeString = type.asString();
+    }
+
     url = 'users/${userId ?? state.userId}/push/$typeString/$token';
   }
 }
