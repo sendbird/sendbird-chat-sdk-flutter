@@ -16,7 +16,7 @@ import 'package:sendbird_sdk/core/models/command.dart';
 // }
 
 Future<Command> parseCommand(String data) async {
-  return compute(parseCommandData, data);
+  return await parseCommandData(data);
 }
 
 Command parseCommandData(String data) {
@@ -28,8 +28,8 @@ Command parseCommandData(String data) {
   return ret;
 }
 
-Future<BaseMessage?> parseMessageData(Map<String, dynamic> data) {
-  return compute(parseMessageFromData, data);
+Future<BaseMessage?> parseMessageData(Map<String, dynamic> data) async {
+  return await parseMessageFromData(data);
 }
 
 BaseMessage? parseMessageFromData(Map<String, dynamic> data) {
@@ -37,7 +37,7 @@ BaseMessage? parseMessageFromData(Map<String, dynamic> data) {
 }
 
 Future<BaseMessage?> parseMessage(Command? data) async {
-  return compute(parseMessageFromCommand, data);
+  return await parseMessageFromCommand(data);
 }
 
 BaseMessage? parseMessageFromCommand(Command? command) {

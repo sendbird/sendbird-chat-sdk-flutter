@@ -1,3 +1,8 @@
+## [3.2.4] - Feb 20, 2023
+
+- Include param `shouldRemoveOperatorStatus` in GroupChannelLeaveRequest to remove operator status when leaving groupchannel
+- Improve speed for sending messages
+
 ## [3.2.3] - Jan 26, 2023
 
 - Include `FileMessageParams.withFileBytes` to support sending file message with bytes for web
