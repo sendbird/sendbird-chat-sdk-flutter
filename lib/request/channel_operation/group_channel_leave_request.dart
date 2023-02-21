@@ -5,8 +5,14 @@ class GroupChannelLeaveRequest extends ApiRequest {
   @override
   final method = Method.put;
 
-  GroupChannelLeaveRequest({required String channelUrl, String? userId})
-      : super(userId: userId) {
+  GroupChannelLeaveRequest({
+    required String channelUrl,
+    String? userId,
+    bool? shouldRemoveOperatorStatus,
+  }) : super(userId: userId) {
     url = 'group_channels/$channelUrl/leave';
+    body = {
+      'should_remove_operator_status': shouldRemoveOperatorStatus ?? false
+    };
   }
 }

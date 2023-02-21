@@ -1,6 +1,9 @@
-## [3.2.4] - Feb 20, 2023
+## [3.2.5] - Feb 20, 2023
 
 - Include param `shouldRemoveOperatorStatus` in GroupChannelLeaveRequest to remove operator status when leaving groupchannel
+
+## [3.2.4] - Feb 20, 2023
+
 - Improve speed for sending messages
 
 ## [3.2.3] - Jan 26, 2023

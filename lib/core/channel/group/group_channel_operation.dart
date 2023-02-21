@@ -59,8 +59,13 @@ extension GroupChannelOperations on GroupChannel {
   ///
   /// After this method completes successfully, channel event
   /// [ChannelEventHandler.onUserLeaved] will be invoked.
-  Future<void> leave() async {
-    await _sdk.api.send(GroupChannelLeaveRequest(channelUrl: channelUrl));
+  /// When [shouldRemoveOperatorStatus] is true it will remove
+  /// user from operator if user is operator
+  Future<void> leave({bool? shouldRemoveOperatorStatus}) async {
+    await _sdk.api.send(GroupChannelLeaveRequest(
+      channelUrl: channelUrl,
+      shouldRemoveOperatorStatus: shouldRemoveOperatorStatus,
+    ));
     invitedAt = 0;
     joinedAt = 0;
   }
