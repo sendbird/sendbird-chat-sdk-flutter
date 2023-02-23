@@ -20,7 +20,7 @@ class GroupChannelMarkAsReadApiRequest extends ApiRequest {
   }) : super(userId: userId) {
     url = 'users/${userId ?? state.userId}/mark_as_read_all';
     body = {
-      if (channelUrls != null && channelUrls.isEmpty)
+      if (channelUrls != null && channelUrls.isNotEmpty)
         'channel_urls': channelUrls,
     };
   }

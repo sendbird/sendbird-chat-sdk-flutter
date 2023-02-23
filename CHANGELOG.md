@@ -1,3 +1,7 @@
+## [3.2.6] - Feb 22, 2023
+
+- Fix `mark_as_read_all` method not returning the `channel_urls`
+
 ## [3.2.5] - Feb 20, 2023
 
 - Include param `shouldRemoveOperatorStatus` in GroupChannelLeaveRequest to remove operator status when leaving groupchannel
