@@ -17,7 +17,7 @@ class UserMessageParams extends BaseMessageParams {
   bool isChannelMention = false;
 
   /// Message Template
-  Map<String, dynamic>? messageTemplate;
+  Map<String, dynamic>? extendedMessage;
 
   UserMessageParams({
     required this.message,
@@ -32,7 +32,7 @@ class UserMessageParams extends BaseMessageParams {
     List<String>? mentionedUserIds,
     List<MessageMetaArray>? metaArrays,
     bool? replyToChannel,
-    this.messageTemplate,
+    this.extendedMessage,
   })  : targetLanguages = targetLanguages ?? [],
         super(
           replyToChannel: replyToChannel ?? false,
@@ -70,7 +70,7 @@ class UserMessageParams extends BaseMessageParams {
     if (targetLanguages.isNotEmpty) {
       ret['translations'] = {for (var e in targetLanguages) e: ''};
     }
-    ret['extended_message'] = messageTemplate;
+    ret['extended_message'] = extendedMessage;
     ret.removeWhere((key, value) => value == null);
     return ret;
   }

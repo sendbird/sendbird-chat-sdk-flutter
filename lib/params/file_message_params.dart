@@ -20,6 +20,8 @@ class FileMessageParams extends BaseMessageParams {
       : uploadFile = FileInfo.fromUrl(
           url: fileMessage.url,
           mimeType: fileMessage.type,
+          fileSize: fileMessage.size,
+          name: fileMessage.name,
         ),
         super.withMessage(fileMessage, deepCopy: deepCopy);
 

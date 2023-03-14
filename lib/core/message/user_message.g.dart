@@ -76,7 +76,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           ? null
           : ScheduledInfo.fromJson(
               json['scheduled_info'] as Map<String, dynamic>)
-      ..messageTemplate =
+      ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
@@ -111,7 +111,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
-      'extended_message': instance.messageTemplate,
+      'extended_message': instance.extendedMessage,
       'translations': instance.translations,
       'translation_target_languages': instance.translationTargetLanguages,
       'poll': instance.poll?.toJson(),

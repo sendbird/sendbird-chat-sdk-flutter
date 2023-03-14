@@ -33,7 +33,6 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-
     // final req = ChannelUserMessageSendRequest(
     //   channelType: channelType,
     //   channelUrl: channelUrl,
@@ -434,8 +433,8 @@ extension Messages on BaseChannel {
       throw InvalidParameterError();
     }
 
-    // Do not copy [messageTemplate] in message
-    message.messageTemplate.clear();
+    // Do not copy [extendedMessage] in message
+    message.extendedMessage.clear();
 
     if (message is UserMessage) {
       final params = UserMessageParams.withMessage(message, deepCopy: false);

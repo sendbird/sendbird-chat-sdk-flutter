@@ -73,7 +73,7 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
           ? null
           : ScheduledInfo.fromJson(
               json['scheduled_info'] as Map<String, dynamic>)
-      ..messageTemplate =
+      ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
@@ -108,7 +108,7 @@ Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
-      'extended_message': instance.messageTemplate,
+      'extended_message': instance.extendedMessage,
       'url': instance.url,
       'name': instance.name,
       'size': instance.size,

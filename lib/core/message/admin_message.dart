@@ -2,12 +2,12 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
-import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
 import 'package:sendbird_sdk/features/reaction/reaction.dart';
-import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 import 'package:sendbird_sdk/features/threading/thread_info.dart';
+import 'package:sendbird_sdk/core/models/sender.dart';
+import 'package:sendbird_sdk/features/scheduled_message/scheduled_info.dart';
 
 part 'admin_message.g.dart';
 
@@ -30,7 +30,7 @@ class AdminMessage extends BaseMessage {
     int createdAt = 0,
     int updatedAt = 0,
     int? parentMessageId,
-    String? parentMesageText,
+    String? parentMessageText,
     Map<String, dynamic>? parentMessage,
     ThreadInfo? threadInfo,
     List<MessageMetaArray>? metaArrays,
@@ -44,6 +44,7 @@ class AdminMessage extends BaseMessage {
     OGMetaData? ogMetaData,
     List<Reaction>? reactions,
     bool replyToChannel = false,
+    Map<String, dynamic>? extendedMessage,
   }) : super(
           replyToChannel: replyToChannel,
           requestId: requestId,
@@ -59,7 +60,7 @@ class AdminMessage extends BaseMessage {
           createdAt: createdAt,
           updatedAt: updatedAt,
           parentMessageId: parentMessageId,
-          parentMessageText: parentMesageText,
+          parentMessageText: parentMessageText,
           parentMessage: parentMessage,
           threadInfo: threadInfo,
           metaArrays: metaArrays,
@@ -72,6 +73,7 @@ class AdminMessage extends BaseMessage {
           data: data,
           ogMetaData: ogMetaData,
           reactions: reactions,
+          extendedMessage: extendedMessage ?? {},
         );
 
   factory AdminMessage.fromJson(Map<String, dynamic> json) =>

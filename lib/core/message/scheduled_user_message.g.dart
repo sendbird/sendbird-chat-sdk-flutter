@@ -66,7 +66,7 @@ ScheduledUserMessage _$ScheduledUserMessageFromJson(
               ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
               .toList() ??
           []
-      ..messageTemplate =
+      ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {};
 
 Map<String, dynamic> _$ScheduledUserMessageToJson(
@@ -91,7 +91,7 @@ Map<String, dynamic> _$ScheduledUserMessageToJson(
       'data': instance.data,
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
-      'extended_message': instance.messageTemplate,
+      'extended_message': instance.extendedMessage,
       'scheduled_message_id': instance.scheduledMessageId,
       'type': _$MessageTypeEnumMap[instance.type],
       'scheduled_at': instance.scheduledAt,

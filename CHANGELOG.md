@@ -1,3 +1,8 @@
+## [3.2.7] - Mar 13, 2023
+
+- Copy `fileName` and `fileSize` when copyMessage for FileMessage
+- Include `extendedMessage` for AdminMessage
+
 ## [3.2.6] - Feb 22, 2023
 
 - Fix `mark_as_read_all` method not returning the `channel_urls`

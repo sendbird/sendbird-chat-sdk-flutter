@@ -33,6 +33,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       createdAt: json['created_at'] as int? ?? 0,
       updatedAt: json['updated_at'] as int? ?? 0,
       parentMessageId: json['parent_message_id'] as int?,
+      parentMessageText: json['parent_message_text'] as String?,
       parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
       threadInfo: json['thread_info'] == null
           ? null
@@ -56,6 +57,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
               .toList() ??
           [],
       replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
+      extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
     )
       ..sender = json['user'] == null
           ? null
@@ -63,9 +65,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       ..scheduledInfo = json['scheduled_info'] == null
           ? null
           : ScheduledInfo.fromJson(
-              json['scheduled_info'] as Map<String, dynamic>)
-      ..messageTemplate =
-          json['extended_message'] as Map<String, dynamic>? ?? {};
+              json['scheduled_info'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
     <String, dynamic>{
@@ -85,6 +85,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'updated_at': instance.updatedAt,
       'is_reply_to_channel': instance.replyToChannel,
       'parent_message_id': instance.parentMessageId,
+      'parent_message_text': instance.parentMessageText,
       'parent_message_info': instance.parentMessage?.toJson(),
       'thread_info': instance.threadInfo?.toJson(),
       'sorted_metaarray': instance.metaArrays?.map((e) => e.toJson()).toList(),
@@ -98,7 +99,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'og_tag': instance.ogMetaData?.toJson(),
       'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
       'scheduled_info': instance.scheduledInfo?.toJson(),
-      'extended_message': instance.messageTemplate,
+      'extended_message': instance.extendedMessage,
     };
 
 const _$ChannelTypeEnumMap = {
