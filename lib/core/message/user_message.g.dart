@@ -71,6 +71,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           (json['translation_target_languages'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
+      isPinnedMessage: json['is_pinned_message'] as bool? ?? false,
     )
       ..scheduledInfo = json['scheduled_info'] == null
           ? null
@@ -81,6 +82,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
     <String, dynamic>{
+      'is_pinned_message': instance.isPinnedMessage,
       'request_id': instance.requestId,
       'message_id': instance.messageId,
       'message': instance.message,

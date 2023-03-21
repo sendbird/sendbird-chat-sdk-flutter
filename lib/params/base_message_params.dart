@@ -6,6 +6,9 @@ import 'package:sendbird_sdk/utils/extensions.dart';
 
 /// Represents base class for message parameters.
 class BaseMessageParams {
+  /// Pinned Message
+  bool isPinnedMessage = false;
+
   /// Message data. The default value is `null`
   String? data;
 
@@ -51,6 +54,7 @@ class BaseMessageParams {
     this.parentMessageId,
     this.replyToChannel = false,
     this.mentionedUsers,
+    this.isPinnedMessage = false,
   });
 
   BaseMessageParams.withMessage(BaseMessage message, {bool? deepCopy}) {
@@ -59,6 +63,7 @@ class BaseMessageParams {
     metaArrays = message.metaArrays;
     mentionType = message.mentionType;
     mentionedUsers = message.mentionedUsers;
+    isPinnedMessage = message.isPinnedMessage;
     mentionedUserIds = message.mentionedUsers.map((e) => e.userId).toList();
     if (deepCopy != null && deepCopy) {
       parentMessageId = message.parentMessageId;
@@ -78,6 +83,7 @@ class BaseMessageParams {
       'parent_message_id': parentMessageId,
       'reply_to_channel': replyToChannel,
       'mentioned_users': mentionedUsers?.map((e) => e.toJson()).toList(),
+      'pin_message': isPinnedMessage,
     };
 
     ret.removeWhere((key, value) => value == null);

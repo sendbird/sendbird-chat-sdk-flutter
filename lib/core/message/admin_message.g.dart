@@ -58,6 +58,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
           [],
       replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
       extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
+      isPinnedMessage: json['is_pinned_message'] as bool? ?? false,
     )
       ..sender = json['user'] == null
           ? null
@@ -69,6 +70,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
 
 Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
     <String, dynamic>{
+      'is_pinned_message': instance.isPinnedMessage,
       'request_id': instance.requestId,
       'message_id': instance.messageId,
       'message': instance.message,

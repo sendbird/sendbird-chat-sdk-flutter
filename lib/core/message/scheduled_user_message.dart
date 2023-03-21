@@ -96,10 +96,12 @@ class ScheduledUserMessage extends BaseMessage {
     bool isSilent = false,
     String? data,
     MessageSendingStatus? sendingStatus,
+    bool isPinnedMessage = false,
   })  : _translationTargetLanguages = translationTargetLanguages,
         _pushOption = pushOption,
         _reqId = reqId,
         super(
+          isPinnedMessage: isPinnedMessage,
           messageId: scheduledMessageId,
           message: message,
           sendingStatus: sendingStatus,

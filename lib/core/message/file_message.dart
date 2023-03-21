@@ -91,7 +91,9 @@ class FileMessage extends BaseMessage {
     List<Reaction>? reactions,
     bool replyToChannel = false,
     Map<String, dynamic>? parentMessage,
+    bool isPinnedMessage = false,
   }) : super(
+          isPinnedMessage: isPinnedMessage,
           parentMessage: parentMessage,
           replyToChannel: replyToChannel,
           requestId: requestId,

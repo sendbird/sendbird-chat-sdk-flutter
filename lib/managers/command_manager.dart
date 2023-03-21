@@ -8,6 +8,7 @@ import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
 import 'package:sendbird_sdk/core/channel/open/open_channel.dart';
+import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/base_message_internal.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
@@ -656,8 +657,44 @@ class CommandManager with SdkAccessor {
       case ChannelEventCategory.updateOperators:
         await _processChannelOperators(event);
         break;
+      case ChannelEventCategory.pinnedMessage:
+        await _processChannelPinnedMessage(event);
+        break;
       default:
         break;
+    }
+  }
+
+  Future<void> _processChannelPinnedMessage(ChannelEvent event) async {
+    try {
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+      );
+      if (channel is GroupChannel) {
+        if (event.data.isEmpty) {
+          channel.pinnedMessageIds = [];
+          channel.lastPinnedMessage = null;
+          //data is empty when unpin
+          eventManager.notifyPinUpdated(channel);
+        } else if ((event.ts ?? 0) >
+            event.data['latest_pinned_message']['updated_at']) {
+          channel.pinnedMessageIds =
+              (event.data["pinned_message_ids"]).cast<int>();
+
+          channel.lastPinnedMessage =
+              BaseMessage.fromJson(event.data["latest_pinned_message"]);
+          channel.pinnedMessagesUpdatedAt = event.ts ?? 0;
+          eventManager.notifyPinUpdated(channel);
+        }
+      } else {
+        final error =
+            SBError(message: "Pin Message Only Supports GroupChannel");
+        logger.e(StackTrace.current, error);
+        throw (error);
+      }
+    } catch (e) {
+      logger.w('Aborted ${event.category.toString()} ' + e.toString());
     }
   }
 

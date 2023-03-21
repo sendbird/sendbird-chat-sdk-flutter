@@ -63,7 +63,9 @@ class UserMessage extends BaseMessage {
     bool replyToChannel = false,
     this.poll,
     this.translationTargetLanguages,
+    bool isPinnedMessage = false,
   }) : super(
+          isPinnedMessage: isPinnedMessage,
           replyToChannel: replyToChannel,
           requestId: requestId,
           messageId: messageId,

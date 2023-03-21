@@ -1,3 +1,22 @@
+## [3.2.8] - Mar 20, 2023
+
+# Pinned Message 📌
+
+Pinned Message is released. You can now maintain a special set of messages (up to 10 per channel) that you want everyone in the channel to share. It can be anything from announcements, surveys, upcoming events, and any many more. Pin your messages and never miss them! Stay tuned for updates as we are rolling out more exciting features and see below for exact specifications👇
+
+# Specification
+
+_Pin when sending a message_
+
+- UserMessageParams(bool isPinnedMessage = false)
+  _Pin existing message_
+- Future<void> GroupChannel.pinMessage(messageId: int)
+  _Unpin a message_
+- Future<void> GroupChannel.unpinMessage(messageId: int)
+  _Pinned messages_
+- BaseMessage? GroupChannel.lastPinnedMessage
+- List<int>? GroupChannel.pinnedMessageIds
+
 ## [3.2.7] - Mar 13, 2023
 
 - Copy `fileName` and `fileSize` when copyMessage for FileMessage

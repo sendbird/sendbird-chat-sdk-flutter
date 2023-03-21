@@ -68,6 +68,7 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
           [],
       replyToChannel: json['is_reply_to_channel'] as bool? ?? false,
       parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
+      isPinnedMessage: json['is_pinned_message'] as bool? ?? false,
     )
       ..scheduledInfo = json['scheduled_info'] == null
           ? null
@@ -78,6 +79,7 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
 
 Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
     <String, dynamic>{
+      'is_pinned_message': instance.isPinnedMessage,
       'request_id': instance.requestId,
       'message_id': instance.messageId,
       'message': instance.message,

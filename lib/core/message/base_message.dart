@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 import 'package:sendbird_sdk/constant/command_type.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
@@ -33,6 +34,10 @@ import 'package:sendbird_sdk/utils/logger.dart';
 
 /// Represents base class for messages.
 class BaseMessage {
+  /// Pinned Message
+  @JsonKey(defaultValue: false)
+  bool isPinnedMessage;
+
   /// Request ID for checking ACK.
   final String? requestId;
 
@@ -156,23 +161,24 @@ class BaseMessage {
 
   /// default constructor
   BaseMessage({
-    required this.message,
-    required this.sendingStatus,
-    required this.channelUrl,
-    required this.channelType,
-    this.sender,
-    this.mentionedUsers = const <User>[],
-    this.mentionedUserIds = const <String>[],
+    Map<String, dynamic>? parentMessage,
+    required this.isPinnedMessage,
     this.requestId,
     this.messageId = 0,
+    required this.message,
+    required this.sendingStatus,
+    this.sender,
+    required this.channelUrl,
+    required this.channelType,
+    this.mentionedUsers = const <User>[],
     this.mentionType,
+    this.mentionedUserIds = const <String>[],
     this.requestedMentionUserIds,
-    this.replyToChannel = false,
     this.createdAt = 0,
     this.updatedAt = 0,
+    this.replyToChannel = false,
     this.parentMessageId,
     this.parentMessageText,
-    Map<String, dynamic>? parentMessage,
     this.threadInfo,
     this.metaArrays,
     this.customType,

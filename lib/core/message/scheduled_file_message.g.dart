@@ -53,6 +53,7 @@ ScheduledFileMessage _$ScheduledFileMessageFromJson(
       data: json['data'] as String?,
       sendingStatus: $enumDecodeNullable(
           _$MessageSendingStatusEnumMap, json['sending_status']),
+      isPinnedMessage: json['is_pinned_message'] as bool? ?? false,
     )
       ..sender = json['user'] == null
           ? null
@@ -77,6 +78,7 @@ ScheduledFileMessage _$ScheduledFileMessageFromJson(
 Map<String, dynamic> _$ScheduledFileMessageToJson(
         ScheduledFileMessage instance) =>
     <String, dynamic>{
+      'is_pinned_message': instance.isPinnedMessage,
       'message': instance.message,
       'sending_status': _$MessageSendingStatusEnumMap[instance.sendingStatus],
       'user': instance.sender?.toJson(),

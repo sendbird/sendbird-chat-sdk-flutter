@@ -66,7 +66,14 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
       customType: json['custom_type'] as String?,
       isFrozen: json['freeze'] as bool? ?? false,
       isEphemeral: json['is_ephemeral'] as bool? ?? false,
-    );
+      lastPinnedMessage: json['latest_pinned_message'] == null
+          ? null
+          : BaseMessage.fromJson(
+              json['latest_pinned_message'] as Map<String, dynamic>),
+      pinnedMessagesUpdatedAt: json['pinned_messages_updated_at'] as int? ?? 0,
+    )..pinnedMessageIds = (json['pinned_message_ids'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList();
 
 Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
     <String, dynamic>{
@@ -79,6 +86,7 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'custom_type': instance.customType,
       'freeze': instance.isFrozen,
       'is_ephemeral': instance.isEphemeral,
+      'pinned_message_ids': instance.pinnedMessageIds,
       'last_message': instance.lastMessage?.toJson(),
       'is_super': instance.isSuper,
       'is_strict': instance.isStrict,
@@ -107,6 +115,8 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'user_last_read': instance.myLastRead,
       'ts_message_offset': instance.messageOffsetTimestamp,
       'message_survival_seconds': instance.messageSurvivalSeconds,
+      'latest_pinned_message': instance.lastPinnedMessage?.toJson(),
+      'pinned_messages_updated_at': instance.pinnedMessagesUpdatedAt,
     };
 
 const _$GroupChannelPushTriggerOptionEnumMap = {

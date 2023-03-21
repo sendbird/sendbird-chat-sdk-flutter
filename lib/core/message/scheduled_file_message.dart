@@ -106,9 +106,11 @@ class ScheduledFileMessage extends BaseMessage {
     bool isSilent = false,
     String? data,
     MessageSendingStatus? sendingStatus,
+    bool isPinnedMessage = false,
   })  : _reqId = reqId,
         _pushOption = pushOption,
         super(
+          isPinnedMessage: isPinnedMessage,
           messageId: scheduledMessageId,
           message: message ?? '',
           sendingStatus: sendingStatus,

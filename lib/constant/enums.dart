@@ -532,6 +532,7 @@ enum ChannelEventCategory {
   metaCounterChanged,
   hidden,
   unhidden,
+  pinnedMessage
 }
 
 ChannelEventCategory channelEventValueOf(int value) {
@@ -576,6 +577,8 @@ ChannelEventCategory channelEventValueOf(int value) {
       return ChannelEventCategory.metaDataChanged;
     case 11200:
       return ChannelEventCategory.metaCounterChanged;
+    case 11300:
+      return ChannelEventCategory.pinnedMessage;
     case 13000:
       return ChannelEventCategory.hidden;
     case 13001:

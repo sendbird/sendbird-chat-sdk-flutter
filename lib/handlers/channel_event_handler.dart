@@ -145,4 +145,7 @@ class ChannelEventHandler implements EventHandler {
 
   /// Informs when a Poll is deleted
   void onPollDeleted(int pollId) {}
+
+  /// Informs when a Pin is update
+  void onPinUpdated(BaseChannel channel) {}
 }

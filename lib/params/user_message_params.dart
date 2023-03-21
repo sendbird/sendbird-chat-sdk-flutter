@@ -33,6 +33,7 @@ class UserMessageParams extends BaseMessageParams {
     List<MessageMetaArray>? metaArrays,
     bool? replyToChannel,
     this.extendedMessage,
+    bool isPinnedMessage = false,
   })  : targetLanguages = targetLanguages ?? [],
         super(
           replyToChannel: replyToChannel ?? false,
@@ -42,6 +43,7 @@ class UserMessageParams extends BaseMessageParams {
           mentionType: isChannelMention ? MentionType.channel : mentionType,
           mentionedUserIds: mentionedUserIds,
           metaArrays: metaArrays,
+          isPinnedMessage: isPinnedMessage,
         );
 
   UserMessageParams.withMessage(UserMessage userMessage, {bool? deepCopy})

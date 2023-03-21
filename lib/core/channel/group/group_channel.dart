@@ -1,9 +1,11 @@
+import 'dart:core';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
+import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
 import 'package:sendbird_sdk/core/channel/group/group_channel_internal.dart';
@@ -34,12 +36,15 @@ import 'package:sendbird_sdk/request/channel_preference/group_channel_freeze_req
 import 'package:sendbird_sdk/request/channel_preference/group_channel_hide_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_push_trigger_option_request.dart';
 import 'package:sendbird_sdk/request/channel_preference/group_channel_screen_shot_request.dart';
+import 'package:sendbird_sdk/request/pin/pin_create_request.dart';
+import 'package:sendbird_sdk/request/pin/pin_delete_request.dart';
 import 'package:sendbird_sdk/request/poll/poll_changelogs_get_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';
 import 'package:sendbird_sdk/services/db/cache_utils.dart';
 import 'package:sendbird_sdk/services/db/cache_service.dart';
 import 'package:sendbird_sdk/utils/json_from_parser.dart';
+import 'package:sendbird_sdk/utils/logger.dart';
 
 part 'group_channel.g.dart';
 part 'group_channel_operation.dart';
@@ -72,6 +77,9 @@ part 'group_channel_configuration.dart';
 ///
 @JsonSerializable()
 class GroupChannel extends BaseChannel {
+  /// List of Pinned Message Ids
+  List<int>? pinnedMessageIds;
+
   /// Last message of the channel
   BaseMessage? lastMessage;
 
@@ -199,6 +207,13 @@ class GroupChannel extends BaseChannel {
   int _lastEndTypingTimestamp = 0;
   int _lastMarkAsReadTimestamp = 0;
 
+  /// Last Pinned Message
+  @JsonKey(name: 'latest_pinned_message')
+  BaseMessage? lastPinnedMessage;
+
+  /// Time updated at Pinned Message
+  int pinnedMessagesUpdatedAt;
+
   /// **WARNING:** Do not use default constructor to initialize manually
   GroupChannel({
     this.lastMessage,
@@ -237,6 +252,8 @@ class GroupChannel extends BaseChannel {
     String? customType,
     bool isFrozen = false,
     bool isEphemeral = false,
+    this.lastPinnedMessage,
+    this.pinnedMessagesUpdatedAt = 0,
   }) : super(
           channelUrl: channelUrl,
           name: name,
@@ -258,6 +275,54 @@ class GroupChannel extends BaseChannel {
   }
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();
+
+  /// Pin Message
+  Future<void> pinMessage(int messageId) async {
+    final sdk = SendbirdSdk().getInternal();
+    if (messageId < 0) {
+      throw SBError(
+        message: "messageId has to be greater than 0",
+        code: ErrorCode.notSupportedError,
+      );
+    }
+
+    try {
+      await sdk.api.send(
+        PinCreateRequest(
+          channelType: ChannelType.group,
+          channelUrl: super.channelUrl,
+          messageId: messageId,
+        ),
+      );
+    } catch (exception) {
+      logger.e(StackTrace.current, exception);
+      throw (SBError(message: "Pin Create Request Failed."));
+    }
+  }
+
+  /// Unpin Message
+  Future<void> unpinMessage(int messageId) async {
+    final sdk = SendbirdSdk().getInternal();
+    if (messageId < 0) {
+      throw SBError(
+        message: "messageId has to be greater than 0",
+        code: ErrorCode.notSupportedError,
+      );
+    }
+
+    try {
+      await sdk.api.send(
+        PinDeleteRequest(
+          channelType: ChannelType.group,
+          channelUrl: super.channelUrl,
+          messageId: messageId,
+        ),
+      );
+    } catch (exception) {
+      logger.e(StackTrace.current, exception);
+      throw (SBError(message: "Pin Delete Request Failed.."));
+    }
+  }
 
   /// Retrieves Poll Changelogs through timestamp
   Future<PollChangeLogsResponse> getPollChangeLogsSinceTimestamp(

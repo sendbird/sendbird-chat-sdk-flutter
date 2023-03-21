@@ -381,4 +381,10 @@ class EventManager {
       element.onPollDeleted(pollId);
     });
   }
+
+  void notifyPinUpdated(BaseChannel channel) {
+    _channelHandlers.values.forEach((element) {
+      element.onPinUpdated(channel);
+    });
+  }
 }

@@ -45,7 +45,9 @@ class AdminMessage extends BaseMessage {
     List<Reaction>? reactions,
     bool replyToChannel = false,
     Map<String, dynamic>? extendedMessage,
+    bool isPinnedMessage = false,
   }) : super(
+          isPinnedMessage: isPinnedMessage,
           replyToChannel: replyToChannel,
           requestId: requestId,
           messageId: messageId,
