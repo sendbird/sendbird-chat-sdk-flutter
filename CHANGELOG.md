@@ -1,3 +1,9 @@
+## [3.2.9] - Apr 13, 2023
+
+- Improved stability
+- Fix issue when Message `data` property is not String to return NULL
+- Fix issue with Vote api request by changing request to websocket request
+
 ## [3.2.8] - Mar 20, 2023
 
 # Pinned Message 📌

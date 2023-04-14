@@ -1,6 +1,7 @@
 import 'package:sendbird_sdk/core/message/base_message.dart';
 import 'package:sendbird_sdk/core/message/file_message.dart';
 import 'package:sendbird_sdk/core/message/user_message.dart';
+import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/features/poll/poll.dart';
 import 'package:sendbird_sdk/features/poll/poll_option.dart';
 
@@ -16,6 +17,8 @@ typedef OnTotalScheduledMessageCountCallback = void Function(
 typedef OnScheduledMessageCancelCallback = void Function(Error? error);
 typedef OnScheduledMessageSendNowCallback = void Function(Error? error);
 typedef OnPollCallback = void Function(Poll? poll, Error? error);
+typedef OnPollVoteEventCallback = void Function(
+    PollVoteEvent? poll, Error? error);
 typedef OnPollOptionCallback = void Function(
     PollOption? pollOption, Error? error);
 typedef OnCompleteCallback = void Function(bool? isCompleted, Error? error);

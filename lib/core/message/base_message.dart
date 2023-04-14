@@ -141,6 +141,8 @@ class BaseMessage {
   final bool isOperatorMessage;
 
   /// data for this message
+  /// returns null if data is not a string
+  @JsonKey(fromJson: _fromJsonToStringData)
   String? data;
 
   /// Open graph information in this message. Nullable
@@ -209,6 +211,11 @@ class BaseMessage {
         sendingStatus = MessageSendingStatus.none;
       }
     }
+  }
+
+  // jsonToStringData converter
+  static String? _fromJsonToStringData(dynamic json) {
+    return json is String ? json : null;
   }
 
   /// Returns `true` if this message can be resend.

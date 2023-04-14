@@ -843,29 +843,38 @@ extension Messages on BaseChannel {
   }
 
   /// Cast/ Cancel Poll Vote
-  Future<Poll> votePoll({
+  Future<PollVoteEvent> votePoll({
     required int pollId,
     required List<int> pollOptionIds,
-    OnPollCallback? onCompleted,
+    OnPollVoteEventCallback? onCompleted,
   }) async {
-    Poll poll = await _sdk.api
-        .send(
-      PollVoteRequest(
-        pollId: pollId,
-        pollOptionIds: pollOptionIds,
-        channelUrl: channelUrl,
-        channelType: channelType,
-      ),
-    )
-        .onError((error, stackTrace) {
+    final cmd = Command.buildVotePoll(
+      requestId: Uuid().v1(),
+      channelType: channelType,
+      channelUrl: channelUrl,
+      pollId: pollId,
+      pollOptionIds: pollOptionIds,
+    );
+
+    try {
+      var result = await _sdk.cmdManager.sendCommand(cmd);
+      if (result == null)
+        throw SBError(
+            message: "ERROR: NULL returned from VotePoll sendCommand");
+      PollVoteEvent event = PollVoteEvent.fromJson(result.payload);
+
       if (onCompleted != null) {
-        onCompleted(null, SBError(message: "Failed voting poll"));
+        onCompleted(event, null);
       }
-      throw SBError(message: "Failed voting poll");
-    });
-    if (onCompleted != null) {
-      onCompleted(poll, null);
+
+      return event;
+    } catch (exception) {
+      logger.e(StackTrace.current, [exception]);
+      if (onCompleted != null)
+        onCompleted(
+            null, SBError(message: "Failed sending Vote Poll Request."));
+
+      throw (SBError(message: "Failed sending Vote Poll Request."));
     }
-    return poll;
   }
 }

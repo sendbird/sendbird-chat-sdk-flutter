@@ -46,7 +46,7 @@ ScheduledUserMessage _$ScheduledUserMessageFromJson(
           .toList(),
       customType: json['custom_type'] as String?,
       isSilent: json['silent'] as bool? ?? false,
-      data: json['data'] as String?,
+      data: BaseMessage._fromJsonToStringData(json['data']),
       sendingStatus: $enumDecodeNullable(
           _$MessageSendingStatusEnumMap, json['sending_status']),
       isPinnedMessage: json['is_pinned_message'] as bool? ?? false,

@@ -6,6 +6,7 @@ import 'package:sendbird_sdk/core/message/scheduled_file_message.dart';
 import 'package:sendbird_sdk/core/message/scheduled_user_message.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
+import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/features/poll/poll.dart';
 import 'package:sendbird_sdk/params/poll_update_params.dart';
 import 'package:sendbird_sdk/params/scheduled_file_message_params.dart';

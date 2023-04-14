@@ -57,6 +57,15 @@ extension ChannelTypeExtension on ChannelType {
         return 'open_channels';
     }
   }
+
+  String get commandString {
+    switch (this) {
+      case ChannelType.group:
+        return 'group';
+      case ChannelType.open:
+        return 'open';
+    }
+  }
 }
 
 /// Represents message's mention type

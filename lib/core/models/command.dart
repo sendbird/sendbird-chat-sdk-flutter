@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
+import 'package:sendbird_sdk/request/poll/poll_vote_request.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:uuid/uuid.dart';
@@ -66,7 +67,8 @@ class Command {
       CommandString.isFileMessage(cmd) ||
       cmd == CommandString.enter ||
       cmd == CommandString.exit ||
-      cmd == CommandString.read;
+      cmd == CommandString.read ||
+      cmd == CommandString.pollVote;
 
   bool get hasError => payload['error'] != null;
 
@@ -125,6 +127,33 @@ class Command {
       payload: {
         'channel_url': channel.channelUrl,
       },
+    );
+  }
+
+  /// Only supports group channel
+  static Command buildVotePoll({
+    required int pollId,
+    required List<int> pollOptionIds,
+    required String channelUrl,
+    required ChannelType channelType,
+    String? requestId,
+  }) {
+    if (channelType == ChannelType.open) {
+      throw SBError(message: "Vote Message only supports group channel");
+    }
+
+    final payload = <String, dynamic>{
+      'channel_url': channelUrl,
+      'channel_type':
+          channelType.commandString, // Currently only supports group channel
+      'poll_id': pollId,
+      'option_ids': pollOptionIds,
+    };
+
+    return Command(
+      cmd: CommandString.pollVote,
+      payload: payload,
+      requestId: requestId,
     );
   }
 
