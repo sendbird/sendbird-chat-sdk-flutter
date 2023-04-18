@@ -48,7 +48,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       isSilent: json['silent'] as bool? ?? false,
       errorCode: json['error_code'] as int?,
       isOperatorMessage: json['is_op_msg'] as bool? ?? false,
-      data: BaseMessage._fromJsonToStringData(json['data']),
+      data: BaseMessage.fromJsonToStringData(json['data']),
       ogMetaData: json['og_tag'] == null
           ? null
           : OGMetaData.fromJson(json['og_tag'] as Map<String, dynamic>),

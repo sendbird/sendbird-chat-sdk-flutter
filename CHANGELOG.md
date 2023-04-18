@@ -1,3 +1,7 @@
+## [3.2.10] - Apr 17, 2023
+
+- Fix issue with code generation dart g files
+
 ## [3.2.9] - Apr 13, 2023
 
 - Improved stability

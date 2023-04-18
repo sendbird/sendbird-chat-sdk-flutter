@@ -142,7 +142,7 @@ class BaseMessage {
 
   /// data for this message
   /// returns null if data is not a string
-  @JsonKey(fromJson: _fromJsonToStringData)
+  @JsonKey(fromJson: fromJsonToStringData)
   String? data;
 
   /// Open graph information in this message. Nullable
@@ -214,7 +214,7 @@ class BaseMessage {
   }
 
   // jsonToStringData converter
-  static String? _fromJsonToStringData(dynamic json) {
+  static String? fromJsonToStringData(dynamic json) {
     return json is String ? json : null;
   }
 
