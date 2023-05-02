@@ -172,7 +172,7 @@ class OpenChannel extends BaseChannel {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         super.hashCode,
         participantCount,
         operators,

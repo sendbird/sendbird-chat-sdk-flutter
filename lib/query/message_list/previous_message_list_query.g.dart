@@ -33,7 +33,7 @@ PreviousMessageListQuery _$PreviousMessageListQueryFromJson(
       ..replyType = $enumDecode(_$ReplyTypeEnumMap, json['include_reply_type'])
       ..includeThreadInfo = json['include_thread_info'] as bool
       ..showSubChannelMessagesOnly =
-          json['show_sub_channel_messages_only'] as bool;
+          json['show_subchannel_messages_only'] as bool;
 
 Map<String, dynamic> _$PreviousMessageListQueryToJson(
         PreviousMessageListQuery instance) =>
@@ -56,7 +56,7 @@ Map<String, dynamic> _$PreviousMessageListQueryToJson(
       'include_replies': instance.includeReplies,
       'include_reply_type': _$ReplyTypeEnumMap[instance.replyType]!,
       'include_thread_info': instance.includeThreadInfo,
-      'show_sub_channel_messages_only': instance.showSubChannelMessagesOnly,
+      'show_subchannel_messages_only': instance.showSubChannelMessagesOnly,
     };
 
 const _$ChannelTypeEnumMap = {

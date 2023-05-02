@@ -8,6 +8,7 @@ extension Messages on BaseChannel {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
+  /// NOTE that the pending message does not have a messageId.
   UserMessage sendUserMessageWithText(
     String text, {
     OnUserMessageCallback? onCompleted,
@@ -25,6 +26,7 @@ extension Messages on BaseChannel {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
+  /// NOTE that the pending message does not have a messageId.
   UserMessage sendUserMessage(
     UserMessageParams params, {
     OnUserMessageCallback? onCompleted,
@@ -127,6 +129,7 @@ extension Messages on BaseChannel {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
+  /// NOTE that the pending message does not have a messageId.
   UserMessage resendUserMessage(
     UserMessage message, {
     OnUserMessageCallback? onCompleted,
@@ -183,6 +186,7 @@ extension Messages on BaseChannel {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
+  /// NOTE that the pending message does not have a messageId.
   FileMessage sendFileMessage(
     FileMessageParams params, {
     OnFileMessageCallback? onCompleted,
@@ -324,6 +328,7 @@ extension Messages on BaseChannel {
   /// [onCompleted] will be invoked once the message has been sent completely.
   /// Channel event [ChannelEventHandler.onMessageReceived] will be invoked
   /// on all other members' end.
+  /// NOTE that the pending message does not have a messageId.
   FileMessage resendFileMessage(
     FileMessage message, {
     required FileMessageParams params,

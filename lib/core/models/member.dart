@@ -90,5 +90,5 @@ class Member extends User {
   }
 
   @override
-  int get hashCode => hashValues(super.hashCode, role, isMuted, state);
+  int get hashCode => Object.hash(super.hashCode, role, isMuted, state);
 }

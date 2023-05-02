@@ -168,7 +168,7 @@ class User {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         userId,
         nickname,
         profileUrl,

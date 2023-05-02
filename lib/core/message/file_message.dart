@@ -177,7 +177,7 @@ class FileMessage extends BaseMessage {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         super.hashCode,
         url,
         name,
@@ -225,7 +225,7 @@ class Thumbnail {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         url,
         plainUrl,
         height,

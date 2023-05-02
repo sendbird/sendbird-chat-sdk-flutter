@@ -113,5 +113,5 @@ class UserMessage extends BaseMessage {
   }
 
   @override
-  int get hashCode => hashValues(super.hashCode, translations);
+  int get hashCode => Object.hash(super.hashCode, translations);
 }

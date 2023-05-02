@@ -69,6 +69,7 @@ class PreviousMessageListQuery extends QueryBase {
 
   /// Determines whether to retrieve sub channel messages on Dynamic
   /// Partitioning. This property is only working for [OpenChannel]
+  @JsonKey(name: 'show_subchannel_messages_only')
   bool showSubChannelMessagesOnly = false;
 
   /// Returns the oldest message timestamp

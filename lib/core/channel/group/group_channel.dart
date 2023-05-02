@@ -492,7 +492,7 @@ class GroupChannel extends BaseChannel {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         super.hashCode,
         lastMessage,
         myMutedState,

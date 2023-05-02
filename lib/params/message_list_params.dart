@@ -41,6 +41,7 @@ class MessageListParams extends BaseMessageFetchParams {
 
   /// Determines whether to retrieve sub channel messages on Dynamic
   /// Partitioning. This property is only working for [OpenChannel]
+  @JsonKey(name: 'show_subchannel_messages_only')
   bool showSubChannelMessagesOnly = false;
 
   /// Determines wheter to include parent message information

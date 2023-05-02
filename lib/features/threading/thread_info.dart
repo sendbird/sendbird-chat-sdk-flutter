@@ -52,5 +52,5 @@ class ThreadInfo {
 
   @override
   int get hashCode =>
-      hashValues(replyCount, mostRepliesUsers, lastRepliedAt, updatedAt);
+      Object.hash(replyCount, mostRepliesUsers, lastRepliedAt, updatedAt);
 }

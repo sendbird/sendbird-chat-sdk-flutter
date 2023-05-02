@@ -386,7 +386,7 @@ class BaseMessage {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         messageId,
         message,
         sendingStatus,

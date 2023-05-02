@@ -1,3 +1,10 @@
+## [3.2.11] - May 1, 2023
+
+- Fix issue with code generation dart g files
+- `message_list_params` variable `showSubChannelMessagesOnly` JSON key updated
+- Update documentation on `preMessage` of not recieving messageID when pending Message
+- Update deprecated value `hashValues` to `Object.hash`
+
 ## [3.2.10] - Apr 17, 2023
 
 - Fix issue with code generation dart g files

@@ -65,5 +65,5 @@ class Reaction {
   }
 
   @override
-  int get hashCode => hashValues(key, userIds, updatedAt);
+  int get hashCode => Object.hash(key, userIds, updatedAt);
 }

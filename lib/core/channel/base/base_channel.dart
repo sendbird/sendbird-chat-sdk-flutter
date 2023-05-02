@@ -174,7 +174,7 @@ class BaseChannel implements Cacheable {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         channelUrl,
         name,
         coverUrl,

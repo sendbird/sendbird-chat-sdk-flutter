@@ -41,7 +41,6 @@ class PollOption {
     required this.createdAt,
     required this.voteCount,
     required this.updatedAt,
-
   });
 
   /// Get Poll Options
@@ -90,7 +89,7 @@ class PollOption {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         super.hashCode,
         pollId,
         id,

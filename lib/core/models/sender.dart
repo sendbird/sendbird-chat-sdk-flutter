@@ -81,5 +81,5 @@ class Sender extends User {
   }
 
   @override
-  int get hashCode => hashValues(super.hashCode, role);
+  int get hashCode => Object.hash(super.hashCode, role);
 }
