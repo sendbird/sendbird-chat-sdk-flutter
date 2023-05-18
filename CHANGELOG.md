@@ -1,3 +1,7 @@
+## [3.2.12] - May 18, 2023
+
+- Update dependency `connectivity_plus` to `^4.0.0`
+
 ## [3.2.11] - May 1, 2023
 
 - Fix issue with code generation dart g files
