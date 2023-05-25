@@ -1,3 +1,7 @@
+## [3.2.12] - May 24, 2023
+
+- Removed error thrown when refresh successful key
+
 ## [3.2.11] - May 1, 2023
 
 - Fix issue with code generation dart g files

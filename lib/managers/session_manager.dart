@@ -230,8 +230,9 @@ class SessionManager with SdkAccessor {
       setSessionKey(payload['new_key']);
     }
 
+    logger.i("Session Key Refresh Succeeded");
+
     flushResultCompleters(SessionKeyRefreshSucceededError());
-    eventManager.notifySessionError(SessionKeyRefreshSucceededError());
     eventManager.notifySessionRefreshed();
     sdk.reconnect(reset: true);
   }
