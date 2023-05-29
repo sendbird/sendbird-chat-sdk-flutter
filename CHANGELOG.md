@@ -1,6 +1,10 @@
-## [3.2.12] - May 18, 2023
+## [3.2.13] - May 29, 2023
 
 - Update dependency `connectivity_plus` to `^4.0.0`
+
+## [3.2.12] - May 24, 2023
+
+- Removed error thrown when refresh successful key
 
 ## [3.2.11] - May 1, 2023
 
