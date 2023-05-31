@@ -1,16 +1,16 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/enum_utils.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/user/list/group_channel_member_list_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/response/responses.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/query/base_query.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/list/group_channel_member_list_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A query object to retrieve list of members from my group channel.
 class MemberListQuery extends BaseQuery {

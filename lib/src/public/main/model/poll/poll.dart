@@ -1,11 +1,11 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/main/poll/poll_create_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/main/poll/poll_get_request.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_create_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_get_request.dart';
 
 part 'poll.g.dart';
 

@@ -2,20 +2,20 @@
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/utils/type_checker.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/core/user/sender.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/model/info/scheduled_info.dart';
-import 'package:sendbird_chat/src/public/main/model/message/message_meta_array.dart';
-import 'package:sendbird_chat/src/public/main/model/og/og_meta_data.dart';
-import 'package:sendbird_chat/src/public/main/model/poll/poll.dart';
-import 'package:sendbird_chat/src/public/main/model/reaction/reaction.dart';
-import 'package:sendbird_chat/src/public/main/model/thread/thread_info.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/type_checker.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/scheduled_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/og/og_meta_data.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info.dart';
 
 part 'user_message.g.dart';
 

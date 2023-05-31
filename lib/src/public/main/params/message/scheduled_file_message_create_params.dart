@@ -4,13 +4,13 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/string_utils.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/model/info/file_info.dart';
-import 'package:sendbird_chat/src/public/main/model/message/apple_critical_alert_options.dart';
-import 'package:sendbird_chat/src/public/main/model/message/message_meta_array.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/file_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/apple_critical_alert_options.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
 import 'package:universal_io/io.dart';
 
 /// Represents a scheduled file message params.

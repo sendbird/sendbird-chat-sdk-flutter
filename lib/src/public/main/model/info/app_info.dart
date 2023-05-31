@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 
 part 'app_info.g.dart';
 

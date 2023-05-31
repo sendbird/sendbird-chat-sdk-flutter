@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-part of 'package:sendbird_chat/src/public/core/message/base_message.dart';
+part of 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 
 extension BaseMessageExtensions on BaseMessage {
   bool hasUpdatedLaterThan(int timestamp) {

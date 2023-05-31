@@ -1,4 +1,4 @@
-name: sendbird_chat
+name: sendbird_chat_sdk
 description: Sendbird Chat SDK
 version: 4.0.0
 homepage: https://sendbird.com
@@ -6,7 +6,7 @@ repository: https://github.com/sendbird/sendbird-chat-sdk-flutter
 documentation: https://sendbird.com/docs/chat/v4/flutter/getting-started/send-first-message
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.17.0 <4.0.0'
   flutter: '>=2.11.0'
 
 platforms:

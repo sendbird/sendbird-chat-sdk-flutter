@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/extensions/extensions.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/model/message/message_meta_array.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
 
 /// Represents a base message params.
 class BaseMessageCreateParams {

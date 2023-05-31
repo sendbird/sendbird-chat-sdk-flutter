@@ -1,12 +1,12 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat/src/internal/main/chat_cache/channel/channel_cache_unit.dart';
-import 'package:sendbird_chat/src/internal/main/model/delivery_status.dart';
-import 'package:sendbird_chat/src/internal/main/model/read_status.dart';
-import 'package:sendbird_chat/src/internal/main/model/typing_status.dart';
-import 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_unit.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 
 class ChannelCache implements CacheStorage {
   Map<String, ChannelCacheUnit> _channelCacheMap = {};

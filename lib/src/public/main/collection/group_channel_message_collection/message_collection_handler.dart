@@ -1,11 +1,11 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/main/collection/group_channel_collection/group_channel_context.dart';
-import 'package:sendbird_chat/src/public/main/collection/group_channel_message_collection/message_collection.dart';
-import 'package:sendbird_chat/src/public/main/collection/group_channel_message_collection/message_context.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_collection/group_channel_context.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_message_collection/message_collection.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_message_collection/message_context.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 /// An interface used in [MessageCollection].
 abstract class MessageCollectionHandler {

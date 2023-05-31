@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-part of 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
+part of 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 
 extension GroupChannelExtensions on GroupChannel {
   bool shouldUpdateLastMessage(BaseMessage message, Sender? sender) {

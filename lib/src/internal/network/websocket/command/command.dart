@@ -3,19 +3,19 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/extensions/extensions.dart';
-import 'package:sendbird_chat/src/internal/network/websocket/command/command_type.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/core/message/file_message.dart';
-import 'package:sendbird_chat/src/public/core/message/user_message.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/model/message/message_meta_array.dart';
-import 'package:sendbird_chat/src/public/main/params/message/file_message_create_params.dart';
-import 'package:sendbird_chat/src/public/main/params/message/file_message_update_params.dart';
-import 'package:sendbird_chat/src/public/main/params/message/user_message_create_params.dart';
-import 'package:sendbird_chat/src/public/main/params/message/user_message_update_params.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/file_message_create_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/file_message_update_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/user_message_create_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/user_message_update_params.dart';
 import 'package:uuid/uuid.dart';
 
 part 'command.g.dart';

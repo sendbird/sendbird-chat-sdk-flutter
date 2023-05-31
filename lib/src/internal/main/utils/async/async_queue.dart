@@ -3,8 +3,8 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/async/async_task.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
 
 class AsyncQueue<T> {
   bool _isScheduled = false;

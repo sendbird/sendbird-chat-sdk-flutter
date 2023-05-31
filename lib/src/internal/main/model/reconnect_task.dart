@@ -2,7 +2,7 @@
 
 import 'dart:math';
 
-import 'package:sendbird_chat/src/internal/main/model/reconnect_configuration.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_configuration.dart';
 
 class ReconnectTask {
   int _backOffPeriod = 0;

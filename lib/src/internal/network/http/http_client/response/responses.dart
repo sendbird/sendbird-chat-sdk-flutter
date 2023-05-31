@@ -1,15 +1,15 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/open_channel/open_channel.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/core/user/member.dart';
-import 'package:sendbird_chat/src/public/core/user/restricted_user.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/model/poll/poll.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/restricted_user.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
 
 part 'responses.g.dart';
 

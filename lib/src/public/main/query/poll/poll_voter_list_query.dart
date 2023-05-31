@@ -1,14 +1,14 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/main/poll/poll_option_get_list_voters_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/response/responses.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/params/poll/poll_voter_list_query_params.dart';
-import 'package:sendbird_chat/src/public/main/query/base_query.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_option_get_list_voters_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/poll/poll_voter_list_query_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A class representing query to retrieve the list of voters for each poll options.
 class PollVoterListQuery extends BaseQuery {

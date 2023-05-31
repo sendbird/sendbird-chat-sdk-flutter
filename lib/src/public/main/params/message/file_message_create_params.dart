@@ -4,9 +4,9 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
-import 'package:sendbird_chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/string_utils.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:universal_io/io.dart';
 
 /// Represents a file message params.

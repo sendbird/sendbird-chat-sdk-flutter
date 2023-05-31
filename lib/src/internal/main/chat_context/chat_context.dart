@@ -2,12 +2,12 @@
 
 import 'dart:async';
 
-import 'package:sendbird_chat/src/internal/main/model/reconnect_configuration.dart';
-import 'package:sendbird_chat/src/internal/main/model/reconnect_task.dart';
-import 'package:sendbird_chat/src/internal/main/model/unread_count_info.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat_options.dart';
-import 'package:sendbird_chat/src/public/main/model/info/app_info.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_configuration.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_task.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/unread_count_info.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat_options.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 
 class ChatContext {
   final String appId;

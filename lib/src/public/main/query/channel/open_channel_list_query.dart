@@ -1,14 +1,14 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/open_channel/open_channel_list_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/response/responses.dart';
-import 'package:sendbird_chat/src/public/core/channel/open_channel/open_channel.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/query/base_query.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_list_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A class representing query to retrieve [OpenChannel] list.
 /// Currently, 1 kind of `OpenChannel` list can be queried.

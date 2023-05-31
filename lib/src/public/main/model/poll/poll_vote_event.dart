@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/public/main/handler/channel_handler.dart';
-import 'package:sendbird_chat/src/public/main/model/poll/poll.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
 
 /// Class representing an event that one or more vote has been casted on a poll option.
 /// The affected poll may be in multiple channels.

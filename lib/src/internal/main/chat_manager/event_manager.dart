@@ -1,23 +1,23 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat_manager/session_manager.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/open_channel/open_channel.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/core/user/restricted_user.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/handler/channel_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/connection_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/session_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/user_event_handler.dart';
-import 'package:sendbird_chat/src/public/main/model/poll/poll_update_event.dart';
-import 'package:sendbird_chat/src/public/main/model/poll/poll_vote_event.dart';
-import 'package:sendbird_chat/src/public/main/model/reaction/reaction_event.dart';
-import 'package:sendbird_chat/src/public/main/model/thread/thread_info_updated_event.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/restricted_user.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/connection_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/session_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/user_event_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_update_event.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_vote_event.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info_updated_event.dart';
 
 class EventManager {
   final Map<String, BaseChannelHandler> _channelHandlers = {};

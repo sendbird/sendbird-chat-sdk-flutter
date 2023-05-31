@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 
 /// The connection handler.
 /// This handler provides callbacks for automatically managed reconnection events.

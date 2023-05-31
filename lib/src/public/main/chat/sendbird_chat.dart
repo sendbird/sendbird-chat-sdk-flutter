@@ -2,28 +2,28 @@
 
 import 'dart:async';
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat_options.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/handler/channel_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/connection_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/session_handler.dart';
-import 'package:sendbird_chat/src/public/main/handler/user_event_handler.dart';
-import 'package:sendbird_chat/src/public/main/model/channel/group_channel_change_logs.dart';
-import 'package:sendbird_chat/src/public/main/model/channel/group_channel_unread_item_count.dart';
-import 'package:sendbird_chat/src/public/main/model/chat/do_not_disturb.dart';
-import 'package:sendbird_chat/src/public/main/model/chat/emoji.dart';
-import 'package:sendbird_chat/src/public/main/model/chat/snooze_period.dart';
-import 'package:sendbird_chat/src/public/main/model/info/app_info.dart';
-import 'package:sendbird_chat/src/public/main/model/info/file_info.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/group_channel_change_logs_params.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/group_channel_total_unread_message_count_params.dart';
-import 'package:sendbird_chat/src/public/main/params/message/total_scheduled_message_count_params.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat_options.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/connection_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/session_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/user_event_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_change_logs.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_unread_item_count.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/do_not_disturb.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/emoji.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/snooze_period.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/file_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_change_logs_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_message_count_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/total_scheduled_message_count_params.dart';
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdChat {

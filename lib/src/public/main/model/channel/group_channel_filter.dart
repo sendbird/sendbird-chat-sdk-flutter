@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
 
 part 'group_channel_filter.g.dart';
 

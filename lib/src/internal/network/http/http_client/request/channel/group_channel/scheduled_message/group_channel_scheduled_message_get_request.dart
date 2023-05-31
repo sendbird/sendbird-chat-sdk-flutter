@@ -1,11 +1,11 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/http_client.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/params/message/scheduled_message_retrieval_params.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/scheduled_message_retrieval_params.dart';
 
 class GroupChannelScheduledMessageGetRequest extends ApiRequest {
   @override

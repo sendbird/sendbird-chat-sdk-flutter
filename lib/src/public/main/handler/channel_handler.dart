@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
 /// The BaseChannel handler.
 /// This handler provides callbacks for events related [OpenChannel] or [GroupChannel].

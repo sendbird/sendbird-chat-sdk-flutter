@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/model/message/apple_critical_alert_options.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/apple_critical_alert_options.dart';
 
 part 'scheduled_user_message_update_params.g.dart';
 

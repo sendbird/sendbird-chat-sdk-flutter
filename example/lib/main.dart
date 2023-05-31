@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:sendbird_chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
 void main() async {
   runZonedGuarded(() async {

@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 /// Represents a params for retrieving total scheduled message.
 class TotalScheduledMessageCountParams {

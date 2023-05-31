@@ -2,15 +2,15 @@
 
 import 'dart:core';
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_get_list_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/response/responses.dart';
-import 'package:sendbird_chat/src/public/core/message/base_message.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/params/message/scheduled_message_list_query_params.dart';
-import 'package:sendbird_chat/src/public/main/query/base_query.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_get_list_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/scheduled_message_list_query_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// Represents a query for retrieving a list of scheduled messages.
 class ScheduledMessageListQuery extends BaseQuery {

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 /// Sendbird Chat
-library sendbird_chat;
+library sendbird_chat_sdk;
 
 export 'src/public/core/channel/base_channel/base_channel.dart';
 export 'src/public/core/channel/group_channel/group_channel.dart';

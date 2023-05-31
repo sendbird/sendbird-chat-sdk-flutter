@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:logger/logger.dart';
-import 'package:sendbird_chat/src/internal/main/logger/logger_stack_trace.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/logger_stack_trace.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 final sbLog = SendbirdLogger();
 

@@ -2,11 +2,11 @@
 
 import 'dart:async';
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/connection_state/base_connection_state.dart';
-import 'package:sendbird_chat/src/internal/main/connection_state/connecting_state.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connecting_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 
 class DisconnectedState extends BaseConnectionState {
   DisconnectedState({

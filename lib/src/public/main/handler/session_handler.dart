@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 
 /// A handler required on refreshing the session key on expiration.
 /// This should be added by [SendbirdChat.setSessionHandler] before the connection by [SendbirdChat.connect].

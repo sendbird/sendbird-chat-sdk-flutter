@@ -4,15 +4,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/chat_manager/command_manager.dart';
-import 'package:sendbird_chat/src/internal/main/connection_state/base_connection_state.dart';
-import 'package:sendbird_chat/src/internal/main/connection_state/disconnected_state.dart';
-import 'package:sendbird_chat/src/internal/main/connection_state/reconnecting_state.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/websocket/websocket_client.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/disconnected_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/reconnecting_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/websocket_client.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:universal_io/io.dart';
 
 class ConnectionManager {

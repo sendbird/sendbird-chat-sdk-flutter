@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 const jsonEncoder = JsonEncoder.withIndent('  ');
 

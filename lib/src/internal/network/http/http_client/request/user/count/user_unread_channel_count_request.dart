@@ -1,11 +1,11 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/utils/enum_utils.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/http_client.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
 
 class UserTotalUnreadChannelCountGetRequest extends ApiRequest {
   @override

@@ -1,10 +1,10 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/public/core/channel/open_channel/open_channel.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/params/message/base_message_fetch_params.dart';
-import 'package:sendbird_chat/src/public/main/query/base_query.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/base_message_fetch_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 part 'message_list_params.g.dart';
 

@@ -2,20 +2,20 @@
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/open_channel/open_channel_create_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/open_channel/open_channel_delete_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/open_channel/open_channel_refresh_request.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/channel/open_channel/open_channel_update_request.dart';
-import 'package:sendbird_chat/src/internal/network/websocket/command/command.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/core/user/user.dart';
-import 'package:sendbird_chat/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat/src/public/main/define/enums.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/open_channel_create_params.dart';
-import 'package:sendbird_chat/src/public/main/params/channel/open_channel_update_params.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_create_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_delete_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_refresh_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_update_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_create_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_update_params.dart';
 
 part 'open_channel.g.dart';
 part 'open_channel_operation.dart';

@@ -2,10 +2,10 @@
 
 import 'dart:async';
 
-import 'package:sendbird_chat/src/internal/main/chat_context/chat_context.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/websocket/command/command.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:universal_io/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

@@ -3,7 +3,7 @@
 import 'dart:async';
 
 import 'package:http/http.dart' as http;
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 
 class MultipartRequest extends http.MultipartRequest {
   // Creates a new [MultipartRequest].

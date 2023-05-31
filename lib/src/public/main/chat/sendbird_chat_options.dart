@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:sendbird_chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
 /// The SendbirdChatOptions class for [SendbirdChat.init].
 class SendbirdChatOptions {

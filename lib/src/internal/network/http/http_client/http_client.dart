@@ -5,16 +5,16 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
-import 'package:sendbird_chat/src/internal/main/chat_context/chat_context.dart';
-import 'package:sendbird_chat/src/internal/main/chat_manager/session_manager.dart';
-import 'package:sendbird_chat/src/internal/main/extensions/extensions.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/json_converter.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/multipart_request.dart';
-import 'package:sendbird_chat/src/public/core/channel/base_channel/base_channel.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/define/sendbird_error.dart';
-import 'package:sendbird_chat/src/public/main/model/info/file_info.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/multipart_request.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/file_info.dart';
 
 enum HttpMethod {
   get,

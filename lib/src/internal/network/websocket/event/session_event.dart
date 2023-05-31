@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sendbird_chat/src/internal/network/websocket/event/base_event.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/base_event.dart';
 
 part 'session_event.g.dart';
 

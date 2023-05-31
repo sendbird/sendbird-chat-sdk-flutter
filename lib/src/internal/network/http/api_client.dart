@@ -2,12 +2,12 @@
 
 import 'dart:async';
 
-import 'package:sendbird_chat/src/internal/main/chat_context/chat_context.dart';
-import 'package:sendbird_chat/src/internal/main/chat_manager/session_manager.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/http_client.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 
 class ApiClient {
   final HttpClient _httpClient;

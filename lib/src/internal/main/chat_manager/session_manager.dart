@@ -4,13 +4,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:encrypt/encrypt.dart';
-import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat/src/internal/main/utils/string_utils.dart';
-import 'package:sendbird_chat/src/internal/network/http/http_client/request/main/app_session_key_update_request.dart';
-import 'package:sendbird_chat/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat/src/public/main/define/sendbird_error.dart';
-import 'package:sendbird_chat/src/public/main/handler/session_handler.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/app_session_key_update_request.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
+import 'package:sendbird_chat_sdk/src/public/main/handler/session_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _AccessTokenRequesterImpl extends AccessTokenRequester {
