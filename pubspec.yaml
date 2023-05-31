@@ -1,13 +1,13 @@
-name: sendbird_sdk
-description: The Flutter SDK for Sendbird Chat brings modern messenger chat features to your iOS and Android deployments
-version: 3.2.12
-homepage: https://www.sendbird.com
-repository: https://www.github.com/sendbird/sendbird-sdk-flutter
-documentation: https://sendbird.com/docs/chat/v3/flutter/quickstart/send-first-message
+name: sendbird_chat
+description: Sendbird Chat SDK
+version: 4.0.0
+homepage: https://sendbird.com
+repository: https://github.com/sendbird/sendbird-chat-sdk-flutter
+documentation: https://sendbird.com/docs/chat/v4/flutter/getting-started/send-first-message
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.11.0 <3.0.0"
+  sdk: '>=2.17.0 <3.0.0'
+  flutter: '>=2.11.0'
 
 platforms:
   android:
@@ -17,26 +17,24 @@ platforms:
 dependencies:
   flutter:
     sdk: flutter
-  collection: ^1.15.0
-  uuid: ^3.0.0
-  json_annotation: ^4.0.0
-  encrypt: ^5.0.0
-  shared_preferences: ^2.0.0
-  http: ^0.13.0
-  logger: ^1.0.0
-  mime: ^1.0.0
-  connectivity_plus: ^3.0.2
-  meta: ^1.3.0
-  http_parser: ^4.0.0
-  web_socket_channel: ^2.1.0
-  universal_io: ^2.0.4
+  collection: ^1.17.0
+  uuid: ^3.0.7
+  json_annotation: ^4.8.0
+  encrypt: ^5.0.1
+  shared_preferences: ^2.1.0
+  http: ^0.13.5
+  logger: ^1.3.0
+  mime: ^1.0.4
+  connectivity_plus: ^3.0.4
+  http_parser: ^4.0.2
+  web_socket_channel: ^2.4.0
+  universal_io: ^2.2.0
 
 dev_dependencies:
-  test: ^1.16.0
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.1.4
-  build_runner: ^2.1.7
-  stack_trace: ^1.9.6
-  lints: ^1.0.1
-  intl:
+  flutter_lints: ^2.0.1
+  test: ^1.21.4
+  stack_trace: ^1.11.0
+  json_serializable: ^6.6.1
+  build_runner: ^2.3.3

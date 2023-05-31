@@ -1,0 +1,33 @@
+// Copyright (c) 2023 Sendbird, Inc. All rights reserved.
+
+import 'package:sendbird_chat/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat/src/internal/network/http/http_client/http_client.dart';
+import 'package:sendbird_chat/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat/src/public/main/define/enums.dart';
+import 'package:sendbird_chat/src/public/main/params/channel/group_channel_total_unread_message_count_params.dart';
+
+class UserTotalUnreadMessageCountGetRequest extends ApiRequest {
+  @override
+  HttpMethod get method => HttpMethod.get;
+
+  UserTotalUnreadMessageCountGetRequest(
+    Chat chat, {
+    GroupChannelTotalUnreadMessageCountParams? params,
+    String? userId,
+  }) : super(chat: chat, userId: userId) {
+    url =
+        'users/${userId ?? chat.chatContext.currentUserId}/unread_message_count';
+    final customTypes = params?.channelCustomTypes ?? [];
+    final superFilter = params?.superChannelFilter ?? SuperChannelFilter.all;
+    queryParams = {
+      if (customTypes.isNotEmpty) 'custom_types': customTypes,
+      'super_mode': groupChannelSuperFilterEnum(superFilter),
+    };
+  }
+
+  @override
+  Future<int> response(Map<String, dynamic> res) async {
+    return res['unread_count'];
+  }
+}
