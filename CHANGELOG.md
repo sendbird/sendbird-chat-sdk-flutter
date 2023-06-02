@@ -1,3 +1,7 @@
+## [3.2.13] - Jun 2, 2023
+
+- Update Connectivity Plus to 4.0.1
+
 ## [3.2.12] - May 24, 2023
 
 - Removed error thrown when refresh successful key
