@@ -80,23 +80,28 @@ extension BaseChannelMessage on BaseChannel {
     pendingUserMessage.sender =
         Sender.fromUser(chat.chatContext.currentUser, this);
 
-    chat.commandManager.sendCommand(cmd).then((result) {
-      if (result == null) return;
-      final message = BaseMessage.getMessageFromJsonWithChat<UserMessage>(
-        chat,
-        result.payload,
-        commandType: result.cmd,
-      );
+    runZonedGuarded(() {
+      chat.commandManager.sendCommand(cmd).then((result) {
+        if (result == null) return;
 
-      chat.collectionManager.onMessageSentByMe(message);
-      if (handler != null) handler(message, null);
-    }).catchError((e) {
+        final message = BaseMessage.getMessageFromJsonWithChat<UserMessage>(
+          chat,
+          result.payload,
+          commandType: result.cmd,
+        );
+
+        chat.collectionManager.onMessageSentByMe(message);
+        if (handler != null) handler(message, null);
+      });
+    }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
 
-      pendingUserMessage
-        ..errorCode = e?.code ?? SendbirdError.unknownError
-        ..sendingStatus = SendingStatus.failed;
-      if (handler != null) handler(pendingUserMessage, e);
+      if (e is AckTimeoutException) {
+        pendingUserMessage
+          ..errorCode = e.code ?? SendbirdError.unknownError
+          ..sendingStatus = SendingStatus.failed;
+        if (handler != null) handler(pendingUserMessage, e);
+      }
     });
 
     return pendingUserMessage;
@@ -239,22 +244,29 @@ extension BaseChannelMessage on BaseChannel {
         }
 
         if (chat.connectionManager.isConnected()) {
-          chat.commandManager.sendCommand(cmd).then((result) {
-            if (result == null) return;
-            final message = BaseMessage.getMessageFromJsonWithChat<FileMessage>(
-              chat,
-              result.payload,
-              commandType: result.cmd,
-            );
+          runZonedGuarded(() {
+            chat.commandManager.sendCommand(cmd).then((result) {
+              if (result == null) return;
 
-            chat.collectionManager.onMessageSentByMe(message);
-            if (handler != null) handler(message, null);
-          }).catchError((e) {
+              final message =
+                  BaseMessage.getMessageFromJsonWithChat<FileMessage>(
+                chat,
+                result.payload,
+                commandType: result.cmd,
+              );
+
+              chat.collectionManager.onMessageSentByMe(message);
+              if (handler != null) handler(message, null);
+            });
+          }, (e, s) {
             sbLog.e(StackTrace.current, 'e: $e');
-            pendingFileMessage
-              ..errorCode = e?.code ?? SendbirdError.unknownError
-              ..sendingStatus = SendingStatus.failed;
-            if (handler != null) handler(pendingFileMessage, e);
+
+            if (e is AckTimeoutException) {
+              pendingFileMessage
+                ..errorCode = e.code ?? SendbirdError.unknownError
+                ..sendingStatus = SendingStatus.failed;
+              if (handler != null) handler(pendingFileMessage, e);
+            }
           });
         } else {
           final request = ChannelFileMessageSendRequest(

@@ -59,6 +59,7 @@ class GroupChannelFilter {
 
   /// Sets to filter channels by the membership filter.
   /// The default value is `all`.
+  @JsonKey(name: 'public_membership_mode')
   MembershipFilter publicMembershipFilter = MembershipFilter.all;
 
   /// Searches for group channels with metadata containing an item with the
