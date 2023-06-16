@@ -205,5 +205,9 @@ class BaseChannel implements Cacheable {
     createdAt = others.createdAt;
     data = others.data;
     customType = others.customType;
+    isFrozen = others.isFrozen;
+    isEphemeral = others.isEphemeral;
+    fromCache = others.fromCache;
+    dirty = others.dirty;
   }
 }

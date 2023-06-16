@@ -370,7 +370,6 @@ class GroupChannel extends BaseChannel {
       channel.fromCache = true;
       return channel;
     }
-
     return GroupChannel.refresh(channelUrl);
   }
 

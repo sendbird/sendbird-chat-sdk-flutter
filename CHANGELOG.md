@@ -1,3 +1,8 @@
+## [3.2.14] - Jun 16, 2023
+
+- Fix issue with MarkAsDirty Method
+- Fix issue with retrieving public group channel list
+
 ## [3.2.13] - Jun 2, 2023
 
 - Update Connectivity Plus to 4.0.1

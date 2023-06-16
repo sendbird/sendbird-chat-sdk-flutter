@@ -67,7 +67,9 @@ class MemoryCacheStorage implements CacheStorage {
 
   @override
   void markAsDirtyAll() {
-    _cacheMap.values.forEach((element) {});
+    _cacheMap.values.forEach((element) {
+      element.markAsDirty();
+    });
   }
 }
 

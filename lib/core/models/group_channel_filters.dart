@@ -53,6 +53,7 @@ class GroupChannelFilter {
   /// The default value is `unhiddenOnly`
   ChannelHiddenStateFilter hiddenMode = ChannelHiddenStateFilter.unhiddenOnly;
 
+  @JsonKey(name: 'public_membership_mode')
   PublicGroupChannelMembershipFilter publicMembershipFilter =
       PublicGroupChannelMembershipFilter.all;
 
