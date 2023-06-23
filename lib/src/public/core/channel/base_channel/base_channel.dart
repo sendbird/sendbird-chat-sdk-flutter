@@ -211,5 +211,8 @@ abstract class BaseChannel implements Cacheable {
     customType = others.customType;
     isFrozen = others.isFrozen;
     isEphemeral = others.isEphemeral;
+
+    fromCache = others.fromCache;
+    dirty = others.dirty;
   }
 }

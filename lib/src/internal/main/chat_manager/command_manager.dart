@@ -120,8 +120,10 @@ class CommandManager {
   }
 
   Future<void> processCommand(Command cmd) async {
-    sbLog.d(StackTrace.current,
-        '\n-[cmd] ${cmd.cmd}\n-[payload] ${jsonEncoder.convert(cmd.payload)}');
+    if (cmd.payload['cmd'] == null || cmd.payload['cmd'] != 'PONG') {
+      sbLog.d(StackTrace.current,
+          '\n-[cmd] ${cmd.cmd}\n-[payload] ${jsonEncoder.convert(cmd.payload)}');
+    }
 
     final unreadCountPayload = cmd.payload['unread_cnt'];
     if (unreadCountPayload != null) {
@@ -180,7 +182,9 @@ class CommandManager {
     } else if (cmd.isVote) {
       await _processVote(cmd);
     } else {
-      sbLog.i(StackTrace.current, 'Pass command: ${cmd.cmd}');
+      if (cmd.cmd != 'PONG') {
+        sbLog.i(StackTrace.current, 'Pass command: ${cmd.cmd}');
+      }
     }
   }
 

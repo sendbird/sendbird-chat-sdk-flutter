@@ -49,7 +49,7 @@ part 'chat_event_handler.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.1';
+const sdkVersion = '4.0.2';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -170,43 +170,39 @@ class Chat with WidgetsBindingObserver {
 
     if (!isTest) {
       Connectivity().onConnectivityChanged.asBroadcastStream(
-            onCancel: (controller) => {
-              _connectivityResult = ConnectivityResult.none,
-              controller.pause(),
-            },
-            onListen: (subscription) {
-              subscription.onData((data) async {
-                switch (data) {
-                  case ConnectivityResult.none:
-                    break;
-                  case ConnectivityResult.mobile:
-                    if (_connectivityResult == ConnectivityResult.none &&
-                        chatContext.sessionKey != null) {
-                      await connectionManager.reconnect(reset: true);
-                    }
-                    break;
-                  case ConnectivityResult.wifi:
-                    if (_connectivityResult == ConnectivityResult.none &&
-                        chatContext.sessionKey != null) {
-                      await connectionManager.reconnect(reset: true);
-                    }
-                    break;
-                  case ConnectivityResult.bluetooth:
-                  case ConnectivityResult.ethernet:
-                    if (_connectivityResult == ConnectivityResult.none &&
-                        chatContext.sessionKey != null) {
-                      await connectionManager.reconnect(reset: true);
-                    }
-                    break;
-                  case ConnectivityResult.vpn:
-                    break;
-                  default:
-                    break;
-                }
-                _connectivityResult = data;
-              });
-            },
-          );
+          onCancel: (controller) => {
+                _connectivityResult = ConnectivityResult.none,
+                controller.pause(),
+              },
+          onListen: (subscription) {
+            subscription.onData((data) async {
+              switch (data) {
+                case ConnectivityResult.none:
+                  sbLog.d(StackTrace.current, 'ConnectivityResult.none');
+                  channelCache.markAsDirtyAll(); // Check
+                  break;
+                case ConnectivityResult.mobile:
+                case ConnectivityResult.wifi:
+                case ConnectivityResult.ethernet:
+                case ConnectivityResult.vpn:
+                case ConnectivityResult.other:
+                  sbLog.d(
+                      StackTrace.current, '${data.toString()} => reconnect()');
+                  if (_connectivityResult == ConnectivityResult.none &&
+                      chatContext.sessionKey != null) {
+                    await connectionManager.reconnect(reset: true);
+                  }
+                  break;
+                case ConnectivityResult.bluetooth:
+                  sbLog.d(StackTrace.current, 'ConnectivityResult.bluetooth');
+                  break;
+                default:
+                  sbLog.d(StackTrace.current, data.toString());
+                  break;
+              }
+              _connectivityResult = data;
+            });
+          });
     }
   }
 

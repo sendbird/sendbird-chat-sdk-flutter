@@ -10,7 +10,9 @@ class SendbirdLogger {
   Logger logger;
 
   static final _instance = SendbirdLogger._();
-  SendbirdLogger._() : logger = Logger(level: Level.nothing);
+  SendbirdLogger._() : logger = Logger(level: Level.nothing) {
+    _setLogLevel(Level.nothing);
+  }
   factory SendbirdLogger() => _instance;
 
   void setLogLevel(LogLevel level) {

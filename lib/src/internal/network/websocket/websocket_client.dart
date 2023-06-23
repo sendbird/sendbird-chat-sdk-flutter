@@ -107,10 +107,12 @@ class WebSocketClient {
   }
 
   void send(String data) {
+    if (!_isConnected) {
+      throw WebSocketFailedException();
+    }
+
     try {
-      if (_isConnected) {
-        _webSocketChannel?.sink.add(data);
-      }
+      _webSocketChannel?.sink.add(data);
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');
       throw WebSocketFailedException(message: e.toString());

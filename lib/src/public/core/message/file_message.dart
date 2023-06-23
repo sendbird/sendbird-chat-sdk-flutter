@@ -148,19 +148,25 @@ class FileMessage extends BaseMessage {
     required BaseChannel channel,
   }) {
     final message = FileMessage(
-      requestId: const Uuid().v1(),
-      url: params.fileInfo.fileUrl ?? '',
-      messageId: 0,
-      file: params.fileInfo.file,
-      name: params.fileInfo.fileName,
-      size: params.fileInfo.fileSize ?? 0,
       channelType: channel.channelType,
       channelUrl: channel.channelUrl,
+      messageId: 0,
+      requestId: const Uuid().v1(),
+      // BaseMessageCreateParams
+      data: params.data,
+      customType: params.customType,
       mentionType: params.mentionType,
+      metaArrays: params.metaArrays,
+      parentMessageId: params.parentMessageId,
+      replyToChannel: params.replyToChannel,
+      // FileMessageCreateParams
+      url: params.fileInfo.fileUrl ?? '',
+      file: params.fileInfo.file,
+      name: params.fileInfo.fileName,
+      type: params.fileInfo.mimeType,
+      size: params.fileInfo.fileSize ?? 0,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
-      replyToChannel: params.replyToChannel,
-      // Check: Is needed to add other fields.
     );
     return message;
   }

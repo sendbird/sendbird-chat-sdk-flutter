@@ -1,3 +1,6 @@
+## v4.0.2 (Jun 23, 2023)
+- Improved stability.
+
 ## v4.0.1 (Jun 14, 2023)
 - Improved stability.
 

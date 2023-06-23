@@ -57,6 +57,7 @@ class AsyncQueue<T> {
         }
       } catch (e) {
         sbLog.e(StackTrace.current, 'e: $e');
+        rethrow;
       }
     }
   }

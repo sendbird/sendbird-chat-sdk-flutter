@@ -96,7 +96,7 @@ extension BaseChannelMessage on BaseChannel {
     }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
 
-      if (e is AckTimeoutException) {
+      if (e is SendbirdException) {
         pendingUserMessage
           ..errorCode = e.code ?? SendbirdError.unknownError
           ..sendingStatus = SendingStatus.failed;
@@ -176,17 +176,19 @@ extension BaseChannelMessage on BaseChannel {
 
     final pendingFileMessage =
         FileMessage.fromParams(params: params, channel: this)..set(chat);
+
     pendingFileMessage.sendingStatus = SendingStatus.pending;
     pendingFileMessage.sender =
         Sender.fromUser(chat.chatContext.currentUser, this);
 
-    final queue = chat.getMessageQueue(channelUrl);
-    final task = AsyncSimpleTask(
-      () async {
-        UploadResponse? uploadResponse;
+    bool isCanceled = false;
+    runZonedGuarded(() async {
+      final queue = chat.getMessageQueue(channelUrl);
+      final task = AsyncSimpleTask(
+        () async {
+          UploadResponse? uploadResponse;
 
-        if (params.fileInfo.hasBinary) {
-          try {
+          if (params.fileInfo.hasBinary) {
             uploadResponse = await chat.apiClient
                 .send<UploadResponse>(ChannelFileUploadRequest(chat,
                     channelUrl: channelUrl,
@@ -199,52 +201,44 @@ extension BaseChannelMessage on BaseChannel {
                 if (handler != null) {
                   handler(
                     pendingFileMessage..sendingStatus = SendingStatus.failed,
-                    SendbirdException(
-                      message: 'Upload timeout',
-                      code: SendbirdError.fileUploadTimeout,
-                    ),
+                    SendbirdException(code: SendbirdError.fileUploadTimeout),
                   );
                 }
                 throw SendbirdException(code: SendbirdError.fileUploadTimeout);
               },
             );
-          } catch (e) {
-            sbLog.e(StackTrace.current, 'e: $e');
-            rethrow;
           }
-        }
 
-        String? fileUrl = uploadResponse?.url;
-        int? fileSize = uploadResponse?.fileSize;
-        if (fileUrl != null) params.fileInfo.fileUrl = fileUrl;
-        if (fileSize != null) params.fileInfo.fileSize = fileSize;
+          String? fileUrl = uploadResponse?.url;
+          int? fileSize = uploadResponse?.fileSize;
+          if (fileUrl != null) params.fileInfo.fileUrl = fileUrl;
+          if (fileSize != null) params.fileInfo.fileSize = fileSize;
 
-        final cmd = Command.buildFileMessage(
-          channelUrl: channelUrl,
-          params: params,
-          requestId: pendingFileMessage.requestId,
-          requireAuth: uploadResponse?.requireAuth,
-          thumbnails: uploadResponse?.thumbnails,
-        );
+          final cmd = Command.buildFileMessage(
+            channelUrl: channelUrl,
+            params: params,
+            requestId: pendingFileMessage.requestId,
+            requireAuth: uploadResponse?.requireAuth,
+            thumbnails: uploadResponse?.thumbnails,
+          );
 
-        final message = BaseMessage.getMessageFromJsonWithChat<FileMessage>(
-          chat,
-          cmd.payload,
-          channelType: channelType,
-          commandType: cmd.cmd,
-        );
+          final message = BaseMessage.getMessageFromJsonWithChat<FileMessage>(
+            chat,
+            cmd.payload,
+            channelType: channelType,
+            commandType: cmd.cmd,
+          );
 
-        if (chat.chatContext.currentUser == null) {
-          final error = ConnectionRequiredException();
-          message
-            ..errorCode = error.code
-            ..sendingStatus = SendingStatus.failed;
-          if (handler != null) handler(message, error);
-          return message;
-        }
+          if (chat.chatContext.currentUser == null) {
+            final error = ConnectionRequiredException();
+            message
+              ..errorCode = error.code
+              ..sendingStatus = SendingStatus.failed;
+            if (handler != null) handler(message, error);
+            return message;
+          }
 
-        if (chat.connectionManager.isConnected()) {
-          runZonedGuarded(() {
+          if (chat.connectionManager.isConnected()) {
             chat.commandManager.sendCommand(cmd).then((result) {
               if (result == null) return;
 
@@ -258,42 +252,44 @@ extension BaseChannelMessage on BaseChannel {
               chat.collectionManager.onMessageSentByMe(message);
               if (handler != null) handler(message, null);
             });
-          }, (e, s) {
-            sbLog.e(StackTrace.current, 'e: $e');
+          } else {
+            final request = ChannelFileMessageSendRequest(
+              chat,
+              channelType: channelType,
+              channelUrl: channelUrl,
+              params: params,
+              thumbnails: uploadResponse?.thumbnails,
+              requireAuth: uploadResponse?.requireAuth,
+            );
+            final message = await chat.apiClient.send<FileMessage>(request);
 
-            if (e is AckTimeoutException) {
-              pendingFileMessage
-                ..errorCode = e.code ?? SendbirdError.unknownError
-                ..sendingStatus = SendingStatus.failed;
-              if (handler != null) handler(pendingFileMessage, e);
-            }
-          });
-        } else {
-          final request = ChannelFileMessageSendRequest(
-            chat,
-            channelType: channelType,
-            channelUrl: channelUrl,
-            params: params,
-            thumbnails: uploadResponse?.thumbnails,
-            requireAuth: uploadResponse?.requireAuth,
-          );
-          final message = await chat.apiClient.send<FileMessage>(request);
+            chat.collectionManager.onMessageSentByMe(message);
+            if (handler != null) handler(message, null);
+          }
+        },
+        onCancel: () {
+          isCanceled = true;
+          if (handler != null) {
+            handler(pendingFileMessage, OperationCanceledException());
+          }
+        },
+      );
 
-          chat.collectionManager.onMessageSentByMe(message);
-          if (handler != null) handler(message, null);
-        }
-      },
-      onCancel: () {
-        if (handler != null) {
-          handler(pendingFileMessage, OperationCanceledException());
-        }
-      },
-    );
+      queue.enqueue(task);
 
-    queue.enqueue(task);
+      chat.setUploadTask(pendingFileMessage.requestId!, task);
+      chat.setMessageQueue(channelUrl, queue);
+    }, (e, s) {
+      sbLog.e(StackTrace.current, 'e: $e');
+      if (isCanceled) return;
 
-    chat.setUploadTask(pendingFileMessage.requestId!, task);
-    chat.setMessageQueue(channelUrl, queue);
+      if (e is SendbirdException) {
+        pendingFileMessage
+          ..errorCode = e.code ?? SendbirdError.unknownError
+          ..sendingStatus = SendingStatus.failed;
+        if (handler != null) handler(pendingFileMessage, e);
+      }
+    });
 
     return pendingFileMessage;
   }
