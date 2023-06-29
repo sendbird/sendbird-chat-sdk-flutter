@@ -278,7 +278,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onReadStatusUpdated(channel);
+        (element as GroupChannelHandler).onReadStatusUpdated(channel);
       }
     }
   }
@@ -288,7 +288,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onDeliveryStatusUpdated(channel);
+        (element as GroupChannelHandler).onDeliveryStatusUpdated(channel);
       }
     }
   }
@@ -298,7 +298,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onTypingStatusUpdated(channel);
+        (element as GroupChannelHandler).onTypingStatusUpdated(channel);
       }
     }
   }
@@ -310,7 +310,8 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onUserReceivedInvitation(channel, invitees, inviter);
+        (element as GroupChannelHandler)
+            .onUserReceivedInvitation(channel, invitees, inviter);
       }
     }
   }
@@ -325,7 +326,8 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onUserDeclinedInvitation(channel, invitee, inviter);
+        (element as GroupChannelHandler)
+            .onUserDeclinedInvitation(channel, invitee, inviter);
       }
     }
   }
@@ -336,7 +338,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onUserJoined(channel, user);
+        (element as GroupChannelHandler).onUserJoined(channel, user);
       }
     }
   }
@@ -347,7 +349,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onUserLeft(channel, user);
+        (element as GroupChannelHandler).onUserLeft(channel, user);
       }
     }
   }
@@ -357,7 +359,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onChannelHidden(channel);
+        (element as GroupChannelHandler).onChannelHidden(channel);
       }
     }
   }
@@ -368,7 +370,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onChannelMemberCountChanged(channels);
+        (element as GroupChannelHandler).onChannelMemberCountChanged(channels);
       }
     }
   }
@@ -378,7 +380,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onPollVoted(channel, event);
+        (element as GroupChannelHandler).onPollVoted(channel, event);
       }
     }
   }
@@ -388,7 +390,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onPollUpdated(channel, event);
+        (element as GroupChannelHandler).onPollUpdated(channel, event);
       }
     }
   }
@@ -398,7 +400,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onPollDeleted(channel, pollId);
+        (element as GroupChannelHandler).onPollDeleted(channel, pollId);
       }
     }
   }
@@ -408,7 +410,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is GroupChannelHandler) {
-        element.onPinnedMessageUpdated(channel);
+        (element as GroupChannelHandler).onPinnedMessageUpdated(channel);
       }
     }
   }
@@ -420,7 +422,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is OpenChannelHandler) {
-        element.onUserEntered(channel, user);
+        (element as OpenChannelHandler).onUserEntered(channel, user);
       }
     }
   }
@@ -431,7 +433,7 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is OpenChannelHandler) {
-        element.onUserExited(channel, user);
+        (element as OpenChannelHandler).onUserExited(channel, user);
       }
     }
   }
@@ -442,7 +444,8 @@ class EventManager {
 
     for (final element in _channelHandlers.values) {
       if (element is OpenChannelHandler) {
-        element.onChannelParticipantCountChanged(channels);
+        (element as OpenChannelHandler)
+            .onChannelParticipantCountChanged(channels);
       }
     }
   }
