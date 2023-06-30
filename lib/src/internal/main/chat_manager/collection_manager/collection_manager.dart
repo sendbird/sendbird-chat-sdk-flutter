@@ -62,7 +62,7 @@ class CollectionManager {
 // GroupChannelHandler for collectionManager
 //------------------------------//
 class InternalGroupChannelHandlerForCollectionManager
-    extends GroupChannelHandler {
+    with GroupChannelHandler, BaseChannelHandler {
   final CollectionManager _collectionManager;
 
   InternalGroupChannelHandlerForCollectionManager(

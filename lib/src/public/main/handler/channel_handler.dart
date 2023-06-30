@@ -90,7 +90,7 @@ abstract class BaseChannelHandler {
 }
 
 /// The GroupChannel handler.
-abstract class GroupChannelHandler extends BaseChannelHandler {
+abstract class GroupChannelHandler {
   /// A callback for when read receipts are updated on `GroupChannel`.
   /// To use the updated read receipt, refer to [GroupChannelRead.getReadStatus],
   /// [GroupChannelRead.getReadMembers], [GroupChannelRead.getUnreadMembers].
@@ -149,7 +149,7 @@ abstract class GroupChannelHandler extends BaseChannelHandler {
 }
 
 /// The OpenChannel handler.
-abstract class OpenChannelHandler extends BaseChannelHandler {
+abstract class OpenChannelHandler {
   /// A callback for when a [User] has entered [OpenChannel].
   /// To use the updated participant count, refer to [OpenChannel.participantCount].
   void onUserEntered(OpenChannel channel, User user) {}
