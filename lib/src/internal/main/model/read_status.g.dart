@@ -16,4 +16,5 @@ ReadStatus _$ReadStatusFromJson(Map<String, dynamic> json) => ReadStatus(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };

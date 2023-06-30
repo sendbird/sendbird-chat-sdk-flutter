@@ -75,6 +75,7 @@ const _$SendingStatusEnumMap = {
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$MentionTypeEnumMap = {

@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_create_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/open_channel/open_channel_delete_request.dart';
@@ -13,7 +14,6 @@ import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
-import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_create_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_update_params.dart';
 
@@ -36,7 +36,6 @@ class OpenChannel extends BaseChannel {
     required String channelUrl,
     String name = '',
     String coverUrl = '',
-    User? creator,
     int? createdAt,
     String data = '',
     String customType = '',
@@ -162,11 +161,11 @@ class OpenChannel extends BaseChannel {
       );
 
   @override
-  void copyWith(dynamic others) {
-    super.copyWith(others);
-    if (others is OpenChannel) {
-      participantCount = others.participantCount;
-      operators = List<User>.from(others.operators);
+  void copyWith(dynamic other) {
+    super.copyWith(other);
+    if (other is OpenChannel) {
+      participantCount = other.participantCount;
+      operators = List<User>.from(other.operators);
     }
   }
 }

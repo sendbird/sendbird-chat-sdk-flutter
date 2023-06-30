@@ -28,10 +28,10 @@ class TypingStatus implements Cacheable {
   String get key => user.userId;
 
   @override
-  void copyWith(dynamic others) {
-    channelType = others.channelType;
-    channelUrl = others.urlKeyword;
-    user = others.user;
-    timestamp = others.timestamp;
+  void copyWith(dynamic other) {
+    channelType = other.channelType;
+    channelUrl = other.urlKeyword;
+    user = other.user;
+    timestamp = other.timestamp;
   }
 }

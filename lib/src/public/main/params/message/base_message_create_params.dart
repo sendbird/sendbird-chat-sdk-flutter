@@ -49,15 +49,13 @@ class BaseMessageCreateParams {
   });
 
   /// withMessage
-  BaseMessageCreateParams.withMessage(BaseMessage message, {bool? deepCopy}) {
+  BaseMessageCreateParams.withMessage(BaseMessage message) {
     data = message.data;
     customType = message.customType;
     mentionType = message.mentionType ?? MentionType.users;
     mentionedUserIds = message.mentionedUsers.map((e) => e.userId).toList();
     metaArrays = message.allMetaArrays;
-    if (deepCopy != null && deepCopy) {
-      parentMessageId = message.parentMessageId;
-    }
+    parentMessageId = message.parentMessageId;
     replyToChannel = message.isReplyToChannel;
   }
 

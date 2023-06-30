@@ -10,6 +10,7 @@ extension BaseChannelMessageMetaArray on BaseChannel {
     List<String> keys,
   ) async {
     sbLog.i(StackTrace.current, 'keys: $keys');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();
@@ -39,6 +40,7 @@ extension BaseChannelMessageMetaArray on BaseChannel {
     List<String> keys,
   ) async {
     sbLog.i(StackTrace.current, 'keys: $keys');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();
@@ -68,6 +70,7 @@ extension BaseChannelMessageMetaArray on BaseChannel {
     List<MessageMetaArray> metaArrays,
   ) async {
     sbLog.i(StackTrace.current, 'metaArrays: $metaArrays');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();
@@ -95,6 +98,7 @@ extension BaseChannelMessageMetaArray on BaseChannel {
     List<MessageMetaArray> metaArrays,
   ) async {
     sbLog.i(StackTrace.current, 'metaArrays: $metaArrays');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();

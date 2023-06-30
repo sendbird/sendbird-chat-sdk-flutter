@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
@@ -131,6 +132,10 @@ class GroupChannel extends BaseChannel {
   @JsonKey(name: 'push_trigger_option')
   GroupChannelPushTriggerOption myPushTriggerOption;
 
+  /// Checks whether this channel is a chat notification [GroupChannel].
+  /// @since 4.0.3
+  bool isChatNotification;
+
   /// My member state.
   @JsonKey(name: 'member_state')
   MemberState myMemberState;
@@ -210,6 +215,7 @@ class GroupChannel extends BaseChannel {
     this.memberCount = 0,
     this.joinedMemberCount = 0,
     this.myPushTriggerOption = GroupChannelPushTriggerOption.defaultValue,
+    this.isChatNotification = false,
     this.myMemberState = MemberState.none,
     this.myRole = Role.none,
     this.myMutedState = MuteState.unmuted,
@@ -392,6 +398,7 @@ class GroupChannel extends BaseChannel {
         other.memberCount == memberCount &&
         other.joinedMemberCount == joinedMemberCount &&
         other.myPushTriggerOption == myPushTriggerOption &&
+        other.isChatNotification == isChatNotification &&
         other.myMemberState == myMemberState &&
         other.myRole == myRole &&
         other.myMutedState == myMutedState &&
@@ -426,36 +433,37 @@ class GroupChannel extends BaseChannel {
       );
 
   @override
-  void copyWith(dynamic others) {
-    super.copyWith(others);
-    if (others is GroupChannel) {
-      lastMessage = others.lastMessage;
-      isSuper = others.isSuper;
-      isBroadcast = others.isBroadcast;
-      isPublic = others.isPublic;
-      isDistinct = others.isDistinct;
-      isDiscoverable = others.isDiscoverable;
-      isExclusive = others.isExclusive;
-      isAccessCodeRequired = others.isAccessCodeRequired;
-      unreadMessageCount = others.unreadMessageCount;
-      unreadMentionCount = others.unreadMentionCount;
-      members = List<Member>.from(others.members);
-      memberCount = others.memberCount;
-      joinedMemberCount = others.joinedMemberCount;
-      myPushTriggerOption = others.myPushTriggerOption;
-      myMemberState = others.myMemberState;
-      myRole = others.myRole;
-      myMutedState = others.myMutedState;
-      myCountPreference = others.myCountPreference;
-      creator = others.creator;
-      inviter = others.inviter;
-      invitedAt = others.invitedAt;
-      joinedAt = others.joinedAt;
-      isHidden = others.isHidden;
-      hiddenState = others.hiddenState;
-      myLastRead = others.myLastRead;
-      messageOffsetTimestamp = others.messageOffsetTimestamp;
-      messageSurvivalSeconds = others.messageSurvivalSeconds;
+  void copyWith(dynamic other) {
+    super.copyWith(other);
+    if (other is GroupChannel) {
+      lastMessage = other.lastMessage;
+      isSuper = other.isSuper;
+      isBroadcast = other.isBroadcast;
+      isPublic = other.isPublic;
+      isDistinct = other.isDistinct;
+      isDiscoverable = other.isDiscoverable;
+      isExclusive = other.isExclusive;
+      isAccessCodeRequired = other.isAccessCodeRequired;
+      unreadMessageCount = other.unreadMessageCount;
+      unreadMentionCount = other.unreadMentionCount;
+      members = List<Member>.from(other.members);
+      memberCount = other.memberCount;
+      joinedMemberCount = other.joinedMemberCount;
+      myPushTriggerOption = other.myPushTriggerOption;
+      isChatNotification = other.isChatNotification;
+      myMemberState = other.myMemberState;
+      myRole = other.myRole;
+      myMutedState = other.myMutedState;
+      myCountPreference = other.myCountPreference;
+      creator = other.creator;
+      inviter = other.inviter;
+      invitedAt = other.invitedAt;
+      joinedAt = other.joinedAt;
+      isHidden = other.isHidden;
+      hiddenState = other.hiddenState;
+      myLastRead = other.myLastRead;
+      messageOffsetTimestamp = other.messageOffsetTimestamp;
+      messageSurvivalSeconds = other.messageSurvivalSeconds;
     }
   }
 }

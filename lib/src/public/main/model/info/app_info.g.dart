@@ -7,15 +7,19 @@ part of 'app_info.dart';
 // **************************************************************************
 
 AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
-      emojiHash: json['emoji_hash'] as String,
-      uploadSizeLimit: json['upload_size_limit'] as int? ?? 31457280,
       premiumFeatureList: (json['premium_feature_list'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      useReaction: json['use_reaction'] as bool,
+      uploadSizeLimit: json['upload_size_limit'] as int? ?? 31457280,
       attributesInUse: (json['attributes_in_use'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
+      emojiHash: json['emoji_hash'] as String,
+      useReaction: json['use_reaction'] as bool,
+      notificationInfo: json['notifications'] == null
+          ? null
+          : NotificationInfo.fromJson(
+              json['notifications'] as Map<String, dynamic>),
     );

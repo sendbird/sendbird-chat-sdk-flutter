@@ -16,11 +16,16 @@ class GroupChannelChangeLogsParams {
   /// Defaults to true.
   bool includeFrozen = true;
 
+  /// Whether to include chat notification channels in changelogs.
+  /// @since 4.0.3
+  bool includeChatNotification = false;
+
   Map<String, dynamic> toJson() {
     return {
       'custom_type': customTypes,
       'show_empty': includeEmpty,
       'show_frozen': includeFrozen,
+      'include_chat_notification': includeChatNotification,
     };
   }
 }

@@ -30,6 +30,7 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
               _$GroupChannelPushTriggerOptionEnumMap,
               json['push_trigger_option']) ??
           GroupChannelPushTriggerOption.defaultValue,
+      isChatNotification: json['is_chat_notification'] as bool? ?? false,
       myMemberState:
           $enumDecodeNullable(_$MemberStateEnumMap, json['member_state']) ??
               MemberState.none,

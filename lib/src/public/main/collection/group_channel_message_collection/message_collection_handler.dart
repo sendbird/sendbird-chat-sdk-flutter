@@ -3,12 +3,13 @@
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_collection/group_channel_context.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_message_collection/base_message_collection_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_message_collection/message_collection.dart';
 import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_message_collection/message_context.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
-/// An interface used in [MessageCollection].
-abstract class MessageCollectionHandler {
+/// A handler used in [MessageCollection].
+abstract class MessageCollectionHandler extends BaseMessageCollectionHandler {
   /// Called when one or more [BaseMessage] is added to this collection.
   ///
   /// [context] is a context of where this addition happened.

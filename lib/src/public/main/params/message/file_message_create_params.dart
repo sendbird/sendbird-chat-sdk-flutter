@@ -148,12 +148,21 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
         );
 
   /// withMessage
-  FileMessageCreateParams.withMessage(FileMessage fileMessage, {bool? deepCopy})
-      : fileInfo = FileInfo.fromFileUrl(
-          fileUrl: fileMessage.url,
-          mimeType: fileMessage.type,
-        ),
-        super.withMessage(fileMessage, deepCopy: deepCopy);
+  FileMessageCreateParams.withMessage(FileMessage fileMessage)
+      : super.withMessage(fileMessage) {
+    if (fileMessage.url.isNotEmpty) {
+      fileInfo = FileInfo.fromFileUrl(
+        fileUrl: fileMessage.url,
+        mimeType: fileMessage.type,
+      );
+    } else if (fileMessage.file != null) {
+      fileInfo = FileInfo.fromFile(
+        file: fileMessage.file,
+        fileName: fileMessage.name,
+        mimeType: fileMessage.type,
+      );
+    }
+  }
 
   @override
   Map<String, dynamic> toJson() {

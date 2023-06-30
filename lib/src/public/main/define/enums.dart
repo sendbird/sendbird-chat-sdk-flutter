@@ -32,6 +32,9 @@ enum SendingStatus {
 enum ChannelType {
   group,
   open,
+
+  /// @since 4.0.3
+  feed,
 }
 
 /// MentionType
@@ -79,7 +82,7 @@ enum MembershipFilter {
 
 /// MessageTypeFilter
 enum MessageTypeFilter {
-  @JsonValue(null)
+  @JsonValue('')
   all,
   @JsonValue('MESG')
   user,
@@ -248,16 +251,6 @@ enum UnreadItemKey {
   superGroupChannelInvitationCount,
   @JsonValue('group_channel_invitation_count')
   groupChannelInvitationCount,
-}
-
-/// ChannelListQueryIncludeOption
-enum ChannelListQueryIncludeOption {
-  includeEmpty,
-  includeMember,
-  includeFrozen,
-  includeMetadata,
-  includeReadReceipt,
-  includeDeliveryReceipt,
 }
 
 /// ReactionEventAction

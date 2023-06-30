@@ -52,6 +52,10 @@ class FileMessage extends BaseMessage {
   /// please refer to [BaseChannelMessage.sendFileMessage].
   final List<Thumbnail>? thumbnails;
 
+  /// [FileMessageCreateParams] object that used for sending this message.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  FileMessageCreateParams? messageCreateParams;
+
   final bool requireAuth;
 
   @JsonKey(includeFromJson: false, includeToJson: false)

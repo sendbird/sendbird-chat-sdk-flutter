@@ -7,6 +7,7 @@ extension BaseChannelReactions on BaseChannel {
   /// Adds `Reaction`.
   Future<ReactionEvent> addReaction(BaseMessage message, String key) async {
     sbLog.i(StackTrace.current, 'messageId: ${message.messageId}, key: $key');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();
@@ -33,6 +34,7 @@ extension BaseChannelReactions on BaseChannel {
   /// Deletes `Reaction`.
   Future<ReactionEvent> deleteReaction(BaseMessage message, String key) async {
     sbLog.i(StackTrace.current, 'messageId: ${message.messageId}, key: $key');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();

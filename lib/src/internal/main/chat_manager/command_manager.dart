@@ -13,7 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/model/unread_count_info.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/unread_message_count_info.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/channel_event.dart';
@@ -23,6 +23,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/message_e
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/session_event.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/user_event.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
@@ -32,6 +33,7 @@ import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/unread_message_count.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_update_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_vote_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
@@ -125,10 +127,10 @@ class CommandManager {
           '\n-[cmd] ${cmd.cmd}\n-[payload] ${jsonEncoder.convert(cmd.payload)}');
     }
 
-    final unreadCountPayload = cmd.payload['unread_cnt'];
-    if (unreadCountPayload != null) {
-      final info = UnreadCountInfo.fromJson(unreadCountPayload);
-      _updateSubscribedUnreadCountInfo(info);
+    final unreadMessageCountPayload = cmd.payload['unread_cnt'];
+    if (unreadMessageCountPayload != null) {
+      final info = UnreadMessageCountInfo.fromJson(unreadMessageCountPayload);
+      _updateSubscribedUnreadMessageCountInfo(info);
     }
 
     if (cmd.requestId != null) {
@@ -188,16 +190,21 @@ class CommandManager {
     }
   }
 
-  void _updateSubscribedUnreadCountInfo(UnreadCountInfo? info) {
+  void _updateSubscribedUnreadMessageCountInfo(UnreadMessageCountInfo? info) {
     if (info == null) return;
-    if (_chat.chatContext.unreadCountInfo.ts > info.ts) return;
+    if (_chat.chatContext.unreadMessageCountInfo.ts > info.ts) return;
 
-    final unreadCountInfo = _chat.chatContext.unreadCountInfo;
-    final didChange = unreadCountInfo.copyWith(info);
+    final unreadMessageCountInfo = _chat.chatContext.unreadMessageCountInfo;
+    final didChange = unreadMessageCountInfo.copyWith(info);
     if (didChange) {
-      _chat.eventManager.notifyTotalUnreadMessageCountUpdated(
-        unreadCountInfo.all,
-        unreadCountInfo.customTypes,
+      final unreadMessageCount = UnreadMessageCount(
+        totalCountForGroupChannels: unreadMessageCountInfo.all,
+        totalCountForFeedChannels: unreadMessageCountInfo.feed,
+        totalCountByCustomType: unreadMessageCountInfo.customTypes,
+      );
+
+      _chat.eventManager.notifyTotalUnreadMessageCountChanged(
+        unreadMessageCount,
       );
     }
   }
@@ -502,17 +509,29 @@ class CommandManager {
       final status = ReadStatus.fromJson(cmd.payload);
       status.saveToCache(_chat);
 
-      final channel = await GroupChannel.getChannel(status.channelUrl);
+      if (cmd.payload['channel_type'] == 'group') {
+        final channel = await GroupChannel.getChannel(status.channelUrl);
 
-      final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
-      final hasUnreadCount =
-          (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0);
-      if (isCurrentUser) {
-        channel.myLastRead = status.timestamp;
-        if (channel.fromCache) channel.clearUnreadCount();
-        if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
-      } else {
-        _chat.eventManager.notifyReadStatusUpdated(channel);
+        final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
+        final hasUnreadCount =
+            (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0);
+        if (isCurrentUser) {
+          channel.myLastRead = status.timestamp;
+          if (channel.fromCache) channel.clearUnreadCount();
+          if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
+        } else {
+          _chat.eventManager.notifyReadStatusUpdated(channel);
+        }
+      } else if (cmd.payload['channel_type'] == 'feed') {
+        final channel = await FeedChannel.getChannel(status.channelUrl);
+
+        final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
+        final hasUnreadCount = (channel.unreadMessageCount > 0);
+        if (isCurrentUser) {
+          if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
+        } else {
+          _chat.eventManager.notifyReadStatusUpdated(channel);
+        }
       }
     } catch (e) {
       sbLog.e(StackTrace.current, 'cmd: ${cmd.cmd}, e: $e');

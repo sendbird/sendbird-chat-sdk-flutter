@@ -2,6 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/notification_info.dart';
 
 part 'app_info.g.dart';
 
@@ -9,30 +10,36 @@ part 'app_info.g.dart';
 /// The values for this will be set after a connection has been made.
 @JsonSerializable(createToJson: false)
 class AppInfo {
-  /// The current registered emoji version hash.
-  final String emojiHash;
+  /// List of all premium features that application is using.
+  @JsonKey(defaultValue: [])
+  final List<String> premiumFeatureList;
 
   /// The maximum limit of file size for uploading.
   @JsonKey(defaultValue: 30 * 1024 * 1024) // Check
   final int uploadSizeLimit;
 
-  /// List of all premium features that application is using.
-  @JsonKey(defaultValue: [])
-  final List<String> premiumFeatureList;
-
-  /// Whether an application is using the reaction feature.
-  final bool useReaction;
-
   /// List of all attributes that the application is using.
   @JsonKey(defaultValue: [])
   final List<String> attributesInUse;
 
+  /// The current registered emoji version hash.
+  final String emojiHash;
+
+  /// Whether an application is using the reaction feature.
+  final bool useReaction;
+
+  /// Notification info.
+  /// @since 4.0.3
+  @JsonKey(name: 'notifications')
+  final NotificationInfo? notificationInfo;
+
   AppInfo({
-    required this.emojiHash,
-    required this.uploadSizeLimit,
     required this.premiumFeatureList,
-    required this.useReaction,
+    required this.uploadSizeLimit,
     required this.attributesInUse,
+    required this.emojiHash,
+    required this.useReaction,
+    this.notificationInfo,
   });
 
   /// Checks whether the emoji list needs to be updated.

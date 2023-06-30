@@ -7,6 +7,7 @@ extension BaseChannelModeration on BaseChannel {
   /// Gets my muted information in this channel.
   Future<MuteInfo> getMyMuteInfo() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMyMuteInfoGetRequest(
@@ -27,6 +28,7 @@ extension BaseChannelModeration on BaseChannel {
     String? description,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
+    checkUnsupportedAction();
 
     if (userId.isEmpty) {
       throw InvalidParameterException();
@@ -46,6 +48,7 @@ extension BaseChannelModeration on BaseChannel {
   /// Operators can unban `User` who has been banned from this channel.
   Future<void> unbanUser({required String userId}) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
+    checkUnsupportedAction();
 
     if (userId.isEmpty) {
       throw InvalidParameterException();
@@ -67,6 +70,7 @@ extension BaseChannelModeration on BaseChannel {
     String? description,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
+    checkUnsupportedAction();
 
     if (userId.isEmpty) {
       throw InvalidParameterException();
@@ -86,6 +90,7 @@ extension BaseChannelModeration on BaseChannel {
   /// Unmuted `User`'s messages are again shown to current `User`.
   Future<void> unmuteUser({required String userId}) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
+    checkUnsupportedAction();
 
     if (userId.isEmpty) {
       throw InvalidParameterException();
@@ -105,6 +110,7 @@ extension BaseChannelModeration on BaseChannel {
     String? description,
   }) async {
     sbLog.i(StackTrace.current, 'category: $category');
+    checkUnsupportedAction();
 
     await chat.apiClient.send(ChannelReportRequest(
       chat,
@@ -123,6 +129,7 @@ extension BaseChannelModeration on BaseChannel {
   }) async {
     sbLog.i(
         StackTrace.current, 'message: ${message.message}, category: $category');
+    checkUnsupportedAction();
 
     final senderId = message.sender?.userId;
     if (senderId == null || senderId.isEmpty) {
@@ -147,6 +154,7 @@ extension BaseChannelModeration on BaseChannel {
     String? description,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId, category: $category');
+    checkUnsupportedAction();
 
     await chat.apiClient.send(UserReportRequest(
       chat,

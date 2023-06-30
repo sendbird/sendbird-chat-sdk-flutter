@@ -3,12 +3,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/restricted_user.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
 
 part 'responses.g.dart';
@@ -97,6 +99,29 @@ class ChannelListQueryResponse<T extends BaseChannel> {
   factory ChannelListQueryResponse.fromJsonWithChat(
       Chat chat, Map<String, dynamic> json) {
     final res = _$ChannelListQueryResponseFromJson<T>(json);
+    for (var element in res.channels) {
+      element.set(chat);
+    }
+    return res;
+  }
+}
+
+@JsonSerializable(createToJson: false)
+class FeedChannelListQueryResponse {
+  @JsonKey(name: 'channels')
+  @FeedChannelConverter()
+  List<FeedChannel> channels;
+
+  String? next;
+
+  FeedChannelListQueryResponse({
+    this.channels = const [],
+    this.next,
+  });
+
+  factory FeedChannelListQueryResponse.fromJsonWithChat(
+      Chat chat, Map<String, dynamic> json) {
+    final res = _$FeedChannelListQueryResponseFromJson(json);
     for (var element in res.channels) {
       element.set(chat);
     }
@@ -195,6 +220,25 @@ class _ChannelConverter<T> implements JsonConverter<T, Object> {
   @override
   Object toJson(T object) {
     return object as Object;
+  }
+}
+
+class FeedChannelConverter<T> implements JsonConverter<FeedChannel, Object> {
+  const FeedChannelConverter();
+
+  @override
+  FeedChannel fromJson(Object json) {
+    if (json is Map<String, dynamic>) {
+      return FeedChannel(
+        groupChannel: GroupChannel.fromJson(json),
+      )..set(SendbirdChat().chat); // Set the singleton chat;
+    }
+    return json as FeedChannel;
+  }
+
+  @override
+  Object toJson(FeedChannel object) {
+    return object;
   }
 }
 

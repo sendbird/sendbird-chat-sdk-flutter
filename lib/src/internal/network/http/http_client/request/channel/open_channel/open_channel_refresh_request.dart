@@ -7,7 +7,6 @@ import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
-import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 class OpenChannelRefreshRequest extends ApiRequest {
   @override

@@ -20,6 +20,8 @@ extension ChannelTypeUrlString on ChannelType {
         return 'group_channels';
       case ChannelType.open:
         return 'open_channels';
+      case ChannelType.feed:
+        return 'group_channels'; // Check
     }
   }
 
@@ -29,6 +31,8 @@ extension ChannelTypeUrlString on ChannelType {
         return 'group';
       case ChannelType.open:
         return 'open';
+      case ChannelType.feed:
+        return 'group'; // Check
     }
   }
 }
@@ -44,6 +48,8 @@ extension ChannelListQueryIncludeOptionListToJson
         contains(ChannelListQueryIncludeOption.includeReadReceipt);
     final hasDeliveryReceipt =
         contains(ChannelListQueryIncludeOption.includeDeliveryReceipt);
+    final hasChatNotification =
+        contains(ChannelListQueryIncludeOption.includeChatNotification);
 
     return {
       if (hasEmpty) 'show_empty': true,
@@ -52,6 +58,17 @@ extension ChannelListQueryIncludeOptionListToJson
       if (hasMetaData) 'show_metadata': true,
       if (hasReadReceipt) 'show_read_receipt': true,
       if (hasDeliveryReceipt) 'show_delivery_receipt': true,
+      if (hasChatNotification) 'include_chat_notification': true,
     };
   }
+}
+
+enum ChannelListQueryIncludeOption {
+  includeEmpty,
+  includeMember,
+  includeFrozen,
+  includeMetadata,
+  includeReadReceipt,
+  includeDeliveryReceipt,
+  includeChatNotification,
 }

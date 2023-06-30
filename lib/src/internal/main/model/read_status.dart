@@ -45,7 +45,7 @@ class ReadStatus implements Cacheable {
   String get key => userId;
 
   @override
-  void copyWith(dynamic others) {
-    timestamp = others.timestamp;
+  void copyWith(dynamic other) {
+    timestamp = other.timestamp;
   }
 }

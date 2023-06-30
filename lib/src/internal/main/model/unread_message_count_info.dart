@@ -2,23 +2,34 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'unread_count_info.g.dart';
+part 'unread_message_count_info.g.dart';
 
 @JsonSerializable(createToJson: false)
-class UnreadCountInfo {
+class UnreadMessageCountInfo {
   int all;
+  int feed;
   Map<String, int> customTypes;
   int ts;
 
-  UnreadCountInfo({
+  UnreadMessageCountInfo({
     this.all = 0,
+    this.feed = 0,
     this.customTypes = const {},
     this.ts = 0,
   });
 
-  bool copyWith(UnreadCountInfo others) {
+  bool copyWith(UnreadMessageCountInfo others) {
     var didChange = false;
-    ts = others.ts;
+
+    if (all != others.all) {
+      didChange = true;
+      all = others.all;
+    }
+
+    if (feed != others.feed) {
+      didChange = true;
+      feed = others.feed;
+    }
 
     others.customTypes.forEach((key, value) {
       final currValue = customTypes[key];
@@ -28,13 +39,10 @@ class UnreadCountInfo {
       }
     });
 
-    if (all != others.all) {
-      didChange = true;
-      all = others.all;
-    }
+    ts = others.ts;
     return didChange;
   }
 
-  static UnreadCountInfo fromJson(Map<String, dynamic> json) =>
-      _$UnreadCountInfoFromJson(json);
+  static UnreadMessageCountInfo fromJson(Map<String, dynamic> json) =>
+      _$UnreadMessageCountInfoFromJson(json);
 }
