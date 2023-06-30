@@ -8,6 +8,7 @@ extension BaseChannelOperator on BaseChannel {
   /// See [https://docs.sendbird.com/platform/user_type#3_operator](https://docs.sendbird.com/platform/user_type#3_operator) for the explanations on the operators.
   Future<void> addOperators(List<String> userIds) async {
     sbLog.i(StackTrace.current, 'userIds: $userIds');
+    checkUnsupportedAction();
 
     if (userIds.isEmpty) {
       throw InvalidParameterException();
@@ -25,6 +26,7 @@ extension BaseChannelOperator on BaseChannel {
   /// See [https://docs.sendbird.com/platform/user_type#3_operator](https://docs.sendbird.com/platform/user_type#3_operator) for the explanations on the operators.
   Future<void> removeOperators(List<String> userIds) async {
     sbLog.i(StackTrace.current, 'userIds: $userIds');
+    checkUnsupportedAction();
 
     if (userIds.isEmpty) {
       throw InvalidParameterException();
@@ -42,6 +44,7 @@ extension BaseChannelOperator on BaseChannel {
   /// See [https://docs.sendbird.com/platform/user_type#3_operator](https://docs.sendbird.com/platform/user_type#3_operator) for the explanations on the operators.
   Future<void> removeAllOperators() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     await chat.apiClient.send(ChannelOperatorsRemoveRequest(
       chat,

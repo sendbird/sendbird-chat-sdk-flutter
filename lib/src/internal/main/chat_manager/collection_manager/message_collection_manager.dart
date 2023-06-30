@@ -6,16 +6,16 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Add and remove message collection
 //------------------------------//
-  void addMessageCollection(MessageCollection collection) {
+  void addMessageCollection(BaseMessageCollection collection) {
     messageCollections.add(collection);
 
     final now = DateTime.now().millisecondsSinceEpoch;
-    lastRequestTsForMessageChangeLogs[collection.channel.channelUrl] = now;
-    lastRequestTsForPollChangeLogs[collection.channel.channelUrl] = now;
-    lastRequestTsForMessagesGap[collection.channel.channelUrl] = now;
+    lastRequestTsForMessageChangeLogs[collection.baseChannel.channelUrl] = now;
+    lastRequestTsForPollChangeLogs[collection.baseChannel.channelUrl] = now;
+    lastRequestTsForMessagesGap[collection.baseChannel.channelUrl] = now;
   }
 
-  void removeMessageCollection(MessageCollection collection) {
+  void removeMessageCollection(BaseMessageCollection collection) {
     messageCollections.remove(collection);
   }
 
@@ -28,7 +28,7 @@ extension MessageCollectionManager on CollectionManager {
     for (final messageCollection in messageCollections) {
       sendEventsToMessageCollection(
         messageCollection: messageCollection,
-        groupChannel: messageCollection.channel,
+        baseChannel: messageCollection.baseChannel,
         eventSource: CollectionEventSource.eventMessageSent,
         sendingStatus: SendingStatus.succeeded,
         addedMessages: [message],
@@ -40,8 +40,9 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Message changeLogs
 //------------------------------//
-  void _requestMessageChangeLogs(MessageCollection messageCollection) async {
-    final channel = messageCollection.channel;
+  void _requestMessageChangeLogs(
+      BaseMessageCollection messageCollection) async {
+    final channel = messageCollection.baseChannel;
     final params = MessageChangeLogParams();
     final List<BaseMessage> updatedMessages = [];
     final List<int> deletedMessageIds = [];
@@ -73,7 +74,7 @@ extension MessageCollectionManager on CollectionManager {
 
     sendEventsToMessageCollection(
       messageCollection: messageCollection,
-      groupChannel: channel,
+      baseChannel: channel,
       eventSource: CollectionEventSource.messageChangeLogs,
       sendingStatus: SendingStatus.succeeded,
       updatedMessages: updatedMessages,
@@ -84,14 +85,18 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Poll changeLogs
 //------------------------------//
-  void _requestPollChangeLogs(MessageCollection messageCollection) async {
+  void _requestPollChangeLogs(BaseMessageCollection messageCollection) async {
     if (_chat.chatContext.appInfo == null ||
         _chat.chatContext.appInfo!.premiumFeatureList.contains('poll') ==
             false) {
       return;
     }
 
-    final channel = messageCollection.channel;
+    if (messageCollection.baseChannel is! GroupChannel) {
+      return;
+    }
+
+    final groupChannel = messageCollection.baseChannel as GroupChannel;
     final List<BaseMessage> updatedMessages = [];
     final List<int> deletedMessageIds = [];
 
@@ -102,11 +107,11 @@ extension MessageCollectionManager on CollectionManager {
       final now = DateTime.now().millisecondsSinceEpoch;
 
       if (token == null) {
-        changeLogs = await channel.getPollChangeLogsSinceTimestamp(
-          lastRequestTsForPollChangeLogs[channel.channelUrl] ?? 0,
+        changeLogs = await groupChannel.getPollChangeLogsSinceTimestamp(
+          lastRequestTsForPollChangeLogs[groupChannel.channelUrl] ?? 0,
         );
       } else {
-        changeLogs = await channel.getPollChangeLogsSinceToken(
+        changeLogs = await groupChannel.getPollChangeLogsSinceToken(
           token,
         );
       }
@@ -125,13 +130,13 @@ extension MessageCollectionManager on CollectionManager {
 
       // changeLogs.deletedPollIds => changeLogs.deletedMessageIds
 
-      lastRequestTsForPollChangeLogs[channel.channelUrl] = now;
+      lastRequestTsForPollChangeLogs[groupChannel.channelUrl] = now;
       token = changeLogs.token;
     } while (changeLogs.hasMore);
 
     sendEventsToMessageCollection(
       messageCollection: messageCollection,
-      groupChannel: channel,
+      baseChannel: groupChannel,
       eventSource: CollectionEventSource.pollChangeLogs,
       sendingStatus: SendingStatus.succeeded,
       updatedMessages: updatedMessages,
@@ -142,10 +147,10 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Messages gap
 //------------------------------//
-  void _requestMessagesGap(MessageCollection messageCollection) async {
+  void _requestMessagesGap(BaseMessageCollection messageCollection) async {
     final now = DateTime.now().millisecondsSinceEpoch;
 
-    final channel = messageCollection.channel;
+    final channel = messageCollection.baseChannel;
     int nextEndTs = messageCollection.latestMessage != null
         ? messageCollection.latestMessage!.createdAt
         : min(lastRequestTsForMessagesGap[channel.channelUrl] ?? 0,
@@ -156,7 +161,7 @@ extension MessageCollectionManager on CollectionManager {
       ChannelMessagesGapRequest(
         _chat,
         channelType: ChannelType.group,
-        channelUrl: messageCollection.channel.channelUrl,
+        channelUrl: messageCollection.baseChannel.channelUrl,
         messageListParams: messageCollection.loadNextParams.toJson(),
         prevStartTs: nextEndTs,
         prevEndTs: nextEndTs,
@@ -172,14 +177,21 @@ extension MessageCollectionManager on CollectionManager {
     if (messages == null) {
       messageCollection.hasNext = true;
       if (!messageCollection.isDisposed) {
-        messageCollection.handler.onHugeGapDetected();
+        if (messageCollection.baseHandler is MessageCollectionHandler) {
+          (messageCollection.baseHandler as MessageCollectionHandler)
+              .onHugeGapDetected();
+        } else if (messageCollection.baseHandler
+            is NotificationCollectionHandler) {
+          (messageCollection.baseHandler as NotificationCollectionHandler)
+              .onHugeGapDetected();
+        }
       }
     } else {
       messageCollection.hasNext = false;
 
       sendEventsToMessageCollection(
         messageCollection: messageCollection,
-        groupChannel: channel,
+        baseChannel: channel,
         eventSource: CollectionEventSource.messagesGap,
         sendingStatus: SendingStatus.succeeded,
         addedMessages: messages,
@@ -193,17 +205,25 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
   void sendEventsToMessageCollectionList({
     required CollectionEventSource eventSource,
-    List<GroupChannel>? updatedChannels,
+    List<BaseChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
   }) {
     if (updatedChannels != null && updatedChannels.isNotEmpty) {
       for (final updatedChannel in updatedChannels) {
         for (final messageCollection in messageCollections) {
           if (updatedChannel.channelUrl ==
-              messageCollection.channel.channelUrl) {
+              messageCollection.baseChannel.channelUrl) {
             if (!messageCollection.isDisposed) {
-              messageCollection.handler.onChannelUpdated(
-                  GroupChannelContext(eventSource), updatedChannel);
+              if (messageCollection.baseHandler is MessageCollectionHandler) {
+                (messageCollection.baseHandler as MessageCollectionHandler)
+                    .onChannelUpdated(GroupChannelContext(eventSource),
+                        updatedChannel as GroupChannel);
+              } else if (messageCollection.baseHandler
+                  is NotificationCollectionHandler) {
+                (messageCollection.baseHandler as NotificationCollectionHandler)
+                    .onChannelUpdated(FeedChannelContext(eventSource),
+                        updatedChannel as FeedChannel);
+              }
             }
             break;
           }
@@ -214,10 +234,18 @@ extension MessageCollectionManager on CollectionManager {
     if (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty) {
       for (final deletedChannelUrl in deletedChannelUrls) {
         for (final messageCollection in messageCollections) {
-          if (deletedChannelUrl == messageCollection.channel.channelUrl) {
+          if (deletedChannelUrl == messageCollection.baseChannel.channelUrl) {
             if (!messageCollection.isDisposed) {
-              messageCollection.handler.onChannelDeleted(
-                  GroupChannelContext(eventSource), deletedChannelUrl);
+              if (messageCollection.baseHandler is MessageCollectionHandler) {
+                (messageCollection.baseHandler as MessageCollectionHandler)
+                    .onChannelDeleted(
+                        GroupChannelContext(eventSource), deletedChannelUrl);
+              } else if (messageCollection.baseHandler
+                  is NotificationCollectionHandler) {
+                (messageCollection.baseHandler as NotificationCollectionHandler)
+                    .onChannelDeleted(
+                        FeedChannelContext(eventSource), deletedChannelUrl);
+              }
             }
             break;
           }
@@ -230,8 +258,8 @@ extension MessageCollectionManager on CollectionManager {
 // Send events to message collection
 //------------------------------//
   void sendEventsToMessageCollection({
-    required MessageCollection messageCollection,
-    required GroupChannel groupChannel,
+    required BaseMessageCollection messageCollection,
+    required BaseChannel baseChannel,
     required CollectionEventSource eventSource,
     required SendingStatus sendingStatus,
     List<BaseMessage>? addedMessages,
@@ -328,31 +356,64 @@ extension MessageCollectionManager on CollectionManager {
 
     if (addedMessagesForEvent.isNotEmpty) {
       if (!messageCollection.isDisposed) {
-        messageCollection.handler.onMessagesAdded(
-          MessageContext(eventSource, sendingStatus),
-          groupChannel,
-          addedMessagesForEvent,
-        );
+        if (messageCollection.baseHandler is MessageCollectionHandler) {
+          (messageCollection.baseHandler as MessageCollectionHandler)
+              .onMessagesAdded(
+            MessageContext(eventSource, sendingStatus),
+            baseChannel as GroupChannel,
+            addedMessagesForEvent,
+          );
+        } else if (messageCollection.baseHandler
+            is NotificationCollectionHandler) {
+          (messageCollection.baseHandler as NotificationCollectionHandler)
+              .onMessagesAdded(
+            NotificationContext(eventSource, sendingStatus),
+            baseChannel as FeedChannel,
+            addedMessagesForEvent,
+          );
+        }
       }
     }
 
     if (updatedMessagesForEvent.isNotEmpty) {
       if (!messageCollection.isDisposed) {
-        messageCollection.handler.onMessagesUpdated(
-          MessageContext(eventSource, sendingStatus),
-          groupChannel,
-          updatedMessagesForEvent,
-        );
+        if (messageCollection.baseHandler is MessageCollectionHandler) {
+          (messageCollection.baseHandler as MessageCollectionHandler)
+              .onMessagesUpdated(
+            MessageContext(eventSource, sendingStatus),
+            baseChannel as GroupChannel,
+            updatedMessagesForEvent,
+          );
+        } else if (messageCollection.baseHandler
+            is NotificationCollectionHandler) {
+          (messageCollection.baseHandler as NotificationCollectionHandler)
+              .onMessagesUpdated(
+            NotificationContext(eventSource, sendingStatus),
+            baseChannel as FeedChannel,
+            updatedMessagesForEvent,
+          );
+        }
       }
     }
 
     if (deletedMessagesForEvent.isNotEmpty) {
       if (!messageCollection.isDisposed) {
-        messageCollection.handler.onMessagesDeleted(
-          MessageContext(eventSource, sendingStatus),
-          groupChannel,
-          deletedMessagesForEvent,
-        );
+        if (messageCollection.baseHandler is MessageCollectionHandler) {
+          (messageCollection.baseHandler as MessageCollectionHandler)
+              .onMessagesDeleted(
+            MessageContext(eventSource, sendingStatus),
+            baseChannel as GroupChannel,
+            deletedMessagesForEvent,
+          );
+        } else if (messageCollection.baseHandler
+            is NotificationCollectionHandler) {
+          (messageCollection.baseHandler as NotificationCollectionHandler)
+              .onMessagesDeleted(
+            NotificationContext(eventSource, sendingStatus),
+            baseChannel as FeedChannel,
+            deletedMessagesForEvent,
+          );
+        }
       }
     }
   }

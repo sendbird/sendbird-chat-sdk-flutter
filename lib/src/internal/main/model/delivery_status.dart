@@ -31,9 +31,9 @@ class DeliveryStatus implements Cacheable {
   String get primaryKey => channelUrl;
 
   @override
-  void copyWith(dynamic others) {
-    if (others is DeliveryStatus) {
-      updatedDeliveryStatus.addAll(others.updatedDeliveryStatus);
+  void copyWith(dynamic other) {
+    if (other is DeliveryStatus) {
+      updatedDeliveryStatus.addAll(other.updatedDeliveryStatus);
     }
   }
 }

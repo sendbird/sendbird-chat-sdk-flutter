@@ -5,16 +5,16 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dar
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_change_logs.dart';
-import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_change_logs_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/channel/feed_channel_change_logs.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/feed_channel_change_logs_params.dart';
 
-class GroupChannelChangeLogsGetRequest extends ApiRequest {
+class FeedChannelChangeLogsGetRequest extends ApiRequest {
   @override
   HttpMethod get method => HttpMethod.get;
 
-  GroupChannelChangeLogsGetRequest(
+  FeedChannelChangeLogsGetRequest(
     Chat chat,
-    GroupChannelChangeLogsParams params, {
+    FeedChannelChangeLogsParams params, {
     String? token,
     int? timestamp,
     String? userId,
@@ -25,6 +25,7 @@ class GroupChannelChangeLogsGetRequest extends ApiRequest {
     queryParams['show_member'] = true;
     queryParams['show_read_receipt'] = true;
     queryParams['show_delivery_receipt'] = true;
+    queryParams['is_feed_channel'] = true;
 
     if (timestamp != null && timestamp > 0) {
       queryParams['change_ts'] = timestamp;
@@ -34,8 +35,8 @@ class GroupChannelChangeLogsGetRequest extends ApiRequest {
   }
 
   @override
-  Future<GroupChannelChangeLogs> response(Map<String, dynamic> res) async {
-    final response = GroupChannelChangeLogs.fromJsonWithChat(chat, res);
+  Future<FeedChannelChangeLogs> response(Map<String, dynamic> res) async {
+    final response = FeedChannelChangeLogs.fromJsonWithChat(chat, res);
     for (var index = 0; index < response.updatedChannels.length; index++) {
       final channel = response.updatedChannels[index];
       channel.saveToCache(chat);

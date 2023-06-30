@@ -44,7 +44,7 @@ abstract class Cacheable {
   String get key;
   bool dirty = false;
 
-  void copyWith(others);
+  void copyWith(dynamic other);
 }
 
 extension Operation on Cacheable {

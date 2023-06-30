@@ -34,6 +34,7 @@ extension BaseChannelMessage on BaseChannel {
     UserMessageHandler? handler,
   }) {
     sbLog.i(StackTrace.current, 'text: $text');
+    checkUnsupportedAction();
 
     final params = UserMessageCreateParams(message: text);
     return sendUserMessage(
@@ -48,6 +49,7 @@ extension BaseChannelMessage on BaseChannel {
     UserMessageHandler? handler,
   }) {
     sbLog.i(StackTrace.current, 'message: ${params.message}');
+    checkUnsupportedAction();
 
     if (params.message.isEmpty) {
       throw InvalidParameterException();
@@ -79,6 +81,7 @@ extension BaseChannelMessage on BaseChannel {
     pendingUserMessage.sendingStatus = SendingStatus.pending;
     pendingUserMessage.sender =
         Sender.fromUser(chat.chatContext.currentUser, this);
+    pendingUserMessage.messageCreateParams = params;
 
     runZonedGuarded(() {
       chat.commandManager.sendCommand(cmd).then((result) {
@@ -113,7 +116,8 @@ extension BaseChannelMessage on BaseChannel {
     UserMessage message, {
     UserMessageHandler? handler,
   }) {
-    sbLog.i(StackTrace.current, 'message: $message');
+    sbLog.i(StackTrace.current, 'message.requestId: ${message.requestId}');
+    checkUnsupportedAction();
 
     if (message.sendingStatus != SendingStatus.failed) {
       throw InvalidParameterException();
@@ -125,8 +129,8 @@ extension BaseChannelMessage on BaseChannel {
       throw InvalidParameterException();
     }
 
-    final params =
-        UserMessageCreateParams.withMessage(message, deepCopy: false);
+    final params = message.messageCreateParams ??
+        UserMessageCreateParams.withMessage(message);
     return sendUserMessage(
       params,
       handler: handler,
@@ -137,6 +141,7 @@ extension BaseChannelMessage on BaseChannel {
   Future<UserMessage> updateUserMessage(
       int messageId, UserMessageUpdateParams params) async {
     sbLog.i(StackTrace.current, 'message: ${params.message}');
+    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -169,6 +174,7 @@ extension BaseChannelMessage on BaseChannel {
   }) {
     sbLog.i(StackTrace.current,
         'params.uploadFile.name: ${params.fileInfo.fileName}');
+    checkUnsupportedAction();
 
     if (params.fileInfo.hasSource == false) {
       throw InvalidParameterException();
@@ -180,6 +186,7 @@ extension BaseChannelMessage on BaseChannel {
     pendingFileMessage.sendingStatus = SendingStatus.pending;
     pendingFileMessage.sender =
         Sender.fromUser(chat.chatContext.currentUser, this);
+    pendingFileMessage.messageCreateParams = params;
 
     bool isCanceled = false;
     runZonedGuarded(() async {
@@ -297,6 +304,7 @@ extension BaseChannelMessage on BaseChannel {
   /// Cancels an ongoing `FileMessage` upload.
   bool cancelFileMessageUpload(String requestId) {
     sbLog.i(StackTrace.current, 'requestId: $requestId');
+    checkUnsupportedAction();
 
     if (requestId.isEmpty) {
       throw InvalidParameterException();
@@ -313,14 +321,16 @@ extension BaseChannelMessage on BaseChannel {
   }
 
   /// Resends a file with given file information.
+  /// [fileMessage] Failed fileMessage.
+  /// [file] File to resend. If there is a fileUrl or a fileBytes in fileMessage, this will be ignored.
   FileMessage resendFileMessage(
     FileMessage message, {
-    required FileMessageCreateParams params,
+    File? file,
     FileMessageHandler? handler,
     ProgressHandler? progressHandler,
   }) {
-    sbLog.i(StackTrace.current,
-        'params.uploadFile.name: ${params.fileInfo.fileName}');
+    sbLog.i(StackTrace.current, 'message.requestId: ${message.requestId}');
+    checkUnsupportedAction();
 
     if (message.sendingStatus != SendingStatus.failed) {
       throw InvalidParameterException();
@@ -332,6 +342,16 @@ extension BaseChannelMessage on BaseChannel {
       throw InvalidParameterException();
     }
 
+    if (message.messageCreateParams != null) {
+      if (message.messageCreateParams?.fileInfo.fileUrl == null &&
+          message.messageCreateParams?.fileInfo.fileBytes == null &&
+          file != null) {
+        message.messageCreateParams?.fileInfo.file = file;
+      }
+    }
+
+    final params = message.messageCreateParams ??
+        FileMessageCreateParams.withMessage(message);
     return sendFileMessage(
       params,
       progressHandler: progressHandler,
@@ -346,6 +366,7 @@ extension BaseChannelMessage on BaseChannel {
     FileMessageUpdateParams params,
   ) async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -373,6 +394,7 @@ extension BaseChannelMessage on BaseChannel {
   /// Deletes a message.
   Future<void> deleteMessage(int messageId) async {
     sbLog.i(StackTrace.current, 'messageId: $messageId');
+    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -392,6 +414,7 @@ extension BaseChannelMessage on BaseChannel {
     List<String> targetLanguages,
   ) async {
     sbLog.i(StackTrace.current, 'message: ${message.message}');
+    checkUnsupportedAction();
 
     if (message.messageId <= 0) {
       throw InvalidParameterException();
@@ -418,6 +441,7 @@ extension BaseChannelMessage on BaseChannel {
     BaseMessageHandler? handler,
   }) {
     sbLog.i(StackTrace.current, 'message: ${message.message}');
+    checkUnsupportedAction();
 
     if (message.channelUrl != channelUrl) {
       throw InvalidParameterException();
@@ -427,8 +451,7 @@ extension BaseChannelMessage on BaseChannel {
     message.extendedMessage.clear();
 
     if (message is UserMessage) {
-      final params =
-          UserMessageCreateParams.withMessage(message, deepCopy: false);
+      final params = UserMessageCreateParams.withMessage(message);
       if (params.pollId != null) {
         throw InvalidParameterException();
       }
@@ -437,8 +460,7 @@ extension BaseChannelMessage on BaseChannel {
         handler: handler,
       );
     } else if (message is FileMessage) {
-      final params =
-          FileMessageCreateParams.withMessage(message, deepCopy: false);
+      final params = FileMessageCreateParams.withMessage(message);
       return targetChannel.sendFileMessage(
         params,
         handler: handler,
@@ -456,6 +478,7 @@ extension BaseChannelMessage on BaseChannel {
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
+    checkUnsupportedAction();
 
     if (timestamp <= 0) {
       throw InvalidParameterException();
@@ -483,6 +506,7 @@ extension BaseChannelMessage on BaseChannel {
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'messageId: $messageId');
+    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -515,6 +539,7 @@ extension BaseChannelMessage on BaseChannel {
     String? token,
   }) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMessageChangeLogGetRequest(

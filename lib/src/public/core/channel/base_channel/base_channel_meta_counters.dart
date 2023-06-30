@@ -8,6 +8,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   Future<Map<String, int>> createMetaCounters(
       Map<String, int> metaCounters) async {
     sbLog.i(StackTrace.current, 'metaCounters: $metaCounters');
+    checkUnsupportedAction();
 
     if (metaCounters.isEmpty) {
       throw InvalidParameterException();
@@ -26,6 +27,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   /// Gets meta counters.
   Future<Map<String, int>> getMetaCounters(List<String> keys) async {
     sbLog.i(StackTrace.current, 'keys: $keys');
+    checkUnsupportedAction();
 
     if (keys.isEmpty) {
       throw InvalidParameterException();
@@ -44,6 +46,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   /// Get all meta counters.
   Future<Map<String, int>> getAllMetaCounters() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMetaCounterGetRequest(
@@ -58,6 +61,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   Future<Map<String, int>> updateMetaCounters(
       Map<String, int> metaCounters) async {
     sbLog.i(StackTrace.current, 'metaCounters: $metaCounters');
+    checkUnsupportedAction();
 
     if (metaCounters.isEmpty) {
       throw InvalidParameterException();
@@ -79,6 +83,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   Future<Map<String, int>> increaseMetaCounters(
       Map<String, int> metaCounters) async {
     sbLog.i(StackTrace.current, 'metaCounters: $metaCounters');
+    checkUnsupportedAction();
 
     if (metaCounters.isEmpty) {
       throw InvalidParameterException();
@@ -100,6 +105,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   Future<Map<String, int>> decreaseMetaCounters(
       Map<String, int> metaCounters) async {
     sbLog.i(StackTrace.current, 'metaCounters: $metaCounters');
+    checkUnsupportedAction();
 
     if (metaCounters.isEmpty) {
       throw InvalidParameterException();
@@ -119,6 +125,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   /// Deletes a meta counter.
   Future<void> deleteMetaCounters(String key) async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     if (key.isEmpty) {
       throw InvalidParameterException();
@@ -137,6 +144,7 @@ extension BaseChannelMetaCounters on BaseChannel {
   /// Deletes all meta counters.
   Future<void> deleteAllMetaCounters() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMetaCounterDeleteAllRequest(

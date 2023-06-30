@@ -13,17 +13,24 @@ import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/connection_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/session_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/user_event_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/channel/feed_channel_change_logs.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_change_logs.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_unread_item_count.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/do_not_disturb.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/emoji.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/global_notification_channel_setting.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/notification_template.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/notification_template_list.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/snooze_period.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/file_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/unread_message_count.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/feed_channel_change_logs_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_change_logs_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_message_count_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/total_scheduled_message_count_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/notifications/notification_template_list_params.dart';
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdChat {
@@ -153,6 +160,18 @@ class SendbirdChat {
         token: token, timestamp: timestamp);
   }
 
+  /// Requests the channel changelogs from given token.
+  /// @since 4.0.3
+  static Future<FeedChannelChangeLogs> getMyFeedChannelChangeLogs(
+    FeedChannelChangeLogsParams params, {
+    String? token,
+    int? timestamp,
+  }) async {
+    sbLog.i(StackTrace.current, 'token: $token');
+    return _instance._chat
+        .getMyFeedChannelChangeLogs(params, token: token, timestamp: timestamp);
+  }
+
   /// Sends mark as read to all joined `GroupChannel`s.
   /// This method has rate limit. You can send one request per second.
   static Future<void> markAsReadAll() async {
@@ -191,6 +210,16 @@ class SendbirdChat {
 
   /// Gets the total number of unread message of `GroupChannel`s with [GroupChannelTotalUnreadMessageCountParams] filter.
   static Future<int> getTotalUnreadMessageCount(
+      [GroupChannelTotalUnreadMessageCountParams? params]) async {
+    final result = await _instance._chat.getTotalUnreadMessageCount(params);
+    sbLog.i(StackTrace.current, 'return: $result');
+    return result.totalCountForGroupChannels;
+  }
+
+  /// Gets the total number of unread message of `GroupChannel`s and `FeedChannel`s
+  /// with [GroupChannelTotalUnreadMessageCountParams] filter.
+  /// @since 4.0.3
+  static Future<UnreadMessageCount> getTotalUnreadMessageCountWithFeedChannel(
       [GroupChannelTotalUnreadMessageCountParams? params]) async {
     final result = await _instance._chat.getTotalUnreadMessageCount(params);
     sbLog.i(StackTrace.current, 'return: $result');
@@ -601,5 +630,38 @@ class SendbirdChat {
   static Future<SnoozePeriod> getSnoozePeriod() async {
     sbLog.i(StackTrace.current);
     return await _instance._chat.getSnoozePeriod();
+  }
+
+//------------------------------//
+// Notifications
+//------------------------------//
+  /// Retrieves Global Notification channel theme.
+  /// @since 4.0.3
+  static Future<GlobalNotificationChannelSetting>
+      getGlobalNotificationChannelSetting() async {
+    sbLog.i(StackTrace.current);
+    return await _instance._chat.getGlobalNotificationChannelSetting();
+  }
+
+  /// Retrieves Notification template list by token.
+  /// [token] is the value to retrieve notification template list from.
+  /// @since 4.0.3
+  static Future<NotificationTemplateList> getNotificationTemplateListByToken(
+    NotificationTemplateListParams params, {
+    String? token,
+  }) async {
+    sbLog.i(StackTrace.current);
+    return await _instance._chat
+        .getNotificationTemplateListByToken(params, token: token);
+  }
+
+  /// Retrieves Notification template.
+  /// [key] is the template key.
+  /// @since 4.0.3
+  static Future<NotificationTemplate> getNotificationTemplate({
+    required String key,
+  }) async {
+    sbLog.i(StackTrace.current);
+    return await _instance._chat.getNotificationTemplate(key: key);
   }
 }

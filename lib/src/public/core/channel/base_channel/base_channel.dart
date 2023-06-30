@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
@@ -38,6 +39,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/report/user_report_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
@@ -76,24 +78,69 @@ abstract class BaseChannel implements Cacheable {
   /// The topic or name of the channel.
   String name;
 
-  /// The cover image URL.
-  String coverUrl;
-
   /// The creation time of the channel.
   int? createdAt;
 
+  /// The cover image URL.
+  String get coverUrl {
+    checkUnsupportedAction();
+    return _coverUrl;
+  }
+
+  set coverUrl(value) {
+    checkUnsupportedAction();
+    _coverUrl = value;
+  }
+
   /// The channel data.
-  String data;
+  String get data {
+    checkUnsupportedAction();
+    return _data;
+  }
 
   /// The custom type of the channel.
-  String customType;
+  String get customType {
+    checkUnsupportedAction();
+    return _customType;
+  }
+
+  set customType(value) {
+    checkUnsupportedAction();
+    _customType = value;
+  }
 
   /// Whether the channel is frozen.
   @JsonKey(name: 'freeze')
-  bool isFrozen;
+  bool get isFrozen {
+    checkUnsupportedAction();
+    return _isFrozen;
+  }
+
+  set isFrozen(value) {
+    checkUnsupportedAction();
+    _isFrozen = value;
+  }
 
   /// Whether the channel is ephemeral.
-  bool isEphemeral;
+  bool get isEphemeral {
+    checkUnsupportedAction();
+    return _isEphemeral;
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String _coverUrl;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String _data;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String _customType;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool _isFrozen;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool _isEphemeral;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool fromCache = false;
@@ -107,20 +154,27 @@ abstract class BaseChannel implements Cacheable {
 
   BaseChannel({
     required this.channelUrl,
-    this.createdAt,
     this.name = '',
-    this.coverUrl = '',
-    this.data = '',
-    this.customType = '',
-    this.isFrozen = false,
-    this.isEphemeral = false,
+    this.createdAt,
+    coverUrl = '',
+    data = '',
+    customType = '',
+    isFrozen = false,
+    isEphemeral = false,
     this.fromCache = false,
     this.dirty = false,
-  });
+  })  : _coverUrl = coverUrl,
+        _data = data,
+        _customType = customType,
+        _isFrozen = isFrozen,
+        _isEphemeral = isEphemeral;
 
   /// ChannelType
-  ChannelType get channelType =>
-      this is GroupChannel ? ChannelType.group : ChannelType.open;
+  ChannelType get channelType => this is GroupChannel
+      ? ChannelType.group
+      : this is OpenChannel
+          ? ChannelType.open
+          : ChannelType.feed;
 
   void set(Chat chat) {
     this.chat = chat;
@@ -139,18 +193,27 @@ abstract class BaseChannel implements Cacheable {
         element.set(chat);
       }
     }
+
+    if (this is FeedChannel) {
+      (this as FeedChannel).lastMessage?.set(chat);
+      for (final element in (this as FeedChannel).members) {
+        element.set(chat);
+      }
+    }
   }
 
   static Future<BaseChannel> getBaseChannel(
-    ChannelType type,
+    ChannelType channelType,
     String channelUrl, {
     Chat? chat,
   }) async {
-    switch (type) {
+    switch (channelType) {
       case ChannelType.group:
         return GroupChannel.getChannel(channelUrl, chat: chat);
       case ChannelType.open:
         return OpenChannel.getChannel(channelUrl, chat: chat);
+      case ChannelType.feed:
+        return FeedChannel.getChannel(channelUrl, chat: chat);
     }
   }
 
@@ -159,10 +222,19 @@ abstract class BaseChannel implements Cacheable {
     String channelUrl, {
     Chat? chat,
   }) async {
-    if (channelType == ChannelType.group) {
-      return GroupChannel.refresh(channelUrl, chat: chat);
-    } else {
-      return OpenChannel.refresh(channelUrl, chat: chat);
+    switch (channelType) {
+      case ChannelType.group:
+        return GroupChannel.refresh(channelUrl, chat: chat);
+      case ChannelType.open:
+        return OpenChannel.refresh(channelUrl, chat: chat);
+      case ChannelType.feed:
+        return FeedChannel.refresh(channelUrl, chat: chat);
+    }
+  }
+
+  void checkUnsupportedAction() {
+    if (channelType == ChannelType.feed) {
+      throw NotSupportedException();
     }
   }
 
@@ -200,19 +272,19 @@ abstract class BaseChannel implements Cacheable {
   String get primaryKey => channelUrl;
 
   @override
-  void copyWith(others) {
-    if (others is! BaseChannel) return;
+  void copyWith(dynamic other) {
+    if (other is! BaseChannel) return;
 
-    channelUrl = others.channelUrl;
-    name = others.name;
-    coverUrl = others.coverUrl;
-    createdAt = others.createdAt;
-    data = others.data;
-    customType = others.customType;
-    isFrozen = others.isFrozen;
-    isEphemeral = others.isEphemeral;
+    channelUrl = other.channelUrl;
+    name = other.name;
+    createdAt = other.createdAt;
+    _coverUrl = other.coverUrl;
+    _data = other.data;
+    _customType = other.customType;
+    _isFrozen = other.isFrozen;
+    _isEphemeral = other.isEphemeral;
 
-    fromCache = others.fromCache;
-    dirty = others.dirty;
+    fromCache = other.fromCache;
+    dirty = other.dirty;
   }
 }

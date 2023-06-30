@@ -32,10 +32,27 @@ extension ChatChannel on Chat {
     return res;
   }
 
+  Future<FeedChannelChangeLogs> getMyFeedChannelChangeLogs(
+    FeedChannelChangeLogsParams params, {
+    String? token,
+    int? timestamp,
+  }) async {
+    sbLog.i(StackTrace.current, 'token: $token');
+
+    final res = await apiClient.send<FeedChannelChangeLogs>(
+        FeedChannelChangeLogsGetRequest(this, params,
+            token: token, timestamp: timestamp));
+
+    for (final element in res.updatedChannels) {
+      element.saveToCache(this);
+    }
+    return res;
+  }
+
   Future<void> markAsReadAll() async {
     sbLog.i(StackTrace.current);
-    await apiClient.send(GroupChannelMarkAsReadRequest(this,
-        userId: chatContext.currentUserId));
+    await apiClient.send(
+        GroupChannelMarkAsReadRequest(this, userId: chatContext.currentUserId));
   }
 
   Future<void> markAsRead({required List<String> channelUrls}) async {
@@ -101,36 +118,37 @@ extension ChatChannel on Chat {
     return result;
   }
 
-  Future<int> getTotalUnreadMessageCount(
+  Future<UnreadMessageCount> getTotalUnreadMessageCount(
       [GroupChannelTotalUnreadMessageCountParams? params]) async {
-    final result = await apiClient
-        .send<int>(UserTotalUnreadMessageCountGetRequest(this, params: params));
+    final result = await apiClient.send<UnreadMessageCount>(
+        UserTotalUnreadMessageCountGetRequest(this, params: params));
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }
 
-  Future<GroupChannelUnreadItemCount> getUnreadItemCount(List<UnreadItemKey> keys) async {
-    final result = await apiClient
-        .send<GroupChannelUnreadItemCount>(UserUnreadItemCountGetRequest(this, keys));
+  Future<GroupChannelUnreadItemCount> getUnreadItemCount(
+      List<UnreadItemKey> keys) async {
+    final result = await apiClient.send<GroupChannelUnreadItemCount>(
+        UserUnreadItemCountGetRequest(this, keys));
     sbLog.i(StackTrace.current, 'keys: $keys, return: $result');
     return result;
   }
 
   int get subscribedTotalUnreadMessageCount {
-    final result = chatContext.unreadCountInfo.all;
+    final result = chatContext.unreadMessageCountInfo.all;
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }
 
   int get subscribedCustomTypeTotalUnreadMessageCount {
     final result =
-        chatContext.unreadCountInfo.customTypes.values.reduce((a, b) => a + b);
+        chatContext.unreadMessageCountInfo.customTypes.values.reduce((a, b) => a + b);
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }
 
   int? subscribedCustomTypeUnreadMessageCount(String customType) {
-    final result = chatContext.unreadCountInfo.customTypes[customType];
+    final result = chatContext.unreadMessageCountInfo.customTypes[customType];
     sbLog.i(StackTrace.current, 'customType: $customType, return: $result');
     return result;
   }

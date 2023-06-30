@@ -10,7 +10,7 @@ part 'file_info.g.dart';
 @JsonSerializable()
 class FileInfo {
   @JsonKey(includeFromJson: false, includeToJson: false)
-  final File? file;
+  File? file;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Uint8List? fileBytes;
@@ -68,5 +68,6 @@ class FileInfo {
   Map<String, dynamic> toJson() => _$FileInfoToJson(this);
 
   bool get hasBinary => file != null || fileBytes != null;
-  bool get hasSource => file != null || (fileUrl != null && fileUrl != '') || fileBytes != null;
+  bool get hasSource =>
+      file != null || (fileUrl != null && fileUrl != '') || fileBytes != null;
 }

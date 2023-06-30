@@ -16,6 +16,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/og/og_meta_data.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/message/user_message_create_params.dart';
 
 part 'user_message.g.dart';
 
@@ -35,6 +36,10 @@ class UserMessage extends BaseMessage {
 
   /// The poll that belongs to this message object.
   Poll? poll;
+
+  /// [UserMessageCreateParams] object that used for sending this message.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  UserMessageCreateParams? messageCreateParams;
 
   UserMessage({
     required this.translations,

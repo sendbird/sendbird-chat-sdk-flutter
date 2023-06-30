@@ -38,7 +38,7 @@ Map<String, dynamic> _$ThreadedMessageListParamsToJson(
       'next_limit': instance.nextResultSize,
       'include': instance.inclusive,
       'reverse': instance.reverse,
-      'message_type': _$MessageTypeFilterEnumMap[instance.messageType],
+      'message_type': _$MessageTypeFilterEnumMap[instance.messageType]!,
       'custom_type': instance.customType,
       'sender_ids': instance.senderIds,
     };
@@ -50,7 +50,7 @@ const _$ReplyTypeEnumMap = {
 };
 
 const _$MessageTypeFilterEnumMap = {
-  MessageTypeFilter.all: null,
+  MessageTypeFilter.all: '',
   MessageTypeFilter.user: 'MESG',
   MessageTypeFilter.file: 'FILE',
   MessageTypeFilter.admin: 'ADMN',

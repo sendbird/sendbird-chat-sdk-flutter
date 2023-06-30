@@ -33,6 +33,7 @@ MessageEvent _$MessageEventFromJson(Map<String, dynamic> json) => MessageEvent(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$MentionTypeEnumMap = {

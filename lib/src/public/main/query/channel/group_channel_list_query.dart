@@ -2,6 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_list_request.dart';
@@ -106,6 +107,10 @@ class GroupChannelListQuery extends BaseQuery {
   /// Checks whether to include channel metadata on fetch.
   /// This flag is true by default.
   bool includeMetaData = true;
+
+  /// Whether to include chat notification [GroupChannel].
+  /// @since 4.0.3
+  bool includeChatNotification = false;
 
   GroupChannelListQuery({
     Chat? chat,
@@ -222,6 +227,8 @@ class GroupChannelListQuery extends BaseQuery {
       if (includeEmpty) ChannelListQueryIncludeOption.includeEmpty,
       if (includeFrozen) ChannelListQueryIncludeOption.includeFrozen,
       if (includeMetaData) ChannelListQueryIncludeOption.includeMetadata,
+      if (includeChatNotification)
+        ChannelListQueryIncludeOption.includeChatNotification,
       ChannelListQueryIncludeOption.includeMember,
       ChannelListQueryIncludeOption.includeReadReceipt,
       ChannelListQueryIncludeOption.includeDeliveryReceipt,

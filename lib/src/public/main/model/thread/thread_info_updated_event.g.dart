@@ -19,4 +19,5 @@ ThreadInfoUpdateEvent _$ThreadInfoUpdateEventFromJson(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };

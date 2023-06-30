@@ -40,7 +40,7 @@ Map<String, dynamic> _$MessageListParamsToJson(MessageListParams instance) =>
       'next_limit': instance.nextResultSize,
       'include': instance.inclusive,
       'reverse': instance.reverse,
-      'message_type': _$MessageTypeFilterEnumMap[instance.messageType],
+      'message_type': _$MessageTypeFilterEnumMap[instance.messageType]!,
       'custom_types': instance.customTypes,
       'sender_ids': instance.senderIds,
       'show_subchannel_messages_only': instance.showSubChannelMessagesOnly,
@@ -53,7 +53,7 @@ const _$ReplyTypeEnumMap = {
 };
 
 const _$MessageTypeFilterEnumMap = {
-  MessageTypeFilter.all: null,
+  MessageTypeFilter.all: '',
   MessageTypeFilter.user: 'MESG',
   MessageTypeFilter.file: 'FILE',
   MessageTypeFilter.admin: 'ADMN',

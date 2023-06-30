@@ -58,6 +58,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$SendingStatusEnumMap = {

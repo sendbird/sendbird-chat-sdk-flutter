@@ -3,6 +3,7 @@
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
@@ -14,6 +15,7 @@ import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/connection_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/session_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/user_event_handler.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/unread_message_count.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_update_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_vote_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
@@ -167,6 +169,8 @@ class EventManager {
   void notifyReactionUpdated(BaseChannel channel, ReactionEvent event) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onReactionUpdated(channel, event);
     }
@@ -175,6 +179,8 @@ class EventManager {
   void notifyUserMuted(BaseChannel channel, RestrictedUser restrictedUser) {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${restrictedUser.userId}');
+
+    if (channel is FeedChannel) return;
 
     for (final element in _channelHandlers.values) {
       element.onUserMuted(channel, restrictedUser);
@@ -185,6 +191,8 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onUserUnmuted(channel, user);
     }
@@ -193,6 +201,8 @@ class EventManager {
   void notifyUserBanned(BaseChannel channel, RestrictedUser restrictedUser) {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${restrictedUser.userId}');
+
+    if (channel is FeedChannel) return;
 
     for (final element in _channelHandlers.values) {
       element.onUserBanned(channel, restrictedUser);
@@ -203,6 +213,8 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onUserUnbanned(channel, user);
     }
@@ -210,6 +222,8 @@ class EventManager {
 
   void notifyChannelFrozen(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
+
+    if (channel is FeedChannel) return;
 
     for (final element in _channelHandlers.values) {
       element.onChannelFrozen(channel);
@@ -219,6 +233,8 @@ class EventManager {
   void notifyChannelUnfrozen(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onChannelUnfrozen(channel);
     }
@@ -227,6 +243,8 @@ class EventManager {
   void notifyMetaDataChanged(BaseChannel channel, Map<String, dynamic> data) {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[metaData] $data');
+
+    if (channel is FeedChannel) return;
 
     for (final element in _channelHandlers.values) {
       final created = Map<String, String>.from(data['created'] ?? {});
@@ -244,6 +262,8 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[metaData] $data');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       final created = Map<String, int>.from(data['created'] ?? {});
       final updated = Map<String, int>.from(data['updated'] ?? {});
@@ -258,6 +278,8 @@ class EventManager {
   void notifyOperatorUpdated(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onOperatorUpdated(channel);
     }
@@ -267,20 +289,31 @@ class EventManager {
       GroupChannel channel, ThreadInfoUpdateEvent event) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
+    if (channel is FeedChannel) return;
+
     for (final element in _channelHandlers.values) {
       element.onThreadInfoUpdated(channel, event);
     }
   }
 
   // GroupChannelHandler
-  void notifyReadStatusUpdated(GroupChannel channel) {
+  void notifyReadStatusUpdated(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onReadStatusUpdated(channel);
+    if (channel is GroupChannel) {
+      for (final element in _channelHandlers.values) {
+        if (element is GroupChannelHandler) {
+          element.onReadStatusUpdated(channel);
+        }
       }
     }
+    // else if (channel is FeedChannel) {
+    //   for (final element in _channelHandlers.values) {
+    //     if (element is FeedChannelHandler) {
+    //       element.onReadStatusUpdated(channel);
+    //     }
+    //   }
+    // }
   }
 
   void notifyDeliveryStatusUpdated(GroupChannel channel) {
@@ -489,13 +522,17 @@ class EventManager {
   }
 
   // UserEventHandler
-  void notifyTotalUnreadMessageCountUpdated(
-      int totalCount, Map<String, int> customTypesCount) {
+  void notifyTotalUnreadMessageCountChanged(
+      UnreadMessageCount unreadMessageCount) {
     sbLog.i(StackTrace.current,
-        '\n-[totalCount] $totalCount\n-[customTypesCount] $customTypesCount');
+        '\n-[groupChannelUnreadMessageCount] ${unreadMessageCount.totalCountForGroupChannels}\n-[feedChannelUnreadMessageCount] ${unreadMessageCount.totalCountForFeedChannels}\n-[totalCountByCustomType] ${unreadMessageCount.totalCountByCustomType}');
 
     for (final element in _userHandlers.values) {
-      element.onTotalUnreadMessageCountUpdated(totalCount, customTypesCount);
+      element.onTotalUnreadMessageCountChanged(unreadMessageCount);
+      element.onTotalUnreadMessageCountUpdated(
+        unreadMessageCount.totalCountForGroupChannels,
+        unreadMessageCount.totalCountByCustomType,
+      );
     }
   }
 

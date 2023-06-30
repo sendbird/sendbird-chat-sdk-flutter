@@ -9,6 +9,7 @@ extension BaseChannelMetaData on BaseChannel {
     Map<String, String> metaData,
   ) async {
     sbLog.i(StackTrace.current, 'metaData: $metaData');
+    checkUnsupportedAction();
 
     if (metaData.isEmpty) {
       throw InvalidParameterException();
@@ -39,6 +40,7 @@ extension BaseChannelMetaData on BaseChannel {
   /// Gets meta data.
   Future<Map<String, String>> getMetaData(List<String> keys) async {
     sbLog.i(StackTrace.current, 'keys: $keys');
+    checkUnsupportedAction();
 
     if (keys.isEmpty) {
       throw InvalidParameterException();
@@ -69,6 +71,7 @@ extension BaseChannelMetaData on BaseChannel {
   /// Gets all meta data.
   Future<Map<String, String>> getAllMetaData() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     final result = await chat.apiClient.send<MetaDataResponse>(
       ChannelMetaDataGetRequest(
@@ -95,6 +98,7 @@ extension BaseChannelMetaData on BaseChannel {
   Future<Map<String, String>> updateMetaData(
       Map<String, String> metaData) async {
     sbLog.i(StackTrace.current, 'metaData: $metaData');
+    checkUnsupportedAction();
 
     if (metaData.isEmpty) {
       throw InvalidParameterException();
@@ -125,6 +129,7 @@ extension BaseChannelMetaData on BaseChannel {
   /// Deletes a meta data.
   Future<void> deleteMetaData(String key) async {
     sbLog.i(StackTrace.current, 'key: $key');
+    checkUnsupportedAction();
 
     if (key.isEmpty) {
       throw InvalidParameterException();
@@ -153,6 +158,7 @@ extension BaseChannelMetaData on BaseChannel {
   /// Deletes all meta data.
   Future<void> deleteAllMetaData() async {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     final ts = await chat.apiClient.send<int>(
       ChannelMetaDataDeleteAllRequest(
@@ -189,6 +195,7 @@ extension BaseChannelMetaData on BaseChannel {
   /// by this method may not contain all metadata mappings.
   Map<String, String> getCachedMetaData() {
     sbLog.i(StackTrace.current);
+    checkUnsupportedAction();
 
     final metaData = chat.channelCache
             .find<MetaDataCache>(channelKey: channelUrl)

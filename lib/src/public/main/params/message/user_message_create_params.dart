@@ -49,11 +49,12 @@ class UserMessageCreateParams extends BaseMessageCreateParams {
         );
 
   /// withMessage
-  UserMessageCreateParams.withMessage(UserMessage userMessage, {bool? deepCopy})
+  UserMessageCreateParams.withMessage(UserMessage userMessage)
       : message = userMessage.message,
         translationTargetLanguages = userMessage.translations.keys.toList(),
         pollId = userMessage.poll?.id,
-        super.withMessage(userMessage, deepCopy: deepCopy);
+        extendedMessage = userMessage.extendedMessage,
+        super.withMessage(userMessage);
 
   @override
   Map<String, dynamic> toJson() {

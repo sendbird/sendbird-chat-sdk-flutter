@@ -26,58 +26,73 @@ abstract class BaseChannelHandler {
   void onChannelDeleted(String channelUrl, ChannelType channelType) {}
 
   /// A callback for when a reactionEvent is updated.
+  /// Not for FeedChannel
   void onReactionUpdated(BaseChannel channel, ReactionEvent event) {}
 
   /// A callback for when a user is muted from channel.
+  /// Not for FeedChannel
   void onUserMuted(BaseChannel channel, RestrictedUser restrictedUser) {}
 
   /// A callback for when a user is unmuted from channel.
+  /// Not for FeedChannel
   void onUserUnmuted(BaseChannel channel, User user) {}
 
   /// A callback for when a user is banned from channel.
+  /// Not for FeedChannel
   void onUserBanned(BaseChannel channel, RestrictedUser restrictedUser) {}
 
   /// A callback for when a user is unbanned from channel.
+  /// Not for FeedChannel
   void onUserUnbanned(BaseChannel channel, User user) {}
 
   /// A callback for when channel is frozen (Users can't send messages).
+  /// Not for FeedChannel
   void onChannelFrozen(BaseChannel channel) {}
 
   /// A callback for when channel is unfrozen (Users can send messages).
+  /// Not for FeedChannel
   void onChannelUnfrozen(BaseChannel channel) {}
 
   /// A callback for when channel meta data is created.
+  /// Not for FeedChannel
   void onMetaDataCreated(BaseChannel channel, Map<String, String> metaData) {}
 
   /// A callback for when channel meta data is updated.
+  /// Not for FeedChannel
   void onMetaDataUpdated(BaseChannel channel, Map<String, String> metaData) {}
 
   /// A callback for when channel meta data is deleted.
+  /// Not for FeedChannel
   void onMetaDataDeleted(BaseChannel channel, List<String> metaDataKeys) {}
 
   /// A callback for when channel meta counters is created.
+  /// Not for FeedChannel
   void onMetaCountersCreated(
       BaseChannel channel, Map<String, int> metaCounters) {}
 
   /// A callback for when channel meta counters is updated.
+  /// Not for FeedChannel
   void onMetaCountersUpdated(
       BaseChannel channel, Map<String, int> metaCounters) {}
 
   /// A callback for when channel meta counters are deleted.
+  /// Not for FeedChannel
   void onMetaCountersDeleted(
       BaseChannel channel, List<String> metaCounterKeys) {}
 
   /// A callback for when operators change in channel
+  /// Not for FeedChannel
   void onOperatorUpdated(BaseChannel channel) {}
 
   /// A callback for when the thread information is updated.
+  /// Not for FeedChannel
   void onThreadInfoUpdated(BaseChannel channel, ThreadInfoUpdateEvent event) {}
 }
 
 /// The GroupChannel handler.
 abstract class GroupChannelHandler extends BaseChannelHandler {
   /// A callback for when read receipts are updated on `GroupChannel`.
-  /// To use the updated read receipt, refer to[GroupChannelRead.getReadStatus],
+  /// To use the updated read receipt, refer to [GroupChannelRead.getReadStatus],
   /// [GroupChannelRead.getReadMembers], [GroupChannelRead.getUnreadMembers].
   void onReadStatusUpdated(GroupChannel channel) {}
 
@@ -146,3 +161,7 @@ abstract class OpenChannelHandler extends BaseChannelHandler {
   /// Called when one or more open channel's member counts are changed.
   void onChannelParticipantCountChanged(List<OpenChannel> channels) {}
 }
+
+/// The FeedChannel handler.
+/// @since 4.0.3
+abstract class FeedChannelHandler extends BaseChannelHandler {}

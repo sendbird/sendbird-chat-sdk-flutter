@@ -58,6 +58,16 @@ ChannelListQueryResponse<T>
           next: json['next'] as String?,
         );
 
+FeedChannelListQueryResponse _$FeedChannelListQueryResponseFromJson(
+        Map<String, dynamic> json) =>
+    FeedChannelListQueryResponse(
+      channels: (json['channels'] as List<dynamic>?)
+              ?.map((e) => const FeedChannelConverter().fromJson(e as Object))
+              .toList() ??
+          const [],
+      next: json['next'] as String?,
+    );
+
 MessageSearchQueryResponse _$MessageSearchQueryResponseFromJson(
         Map<String, dynamic> json) =>
     MessageSearchQueryResponse(

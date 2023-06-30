@@ -18,4 +18,5 @@ ChannelEvent _$ChannelEventFromJson(Map<String, dynamic> json) => ChannelEvent(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };

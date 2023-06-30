@@ -70,6 +70,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$SendingStatusEnumMap = {

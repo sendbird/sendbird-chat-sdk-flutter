@@ -18,7 +18,8 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_queue.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/api_client.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_change_log_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/feed_channel/feed_channel_change_logs_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_change_logs_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_delivery_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_read_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_total_count_request.dart';
@@ -26,6 +27,9 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/emoji/emoji_category_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/emoji/emoji_container_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/emoji/emoji_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/global_notification_channel_setting_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_list_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_block_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_unblock_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/count/user_group_channel_count_request.dart';
@@ -46,10 +50,11 @@ part 'chat_channel.dart';
 part 'chat_connection.dart';
 part 'chat_emoji.dart';
 part 'chat_event_handler.dart';
+part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.2';
+const sdkVersion = '4.0.3';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -61,8 +66,9 @@ class Chat with WidgetsBindingObserver {
   // Extra data
   static const extraDataPremiumFeatureList = 'premium_feature_list';
   static const extraDataFileUploadSizeLimit = 'file_upload_size_limit';
-  static const extraDataEmojiHash = 'emoji_hash';
   static const extraDataApplicationAttributes = 'application_attributes';
+  static const extraDataEmojiHash = 'emoji_hash';
+  static const extraDataNotifications = 'notifications';
 
   static int globalChatId = 0;
 
@@ -72,6 +78,7 @@ class Chat with WidgetsBindingObserver {
     extraDataFileUploadSizeLimit,
     extraDataApplicationAttributes,
     extraDataEmojiHash,
+    extraDataNotifications,
   ];
 
   bool? _isObserverRegistered;

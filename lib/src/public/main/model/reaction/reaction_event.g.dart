@@ -23,6 +23,7 @@ ReactionEvent _$ReactionEventFromJson(Map<String, dynamic> json) =>
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$ReactionEventActionEnumMap = {

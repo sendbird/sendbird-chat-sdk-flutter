@@ -36,6 +36,7 @@ Map<String, dynamic> _$MessageRetrievalParamsToJson(
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',
   ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
 };
 
 const _$ReplyTypeEnumMap = {

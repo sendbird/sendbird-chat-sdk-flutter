@@ -62,8 +62,8 @@ class MetaDataCache<T> implements Cacheable, Evictable {
   bool dirty = false;
 
   @override
-  void copyWith(others) {
-    _channelType = others._channelType;
+  void copyWith(dynamic other) {
+    _channelType = other._channelType;
   }
 
   @override
