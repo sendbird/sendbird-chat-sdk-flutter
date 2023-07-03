@@ -13,7 +13,9 @@ class AsyncQueue<T> {
   final Map<int, Completer> _completerMap = {};
   Operation? _currentOperation;
 
-  Future enqueue(Operation operation) {
+  Future<void> enqueue(Operation operation) {
+    sbLog.d(StackTrace.current);
+
     _operationQueue.add(operation);
     final completer = Completer();
     _completerMap[operation.hashCode] = completer;
@@ -26,6 +28,8 @@ class AsyncQueue<T> {
   }
 
   bool cancel(int hashCode) {
+    sbLog.d(StackTrace.current);
+
     final completer = _completerMap.remove(hashCode);
     if (completer != null && !completer.isCompleted) {
       if (_currentOperation?.onCancel != null) {
@@ -38,8 +42,11 @@ class AsyncQueue<T> {
   }
 
   Future _execute() async {
+    sbLog.d(StackTrace.current);
+
     while (true) {
       if (_operationQueue.isEmpty) {
+        sbLog.d(StackTrace.current);
         _isScheduled = false;
         return;
       }
@@ -47,22 +54,34 @@ class AsyncQueue<T> {
       var task = _operationQueue.removeFirst();
       _currentOperation = task;
 
-      try {
-        if (task is AsyncTask<T>) {
-          final res = await task.func(task.arg);
+      if (task is AsyncTask<T>) {
+        dynamic res;
+        try {
+          res = await task.func(task.arg);
+        } catch (e) {
+          sbLog.e(StackTrace.current, 'e: $e');
+          _isScheduled = false;
+          rethrow;
+        } finally {
           _completerMap.remove(task.hashCode)?.complete(res);
-        } else if (task is AsyncSimpleTask) {
+        }
+      } else if (task is AsyncSimpleTask) {
+        try {
           await task.func();
+        } catch (e) {
+          sbLog.e(StackTrace.current, 'e: $e');
+          _isScheduled = false;
+          rethrow;
+        } finally {
           _completerMap.remove(task.hashCode)?.complete();
         }
-      } catch (e) {
-        sbLog.e(StackTrace.current, 'e: $e');
-        rethrow;
       }
     }
   }
 
   void cleanUp() {
+    sbLog.d(StackTrace.current);
+
     for (final operation in _operationQueue) {
       cancel(operation.hashCode);
     }

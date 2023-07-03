@@ -40,7 +40,7 @@ class SendbirdChat {
   /// Alternative push template
   static const String pushTemplateAlternative = 'alternative';
 
-  static SendbirdChat _instance = SendbirdChat._internal();
+  static final SendbirdChat _instance = SendbirdChat._internal();
   SendbirdChat._internal()
       : _chat = Chat(appId: '', options: SendbirdChatOptions());
 
@@ -64,9 +64,8 @@ class SendbirdChat {
     }
 
     _instance._chat.disconnect();
-    _instance = SendbirdChat._internal();
-    _instance._chat =
-        Chat(appId: appId, options: options ?? SendbirdChatOptions());
+    _instance._chat.chatContext.appId = appId;
+    if (options != null) _instance._chat.chatContext.options = options;
   }
 
   /// Current SDK version.

@@ -1,3 +1,9 @@
+## v4.0.4 (Jul 3, 2023)
+
+### Improvements
+- Fixed the bug regarding `resendFileMessage()`.
+- Fixed the bug regarding connectivity events.
+
 ## v4.0.3 (Jun 30, 2023)
 
 ### Features

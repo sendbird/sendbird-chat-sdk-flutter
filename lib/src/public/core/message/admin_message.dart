@@ -31,7 +31,6 @@ class AdminMessage extends BaseMessage {
     int createdAt = 0,
     int updatedAt = 0,
     int? parentMessageId,
-    String? parentMessageText,
     Map<String, dynamic>? parentMessage,
     ThreadInfo? threadInfo,
     List<MessageMetaArray>? metaArrays,

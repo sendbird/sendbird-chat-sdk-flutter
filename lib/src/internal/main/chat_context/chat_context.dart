@@ -10,7 +10,7 @@ import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat_options.dar
 import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 
 class ChatContext {
-  final String appId;
+  String appId;
   SendbirdChatOptions options;
   String? appVersion;
   String? apiToken; // for test

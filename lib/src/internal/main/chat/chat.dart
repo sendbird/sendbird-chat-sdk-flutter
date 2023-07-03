@@ -54,7 +54,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.3';
+const sdkVersion = '4.0.4';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -165,6 +165,8 @@ class Chat with WidgetsBindingObserver {
   }
 
   void _listenConnectivityChangedEvent() {
+    sbLog.d(StackTrace.current);
+
     String flutterTest = const String.fromEnvironment('FLUTTER_TEST');
     if (flutterTest.isEmpty && kIsWeb) {
       flutterTest = '';
@@ -176,40 +178,37 @@ class Chat with WidgetsBindingObserver {
         : Platform.environment['FLUTTER_TEST'] == 'true';
 
     if (!isTest) {
-      Connectivity().onConnectivityChanged.asBroadcastStream(
-          onCancel: (controller) => {
-                _connectivityResult = ConnectivityResult.none,
-                controller.pause(),
-              },
-          onListen: (subscription) {
-            subscription.onData((data) async {
-              switch (data) {
-                case ConnectivityResult.none:
-                  sbLog.d(StackTrace.current, 'ConnectivityResult.none');
-                  channelCache.markAsDirtyAll(); // Check
-                  break;
-                case ConnectivityResult.mobile:
-                case ConnectivityResult.wifi:
-                case ConnectivityResult.ethernet:
-                case ConnectivityResult.vpn:
-                case ConnectivityResult.other:
-                  sbLog.d(
-                      StackTrace.current, '${data.toString()} => reconnect()');
-                  if (_connectivityResult == ConnectivityResult.none &&
-                      chatContext.sessionKey != null) {
-                    await connectionManager.reconnect(reset: true);
-                  }
-                  break;
-                case ConnectivityResult.bluetooth:
-                  sbLog.d(StackTrace.current, 'ConnectivityResult.bluetooth');
-                  break;
-                default:
-                  sbLog.d(StackTrace.current, data.toString());
-                  break;
-              }
-              _connectivityResult = data;
-            });
-          });
+      sbLog.d(
+          StackTrace.current, 'Connectivity().onConnectivityChanged.listen()');
+
+      Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) async {
+        sbLog.d(StackTrace.current, result.toString());
+
+        switch (result) {
+          case ConnectivityResult.none:
+            channelCache.markAsDirtyAll(); // Check
+            await connectionManager.disconnect(logout: false);
+            break;
+          case ConnectivityResult.mobile:
+          case ConnectivityResult.wifi:
+          case ConnectivityResult.ethernet:
+          case ConnectivityResult.vpn:
+          case ConnectivityResult.other:
+            if (_connectivityResult == ConnectivityResult.none &&
+                chatContext.sessionKey != null) {
+              await connectionManager.reconnect(reset: true);
+            }
+            break;
+          case ConnectivityResult.bluetooth:
+            break;
+          default:
+            break;
+        }
+
+        _connectivityResult = result;
+      });
     }
   }
 

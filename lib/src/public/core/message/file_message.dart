@@ -82,7 +82,6 @@ class FileMessage extends BaseMessage {
     int createdAt = 0,
     int updatedAt = 0,
     int? parentMessageId,
-    String? parentMessageText,
     ThreadInfo? threadInfo,
     List<MessageMetaArray>? metaArrays,
     String? customType,

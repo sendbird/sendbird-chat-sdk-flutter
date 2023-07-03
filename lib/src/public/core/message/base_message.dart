@@ -282,7 +282,8 @@ abstract class BaseMessage {
         errorCode == SendbirdError.internalServerError ||
         errorCode == SendbirdError.rateLimitExceeded ||
         errorCode == SendbirdError.socketTooManyMessages ||
-        errorCode == SendbirdError.pendingError;
+        errorCode == SendbirdError.pendingError ||
+        errorCode == SendbirdError.requestFailed;
     if (resendableError &&
         (sendingStatus == SendingStatus.failed ||
             sendingStatus == SendingStatus.canceled)) {
