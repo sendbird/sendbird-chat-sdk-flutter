@@ -1,3 +1,8 @@
+## [3.2.15] - July 7, 2023
+
+- Fix issue with resendFileMessage()
+- Fix issue with access code always false
+
 ## [3.2.14] - Jun 16, 2023
 
 - Fix issue with MarkAsDirty Method

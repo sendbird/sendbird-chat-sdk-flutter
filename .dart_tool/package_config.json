@@ -117,9 +117,9 @@
     },
     {
       "name": "connectivity_plus",
-      "rootUri": "file:///Users/daniel.kang/.pub-cache/hosted/pub.dev/connectivity_plus-3.0.3",
+      "rootUri": "file:///Users/daniel.kang/.pub-cache/hosted/pub.dev/connectivity_plus-4.0.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "connectivity_plus_platform_interface",
@@ -638,7 +638,7 @@
       "languageVersion": "2.14"
     }
   ],
-  "generated": "2023-05-25T10:29:51.474759Z",
+  "generated": "2023-07-07T12:02:37.240297Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }

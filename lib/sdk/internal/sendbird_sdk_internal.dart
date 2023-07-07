@@ -22,7 +22,7 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.2.14';
+const sdk_version = '3.2.15';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.

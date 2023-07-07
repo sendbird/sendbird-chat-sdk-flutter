@@ -17,7 +17,7 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
       isDistinct: json['is_distinct'] as bool? ?? false,
       isDiscoverable: json['is_discoverable'] as bool? ?? false,
       isExclusive: json['is_exclusive'] as bool? ?? false,
-      accessCodeRequired: json['access_code_required'] as bool? ?? false,
+      accessCodeRequired: json['is_access_code_required'] as bool? ?? false,
       unreadMessageCount: json['unread_message_count'] as int? ?? 0,
       unreadMentionCount: json['unread_mention_count'] as int? ?? 0,
       members: (json['members'] as List<dynamic>?)
@@ -95,7 +95,7 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'is_distinct': instance.isDistinct,
       'is_discoverable': instance.isDiscoverable,
       'is_exclusive': instance.isExclusive,
-      'access_code_required': instance.accessCodeRequired,
+      'is_access_code_required': instance.accessCodeRequired,
       'unread_message_count': instance.unreadMessageCount,
       'unread_mention_count': instance.unreadMentionCount,
       'members': instance.members.map((e) => e.toJson()).toList(),

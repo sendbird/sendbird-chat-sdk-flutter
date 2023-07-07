@@ -113,7 +113,7 @@ class GroupChannel extends BaseChannel {
   bool isExclusive;
 
   /// True if this channel is required access code
-  @JsonKey(defaultValue: false)
+  @JsonKey(defaultValue: false, name: "is_access_code_required")
   bool accessCodeRequired;
 
   /// Unread message count of the channel
