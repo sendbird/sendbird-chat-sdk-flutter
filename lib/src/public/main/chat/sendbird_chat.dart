@@ -63,7 +63,6 @@ class SendbirdChat {
       return;
     }
 
-    _instance._chat.disconnect();
     _instance._chat.chatContext.appId = appId;
     if (options != null) _instance._chat.chatContext.options = options;
   }

@@ -44,8 +44,8 @@ class CollectionManager {
 //------------------------------//
 // Reconnected
 //------------------------------//
-  void onReconnectSucceeded() {
-    sbLog.d(StackTrace.current, 'onReconnectSucceeded()');
+  void onReconnected() {
+    sbLog.d(StackTrace.current, 'onReconnected()');
     if (groupChannelCollections.isNotEmpty) {
       requestGroupChannelChangeLogs();
     }

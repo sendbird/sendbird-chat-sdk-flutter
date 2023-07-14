@@ -243,7 +243,7 @@ class CommandManager {
       ..eKey = event.eKey
       ..sessionKey = event.sessionKey
       ..appInfo = event.appInfo
-      ..uploadSizeLimit = event.appInfo.uploadSizeLimit
+      ..uploadSizeLimit = event.appInfo.uploadSizeLimit * 1024 * 1024
       ..maxUnreadCountOnSuperGroup = event.maxUnreadCountOnSuperGroup
       ..lastConnectedAt = event.loginTimestamp
       ..reconnectConfig = event.reconnectConfiguration;
@@ -255,15 +255,20 @@ class CommandManager {
     _chat.chatContext.setPingInterval(event.pingInterval);
     _chat.chatContext.setWatchdogInterval(event.watchdogInterval);
 
+    final wasReconnecting = _chat.connectionManager.isReconnecting();
+    if (wasReconnecting) {
+      await _chat.eventDispatcher.onReconnected(event);
+    } else {
+      await _chat.eventDispatcher.onLogin(event);
+    }
+
     _chat.chatContext.loginCompleter?.complete(event.user);
     _chat.chatContext.loginCompleter = null;
 
-    final wasReconnecting = _chat.connectionManager.isReconnecting();
     _chat.connectionManager.changeState(ConnectedState(chat: _chat));
     await _enterEnteredOpenChannels();
 
     if (wasReconnecting) {
-      _chat.collectionManager.onReconnectSucceeded();
       _chat.eventManager.notifyReconnectSucceeded();
     } else {
       _chat.eventManager.notifyConnected(event.user.userId);

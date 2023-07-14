@@ -18,7 +18,7 @@ class OpenChannelRefreshRequest extends ApiRequest {
     List<ChannelListQueryIncludeOption> options = const [],
     bool passive = false,
   }) : super(chat: chat) {
-    url = '${passive ? '/sdk/' : ''}open_channels/$channelUrl';
+    url = '${passive ? 'sdk/' : ''}open_channels/$channelUrl';
     queryParams = options.toJson();
   }
 
