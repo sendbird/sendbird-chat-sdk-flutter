@@ -1,3 +1,11 @@
+## v4.0.5 (Jul 14, 2023)
+
+### Features
+- Added `SendbirdStatistics` for internal use.
+
+### Improvements
+- Improved stability.
+
 ## v4.0.4 (Jul 3, 2023)
 
 ### Improvements

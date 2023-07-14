@@ -12,9 +12,11 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.da
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/connection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_dispatcher.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_queue.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/api_client.dart';
@@ -54,7 +56,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.4';
+const sdkVersion = '4.0.5';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -97,7 +99,9 @@ class Chat with WidgetsBindingObserver {
   late CommandManager commandManager;
   late EventManager eventManager;
   late ApiClient apiClient;
+  late EventDispatcher eventDispatcher;
   late CollectionManager collectionManager;
+  late StatManager statManager;
 
   final int chatId;
 
@@ -115,7 +119,9 @@ class Chat with WidgetsBindingObserver {
       chatContext: chatContext,
       sessionManager: sessionManager,
     ); // HttpClient
+    eventDispatcher = EventDispatcher(chat: this);
     collectionManager = CollectionManager(chat: this);
+    statManager = StatManager(chat: this);
 
     _listenConnectivityChangedEvent();
   }

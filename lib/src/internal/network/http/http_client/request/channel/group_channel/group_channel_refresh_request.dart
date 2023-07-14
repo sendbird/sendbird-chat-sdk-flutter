@@ -18,7 +18,7 @@ class GroupChannelRefreshRequest extends ApiRequest {
     List<ChannelListQueryIncludeOption> options = const [],
     bool passive = false,
   }) : super(chat: chat) {
-    url = '${passive ? '/sdk/' : ''}group_channels/$channelUrl';
+    url = '${passive ? 'sdk/' : ''}group_channels/$channelUrl';
     queryParams = options.toJson();
   }
 

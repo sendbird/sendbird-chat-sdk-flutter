@@ -14,12 +14,15 @@ class AppInfo {
   @JsonKey(defaultValue: [])
   final List<String> premiumFeatureList;
 
-  /// The maximum limit of file size for uploading.
-  @JsonKey(defaultValue: 30 * 1024 * 1024) // Check
+  /// The maximum limit of file size for uploading. (MB)
+  @JsonKey(
+    name: 'file_upload_size_limit',
+    defaultValue: 30,
+  ) // Check
   final int uploadSizeLimit;
 
   /// List of all attributes that the application is using.
-  @JsonKey(defaultValue: [])
+  @JsonKey(name: 'application_attributes', defaultValue: [])
   final List<String> attributesInUse;
 
   /// The current registered emoji version hash.
@@ -33,6 +36,9 @@ class AppInfo {
   @JsonKey(name: 'notifications')
   final NotificationInfo? notificationInfo;
 
+  @JsonKey(name: 'allow_sdk_log_ingestion')
+  final bool allowSdkStatsUpload;
+
   AppInfo({
     required this.premiumFeatureList,
     required this.uploadSizeLimit,
@@ -40,6 +46,7 @@ class AppInfo {
     required this.emojiHash,
     required this.useReaction,
     this.notificationInfo,
+    this.allowSdkStatsUpload = true,
   });
 
   /// Checks whether the emoji list needs to be updated.

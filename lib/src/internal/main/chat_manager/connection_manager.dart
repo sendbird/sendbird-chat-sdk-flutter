@@ -185,6 +185,8 @@ class ConnectionManager {
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
     if (logout) {
+      await chat.eventDispatcher.onLogout();
+
       chat.messageQueueMap.forEach((key, q) => q.cleanUp());
       chat.messageQueueMap.clear();
       // chat.uploads.forEach((key, value) => _api.cancelUploadingFile(key));
@@ -195,6 +197,8 @@ class ConnectionManager {
       chat.sessionManager.cleanUp();
       chat.commandManager.cleanUp();
       chat.apiClient.cleanUp();
+    } else {
+      await chat.eventDispatcher.onDisconnected();
     }
 
     changeState(DisconnectedState(chat: chat));
@@ -244,6 +248,7 @@ class ConnectionManager {
       );
 
       if (chat.chatContext.reconnectTask?.retryCount == 1) {
+        await chat.eventDispatcher.onReconnecting();
         chat.eventManager.notifyReconnectStarted();
       }
 

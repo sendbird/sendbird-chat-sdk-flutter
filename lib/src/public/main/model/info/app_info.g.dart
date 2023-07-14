@@ -11,8 +11,8 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      uploadSizeLimit: json['upload_size_limit'] as int? ?? 31457280,
-      attributesInUse: (json['attributes_in_use'] as List<dynamic>?)
+      uploadSizeLimit: json['file_upload_size_limit'] as int? ?? 30,
+      attributesInUse: (json['application_attributes'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -22,4 +22,5 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
           ? null
           : NotificationInfo.fromJson(
               json['notifications'] as Map<String, dynamic>),
+      allowSdkStatsUpload: json['allow_sdk_log_ingestion'] as bool? ?? true,
     );

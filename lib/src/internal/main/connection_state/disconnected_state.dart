@@ -23,13 +23,17 @@ class DisconnectedState extends BaseConnectionState {
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
     chat.connectionManager.changeState(ConnectingState(chat: chat));
-    return chat.connectionManager.doConnect(
+
+    final result = chat.connectionManager.doConnect(
       userId,
       nickname: nickname,
       accessToken: accessToken,
       apiHost: apiHost,
       wsHost: wsHost,
     );
+
+    await chat.eventDispatcher.onConnecting();
+    return result;
   }
 
   @override
