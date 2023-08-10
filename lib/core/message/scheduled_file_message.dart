@@ -60,6 +60,8 @@ class ScheduledFileMessage extends BaseMessage {
     defaultValue: PushNotificationDeliveryOption.normal,
     unknownEnumValue: PushNotificationDeliveryOption.normal,
   )
+
+  // ignore: unused_field
   final PushNotificationDeliveryOption _pushOption;
 
   /// Determines whether to mark the message as read for the sender.
@@ -75,6 +77,7 @@ class ScheduledFileMessage extends BaseMessage {
   AppleCriticalAlertOptions? appleCriticalAlertOptions;
 
   /// Additional ID which is sent from the SDK.
+  // ignore: unused_field
   String? _reqId;
 
   ScheduledFileMessage({

@@ -16,7 +16,7 @@ class PollUpdateParams {
   bool? allowUserSuggestion;
 
   /// Whether to allow multiple vote casting. Default is NO
-  bool? allowMutipleVotes;
+  bool? allowMultipleVotes;
 
   /// Unix timestamp at which the poll will close (millisecond)
   int closeAt = -1;
@@ -25,7 +25,7 @@ class PollUpdateParams {
     this.title,
     this.data,
     this.allowUserSuggestion,
-    this.allowMutipleVotes,
+    this.allowMultipleVotes,
     this.closeAt = -1,
   }) : assert((title?.length ?? 0) <= 2000);
 

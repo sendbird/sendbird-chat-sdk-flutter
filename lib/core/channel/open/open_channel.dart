@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
@@ -52,7 +51,7 @@ class OpenChannel extends BaseChannel {
   @JsonKey(defaultValue: [])
   List<User> operators;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   bool entered = false;
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();

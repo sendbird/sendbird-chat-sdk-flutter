@@ -1,8 +1,6 @@
-import 'dart:ui';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/models/error.dart';
-import 'package:sendbird_sdk/core/models/user.dart';
 import 'package:sendbird_sdk/params/poll_option_retrieval_params.dart';
 import 'package:sendbird_sdk/request/poll/poll_option_get_request.dart';
 import 'package:sendbird_sdk/sdk/sendbird_sdk_api.dart';

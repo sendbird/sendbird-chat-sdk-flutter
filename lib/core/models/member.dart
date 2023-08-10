@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/restricted_user.dart';
@@ -33,7 +32,7 @@ class Member extends User {
   Role role;
 
   /// Restriction information
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   RestrictionInfo? restrictionInfo;
 
   Member({

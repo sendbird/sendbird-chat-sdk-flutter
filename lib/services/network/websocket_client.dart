@@ -191,7 +191,9 @@ class WebSocketClient {
     _watchdogTimer = Timer(
       Duration(seconds: _watchdogInterval),
       () {
-        close(code: WebSocketStatus.goingAway, reason: 'Watchdog timeout');
+        // Below code throws DOMException (The code must be either 1000, or between 3000 and 4999)
+        // close(code: WebSocketStatus.goingAway, reason: 'Watchdog timeout');
+        close(code: WebSocketStatus.normalClosure, reason: 'Watchdog timeout');
         onReceiveError(SBError(message: 'Watchdog timeout'));
       },
     );

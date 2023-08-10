@@ -163,10 +163,6 @@ class Poll {
         }
         this.options = list;
       }
-      //TODO include when isAnonymous is available
-      // if (event.json['poll']['is_anonymous'] != null) {
-      //   this.isAnonymous = event.json['poll']['is_anonymous'];
-      // }
       if (event.json['poll']['allow_user_suggestion'] != null) {
         this.allowUserSuggestion = event.json['poll']['allow_user_suggestion'];
       }

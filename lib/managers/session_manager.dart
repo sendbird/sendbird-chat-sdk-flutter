@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/models/command.dart';
-import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/request/general/session_key_update_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_accessor.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';

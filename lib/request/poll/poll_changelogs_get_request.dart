@@ -1,5 +1,4 @@
 import 'package:sendbird_sdk/constant/enums.dart';
-import 'package:sendbird_sdk/core/models/error.dart';
 import 'package:sendbird_sdk/core/models/responses.dart';
 import 'package:sendbird_sdk/params/poll_changelogs_params.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';

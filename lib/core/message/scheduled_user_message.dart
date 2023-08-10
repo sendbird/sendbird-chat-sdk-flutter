@@ -36,6 +36,8 @@ class ScheduledUserMessage extends BaseMessage {
     defaultValue: PushNotificationDeliveryOption.normal,
     unknownEnumValue: PushNotificationDeliveryOption.normal,
   )
+
+  // ignore: unused_field
   final PushNotificationDeliveryOption _pushOption;
 
   // Determines whether to send a push notification for the message
@@ -45,6 +47,7 @@ class ScheduledUserMessage extends BaseMessage {
 
   /// Target languages that the message will be translated into
   @JsonKey(name: 'target_langs')
+  // ignore: unused_field
   final List<String> _translationTargetLanguages;
 
   /// Determines whether to mark the message as read for the sender.
@@ -63,6 +66,7 @@ class ScheduledUserMessage extends BaseMessage {
   AppleCriticalAlertOptions? appleCriticalAlertOptions;
 
   /// Additional ID which is sent from the SDK.
+  // ignore: unused_field
   String? _reqId;
 
   /// The sent time of the scheduled message, in Unix milliseconds format. If it is not sent yet, the value is 0.

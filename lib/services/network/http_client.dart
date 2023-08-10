@@ -300,7 +300,6 @@ class HttpClient {
       //NOTE: is this best way to do?..
       if (err.code == ErrorCode.sessionKeyExpired) {
         log('Attempting to update session due to expired');
-        // TODO: refactor
         SendbirdSdk().getInternal().state.sessionKey = null;
         SendbirdSdk().getInternal().sessionManager.setSessionKey(null);
         try {

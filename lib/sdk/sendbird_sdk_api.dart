@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:sendbird_sdk/constant/contants.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
@@ -46,6 +47,7 @@ import 'package:sendbird_sdk/request/user/push/push_register_request.dart';
 import 'package:sendbird_sdk/request/user/push/push_unregister_request.dart';
 import 'package:sendbird_sdk/sdk/internal/sendbird_sdk_internal.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// An object represents a main class to use Sendbird Chat
 class SendbirdSdk {
@@ -308,13 +310,61 @@ class SendbirdSdk {
     bool alwaysPush = false,
     bool unique = false,
   }) async {
-    return _int.api
-        .send<PushTokenRegistrationStatus>(UserPushTokenRegisterRequest(
-      type: type,
-      token: token,
-      alwaysPush: alwaysPush,
-      unique: unique,
-    ));
+    try {
+      //* Check if device token exists in shared preference
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String>? cachedToken = prefs.getStringList(prefDeviceToken);
+
+      if (cachedToken != null && cachedToken.contains(token)) {
+        //? If unique true then only one token will be registered
+        if (unique == false) {
+          logger.d('Token already registered');
+          return PushTokenRegistrationStatus.success; // or appropriate status
+        }
+      }
+
+      int? deviceTokenLastDeletedAt =
+          await _int.api.send<int?>(UserPushTokenRegisterRequest(
+        type: type,
+        token: token,
+        alwaysPush: alwaysPush,
+        unique: unique,
+      ));
+
+      //* If deviceTokenLastDeletedAt is not NULL then update the state
+      if (deviceTokenLastDeletedAt != null) {
+        await prefs.setInt(
+          prefDeviceTokenLastDeletedAt,
+          deviceTokenLastDeletedAt,
+        );
+      }
+
+      //* Store status in sharedpreference
+      //? If unique true then only one token will be registered
+      if (unique == true) {
+        logger.d('RegisterPushToken `Unique` Called - Token registering');
+        List<String> uniqueTokenList = [token];
+        await prefs.setStringList(prefDeviceToken, uniqueTokenList);
+      } else {
+        // read the old list
+        List<String>? formerSavedList = prefs.getStringList(prefDeviceToken);
+
+        // append the new data to it
+        if (formerSavedList != null) {
+          formerSavedList.add(token);
+        } else {
+          formerSavedList = [token];
+        }
+
+        // and save the new list back to storage
+        await prefs.setStringList(prefDeviceToken, formerSavedList);
+      }
+
+      return PushTokenRegistrationStatus.success;
+    } catch (exception) {
+      logger.e(StackTrace.current, "Failed to register push token");
+      rethrow;
+    }
   }
 
   /// Unregisters push [token] with [type].
@@ -326,15 +376,49 @@ class SendbirdSdk {
     required PushTokenType type,
     required String token,
   }) async {
-    return _int.api.send(UserPushTokenUnregisterRequest(
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? cachedToken = prefs.getStringList(prefDeviceToken);
+
+    return _int.api
+        .send<int?>(UserPushTokenUnregisterRequest(
       type: type,
       token: token,
-    ));
+    ))
+        .then((value) async {
+      //* If deviceTokenLastDeletedAt is not NULL then update the state
+      if (value != null) {
+        await prefs.setInt(
+          prefDeviceTokenLastDeletedAt,
+          value,
+        );
+      }
+
+      //* Remove selected token from shared preference
+      if (cachedToken != null) {
+        cachedToken.remove(token);
+        await prefs.setStringList(prefDeviceToken, cachedToken);
+      }
+    });
   }
 
   /// Unregisters all push token
   Future<void> unregisterAllPushToken() async {
-    return _int.api.send(UserPushTokenUnregisterAllRequest());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return _int.api
+        .send<int?>(UserPushTokenUnregisterAllRequest())
+        .then((value) {
+      //* If deviceTokenLastDeletedAt is not NULL then update the state
+      if (value != null) {
+        prefs.setInt(
+          prefDeviceTokenLastDeletedAt,
+          value,
+        );
+      }
+
+      //* Remove all token from shared preference
+      prefs.remove(prefDeviceToken);
+    });
   }
 
   /// Sets do not disturb mode [enable] with given start and end time.
@@ -430,11 +514,6 @@ class SendbirdSdk {
   Future<String> getPushTemplate() async {
     return _int.api.send<String>(UserPushTemplateGetRequest());
   }
-
-  // TBD
-  // Future<PushTokenResponse> getMyPushToken(String next, PushTokenType tokenType) async {
-  //   return null;
-  // }
 
   // Channels
 

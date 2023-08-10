@@ -95,10 +95,12 @@ class PreviousMessageListQuery extends QueryBase {
       ..senderIds = senderIdsFilter
       ..includeMetaArray = includeMetaArray
       ..includeParentMessageInfo = includeParentMessageInfo
+      // ignore: deprecated_member_use_from_same_package
       ..includeParentMessageText = includeParentMessageText
       ..includeReactions = includeReactions
       ..includeThreadInfo = includeThreadInfo
       ..replyType = replyType
+      // ignore: deprecated_member_use_from_same_package
       ..includeReplies = includeReplies
       ..showSubChannelMessagesOnly = showSubChannelMessagesOnly;
 

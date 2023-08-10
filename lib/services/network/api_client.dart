@@ -1,7 +1,6 @@
 import 'package:sendbird_sdk/core/models/state.dart';
 import 'package:sendbird_sdk/request/abstract/api_request.dart';
 import 'package:sendbird_sdk/services/network/http_client.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiClient {
   late HttpClient client;

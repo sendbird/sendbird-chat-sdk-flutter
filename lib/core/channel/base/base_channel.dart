@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/types.dart';
 import 'package:sendbird_sdk/core/message/scheduled_file_message.dart';
@@ -45,7 +44,6 @@ import 'package:sendbird_sdk/request/poll/poll_option_add_request.dart';
 import 'package:sendbird_sdk/request/poll/poll_option_delete_request.dart';
 import 'package:sendbird_sdk/request/poll/poll_option_update_request.dart';
 import 'package:sendbird_sdk/request/poll/poll_update_request.dart';
-import 'package:sendbird_sdk/request/poll/poll_vote_request.dart';
 import 'package:sendbird_sdk/request/reaction/channel_reaction_add_request.dart';
 import 'package:sendbird_sdk/request/reaction/channel_reaction_remove_request.dart';
 import 'package:sendbird_sdk/request/report/channel_report_request.dart';
@@ -104,10 +102,10 @@ class BaseChannel implements Cacheable {
   bool isEphemeral;
 
   /// local usage
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   bool fromCache = false;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   bool dirty;
 

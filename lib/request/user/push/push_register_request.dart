@@ -30,7 +30,7 @@ class UserPushTokenRegisterRequest extends ApiRequest {
   }
 
   @override
-  Future<PushTokenRegistrationStatus> response(res) async {
-    return PushTokenRegistrationStatus.success;
+  Future<int?> response(res) async {
+    return res['device_token_last_deleted_at'] as int?;
   }
 }

@@ -40,8 +40,10 @@ class BaseMessageFetchParams {
 
   Map<String, dynamic> toJson() {
     final json = _$BaseMessageFetchParamsToJson(this);
+    // ignore: deprecated_member_use_from_same_package
     final replies = includeReplies;
-    final parentText = includeParentMessageText;
+    // ignore: deprecated_member_use_from_same_package
+    final parentText = includeParentMessageText ?? includeParentMessageText;
     if (replies != null) {
       json['include_reply_type'] = replies ? 'ALL' : 'NONE';
     }

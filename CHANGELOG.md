@@ -1,3 +1,10 @@
+## [3.2.16] - Aug 10, 2023
+
+- Resolve warning issues
+- Fix issue with API Token missing
+- Fix typo `allowMultipleVotes`
+- Include device token caching
+
 ## [3.2.15] - July 7, 2023
 
 - Fix issue with resendFileMessage()

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -22,7 +23,9 @@ import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-const sdk_version = '3.2.15';
+import '../../constant/contants.dart';
+
+const sdk_version = '3.2.16';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
@@ -182,6 +185,7 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     String? wsHost,
     bool reconnect = false,
   }) async {
+    logger.i("sendbird connecting....");
     if (userId.isEmpty) {
       throw InvalidParameterError();
     }
@@ -283,7 +287,6 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final user = await _loginCompleter!.future.timeout(
         Duration(seconds: options.connectionTimeout), onTimeout: () async {
       logger.e('login timeout');
-      await logout();
       throw LoginTimeoutError();
     });
 
@@ -304,6 +307,11 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
 
   Future<void> logout() async {
     logger.i('logout');
+
+    // Remove Push Tokens from Cache
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(prefDeviceToken);
+    prefs.remove(prefDeviceTokenLastDeletedAt);
 
     if (state.reconnecting) {
       eventManager.notifyReconnectionCanceled();
@@ -450,6 +458,16 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
                         _state.sessionKey != null) {
                       reconnect(reset: true);
                     }
+                    break;
+                  case ConnectivityResult.vpn:
+                    logger.e("connection status: vpn");
+                    if (_connectionResult == ConnectivityResult.none &&
+                        _state.sessionKey != null) {
+                      reconnect(reset: true);
+                    }
+                    break;
+                  case ConnectivityResult.other:
+                    logger.e("connection status: other");
                     break;
                 }
                 _connectionResult = data;

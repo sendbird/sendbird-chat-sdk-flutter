@@ -1,12 +1,9 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/core/models/meta_array.dart';
 import 'package:sendbird_sdk/core/models/sender.dart';
 import 'package:sendbird_sdk/core/models/user.dart';
-import 'package:sendbird_sdk/events/poll_update_event.dart';
-import 'package:sendbird_sdk/events/poll_vote_event.dart';
 import 'package:sendbird_sdk/features/og_meta_data/og_meta_data.dart';
 import 'package:sendbird_sdk/features/poll/poll.dart';
 import 'package:sendbird_sdk/features/reaction/reaction.dart';

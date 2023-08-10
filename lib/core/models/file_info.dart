@@ -14,7 +14,7 @@ class FileInfo {
   String? url;
 
   /// file data
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   final File? file;
 
   /// mime file type
@@ -26,7 +26,7 @@ class FileInfo {
   int? fileSize;
 
   /// file bytes
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Uint8List? fileBytes;
 
   FileInfo(

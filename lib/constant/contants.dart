@@ -9,3 +9,7 @@ const String sbExtraDataApplicationAttributes = 'application_attributes';
 
 const String sbPushTemplateDefault = 'default';
 const String sbPushTemplateAlternative = 'alternative';
+
+const String prefDeviceToken = 'com.sendbird.chat.device_token_list';
+const String prefDeviceTokenLastDeletedAt =
+    'com.sendbird.chat.device_token_last_deleted_at';

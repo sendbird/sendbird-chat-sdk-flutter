@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:collection/collection.dart';
+import 'package:sendbird_sdk/constant/contants.dart';
 
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
@@ -41,6 +42,7 @@ import 'package:sendbird_sdk/utils/async/async_operation.dart';
 import 'package:sendbird_sdk/utils/async/async_queue.dart';
 import 'package:sendbird_sdk/utils/logger.dart';
 import 'package:sendbird_sdk/utils/parsers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommandManager with SdkAccessor {
   final Map<String, Timer> _ackTimers = {};
@@ -267,7 +269,44 @@ class CommandManager with SdkAccessor {
     }
   }
 
+  Future<void> _checkDeviceToken(Command cmd) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //* Check if `sdk_device_token_cache` exists in payload
+    if (cmd.payload['application_attributes']
+            .contains('sdk_device_token_cache') ==
+        false) {
+      // * If `sdk_device_token_cache` does not exist, then delete all cache tokens and prevent caching
+      await prefs.remove(prefDeviceToken);
+    } else {
+      //? Test below
+      //* Check if `device_token_last_deleted_at` exists in payload
+      if (cmd.payload.containsKey('device_token_last_deleted_at')) {
+        int tokenLastDeletedUnixTime =
+            cmd.payload['device_token_last_deleted_at'] as int;
+
+        //* Check if device token exists in shared preference
+        int? deviceTokenUnixTimeAt = prefs.getInt(prefDeviceTokenLastDeletedAt);
+
+        // * If tokenAt is NULL, then delete the token and update prefDeviceTokenLastDeletedAt
+        // * If tokenAt is 0, then delete the token and update prefDeviceTokenLastDeletedAt
+        if (deviceTokenUnixTimeAt == null ||
+            deviceTokenUnixTimeAt < tokenLastDeletedUnixTime) {
+          logger.d(StackTrace.current, 'tokenAt NULL');
+          //* Delete token from shared preference
+          await prefs.remove(prefDeviceToken);
+          //* Update prefDeviceTokenLastDeletedAt
+          await prefs.setInt(
+            prefDeviceTokenLastDeletedAt,
+            tokenLastDeletedUnixTime,
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _processLogin(Command cmd) async {
+    //* Check Device Token if updated
+    await _checkDeviceToken(cmd);
     final event = LoginEvent.fromJson(cmd.payload);
 
     sdk.webSocket?.setInterval(event.pingInterval);

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_sdk/constant/command_type.dart';
-import 'package:sendbird_sdk/request/poll/poll_vote_request.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 import 'package:sendbird_sdk/utils/extensions.dart';
 import 'package:uuid/uuid.dart';
@@ -31,7 +30,7 @@ class Command {
   @JsonKey(defaultValue: false)
   bool replyToChannel;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Map<String, dynamic> payload = {};
 
   Command({

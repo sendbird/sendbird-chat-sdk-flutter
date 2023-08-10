@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
