@@ -55,7 +55,7 @@ class GroupChannelParams {
   /// Name for a channel
   String? name;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   FileInfo? coverImage;
 
   /// List of user id who will get invited

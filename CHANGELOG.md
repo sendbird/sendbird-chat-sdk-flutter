@@ -1,3 +1,7 @@
+## [3.2.17] - Aug 14, 2023
+
+- Fix issue with no named parameter for JsonKey
+
 ## [3.2.16] - Aug 10, 2023
 
 - Resolve warning issues

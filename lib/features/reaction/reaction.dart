@@ -15,7 +15,7 @@ class Reaction {
 
   int updatedAt;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   Map<String, int> updatedAts = {};
 
   Reaction({

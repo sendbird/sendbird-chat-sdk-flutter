@@ -11,7 +11,7 @@ class DeliveryStatus implements Cacheable {
   @JsonKey(defaultValue: {}, name: 'updated')
   Map<String, int> updatedDeliveryReceipt;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   bool dirty = false;
 

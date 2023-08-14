@@ -102,10 +102,10 @@ class BaseChannel implements Cacheable {
   bool isEphemeral;
 
   /// local usage
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   bool fromCache = false;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   bool dirty;
 

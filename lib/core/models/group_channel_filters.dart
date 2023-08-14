@@ -29,7 +29,7 @@ class GroupChannelFilter {
 
   /// Sets the filter with user IDs that query result will return
   /// if any one of user id matches with channel's members
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   List<String>? membersIncludeIn;
 
   /// Sets the filter with user IDs that query result will return
@@ -46,7 +46,7 @@ class GroupChannelFilter {
 
   /// Sets a key for ordering by value in the metadata.
   /// This is valid when the `order` is `channelMetaDataValueAlphabetical` only
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   String? metadataOrderKey;
 
   /// Sets to filter channels by the hidden state.

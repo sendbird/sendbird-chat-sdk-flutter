@@ -20,7 +20,7 @@ class OpenChannelParams {
   String? name;
 
   /// Object contains url or file to be uploaded
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   FileInfo? coverImage;
 
   /// List of user id who will be operator in a channel

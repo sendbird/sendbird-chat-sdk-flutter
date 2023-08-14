@@ -23,10 +23,10 @@ class LoginEvent extends SessionEvent {
   @JsonKey(name: 'pong_timeout')
   final int watchdogInterval;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   late AppInfo appInfo;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   late User user;
 
   LoginEvent({

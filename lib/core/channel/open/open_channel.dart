@@ -51,7 +51,7 @@ class OpenChannel extends BaseChannel {
   @JsonKey(defaultValue: [])
   List<User> operators;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   bool entered = false;
 
   SendbirdSdkInternal _sdk = SendbirdSdk().getInternal();

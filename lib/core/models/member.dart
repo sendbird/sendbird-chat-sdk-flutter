@@ -32,7 +32,7 @@ class Member extends User {
   Role role;
 
   /// Restriction information
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   RestrictionInfo? restrictionInfo;
 
   Member({

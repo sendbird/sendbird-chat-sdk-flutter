@@ -30,7 +30,7 @@ class Command {
   @JsonKey(defaultValue: false)
   bool replyToChannel;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   Map<String, dynamic> payload = {};
 
   Command({

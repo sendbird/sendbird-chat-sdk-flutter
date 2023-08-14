@@ -51,7 +51,7 @@ class FileMessage extends BaseMessage {
   @JsonKey(defaultValue: false)
   final bool requireAuth;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   File? localFile;
 
   FileMessage({

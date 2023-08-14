@@ -25,7 +25,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../constant/contants.dart';
 
-const sdk_version = '3.2.16';
+const sdk_version = '3.2.17';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
