@@ -84,11 +84,11 @@ class SessionManager {
 
     setSessionKey(null);
 
-    // If websocket exists, ws request to update session key => Check server error
-    // if (_chat.connectionManager.isConnected()) {
-    //   await _chat.commandManager.updateSessionKey();
-    //   return;
-    // }
+    // If websocket exists, ws request to update session key
+    if (_chat.connectionManager.isConnected()) {
+      await _chat.commandManager.updateSessionKey();
+      return;
+    }
 
     final completer = Completer();
     _updateSessionKeyCompleterList.add(completer);
@@ -98,9 +98,6 @@ class SessionManager {
     }
 
     final accessToken = _chat.chatContext.accessToken;
-    if (accessToken == null) {
-      throw UnauthorizedException();
-    }
 
     _isUpdatingSessionKey = true;
 
@@ -110,7 +107,6 @@ class SessionManager {
           _chat,
           appId: _chat.chatContext.appId,
           accessToken: accessToken,
-          expiringSession: (_chat.eventManager.getSessionHandler() != null),
         ),
       );
 
@@ -120,12 +116,11 @@ class SessionManager {
       sbLog.e(StackTrace.current, 'e: $err');
 
       _isUpdatingSessionKey = false;
-      _flushUpdateSessionCompleterList(
-          e: SessionKeyRefreshFailedException());
 
       if (err.code == SendbirdError.accessTokenNotValid) {
         _chat.eventManager.notifyAccessTokenRequired();
       } else {
+        _flushUpdateSessionCompleterList(e: SessionKeyRefreshFailedException());
         _chat.eventManager
             .notifySessionError(SessionKeyRefreshFailedException());
       }
@@ -133,8 +128,7 @@ class SessionManager {
       sbLog.e(StackTrace.current, 'e: $e');
 
       _isUpdatingSessionKey = false;
-      _flushUpdateSessionCompleterList(
-          e: SessionKeyRefreshFailedException());
+      _flushUpdateSessionCompleterList(e: SessionKeyRefreshFailedException());
       _chat.eventManager.notifySessionError(SessionKeyRefreshFailedException());
     }
     return completer.future;
@@ -203,15 +197,17 @@ class SessionManager {
   // Applies refreshed session payload and reconnect if necessary
   Future<void> _applyRefreshedSessionKey(Map<String, dynamic> payload) async {
     if (payload['key'] != null) {
-      setSessionKey(payload['key']);
+      await setSessionKey(payload['key']);
     } else if (payload['new_key'] != null) {
-      setSessionKey(payload['new_key']);
+      await setSessionKey(payload['new_key']);
     }
 
     _flushUpdateSessionCompleterList();
     _chat.eventManager.notifySessionRefreshed();
 
-    await _chat.connectionManager.reconnect(reset: true); // Check
+    if (_chat.chatContext.isChatConnected) {
+      await _chat.connectionManager.reconnect(reset: true); // Check
+    }
   }
 
   void _flushUpdateSessionCompleterList({SendbirdException? e}) {
@@ -230,6 +226,7 @@ class SessionManager {
 
     if (newAccessToken == null) {
       await _chat.connectionManager.disconnect(logout: true);
+      _chat.eventManager.notifySessionClosed();
       return;
     }
 
@@ -239,7 +236,6 @@ class SessionManager {
           _chat,
           appId: _chat.chatContext.appId,
           accessToken: newAccessToken,
-          expiringSession: (_chat.eventManager.getSessionHandler() != null),
         ),
       );
 
@@ -247,8 +243,7 @@ class SessionManager {
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');
 
-      _flushUpdateSessionCompleterList(
-          e: SessionKeyRefreshFailedException());
+      _flushUpdateSessionCompleterList(e: SessionKeyRefreshFailedException());
       _chat.eventManager.notifySessionError(InvalidAccessTokenException());
     }
   }

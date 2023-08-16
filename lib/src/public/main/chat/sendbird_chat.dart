@@ -41,10 +41,12 @@ class SendbirdChat {
   static const String pushTemplateAlternative = 'alternative';
 
   static final SendbirdChat _instance = SendbirdChat._internal();
+
   SendbirdChat._internal()
       : _chat = Chat(appId: '', options: SendbirdChatOptions());
 
   late Chat _chat;
+
   Chat get chat => _chat;
 
   factory SendbirdChat() {
@@ -661,5 +663,32 @@ class SendbirdChat {
   }) async {
     sbLog.i(StackTrace.current);
     return await _instance._chat.getNotificationTemplate(key: key);
+  }
+
+  /// Authenticate with the Sendbird server.
+  /// Calling this method will grant you access to Sendbird notification's features.
+  /// If you want to access Sendbird Chat's features, call [SendbirdChat.connect].
+  /// You can deauthenticate from the Sendbird server by calling [SendbirdChat.disconnect].
+  /// @since 4.0.6
+  static Future<User> authenticateFeed(
+    String userId, {
+    String? accessToken,
+    String? apiHost,
+  }) async {
+    sbLog.i(StackTrace.current, 'userId: $userId');
+
+    return await _instance._chat.authenticateFeed(
+      userId,
+      accessToken: accessToken,
+      apiHost: apiHost,
+    );
+  }
+
+  /// Refresh the contents of all notification collections that are currently valid.
+  /// @since 4.0.6
+  static void refreshNotificationCollections() {
+    sbLog.i(StackTrace.current);
+
+    _instance._chat.refreshNotificationCollections();
   }
 }

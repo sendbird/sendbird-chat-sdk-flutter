@@ -12,7 +12,7 @@ extension ChatConnection on Chat {
     bool reconnect = false,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
-    _listenAppLifecycleState(); // Check
+    listenAppLifecycleState(); // Check
 
     if (userId.isEmpty) {
       throw InvalidParameterException();

@@ -37,4 +37,13 @@ class NotificationCollection extends BaseMessageCollection {
         ) {
     sbLog.i(StackTrace.current, 'MessageCollection()');
   }
+
+  // Refresh the contents of the notification collection.
+  Future<void> refresh() async {
+    sbLog.i(StackTrace.current);
+
+    await chat.collectionManager.refreshNotificationCollection(
+      channelUrl: baseChannel.channelUrl,
+    );
+  }
 }

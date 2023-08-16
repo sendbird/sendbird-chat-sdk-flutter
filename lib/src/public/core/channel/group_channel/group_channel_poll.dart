@@ -10,6 +10,7 @@ extension GroupChannelPoll on GroupChannel {
     required PollUpdateParams params,
   }) async {
     sbLog.i(StackTrace.current, 'pollId: $pollId');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(PollUpdateRequest(
       chat,
@@ -23,6 +24,8 @@ extension GroupChannelPoll on GroupChannel {
     required int pollId,
   }) async {
     sbLog.i(StackTrace.current, 'pollId: $pollId');
+    checkUnsupportedAction();
+
     return await chat.apiClient.send(PollDeleteRequest(chat, pollId: pollId));
   }
 
@@ -31,6 +34,8 @@ extension GroupChannelPoll on GroupChannel {
     required int pollId,
   }) async {
     sbLog.i(StackTrace.current, 'pollId: $pollId');
+    checkUnsupportedAction();
+
     return await chat.apiClient.send(PollCloseRequest(chat, pollId: pollId));
   }
 
@@ -40,6 +45,7 @@ extension GroupChannelPoll on GroupChannel {
     required String optionText,
   }) async {
     sbLog.i(StackTrace.current, 'pollId: $pollId, optionText: $optionText');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       PollOptionAddRequest(
@@ -60,6 +66,7 @@ extension GroupChannelPoll on GroupChannel {
   }) async {
     sbLog.i(StackTrace.current,
         'pollId: $pollId, pollOptionId: $pollOptionId, optionText: $optionText');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       PollOptionUpdateRequest(
@@ -77,6 +84,7 @@ extension GroupChannelPoll on GroupChannel {
     required int pollOptionId,
   }) async {
     sbLog.i(StackTrace.current, 'pollId: $pollId, pollOptionId: $pollOptionId');
+    checkUnsupportedAction();
 
     await chat.apiClient.send(PollOptionDeleteRequest(
       chat,
@@ -95,6 +103,7 @@ extension GroupChannelPoll on GroupChannel {
   }) async {
     sbLog.i(
         StackTrace.current, 'pollId: $pollId, pollOptionIds: $pollOptionIds');
+    checkUnsupportedAction();
 
     final cmd = Command.buildVotePoll(
       channelType: channelType,
@@ -117,6 +126,7 @@ extension GroupChannelPoll on GroupChannel {
   /// Change logs after this timestamp will be returned.
   Future<PollChangeLogs> getPollChangeLogsSinceTimestamp(int timestamp) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send<PollChangeLogs>(
       PollChangelogsGetRequest(
@@ -134,6 +144,7 @@ extension GroupChannelPoll on GroupChannel {
   /// If the token is null, the result will be passed from the beginning.
   Future<PollChangeLogs> getPollChangeLogsSinceToken(String? token) async {
     sbLog.i(StackTrace.current, 'token: $token');
+    checkUnsupportedAction();
 
     return await chat.apiClient.send<PollChangeLogs>(
       PollChangelogsGetRequest(

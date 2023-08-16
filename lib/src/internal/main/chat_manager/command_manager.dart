@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/meta_data_cache.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
@@ -127,11 +128,7 @@ class CommandManager {
           '\n-[cmd] ${cmd.cmd}\n-[payload] ${jsonEncoder.convert(cmd.payload)}');
     }
 
-    final unreadMessageCountPayload = cmd.payload['unread_cnt'];
-    if (unreadMessageCountPayload != null) {
-      final info = UnreadMessageCountInfo.fromJson(unreadMessageCountPayload);
-      _updateSubscribedUnreadMessageCountInfo(info);
-    }
+    processUnreadMessageCountPayload(cmd.payload['unread_cnt']);
 
     if (cmd.requestId != null) {
       _ackTimerMap.remove(cmd.requestId)?.cancel();
@@ -163,9 +160,9 @@ class CommandManager {
       await _processNewMessage(cmd);
     } else if (cmd.isUpdatedMessage) {
       await _processUpdateMessage(cmd);
-    } else if (cmd.isDeletedMessage) {
+    } else if (cmd.isMessageDeleted) {
       await _processDeleteMessage(cmd);
-    } else if (cmd.isMemberCountChange) {
+    } else if (cmd.isMemberCountChanged) {
       await _processMemberCountChange(cmd);
     } else if (cmd.isRead) {
       await _processRead(cmd);
@@ -179,10 +176,10 @@ class CommandManager {
       await _processUserEvent(cmd);
     } else if (cmd.isSystemEvent) {
       await _processSystemEvent(cmd);
-    } else if (cmd.isUpdatedPoll) {
-      await _processUpdatePoll(cmd);
-    } else if (cmd.isVote) {
-      await _processVote(cmd);
+    } else if (cmd.isPollVoted) {
+      await _processPollVoted(cmd);
+    } else if (cmd.isPollUpdated) {
+      await _processPollUpdated(cmd);
     } else {
       if (cmd.cmd != 'PONG') {
         sbLog.i(StackTrace.current, 'Pass command: ${cmd.cmd}');
@@ -190,8 +187,28 @@ class CommandManager {
     }
   }
 
-  void _updateSubscribedUnreadMessageCountInfo(UnreadMessageCountInfo? info) {
-    if (info == null) return;
+  GroupChannel? _eitherGroupOrFeed(BaseChannel channel) {
+    if (channel is GroupChannel) {
+      return channel;
+    } else if (channel is FeedChannel) {
+      return channel.groupChannel;
+    }
+    return null;
+  }
+
+  bool _isGroupChannel(Command cmd) {
+    return (cmd.payload['channel_type'] == 'group');
+  }
+
+  bool _isFeedChannel(Command cmd) {
+    return (cmd.payload['channel_type'] == 'feed');
+  }
+
+  void processUnreadMessageCountPayload(
+    Map<String, dynamic>? unreadMessageCountPayload,
+  ) {
+    if (unreadMessageCountPayload == null) return;
+    final info = UnreadMessageCountInfo.fromJson(unreadMessageCountPayload);
     if (_chat.chatContext.unreadMessageCountInfo.ts > info.ts) return;
 
     final unreadMessageCountInfo = _chat.chatContext.unreadMessageCountInfo;
@@ -209,24 +226,6 @@ class CommandManager {
     }
   }
 
-  Future<void> _processVote(Command cmd) async {
-    final channel = await GroupChannel.getChannel(cmd.payload['channel_url']);
-
-    final event = PollVoteEvent.fromJson(cmd.payload);
-    _chat.eventManager.notifyPollVoted(channel, event);
-  }
-
-  Future<void> _processUpdatePoll(Command cmd) async {
-    final channel = await GroupChannel.getChannel(cmd.payload['channel_url']);
-
-    if (cmd.payload['poll']['status'] == 'removed') {
-      _chat.eventManager.notifyPollDeleted(channel, cmd.payload['poll']['id']);
-    } else {
-      final event = PollUpdateEvent.fromJson(cmd.payload);
-      _chat.eventManager.notifyPollUpdated(channel, event);
-    }
-  }
-
   Future<void> _processLogin(Command cmd) async {
     if (_chat.connectionManager.isConnecting() &&
         _chat.chatContext.loginCompleter == null) {
@@ -234,44 +233,67 @@ class CommandManager {
       return;
     }
 
-    final event = LoginEvent.fromJson(cmd.payload);
+    await processLoginPayload(fromWebSocket: true, loginPayload: cmd.payload);
+  }
+
+  Future<void> processLoginPayload({
+    required bool fromWebSocket,
+    required Map<String, dynamic> loginPayload,
+  }) async {
+    final event = LoginEvent.fromJson(loginPayload);
     event.user.set(_chat);
+
+    final services = loginPayload['services'] as List<dynamic>?;
+    _chat.chatContext.services.clear();
+    if (services != null) {
+      for (final service in services) {
+        if (service == 'chat') {
+          _chat.chatContext.services.add(Service.chat);
+        } else if (service == 'feed') {
+          _chat.chatContext.services.add(Service.feed);
+        }
+      }
+    }
 
     _chat.chatContext
       ..currentUser = event.user
       ..currentUserId = event.user.userId
-      ..eKey = event.eKey
       ..sessionKey = event.sessionKey
+      ..eKey = event.eKey
       ..appInfo = event.appInfo
       ..uploadSizeLimit = event.appInfo.uploadSizeLimit * 1024 * 1024
       ..maxUnreadCountOnSuperGroup = event.maxUnreadCountOnSuperGroup
       ..lastConnectedAt = event.loginTimestamp
       ..reconnectConfig = event.reconnectConfiguration;
 
-    _chat.chatContext.reconnectTask =
-        ReconnectTask(event.reconnectConfiguration);
-
     _chat.sessionManager.setSessionKey(event.sessionKey);
-    _chat.chatContext.setPingInterval(event.pingInterval);
-    _chat.chatContext.setWatchdogInterval(event.watchdogInterval);
 
-    final wasReconnecting = _chat.connectionManager.isReconnecting();
-    if (wasReconnecting) {
-      await _chat.eventDispatcher.onReconnected(event);
+    if (fromWebSocket) {
+      _chat.chatContext.reconnectTask =
+          ReconnectTask(event.reconnectConfiguration);
+      _chat.chatContext.setPingInterval(event.pingInterval);
+      _chat.chatContext.setWatchdogInterval(event.watchdogInterval);
+
+      final wasReconnecting = _chat.connectionManager.isReconnecting();
+      if (wasReconnecting) {
+        await _chat.eventDispatcher.onReconnected(event);
+      } else {
+        await _chat.eventDispatcher.onLogin(event);
+      }
+
+      _chat.chatContext.loginCompleter?.complete(event.user);
+      _chat.chatContext.loginCompleter = null;
+
+      _chat.connectionManager.changeState(ConnectedState(chat: _chat));
+      await _enterEnteredOpenChannels();
+
+      if (wasReconnecting) {
+        _chat.eventManager.notifyReconnectSucceeded();
+      } else {
+        _chat.eventManager.notifyConnected(event.user.userId);
+      }
     } else {
       await _chat.eventDispatcher.onLogin(event);
-    }
-
-    _chat.chatContext.loginCompleter?.complete(event.user);
-    _chat.chatContext.loginCompleter = null;
-
-    _chat.connectionManager.changeState(ConnectedState(chat: _chat));
-    await _enterEnteredOpenChannels();
-
-    if (wasReconnecting) {
-      _chat.eventManager.notifyReconnectSucceeded();
-    } else {
-      _chat.eventManager.notifyConnected(event.user.userId);
     }
   }
 
@@ -310,8 +332,8 @@ class CommandManager {
     _chat.sessionManager.setSessionKey(null);
 
     if (cmd.payload['reason'] == SendbirdError.accessTokenRevoked) {
+      await _chat.connectionManager.disconnect(logout: true);
       _chat.eventManager.notifySessionClosed();
-      await _chat.disconnect();
     } else if (cmd.payload['expires_in'] != null
         ? cmd.payload['expires_in'] < 0
         : false) {
@@ -352,22 +374,24 @@ class CommandManager {
         chat: _chat,
       );
 
-      var shouldCallChannelChanged = false;
+      bool shouldCallChannelChanged = false;
 
-      if (channel is GroupChannel) {
-        if (channel.hiddenState == GroupChannelHiddenState.allowAutoUnhide) {
-          channel.isHidden = false;
-          channel.hiddenState = GroupChannelHiddenState.unhidden;
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        if (groupChannel.hiddenState ==
+            GroupChannelHiddenState.allowAutoUnhide) {
+          groupChannel.isHidden = false;
+          groupChannel.hiddenState = GroupChannelHiddenState.unhidden;
         }
 
-        channel.updateMember(event.sender);
+        groupChannel.updateMember(event.sender);
 
-        if (channel.shouldUpdateLastMessage(message, message.sender)) {
+        if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
           shouldCallChannelChanged = true;
-          channel.lastMessage = message;
+          groupChannel.lastMessage = message;
         }
 
-        if (channel.fromCache && channel.updateUnreadCount(message)) {
+        if (groupChannel.fromCache && groupChannel.updateUnreadCount(message)) {
           shouldCallChannelChanged = true;
         }
       }
@@ -405,6 +429,7 @@ class CommandManager {
 
       final currentUser = _chat.chatContext.currentUser;
       if (currentUser == null) return;
+
       final channel = await BaseChannel.getBaseChannel(
         message.channelType,
         message.channelUrl,
@@ -413,42 +438,49 @@ class CommandManager {
 
       if (channel is OpenChannel) {
         _chat.eventManager.notifyMessageUpdate(channel, message);
-      } else if (channel is GroupChannel) {
-        var shouldCallChannelChanged = false;
-        var shouldCallMentionReceived = false;
+      } else {
+        final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+        if (groupChannel != null) {
+          bool shouldCallChannelChanged = false;
+          bool shouldCallMentionReceived = false;
 
-        if (channel.shouldUpdateLastMessage(message, message.sender)) {
-          shouldCallChannelChanged = true;
-          channel.lastMessage = message;
-        }
-
-        final timestamp = channel.myReadReceipt();
-
-        if (message.hasUpdatedLaterThan(timestamp) &&
-            event.sender?.isCurrentUser == false &&
-            !message.isSilent) {
-          if (event.hasChangedMentionType() == MentionType.channel &&
-              event.previousMentionedContains(currentUser)) {
-            if (channel.fromCache) channel.increaseUnreadMentionCount();
+          if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
             shouldCallChannelChanged = true;
-            shouldCallMentionReceived = true;
-          } else if (event.hasChangedMentionType() == MentionType.users &&
-              !event.previousMentionedContains(currentUser) &&
-              event.mentionedContains(currentUser)) {
-            if (channel.fromCache) channel.increaseUnreadMentionCount();
-            shouldCallChannelChanged = true;
-            shouldCallMentionReceived = true;
+            groupChannel.lastMessage = message;
           }
-        }
 
-        _chat.eventManager.notifyMessageUpdate(channel, message);
+          final timestamp = groupChannel.myReadReceipt();
 
-        if (shouldCallMentionReceived) {
-          _chat.eventManager.notifyMentionReceived(channel, message);
-        }
+          if (message.hasUpdatedLaterThan(timestamp) &&
+              event.sender?.isCurrentUser == false &&
+              !message.isSilent) {
+            if (event.hasChangedMentionType() == MentionType.channel &&
+                event.previousMentionedContains(currentUser)) {
+              if (groupChannel.fromCache) {
+                groupChannel.increaseUnreadMentionCount();
+              }
+              shouldCallChannelChanged = true;
+              shouldCallMentionReceived = true;
+            } else if (event.hasChangedMentionType() == MentionType.users &&
+                !event.previousMentionedContains(currentUser) &&
+                event.mentionedContains(currentUser)) {
+              if (groupChannel.fromCache) {
+                groupChannel.increaseUnreadMentionCount();
+              }
+              shouldCallChannelChanged = true;
+              shouldCallMentionReceived = true;
+            }
+          }
 
-        if (shouldCallChannelChanged) {
-          _chat.eventManager.notifyChannelChanged(channel);
+          _chat.eventManager.notifyMessageUpdate(channel, message);
+
+          if (shouldCallMentionReceived) {
+            _chat.eventManager.notifyMentionReceived(channel, message);
+          }
+
+          if (shouldCallChannelChanged) {
+            _chat.eventManager.notifyChannelChanged(channel);
+          }
         }
       }
     } catch (e) {
@@ -475,28 +507,28 @@ class CommandManager {
     }
   }
 
-  //only for open channel and broadcast channel
+  // only for open channel and broadcast channel
   Future<void> _processMemberCountChange(Command cmd) async {
     final event = MCNTEvent.fromJsonWithChat(_chat, cmd.payload);
 
     final groupChannels = <GroupChannel>[];
     final openChannels = <OpenChannel>[];
 
-    for (final e in event.groupChannels) {
-      final channel =
-          _chat.channelCache.find<GroupChannel>(channelKey: e.channelUrl);
+    for (final groupChannel in event.groupChannels) {
+      final channel = _chat.channelCache
+          .find<GroupChannel>(channelKey: groupChannel.channelUrl);
       if (channel != null) {
-        channel.joinedMemberCount = e.joinedMemberCount;
-        channel.memberCount = e.memberCount;
+        channel.joinedMemberCount = groupChannel.joinedMemberCount;
+        channel.memberCount = groupChannel.memberCount;
         groupChannels.add(channel);
       }
     }
 
-    for (final e in event.openChannels) {
-      final channel =
-          _chat.channelCache.find<OpenChannel>(channelKey: e.channelUrl);
+    for (final openChannel in event.openChannels) {
+      final channel = _chat.channelCache
+          .find<OpenChannel>(channelKey: openChannel.channelUrl);
       if (channel != null) {
-        channel.participantCount = e.participantCount;
+        channel.participantCount = openChannel.participantCount;
         openChannels.add(channel);
       }
     }
@@ -514,25 +546,20 @@ class CommandManager {
       final status = ReadStatus.fromJson(cmd.payload);
       status.saveToCache(_chat);
 
-      if (cmd.payload['channel_type'] == 'group') {
-        final channel = await GroupChannel.getChannel(status.channelUrl);
+      final channel = await BaseChannel.getBaseChannel(
+        status.channelType,
+        status.channelUrl,
+        chat: _chat,
+      );
 
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
         final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
-        final hasUnreadCount =
-            (channel.unreadMessageCount > 0 || channel.unreadMentionCount > 0);
+        final hasUnreadCount = (groupChannel.unreadMessageCount > 0 ||
+            groupChannel.unreadMentionCount > 0);
         if (isCurrentUser) {
-          channel.myLastRead = status.timestamp;
-          if (channel.fromCache) channel.clearUnreadCount();
-          if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
-        } else {
-          _chat.eventManager.notifyReadStatusUpdated(channel);
-        }
-      } else if (cmd.payload['channel_type'] == 'feed') {
-        final channel = await FeedChannel.getChannel(status.channelUrl);
-
-        final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
-        final hasUnreadCount = (channel.unreadMessageCount > 0);
-        if (isCurrentUser) {
+          groupChannel.myLastRead = status.timestamp;
+          if (groupChannel.fromCache) groupChannel.clearUnreadCount();
           if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
         } else {
           _chat.eventManager.notifyReadStatusUpdated(channel);
@@ -547,7 +574,8 @@ class CommandManager {
     try {
       final status = DeliveryStatus.fromJson(cmd.payload);
 
-      final channel = await GroupChannel.getChannel(status.channelUrl);
+      final GroupChannel groupChannel =
+          await GroupChannel.getChannel(status.channelUrl);
       final currentUserId = _chat.chatContext.currentUserId;
       var shouldCallDelivery = true;
       if (status.updatedDeliveryStatus.length == 1 &&
@@ -558,7 +586,7 @@ class CommandManager {
       status.saveToCache(_chat);
 
       if (shouldCallDelivery) {
-        _chat.eventManager.notifyDeliveryStatusUpdated(channel);
+        _chat.eventManager.notifyDeliveryStatusUpdated(groupChannel);
       }
     } catch (e) {
       sbLog.e(StackTrace.current, 'cmd: ${cmd.cmd}, e: $e');
@@ -572,8 +600,16 @@ class CommandManager {
         element.set(_chat);
       }
 
-      final channel = await GroupChannel.getChannel(event.channelUrl);
-      _chat.eventManager.notifyThreadInfoUpdated(channel, event);
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
+      );
+
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        _chat.eventManager.notifyThreadInfoUpdated(groupChannel, event);
+      }
     } catch (e) {
       sbLog.e(StackTrace.current, 'cmd: ${cmd.cmd}, e: $e');
     }
@@ -582,11 +618,13 @@ class CommandManager {
   Future<void> _processReaction(Command cmd) async {
     try {
       final event = ReactionEvent.fromJson(cmd.payload);
+
       final channel = await BaseChannel.getBaseChannel(
         event.channelType,
         event.channelUrl,
         chat: _chat,
       );
+
       _chat.eventManager.notifyReactionUpdated(channel, event);
     } catch (e) {
       sbLog.e(StackTrace.current, 'cmd: ${cmd.cmd}, e: $e');
@@ -595,7 +633,9 @@ class CommandManager {
 
   Future<void> _processSessionRefresh(Command cmd) async {
     sbLog.d(StackTrace.current);
+
     final event = SessionEvent.fromJson(cmd.payload);
+
     await _chat.sessionManager.setSessionKey(event.sessionKey);
     _chat.eventManager.notifySessionRefreshed();
   }
@@ -632,7 +672,7 @@ class CommandManager {
     }
   }
 
-  // System
+// System
   Future<void> _processSystemEvent(Command cmd) async {
     final event = ChannelEvent.fromJsonWithChat(_chat, cmd.payload);
 
@@ -711,21 +751,30 @@ class CommandManager {
   Future<void> _processTyping(ChannelEvent event, bool start) async {
     try {
       final user = User.fromJsonWithChat(_chat, event.data);
-      final channel = await GroupChannel.getChannel(event.channelUrl);
-      final status = TypingStatus(
-        channelType: ChannelType.group,
-        channelUrl: event.channelUrl,
-        user: user,
-        timestamp: DateTime.now().millisecondsSinceEpoch,
+
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
       );
 
-      if (start) {
-        status.saveToCache(_chat);
-      } else {
-        status.removeFromCache(_chat);
-      }
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        final status = TypingStatus(
+          channelType: ChannelType.group,
+          channelUrl: event.channelUrl,
+          user: user,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
+        );
 
-      _chat.eventManager.notifyChannelTypingStatusUpdated(channel);
+        if (start) {
+          status.saveToCache(_chat);
+        } else {
+          status.removeFromCache(_chat);
+        }
+
+        _chat.eventManager.notifyChannelTypingStatusUpdated(groupChannel);
+      }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
     }
@@ -746,20 +795,23 @@ class CommandManager {
       if (banned) {
         if (channel is OpenChannel && user.isCurrentUser) {
           channel.removeFromCache(_chat);
-        } else if (channel is GroupChannel) {
-          if (channel.isSuper) {
-            // has to be checked by ts
-            channel.updateMemberCounts(event);
-          } else {
-            channel.removeMember(event.user?.userId);
-          }
+        } else {
+          final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+          if (groupChannel != null) {
+            if (groupChannel.isSuper) {
+              // has to be checked by ts
+              groupChannel.updateMemberCounts(event);
+            } else {
+              groupChannel.removeMember(event.user?.userId);
+            }
 
-          if (user.isCurrentUser) {
-            channel.myMemberState = MemberState.none;
-            channel.invitedAt = 0;
-            channel.clearUnreadCount();
-            if (!channel.isPublic) {
-              channel.removeFromCache(_chat);
+            if (user.isCurrentUser) {
+              groupChannel.myMemberState = MemberState.none;
+              groupChannel.invitedAt = 0;
+              groupChannel.clearUnreadCount();
+              if (!groupChannel.isPublic) {
+                channel.removeFromCache(_chat);
+              }
             }
           }
         }
@@ -784,13 +836,15 @@ class CommandManager {
         chat: _chat,
       );
 
-      if (channel is GroupChannel) {
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
         if (user.isCurrentUser) {
-          channel.myMutedState = muted ? MuteState.muted : MuteState.unmuted;
+          groupChannel.myMutedState =
+              muted ? MuteState.muted : MuteState.unmuted;
         }
 
-        final member =
-            channel.members.firstWhereOrNull((e) => e.userId == user.userId);
+        final member = groupChannel.members
+            .firstWhereOrNull((e) => e.userId == user.userId);
         member?.restrictionInfo =
             muted ? RestrictionInfo.fromJson(event.data) : null;
         member?.isMuted = muted;
@@ -808,52 +862,60 @@ class CommandManager {
 
   Future<void> _processChannelJoin(ChannelEvent event, bool joined) async {
     try {
-      if (joined) {
-        final channel = await GroupChannel.getChannel(event.channelUrl);
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
+      );
 
-        if (channel.isSuper) {
-          channel.updateMemberCounts(event);
-        }
-
-        final members = event.joinedMembers;
-
-        for (final member in members) {
-          if (!channel.isSuper) {
-            channel.addMember(member);
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        if (joined) {
+          if (groupChannel.isSuper) {
+            groupChannel.updateMemberCounts(event);
           }
 
-          if (member.isCurrentUser) {
-            channel.myMemberState = MemberState.joined;
-          }
-          _chat.eventManager.notifyUserJoined(channel, member);
-          _chat.eventManager.notifyChannelMemberCountChanged([channel]);
-        }
-      } else {
-        final channel = GroupChannel.getChannelFromCache(event.channelUrl);
+          final members = event.joinedMembers;
 
-        if (channel != null) {
-          if (channel.isSuper) {
-            channel.updateMemberCounts(event);
-          }
-
-          final member = Member.fromJsonWithChat(_chat, event.data);
-          if (!channel.isSuper) {
-            channel.removeMember(member.userId);
-          }
-
-          channel.updateTypingStatus(member, typing: false);
-
-          if (member.isCurrentUser) {
-            channel.myMemberState = MemberState.none;
-            channel.invitedAt = 0;
-            channel.joinedAt = 0;
-            channel.clearUnreadCount();
-            if (!channel.isPublic) {
-              channel.removeFromCache(_chat);
+          for (final member in members) {
+            if (!groupChannel.isSuper) {
+              groupChannel.addMember(member);
             }
+
+            if (member.isCurrentUser) {
+              groupChannel.myMemberState = MemberState.joined;
+            }
+            _chat.eventManager.notifyUserJoined(groupChannel, member);
+            _chat.eventManager.notifyChannelMemberCountChanged([groupChannel]);
           }
-          _chat.eventManager.notifyUserLeft(channel, member);
-          _chat.eventManager.notifyChannelMemberCountChanged([channel]);
+        } else {
+          final groupChannel =
+              GroupChannel.getChannelFromCache(event.channelUrl);
+
+          if (groupChannel != null) {
+            if (groupChannel.isSuper) {
+              groupChannel.updateMemberCounts(event);
+            }
+
+            final member = Member.fromJsonWithChat(_chat, event.data);
+            if (!groupChannel.isSuper) {
+              groupChannel.removeMember(member.userId);
+            }
+
+            groupChannel.updateTypingStatus(member, typing: false);
+
+            if (member.isCurrentUser) {
+              groupChannel.myMemberState = MemberState.none;
+              groupChannel.invitedAt = 0;
+              groupChannel.joinedAt = 0;
+              groupChannel.clearUnreadCount();
+              if (!groupChannel.isPublic) {
+                groupChannel.removeFromCache(_chat);
+              }
+            }
+            _chat.eventManager.notifyUserLeft(groupChannel, member);
+            _chat.eventManager.notifyChannelMemberCountChanged([groupChannel]);
+          }
         }
       }
     } catch (e) {
@@ -863,40 +925,49 @@ class CommandManager {
 
   Future<void> _processChannelInvite(ChannelEvent event) async {
     try {
-      final channel = await GroupChannel.getChannel(event.channelUrl);
-      final invitees = event.invitees;
-      final inviter = event.inviter;
-
-      if (channel.isSuper) {
-        channel.updateMemberCounts(event);
-      } else if (inviter != null) {
-        channel.addMember(inviter);
-      }
-
-      for (final member in invitees) {
-        if (!channel.isSuper) {
-          channel.addMember(member);
-        }
-
-        if (member.isCurrentUser) {
-          if (channel.myMemberState != MemberState.joined) {
-            channel.myMemberState = MemberState.invited;
-          }
-
-          if (channel.hiddenState == GroupChannelHiddenState.allowAutoUnhide) {
-            channel.isHidden = false;
-            channel.hiddenState = GroupChannelHiddenState.unhidden;
-          }
-
-          channel.invitedAt = event.invitedAt;
-        }
-      }
-
-      _chat.eventManager.notifyUserReceivedInvitation(
-        channel,
-        invitees,
-        inviter,
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
       );
+
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        final invitees = event.invitees;
+        final inviter = event.inviter;
+
+        if (groupChannel.isSuper) {
+          groupChannel.updateMemberCounts(event);
+        } else if (inviter != null) {
+          groupChannel.addMember(inviter);
+        }
+
+        for (final member in invitees) {
+          if (!groupChannel.isSuper) {
+            groupChannel.addMember(member);
+          }
+
+          if (member.isCurrentUser) {
+            if (groupChannel.myMemberState != MemberState.joined) {
+              groupChannel.myMemberState = MemberState.invited;
+            }
+
+            if (groupChannel.hiddenState ==
+                GroupChannelHiddenState.allowAutoUnhide) {
+              groupChannel.isHidden = false;
+              groupChannel.hiddenState = GroupChannelHiddenState.unhidden;
+            }
+
+            groupChannel.invitedAt = event.invitedAt;
+          }
+        }
+
+        _chat.eventManager.notifyUserReceivedInvitation(
+          groupChannel,
+          invitees,
+          inviter,
+        );
+      }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
     }
@@ -904,27 +975,35 @@ class CommandManager {
 
   Future<void> _processChannelDeclineInvitation(ChannelEvent event) async {
     try {
-      final channel = await GroupChannel.getChannel(event.channelUrl);
-      if (channel.isSuper) {
-        channel.updateMemberCounts(event);
-      } else {
-        channel.removeMember(event.invitee?.userId);
-      }
-
-      if (event.invitee?.isCurrentUser == true) {
-        channel.myMemberState = MemberState.none;
-        channel.invitedAt = 0;
-
-        if (!channel.isPublic) {
-          channel.removeFromCache(_chat);
-        }
-      }
-
-      _chat.eventManager.notifyUserDeclinedInvitation(
-        channel,
-        event.invitee!,
-        event.inviter,
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
       );
+
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        if (groupChannel.isSuper) {
+          groupChannel.updateMemberCounts(event);
+        } else {
+          groupChannel.removeMember(event.invitee?.userId);
+        }
+
+        if (event.invitee?.isCurrentUser == true) {
+          groupChannel.myMemberState = MemberState.none;
+          groupChannel.invitedAt = 0;
+
+          if (!groupChannel.isPublic) {
+            groupChannel.removeFromCache(_chat);
+          }
+        }
+
+        _chat.eventManager.notifyUserDeclinedInvitation(
+          groupChannel,
+          event.invitee!,
+          event.inviter,
+        );
+      }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
     }
@@ -932,18 +1011,20 @@ class CommandManager {
 
   Future<void> _processChannelEnter(ChannelEvent event, bool entered) async {
     try {
-      final channel = await OpenChannel.getChannel(event.channelUrl);
-      final user = event.user;
-      if (user == null) throw MalformedDataException();
+      if (event.channelType == ChannelType.open) {
+        final channel = await OpenChannel.getChannel(event.channelUrl);
+        final user = event.user;
+        if (user == null) throw MalformedDataException();
 
-      channel.participantCount = event.participantCount;
+        channel.participantCount = event.participantCount;
 
-      if (entered) {
-        _chat.eventManager.notifyUserEntered(channel, user);
-        _chat.eventManager.notifyChannelParticipantCountChanged([channel]);
-      } else {
-        _chat.eventManager.notifyUserExited(channel, user);
-        _chat.eventManager.notifyChannelParticipantCountChanged([channel]);
+        if (entered) {
+          _chat.eventManager.notifyUserEntered(channel, user);
+          _chat.eventManager.notifyChannelParticipantCountChanged([channel]);
+        } else {
+          _chat.eventManager.notifyUserExited(channel, user);
+          _chat.eventManager.notifyChannelParticipantCountChanged([channel]);
+        }
       }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
@@ -957,6 +1038,7 @@ class CommandManager {
         event.channelUrl,
         chat: _chat,
       );
+
       channel.isFrozen = frozen;
 
       if (frozen) {
@@ -975,22 +1057,30 @@ class CommandManager {
     bool hidden,
   ) async {
     try {
-      final channel = await GroupChannel.getChannel(event.channelUrl);
-      if (hidden) {
-        channel.messageOffsetTimestamp = messageOffset;
+      final channel = await BaseChannel.getBaseChannel(
+        event.channelType,
+        event.channelUrl,
+        chat: _chat,
+      );
 
-        if (event.hidePreviousMessage) {
-          channel.clearUnreadCount();
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        if (hidden) {
+          groupChannel.messageOffsetTimestamp = messageOffset;
+
+          if (event.hidePreviousMessage) {
+            groupChannel.clearUnreadCount();
+          }
         }
-      }
 
-      channel.isHidden = hidden;
-      channel.hiddenState = event.hiddenState;
+        groupChannel.isHidden = hidden;
+        groupChannel.hiddenState = event.hiddenState;
 
-      if (hidden) {
-        _chat.eventManager.notifyChannelHidden(channel);
-      } else {
-        _chat.eventManager.notifyChannelChanged(channel);
+        if (hidden) {
+          _chat.eventManager.notifyChannelHidden(groupChannel);
+        } else {
+          _chat.eventManager.notifyChannelChanged(channel);
+        }
       }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
@@ -1035,6 +1125,7 @@ class CommandManager {
         event.channelUrl,
         chat: _chat,
       );
+
       _chat.eventManager.notifyMetaCountersChanged(channel, event.data);
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
@@ -1048,19 +1139,24 @@ class CommandManager {
         event.channelUrl,
         chat: _chat,
       );
+
       if (channel is OpenChannel) {
         channel.operators = event.operators;
-      } else if (channel is GroupChannel) {
-        for (final member in channel.members) {
-          final isOperator = event.operators
-              .where((e) => e.userId == member.userId)
-              .isNotEmpty;
-          member.role = isOperator ? Role.operator : Role.none;
-          if (member.isCurrentUser) {
-            channel.myRole = isOperator ? Role.operator : Role.none;
+      } else {
+        final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+        if (groupChannel != null) {
+          for (final member in groupChannel.members) {
+            final isOperator = event.operators
+                .where((e) => e.userId == member.userId)
+                .isNotEmpty;
+            member.role = isOperator ? Role.operator : Role.none;
+            if (member.isCurrentUser) {
+              groupChannel.myRole = isOperator ? Role.operator : Role.none;
+            }
           }
         }
       }
+
       _chat.eventManager.notifyOperatorUpdated(channel);
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
@@ -1075,14 +1171,16 @@ class CommandManager {
         chat: _chat,
       );
 
-      if (channel is GroupChannel) {
-        if (!channel.canChangeUnreadMessageCount) {
-          channel.unreadMessageCount = 0;
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        if (!groupChannel.canChangeUnreadMessageCount) {
+          groupChannel.unreadMessageCount = 0;
         }
-        if (!channel.canChangeUnreadMentionCount) {
-          channel.unreadMentionCount = 0;
+        if (!groupChannel.canChangeUnreadMentionCount) {
+          groupChannel.unreadMentionCount = 0;
         }
       }
+
       channel.saveToCache(_chat);
       _chat.eventManager.notifyChannelChanged(channel);
     } catch (e) {
@@ -1092,6 +1190,7 @@ class CommandManager {
 
   Future<void> _processChannelDelete(ChannelEvent event) async {
     _chat.channelCache.delete(channelKey: event.channelUrl);
+
     _chat.eventManager.notifyChannelDeleted(
       event.channelUrl,
       event.channelType,
@@ -1106,20 +1205,21 @@ class CommandManager {
         chat: _chat,
       );
 
-      if (channel is GroupChannel) {
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
         if (event.data.isEmpty) {
-          channel.pinnedMessageIds = [];
-          channel.lastPinnedMessage = null;
+          groupChannel.pinnedMessageIds = [];
+          groupChannel.lastPinnedMessage = null;
         } else if ((event.ts ?? 0) >
             event.data['latest_pinned_message']['updated_at']) {
-          channel.pinnedMessageIds =
+          groupChannel.pinnedMessageIds =
               event.data["pinned_message_ids"].cast<int>();
-          channel.lastPinnedMessage =
+          groupChannel.lastPinnedMessage =
               BaseMessage.fromJson(event.data["latest_pinned_message"]);
         }
 
-        channel.pinnedMessageUpdatedAt = event.ts ?? 0;
-        _chat.eventManager.notifyPinnedMessageUpdated(channel);
+        groupChannel.pinnedMessageUpdatedAt = event.ts ?? 0;
+        _chat.eventManager.notifyPinnedMessageUpdated(groupChannel);
       }
     } catch (e) {
       sbLog.e(StackTrace.current, 'eventCategory: ${event.category}, e: $e');
@@ -1144,22 +1244,59 @@ class CommandManager {
   }
 
   void _processBlock(UserEvent event) {
-    final channels = _chat.channelCache.findAll<GroupChannel>();
-    channels?.forEach((e) => e.setBlockedByMe(
+    final channels = _chat.channelCache.findAll<BaseChannel>();
+    channels?.forEach((channel) {
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        groupChannel.setBlockedByMe(
           targetId: event.blockee.userId,
           blocked: true,
-        ));
+        );
+      }
+    });
   }
 
   void _processUnblock(UserEvent event) {
-    final channels = _chat.channelCache.findAll<GroupChannel>();
-    channels?.forEach((e) => e.setBlockedByMe(
+    final channels = _chat.channelCache.findAll<BaseChannel>();
+    channels?.forEach((channel) {
+      final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
+      if (groupChannel != null) {
+        groupChannel.setBlockedByMe(
           targetId: event.blockee.userId,
           blocked: false,
-        ));
+        );
+      }
+    });
   }
 
   void _processFriendDiscovery(UserEvent event) {
     _chat.eventManager.notifyFriendsDiscovered(event.friendDiscoveries);
+  }
+
+  Future<void> _processPollVoted(Command cmd) async {
+    if (_isFeedChannel(cmd)) return;
+
+    if (_isGroupChannel(cmd)) {
+      final channel = await GroupChannel.getChannel(cmd.payload['channel_url']);
+
+      final event = PollVoteEvent.fromJson(cmd.payload);
+      _chat.eventManager.notifyPollVoted(channel, event);
+    }
+  }
+
+  Future<void> _processPollUpdated(Command cmd) async {
+    if (_isFeedChannel(cmd)) return;
+
+    if (_isGroupChannel(cmd)) {
+      final channel = await GroupChannel.getChannel(cmd.payload['channel_url']);
+
+      if (cmd.payload['poll']['status'] == 'removed') {
+        _chat.eventManager
+            .notifyPollDeleted(channel, cmd.payload['poll']['id']);
+      } else {
+        final event = PollUpdateEvent.fromJson(cmd.payload);
+        _chat.eventManager.notifyPollUpdated(channel, event);
+      }
+    }
   }
 }

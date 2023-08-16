@@ -478,7 +478,6 @@ extension BaseChannelMessage on BaseChannel {
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
-    checkUnsupportedAction();
 
     if (timestamp <= 0) {
       throw InvalidParameterException();
@@ -506,7 +505,6 @@ extension BaseChannelMessage on BaseChannel {
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'messageId: $messageId');
-    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -539,7 +537,6 @@ extension BaseChannelMessage on BaseChannel {
     String? token,
   }) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
-    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMessageChangeLogGetRequest(

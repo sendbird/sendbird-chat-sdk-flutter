@@ -5,8 +5,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_c
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
-import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 
 class ChannelCache implements CacheStorage {
   Map<String, ChannelCacheUnit> _channelCacheMap = {};
@@ -48,7 +47,7 @@ class ChannelCache implements CacheStorage {
   @override
   List<T>? findAll<T extends Cacheable>({String? channelKey}) {
     // find channels only support atm
-    if (T == OpenChannel || T == GroupChannel) {
+    if (T is BaseChannel) {
       return _channelCacheMap.values
           .where((e) => e.channel is T)
           .map((e) => e.channel as T)

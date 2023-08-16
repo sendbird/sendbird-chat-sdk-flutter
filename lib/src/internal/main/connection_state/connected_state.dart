@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
@@ -20,7 +21,8 @@ class ConnectedState extends BaseConnectionState {
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
     if (chat.chatContext.currentUserId == userId &&
-        chat.chatContext.currentUser != null) {
+        chat.chatContext.currentUser != null &&
+        chat.chatContext.services.contains(Service.chat)) {
       return chat.chatContext.currentUser!;
     }
 

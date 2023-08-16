@@ -11,13 +11,28 @@ class AppSessionKeyUpdateRequest extends ApiRequest {
   AppSessionKeyUpdateRequest(
     Chat chat, {
     required String appId,
-    required String accessToken,
-    bool expiringSession = false,
+    String? accessToken,
     String? userId,
   }) : super(chat: chat) {
     url = 'users/${userId ?? chat.chatContext.currentUserId}/session_key';
-    body = {'expiring_session': expiringSession};
-    headers = {'App-Id': appId, 'Access-Token': accessToken};
+
+    headers = {'App-Id': appId};
+
+    if (accessToken != null) {
+      headers['Access-Token'] = accessToken;
+    }
+
+    body = {
+      'expiring_session': chat.chatContext.isFeedAuthenticated
+          ? true
+          : (chat.eventManager.getSessionHandler() != null),
+    };
+
+    if (chat.chatContext.isChatConnected) {
+      body['services'] = ['chat', 'feed'];
+    } else if (chat.chatContext.isFeedAuthenticated) {
+      body['services'] = ['feed'];
+    }
   }
 
   @override

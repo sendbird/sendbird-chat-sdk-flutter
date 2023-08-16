@@ -19,6 +19,7 @@ abstract class ApiRequest {
   Map<String, String> headers = {};
   ProgressHandler? progressHandler;
   bool isMultipart = false;
+  bool isAuthenticateFeed = false;
 
   final Chat chat;
   String? userId;

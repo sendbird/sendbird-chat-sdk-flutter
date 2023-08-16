@@ -7,7 +7,7 @@ extension MessageCollectionManager on CollectionManager {
 // Add and remove message collection
 //------------------------------//
   void addMessageCollection(BaseMessageCollection collection) {
-    messageCollections.add(collection);
+    baseMessageCollections.add(collection);
 
     final now = DateTime.now().millisecondsSinceEpoch;
     lastRequestTsForMessageChangeLogs[collection.baseChannel.channelUrl] = now;
@@ -16,7 +16,7 @@ extension MessageCollectionManager on CollectionManager {
   }
 
   void removeMessageCollection(BaseMessageCollection collection) {
-    messageCollections.remove(collection);
+    baseMessageCollections.remove(collection);
   }
 
 //------------------------------//
@@ -25,7 +25,7 @@ extension MessageCollectionManager on CollectionManager {
   void onMessageSentByMe(BaseMessage message) async {
     sbLog.d(StackTrace.current, 'onMessageSentByMe()');
 
-    for (final messageCollection in messageCollections) {
+    for (final messageCollection in baseMessageCollections) {
       sendEventsToMessageCollection(
         messageCollection: messageCollection,
         baseChannel: messageCollection.baseChannel,
@@ -40,7 +40,7 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Message changeLogs
 //------------------------------//
-  void _requestMessageChangeLogs(
+  Future<void> _requestMessageChangeLogs(
       BaseMessageCollection messageCollection) async {
     final channel = messageCollection.baseChannel;
     final params = MessageChangeLogParams();
@@ -85,7 +85,8 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Poll changeLogs
 //------------------------------//
-  void _requestPollChangeLogs(BaseMessageCollection messageCollection) async {
+  Future<void> _requestPollChangeLogs(
+      BaseMessageCollection messageCollection) async {
     if (_chat.chatContext.appInfo == null ||
         _chat.chatContext.appInfo!.premiumFeatureList.contains('poll') ==
             false) {
@@ -147,7 +148,9 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Messages gap
 //------------------------------//
-  void _requestMessagesGap(BaseMessageCollection messageCollection) async {
+  Future<void> _requestMessagesGap(
+    BaseMessageCollection messageCollection,
+  ) async {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     final channel = messageCollection.baseChannel;
@@ -210,7 +213,7 @@ extension MessageCollectionManager on CollectionManager {
   }) {
     if (updatedChannels != null && updatedChannels.isNotEmpty) {
       for (final updatedChannel in updatedChannels) {
-        for (final messageCollection in messageCollections) {
+        for (final messageCollection in baseMessageCollections) {
           if (updatedChannel.channelUrl ==
               messageCollection.baseChannel.channelUrl) {
             if (!messageCollection.isDisposed) {
@@ -233,7 +236,7 @@ extension MessageCollectionManager on CollectionManager {
 
     if (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty) {
       for (final deletedChannelUrl in deletedChannelUrls) {
-        for (final messageCollection in messageCollections) {
+        for (final messageCollection in baseMessageCollections) {
           if (deletedChannelUrl == messageCollection.baseChannel.channelUrl) {
             if (!messageCollection.isDisposed) {
               if (messageCollection.baseHandler is MessageCollectionHandler) {

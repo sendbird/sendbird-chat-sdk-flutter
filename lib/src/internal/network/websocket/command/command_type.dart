@@ -8,10 +8,10 @@ class CommandString {
   static const String adminMessage = 'ADMM';
   static const String adminMessageUpdate = 'AEDI';
   static const String broadcastMessage = 'BRDM';
-  static const String deleteMessage = 'DELM';
+  static const String messageDeleted = 'DELM';
   static const String delivery = 'DLVR';
   static const String read = 'READ';
-  static const String memberCountChange = 'MCNT';
+  static const String memberCountChanged = 'MCNT';
   static const String reaction = 'MRCT';
   static const String thread = 'MTHD';
   static const String userEvent = 'USEV';
@@ -25,8 +25,8 @@ class CommandString {
   static const String typingStart = 'TPST';
   static const String typingEnd = 'TPEN';
   static const String ping = 'PING';
-  static const String pollVote = 'VOTE';
-  static const String pollUpdate = 'PEDI';
+  static const String pollVoted = 'VOTE';
+  static const String pollUpdated = 'PEDI';
 
   static bool isUserMessage(String commandType) {
     return CommandType.userMessage.value == commandType ||
