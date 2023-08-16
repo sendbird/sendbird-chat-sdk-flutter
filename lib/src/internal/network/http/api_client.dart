@@ -25,6 +25,7 @@ class ApiClient {
   }
 
   HttpClient get httpClient => _httpClient;
+
   Stream? get errorStreamController =>
       _httpClient.errorStreamController?.stream;
 
@@ -58,6 +59,7 @@ class ApiClient {
               queryParams: request.queryParams,
               body: request.body,
               headers: request.headers,
+              isAuthenticateFeed: request.isAuthenticateFeed,
             );
           } else {
             json = await _httpClient.requestMultipart(

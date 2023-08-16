@@ -98,6 +98,11 @@ abstract class BaseChannel implements Cacheable {
     return _data;
   }
 
+  set data(value) {
+    checkUnsupportedAction();
+    _data = value;
+  }
+
   /// The custom type of the channel.
   String get customType {
     checkUnsupportedAction();
@@ -125,6 +130,11 @@ abstract class BaseChannel implements Cacheable {
   bool get isEphemeral {
     checkUnsupportedAction();
     return _isEphemeral;
+  }
+
+  set isEphemeral(value) {
+    checkUnsupportedAction();
+    _isEphemeral = value;
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -163,16 +173,18 @@ abstract class BaseChannel implements Cacheable {
     isEphemeral = false,
     this.fromCache = false,
     this.dirty = false,
-  })  : _coverUrl = coverUrl,
+  })
+      : _coverUrl = coverUrl,
         _data = data,
         _customType = customType,
         _isFrozen = isFrozen,
         _isEphemeral = isEphemeral;
 
   /// ChannelType
-  ChannelType get channelType => this is GroupChannel
-      ? ChannelType.group
-      : this is OpenChannel
+  ChannelType get channelType =>
+      this is GroupChannel
+          ? ChannelType.group
+          : this is OpenChannel
           ? ChannelType.open
           : ChannelType.feed;
 
@@ -202,11 +214,10 @@ abstract class BaseChannel implements Cacheable {
     }
   }
 
-  static Future<BaseChannel> getBaseChannel(
-    ChannelType channelType,
-    String channelUrl, {
-    Chat? chat,
-  }) async {
+  static Future<BaseChannel> getBaseChannel(ChannelType channelType,
+      String channelUrl, {
+        Chat? chat,
+      }) async {
     switch (channelType) {
       case ChannelType.group:
         return GroupChannel.getChannel(channelUrl, chat: chat);
@@ -217,11 +228,10 @@ abstract class BaseChannel implements Cacheable {
     }
   }
 
-  static Future<BaseChannel> refreshChannel(
-    ChannelType channelType,
-    String channelUrl, {
-    Chat? chat,
-  }) async {
+  static Future<BaseChannel> refreshChannel(ChannelType channelType,
+      String channelUrl, {
+        Chat? chat,
+      }) async {
     switch (channelType) {
       case ChannelType.group:
         return GroupChannel.refresh(channelUrl, chat: chat);
@@ -254,7 +264,8 @@ abstract class BaseChannel implements Cacheable {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode =>
+      Object.hash(
         channelUrl,
         name,
         coverUrl,
@@ -278,11 +289,11 @@ abstract class BaseChannel implements Cacheable {
     channelUrl = other.channelUrl;
     name = other.name;
     createdAt = other.createdAt;
-    _coverUrl = other.coverUrl;
-    _data = other.data;
-    _customType = other.customType;
-    _isFrozen = other.isFrozen;
-    _isEphemeral = other.isEphemeral;
+    _coverUrl = other._coverUrl;
+    _data = other._data;
+    _customType = other._customType;
+    _isFrozen = other._isFrozen;
+    _isEphemeral = other._isEphemeral;
 
     fromCache = other.fromCache;
     dirty = other.dirty;

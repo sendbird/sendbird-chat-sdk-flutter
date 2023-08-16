@@ -1,5 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
@@ -12,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/channel/notification_category.dart';
 
 /// Represents a feed channel.
 /// @since 4.0.3
@@ -20,6 +22,7 @@ class FeedChannel extends BaseChannel {
   /// @since 4.0.3
   @override
   String get channelUrl => groupChannel.channelUrl;
+
   @override
   set channelUrl(value) => groupChannel.channelUrl = value;
 
@@ -27,6 +30,7 @@ class FeedChannel extends BaseChannel {
   /// @since 4.0.3
   @override
   String get name => groupChannel.name;
+
   @override
   set name(value) => groupChannel.name = value;
 
@@ -34,6 +38,7 @@ class FeedChannel extends BaseChannel {
   /// @since 4.0.3
   @override
   int? get createdAt => groupChannel.createdAt;
+
   @override
   set createdAt(value) => groupChannel.createdAt = value;
 
@@ -61,12 +66,29 @@ class FeedChannel extends BaseChannel {
   /// @since 4.0.3
   int get unreadMessageCount => groupChannel.unreadMessageCount;
 
+  /// isTemplateLabelEnabled
+  /// @since 4.0.6
+  bool? isTemplateLabelEnabled;
+
+  /// isCategoryFilterEnabled
+  /// @since 4.0.6
+  bool? isCategoryFilterEnabled;
+
+  /// notificationCategories
+  /// @since 4.0.6
+  @JsonKey(name: 'categories')
+  List<NotificationCategory> notificationCategories;
+
   GroupChannel groupChannel;
   int _lastMarkAsReadTimestamp;
 
   FeedChannel({
     required this.groupChannel,
-  })  : _lastMarkAsReadTimestamp = 0,
+    this.isCategoryFilterEnabled,
+    this.isTemplateLabelEnabled,
+    List<NotificationCategory>? notificationCategories,
+  })  : notificationCategories = notificationCategories ?? [],
+        _lastMarkAsReadTimestamp = 0,
         super(
           channelUrl: groupChannel.channelUrl,
           name: groupChannel.name,
@@ -79,6 +101,47 @@ class FeedChannel extends BaseChannel {
           fromCache: false,
           dirty: false,
         );
+
+  factory FeedChannel.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
+    return _fromJson(chat, json)..set(chat);
+  }
+
+  factory FeedChannel.fromJson(Map<String, dynamic> json) {
+    return _fromJson(SendbirdChat().chat, json)
+      ..set(SendbirdChat().chat); // Set the singleton chat
+  }
+
+  static FeedChannel _fromJson(Chat chat, Map<String, dynamic> json) {
+    List<NotificationCategory>? notificationCategories;
+    List<dynamic>? categories = json['categories'] as List<dynamic>?;
+
+    if (categories != null) {
+      notificationCategories = [];
+
+      for (final category in categories) {
+        final id = category['id'] as int?;
+        final name = category['name'] as String?;
+        final isDefault = category['is_default'] as bool?;
+
+        if (id != null && name != null && isDefault != null) {
+          final notificationCategory = NotificationCategory(
+            id: id,
+            customType: id.toString(),
+            name: name,
+            isDefault: isDefault,
+          );
+          notificationCategories.add(notificationCategory);
+        }
+      }
+    }
+
+    return FeedChannel(
+      groupChannel: GroupChannel.fromJsonWithChat(chat, json),
+      isCategoryFilterEnabled: json['is_category_filter_enabled'] as bool?,
+      isTemplateLabelEnabled: json['is_template_label_enabled'] as bool?,
+      notificationCategories: notificationCategories,
+    );
+  }
 
   static Future<FeedChannel> getChannel(
     String channelUrl, {
@@ -152,7 +215,7 @@ class FeedChannel extends BaseChannel {
   void copyWith(dynamic other) {
     super.copyWith(other);
     if (other is FeedChannel) {
-      groupChannel = other.groupChannel;
+      groupChannel.copyWith(other.groupChannel);
     }
   }
 }

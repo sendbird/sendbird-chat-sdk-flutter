@@ -1,3 +1,14 @@
+## v4.0.6 (Aug 16, 2023)
+
+### Features
+
+#### Notification
+- Added `isTemplateLabelEnabled`, `isCategoryFilterEnabled` and `notificationCategories` in `FeedChannel`.
+- Added `authenticateFeed()`, `refreshNotificationCollections()` in `SendbirdChat`.
+
+### Improvements
+- Improved stability.
+
 ## v4.0.5 (Jul 14, 2023)
 
 ### Features

@@ -25,5 +25,10 @@ class SnoozePeriod {
       _$SnoozePeriodFromJson(json);
 }
 
-DateTime _msToDateTime(int millisecondsSinceEpoch) =>
-    DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+DateTime? _msToDateTime(dynamic ms) {
+  if (ms is int) {
+    return DateTime.fromMillisecondsSinceEpoch(ms);
+  } else {
+    return null; // Fix related to the wrong response from server
+  }
+}

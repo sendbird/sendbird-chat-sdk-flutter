@@ -25,7 +25,7 @@ class CollectionManager {
   int lastRequestTsForGroupChannelChangeLogs = 0;
 
   // MessageCollection
-  final List<BaseMessageCollection> messageCollections = [];
+  final List<BaseMessageCollection> baseMessageCollections = [];
   final Map<String, int> lastRequestTsForMessageChangeLogs = {};
   final Map<String, int> lastRequestTsForPollChangeLogs = {};
   final Map<String, int> lastRequestTsForMessagesGap = {};
@@ -46,16 +46,56 @@ class CollectionManager {
 //------------------------------//
   void onReconnected() {
     sbLog.d(StackTrace.current, 'onReconnected()');
+    _refreshGroupChannelCollections();
+    _refreshBaseMessageCollections();
+  }
+
+  void _refreshGroupChannelCollections() {
     if (groupChannelCollections.isNotEmpty) {
       requestGroupChannelChangeLogs();
     }
+  }
 
-    for (final messageCollection in messageCollections) {
-      if (messageCollection.isInitialized) {
-        _requestMessageChangeLogs(messageCollection);
-        _requestPollChangeLogs(messageCollection);
-        _requestMessagesGap(messageCollection);
+  void _refreshBaseMessageCollections() {
+    for (final collection in baseMessageCollections) {
+      if (collection.isInitialized) {
+        _requestMessageChangeLogs(collection);
+        _requestPollChangeLogs(collection);
+        _requestMessagesGap(collection);
       }
+    }
+  }
+
+  void refreshNotificationCollections() {
+    for (final collection in baseMessageCollections) {
+      if (collection is NotificationCollection) {
+        if (collection.isInitialized) {
+          _requestMessageChangeLogs(collection);
+          _requestMessagesGap(collection);
+        }
+      }
+    }
+  }
+
+  Future<void> refreshNotificationCollection({
+    required String channelUrl,
+  }) async {
+    List<Future<dynamic>> futures = [];
+
+    for (final collection in baseMessageCollections) {
+      if (collection is NotificationCollection) {
+        if (collection.isInitialized) {
+          if (collection.baseChannel.channelUrl == channelUrl) {
+            futures.add(_requestMessageChangeLogs(collection));
+            futures.add(_requestMessagesGap(collection));
+            break;
+          }
+        }
+      }
+    }
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
     }
   }
 }
@@ -250,7 +290,8 @@ class InternalGroupChannelHandlerForCollectionManager
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage message) async {
     if (channel is GroupChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,
@@ -268,7 +309,8 @@ class InternalGroupChannelHandlerForCollectionManager
   @override
   void onMessageUpdated(BaseChannel channel, BaseMessage message) async {
     if (channel is GroupChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,
@@ -286,7 +328,8 @@ class InternalGroupChannelHandlerForCollectionManager
   @override
   void onMessageDeleted(BaseChannel channel, int messageId) async {
     if (channel is GroupChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,
@@ -304,7 +347,8 @@ class InternalGroupChannelHandlerForCollectionManager
   @override
   void onReactionUpdated(BaseChannel channel, ReactionEvent event) async {
     if (channel is GroupChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           for (final message in messageCollection.messageList) {
             if (message.messageId == event.messageId) {
@@ -330,7 +374,8 @@ class InternalGroupChannelHandlerForCollectionManager
   void onThreadInfoUpdated(
       BaseChannel channel, ThreadInfoUpdateEvent event) async {
     if (channel is GroupChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           for (final message in messageCollection.messageList) {
             if (message.messageId == event.targetMessageId) {
@@ -463,7 +508,7 @@ class InternalGroupChannelHandlerForCollectionManager
 //------------------------------//
   @override
   void onPollVoted(GroupChannel channel, PollVoteEvent event) async {
-    for (final messageCollection in _collectionManager.messageCollections) {
+    for (final messageCollection in _collectionManager.baseMessageCollections) {
       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
         for (final message in messageCollection.messageList) {
           if (message.messageId == event.messageId) {
@@ -488,7 +533,7 @@ class InternalGroupChannelHandlerForCollectionManager
 
   @override
   void onPollUpdated(GroupChannel channel, PollUpdateEvent event) async {
-    for (final messageCollection in _collectionManager.messageCollections) {
+    for (final messageCollection in _collectionManager.baseMessageCollections) {
       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
         for (final message in messageCollection.messageList) {
           if (message.messageId == event.messageId) {
@@ -534,7 +579,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onMentionReceived(BaseChannel channel, BaseMessage message) {
     if (channel is FeedChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollectionList(
             eventSource: CollectionEventSource.eventMentionReceived,
@@ -549,7 +595,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onChannelChanged(BaseChannel channel) {
     if (channel is FeedChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollectionList(
             eventSource: CollectionEventSource.eventChannelChanged,
@@ -564,7 +611,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onChannelDeleted(String channelUrl, ChannelType channelType) {
     if (channelType == ChannelType.feed) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channelUrl) {
           _collectionManager.sendEventsToMessageCollectionList(
             eventSource: CollectionEventSource.eventChannelDeleted,
@@ -582,7 +630,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onMessageReceived(BaseChannel channel, BaseMessage message) async {
     if (channel is FeedChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,
@@ -600,7 +649,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onMessageUpdated(BaseChannel channel, BaseMessage message) async {
     if (channel is FeedChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,
@@ -618,7 +668,8 @@ class InternalFeedChannelHandlerForCollectionManager
   @override
   void onMessageDeleted(BaseChannel channel, int messageId) async {
     if (channel is FeedChannel) {
-      for (final messageCollection in _collectionManager.messageCollections) {
+      for (final messageCollection
+          in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           _collectionManager.sendEventsToMessageCollection(
             messageCollection: messageCollection,

@@ -32,6 +32,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/global_notification_channel_setting_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_list_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/auth/authenticate_feed_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_block_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_unblock_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/count/user_group_channel_count_request.dart';
@@ -48,6 +49,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/push/user_push_unregister_request.dart';
 import 'package:universal_io/io.dart';
 
+part 'chat_auth.dart';
 part 'chat_channel.dart';
 part 'chat_connection.dart';
 part 'chat_emoji.dart';
@@ -56,7 +58,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.5';
+const sdkVersion = '4.0.6';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -132,14 +134,18 @@ class Chat with WidgetsBindingObserver {
 
   AsyncQueue getMessageQueue(String channelUrl) =>
       messageQueueMap[channelUrl] ?? AsyncQueue();
+
   void setMessageQueue(String channelUrl, AsyncQueue queue) =>
       messageQueueMap[channelUrl] = queue;
+
   AsyncSimpleTask? getUploadTask(String requestId) => uploadTaskMap[requestId];
+
   void setUploadTask(String requestId, AsyncSimpleTask task) =>
       uploadTaskMap[requestId] = task;
+
   //- FileMessage
 
-  void _listenAppLifecycleState() {
+  void listenAppLifecycleState() {
     if (_isObserverRegistered == null) {
       if (_ambiguate(WidgetsBinding.instance) != null) {
         sbLog.i(StackTrace.current, '(WidgetsBinding.instance).addObserver()');
@@ -162,12 +168,19 @@ class Chat with WidgetsBindingObserver {
   Future<void> _handleEnterBackground() async {
     sbLog.i(StackTrace.current);
     channelCache.markAsDirtyAll();
-    await connectionManager.enterBackground();
+    if (chatContext.isChatConnected) {
+      await connectionManager.enterBackground();
+    }
   }
 
   Future<void> _handleEnterForeground() async {
     sbLog.i(StackTrace.current);
-    await connectionManager.enterForeground();
+    if (chatContext.isChatConnected) {
+      await connectionManager.enterForeground();
+    }
+    if (chatContext.isFeedAuthenticated) {
+      collectionManager.refreshNotificationCollections();
+    }
   }
 
   void _listenConnectivityChangedEvent() {
@@ -202,9 +215,13 @@ class Chat with WidgetsBindingObserver {
           case ConnectivityResult.ethernet:
           case ConnectivityResult.vpn:
           case ConnectivityResult.other:
-            if (_connectivityResult == ConnectivityResult.none &&
-                chatContext.sessionKey != null) {
-              await connectionManager.reconnect(reset: true);
+            if (_connectivityResult == ConnectivityResult.none) {
+              if (chatContext.isChatConnected) {
+                await connectionManager.reconnect(reset: true);
+              }
+              if (chatContext.isFeedAuthenticated) {
+                collectionManager.refreshNotificationCollections();
+              }
             }
             break;
           case ConnectivityResult.bluetooth:

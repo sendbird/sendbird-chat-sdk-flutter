@@ -98,6 +98,30 @@ class ConnectionManager {
 //------------------------------//
 // Implementation
 //------------------------------//
+  void setLoginInfo({
+    required bool fromWebSocket,
+    required String userId,
+    String? accessToken,
+    String? apiHost,
+    String? wsHost,
+  }) {
+    chat.chatContext
+      ..currentUserId = userId
+      ..accessToken = accessToken
+      ..apiHost = apiHost ?? _getDefaultApiHost()
+      ..apiHeaders = {
+        'SB-User-Agent': _sbUserAgentHeader,
+        'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
+        'SendBird': _sendbirdHeader,
+      };
+
+    if (fromWebSocket) {
+      chat.chatContext
+        ..wsHost = wsHost ?? _getDefaultWsHost()
+        ..loginCompleter = Completer();
+    }
+  }
+
   Future<User> doConnect(
     String userId, {
     String? nickname,
@@ -107,23 +131,21 @@ class ConnectionManager {
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
-    // ===== Connect =====
-    chat.chatContext
-      ..currentUserId = userId
-      ..accessToken = accessToken
-      ..apiHost = apiHost ?? _getDefaultApiHost()
-      ..wsHost = wsHost ?? _getDefaultWsHost()
-      ..apiHeaders = {
-        'SB-User-Agent': _sbUserAgentHeader,
-        'SendBird': _sendbirdHeader,
-      }
-      ..loginCompleter = Completer();
+    setLoginInfo(
+      fromWebSocket: true,
+      userId: userId,
+      accessToken: accessToken,
+      apiHost: apiHost,
+      wsHost: wsHost,
+    );
 
+    // ===== Connect =====
     final params = {
       'user_id': userId,
       if (nickname != null && nickname != '') 'nickname': nickname,
       if (accessToken != null) 'access_token': accessToken,
       'SB-User-Agent': _sbUserAgentHeader,
+      'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
       'expiring_session':
           chat.eventManager.getSessionHandler() != null ? '1' : '0',
       'include_extra_data': chat.extraData.join(','),
@@ -261,6 +283,7 @@ class ConnectionManager {
           'user_id': chat.chatContext.currentUserId,
         'access_token': chat.chatContext.accessToken,
         'SB-User-Agent': _sbUserAgentHeader,
+        'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
         'expiring_session':
             chat.eventManager.getSessionHandler() != null ? '1' : '0',
         'include_extra_data': chat.extraData.join(','),
@@ -353,8 +376,22 @@ class ConnectionManager {
     final uikitVersion = chat.extensions[Chat.extensionKeyUiKit];
     const core = '/c$sdkVersion';
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
-    final os = '/o${kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase()}';
+    final os = '/o${kIsWeb ? 'web' : Platform.operatingSystem}';
     return '${Chat.platform}$core$uikit$os';
+  }
+
+  String get _sbSdkUserAgentHeader {
+    const mainSdkInfo = 'chat/${Chat.platform}/$sdkVersion';
+    final deviceOsPlatform = kIsWeb ? 'web' : Platform.operatingSystem;
+    final osVersion = kIsWeb ? '' : Platform.operatingSystemVersion;
+    // '2.19.0 (stable) (Mon Jan 23 11:29:09 2023 -0800) on "android_arm64"'
+    final platformVersion = kIsWeb ? '' : Platform.version.split(' ').first;
+
+    return 'main_sdk_info=$mainSdkInfo'
+        '&device_os_platform=$deviceOsPlatform'
+        '&os_version=$osVersion'
+        '&platform_version=$platformVersion';
+    // '&extension_sdk_info='; // 'uikit/android/3.3.2,live/android/1.0.0-beta' // TODO: SendbirdChat.addSendbirdExtensions()
   }
 
   String get _sendbirdHeader {
@@ -364,7 +401,7 @@ class ConnectionManager {
       sdkVersion,
       chat.chatContext.appId,
       chat.chatContext.appVersion ?? '',
-      kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase(),
+      kIsWeb ? 'web' : Platform.operatingSystem,
       kIsWeb ? '' : Platform.operatingSystemVersion,
     ];
     return headers.join(',');
@@ -377,7 +414,7 @@ class ConnectionManager {
     return {
       'p': Chat.platform,
       if (!kIsWeb) 'pv': Platform.version.split(' ').first,
-      'o': kIsWeb ? 'web' : Platform.operatingSystem.toLowerCase(),
+      'o': kIsWeb ? 'web' : Platform.operatingSystem,
       if (!kIsWeb) 'ov': Platform.operatingSystemVersion,
       'sv': sdkVersion,
       'ai': appId,

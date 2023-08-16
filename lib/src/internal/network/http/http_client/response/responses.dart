@@ -229,9 +229,8 @@ class FeedChannelConverter<T> implements JsonConverter<FeedChannel, Object> {
   @override
   FeedChannel fromJson(Object json) {
     if (json is Map<String, dynamic>) {
-      return FeedChannel(
-        groupChannel: GroupChannel.fromJson(json),
-      )..set(SendbirdChat().chat); // Set the singleton chat;
+      return FeedChannel.fromJson(json)
+        ..set(SendbirdChat().chat); // Set the singleton chat;
     }
     return json as FeedChannel;
   }

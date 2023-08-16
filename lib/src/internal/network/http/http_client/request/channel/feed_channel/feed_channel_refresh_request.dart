@@ -7,8 +7,6 @@ import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
-import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 
 class FeedChannelRefreshRequest extends ApiRequest {
   @override
@@ -27,9 +25,9 @@ class FeedChannelRefreshRequest extends ApiRequest {
 
   @override
   Future<FeedChannel> response(Map<String, dynamic> res) async {
-    final channel = FeedChannel(
-      groupChannel: GroupChannel.fromJsonWithChat(chat, res)..saveToCache(chat),
-    )..set(SendbirdChat().chat); // Set the singleton chat
+    final channel = FeedChannel.fromJsonWithChat(chat, res)
+      ..saveToCache(chat)
+      ..set(chat);
     res.cacheMetaData(channel: channel);
     res.cacheReadStatus(channel);
     res.cacheDeliveryStatus(channel);
