@@ -1,5 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
@@ -25,6 +27,7 @@ import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/scheduled_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/message/notification_data.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/og/og_meta_data.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
@@ -145,6 +148,11 @@ abstract class BaseMessage {
   /// Only featured in [GroupChannel]
   @JsonKey(name: "extended_message", defaultValue: {})
   Map<String, dynamic> extendedMessage;
+
+  /// notificationData
+  /// @since 4.0.7
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  NotificationData? notificationData;
 
   final bool forceUpdateLastMessage;
 
@@ -558,6 +566,29 @@ abstract class BaseMessage {
         return MessageMetaArray(key: e, value: value);
       }).toList();
     }
+
+    // notificationData
+    if (message.extendedMessage.isNotEmpty) {
+      if (message.extendedMessage['sub_type'] != null &&
+          (message.extendedMessage['sub_type'] as int) == 0) {
+        final subData = message.extendedMessage['sub_data'];
+        if (subData != null) {
+          Map<String, dynamic>? subDataMap = jsonDecode(subData);
+          if (subDataMap != null) {
+            final Map<String, String>? templateVariablesMap =
+                (subDataMap['template_variables'] as Map<String, dynamic>?)
+                    ?.map((key, value) => MapEntry(key, value as String));
+
+            message.notificationData = NotificationData(
+              templateKey: subDataMap['template_key'] as String? ?? '',
+              templateVariables: templateVariablesMap ?? {},
+              label: subDataMap['label'] as String?,
+            );
+          }
+        }
+      }
+    }
+
     return message as T;
   }
 }

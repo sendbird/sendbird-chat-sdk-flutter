@@ -58,6 +58,7 @@ export 'src/public/main/model/info/scheduled_info.dart';
 export 'src/public/main/model/message/apple_critical_alert_options.dart';
 export 'src/public/main/model/message/message_change_logs.dart';
 export 'src/public/main/model/message/message_meta_array.dart';
+export 'src/public/main/model/message/notification_data.dart';
 export 'src/public/main/model/message/unread_message_count.dart';
 export 'src/public/main/model/og/og_image.dart';
 export 'src/public/main/model/og/og_meta_data.dart';

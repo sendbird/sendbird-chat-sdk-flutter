@@ -153,6 +153,7 @@ class FeedChannel extends BaseChannel {
     final channel = chat.channelCache.find<FeedChannel>(channelKey: channelUrl);
     if (channel != null && !channel.dirty) {
       channel.fromCache = true;
+      channel.groupChannel.fromCache = true;
       return channel;
     }
     return await FeedChannel.refresh(channelUrl, chat: chat);
