@@ -9,23 +9,23 @@ part of 'group_channel_filter.dart';
 GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) =>
     GroupChannelFilter()
       ..memberStateFilter =
-          $enumDecode(_$MyMemberStateFilterEnumMap, json['member_state_filter'])
-      ..superMode = $enumDecode(_$SuperChannelFilterEnumMap, json['super_mode'])
+          $enumDecode(_$MyMemberStateFilterEnumMap, json['memberStateFilter'])
+      ..superMode = $enumDecode(_$SuperChannelFilterEnumMap, json['superMode'])
       ..publicMode =
-          $enumDecode(_$PublicChannelFilterEnumMap, json['public_mode'])
+          $enumDecode(_$PublicChannelFilterEnumMap, json['publicMode'])
       ..customTypeStartsWith = json['custom_type_startswith'] as String?
-      ..customTypes = (json['custom_types'] as List<dynamic>?)
+      ..customTypes = (json['customTypes'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList()
-      ..membersNicknameContains = json['members_nickname_contains'] as String?
-      ..membersExactlyIn = (json['members_exactly_in'] as List<dynamic>?)
+      ..membersNicknameContains = json['membersNicknameContains'] as String?
+      ..membersExactlyIn = (json['membersExactlyIn'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList()
-      ..nameContains = json['name_contains'] as String?
+      ..nameContains = json['nameContains'] as String?
       ..unreadFilter =
-          $enumDecode(_$UnreadChannelFilterEnumMap, json['unread_filter'])
+          $enumDecode(_$UnreadChannelFilterEnumMap, json['unreadFilter'])
       ..hiddenMode =
-          $enumDecode(_$HiddenChannelFilterEnumMap, json['hidden_mode'])
+          $enumDecode(_$HiddenChannelFilterEnumMap, json['hiddenMode'])
       ..publicMembershipFilter =
           $enumDecode(_$MembershipFilterEnumMap, json['public_membership_mode'])
       ..metaDataKey = json['metadata_key'] as String?
@@ -37,17 +37,17 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
     <String, dynamic>{
-      'member_state_filter':
+      'memberStateFilter':
           memberStateFilterEnumForQuery(instance.memberStateFilter),
-      'super_mode': groupChannelSuperFilterEnum(instance.superMode),
-      'public_mode': _$PublicChannelFilterEnumMap[instance.publicMode]!,
+      'superMode': groupChannelSuperFilterEnum(instance.superMode),
+      'publicMode': _$PublicChannelFilterEnumMap[instance.publicMode]!,
       'custom_type_startswith': instance.customTypeStartsWith,
-      'custom_types': instance.customTypes,
-      'members_nickname_contains': instance.membersNicknameContains,
-      'members_exactly_in': instance.membersExactlyIn,
-      'name_contains': instance.nameContains,
-      'unread_filter': _$UnreadChannelFilterEnumMap[instance.unreadFilter]!,
-      'hidden_mode': _$HiddenChannelFilterEnumMap[instance.hiddenMode]!,
+      'customTypes': instance.customTypes,
+      'membersNicknameContains': instance.membersNicknameContains,
+      'membersExactlyIn': instance.membersExactlyIn,
+      'nameContains': instance.nameContains,
+      'unreadFilter': _$UnreadChannelFilterEnumMap[instance.unreadFilter]!,
+      'hiddenMode': _$HiddenChannelFilterEnumMap[instance.hiddenMode]!,
       'public_membership_mode':
           _$MembershipFilterEnumMap[instance.publicMembershipFilter]!,
       'metadata_key': instance.metaDataKey,

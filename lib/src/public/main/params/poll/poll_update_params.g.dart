@@ -12,16 +12,16 @@ PollUpdateParams _$PollUpdateParamsFromJson(Map<String, dynamic> json) =>
       data: json['data'] == null
           ? null
           : PollData.fromJson(json['data'] as Map<String, dynamic>),
-      allowUserSuggestion: json['allow_user_suggestion'] as bool?,
-      allowMultipleVotes: json['allow_multiple_votes'] as bool?,
-      closeAt: json['close_at'] as int? ?? -1,
+      allowUserSuggestion: json['allowUserSuggestion'] as bool?,
+      allowMultipleVotes: json['allowMultipleVotes'] as bool?,
+      closeAt: json['closeAt'] as int? ?? -1,
     );
 
 Map<String, dynamic> _$PollUpdateParamsToJson(PollUpdateParams instance) =>
     <String, dynamic>{
       'title': instance.title,
-      'data': instance.data?.toJson(),
-      'allow_user_suggestion': instance.allowUserSuggestion,
-      'allow_multiple_votes': instance.allowMultipleVotes,
-      'close_at': instance.closeAt,
+      'data': instance.data,
+      'allowUserSuggestion': instance.allowUserSuggestion,
+      'allowMultipleVotes': instance.allowMultipleVotes,
+      'closeAt': instance.closeAt,
     };

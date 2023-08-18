@@ -15,6 +15,6 @@ PollChangeLogs _$PollChangeLogsFromJson(Map<String, dynamic> json) =>
       deletedPollIds: (json['deleted'] as List<dynamic>?)
           ?.map((e) => (e as num).toDouble())
           .toList(),
-      hasMore: json['has_more'] as bool? ?? false,
+      hasMore: json['hasMore'] as bool? ?? false,
       token: json['next'] as String?,
     );

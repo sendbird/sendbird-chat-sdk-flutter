@@ -13,6 +13,6 @@ MessageChangeLogs _$MessageChangeLogsFromJson(Map<String, dynamic> json) =>
               .toList() ??
           [],
       deletedMessageIds: _deletedMessageIds(json['deleted'] as List),
-      hasMore: json['has_more'] as bool? ?? false,
+      hasMore: json['hasMore'] as bool? ?? false,
       token: json['next'] as String?,
     );

@@ -24,8 +24,8 @@ EmojiCategory _$EmojiCategoryFromJson(Map<String, dynamic> json) =>
 
 EmojiContainer _$EmojiContainerFromJson(Map<String, dynamic> json) =>
     EmojiContainer(
-      emojiHash: json['emoji_hash'] as String,
-      emojiCategories: (json['emoji_categories'] as List<dynamic>?)
+      emojiHash: json['emojiHash'] as String,
+      emojiCategories: (json['emojiCategories'] as List<dynamic>?)
               ?.map((e) => EmojiCategory.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],

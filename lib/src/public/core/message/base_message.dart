@@ -340,7 +340,7 @@ abstract class BaseMessage {
       final reaction = Reaction(
         key: event.key,
         userIds: [event.userId],
-        updatedAt: event.updatedAt,
+        updatedAt: event.updatedAt ?? 0,
       );
       reactions?.add(reaction);
       return true;

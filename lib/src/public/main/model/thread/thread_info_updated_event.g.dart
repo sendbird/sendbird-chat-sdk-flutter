@@ -10,10 +10,10 @@ ThreadInfoUpdateEvent _$ThreadInfoUpdateEventFromJson(
         Map<String, dynamic> json) =>
     ThreadInfoUpdateEvent(
       threadInfo:
-          ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
+          ThreadInfo.fromJson(json['threadInfo'] as Map<String, dynamic>),
       targetMessageId: json['parent_message_id'] as int,
-      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
-      channelUrl: json['channel_url'] as String,
+      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channelType']),
+      channelUrl: json['channelUrl'] as String,
     );
 
 const _$ChannelTypeEnumMap = {

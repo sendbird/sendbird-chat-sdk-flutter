@@ -10,44 +10,42 @@ ScheduledFileMessageUpdateParams _$ScheduledFileMessageUpdateParamsFromJson(
         Map<String, dynamic> json) =>
     ScheduledFileMessageUpdateParams(
       url: json['url'] as String?,
-      fileName: json['file_name'] as String?,
-      fileSize: json['file_size'] as int?,
-      mimeType: json['mime_type'] as String?,
-      scheduledAt: json['scheduled_at'] as int?,
-      customType: json['custom_type'] as String?,
+      fileName: json['fileName'] as String?,
+      fileSize: json['fileSize'] as int?,
+      mimeType: json['mimeType'] as String?,
+      scheduledAt: json['scheduledAt'] as int?,
+      customType: json['customType'] as String?,
       data: json['data'] as String?,
-      mentionType: json['mention_type'] as String?,
-      mentionedUserIds: json['mentioned_user_ids'] as List<dynamic>?,
-      appleCriticalAlertOptions: json['apple_critical_alert_options'] == null
+      mentionType: json['mentionType'] as String?,
+      mentionedUserIds: json['mentionedUserIds'] as List<dynamic>?,
+      appleCriticalAlertOptions: json['appleCriticalAlertOptions'] == null
           ? null
           : AppleCriticalAlertOptions.fromJson(
-              json['apple_critical_alert_options'] as Map<String, dynamic>),
+              json['appleCriticalAlertOptions'] as Map<String, dynamic>),
       pushNotificationDeliveryOption: $enumDecodeNullable(
               _$PushNotificationDeliveryOptionEnumMap,
-              json['push_notification_delivery_option']) ??
+              json['pushNotificationDeliveryOption']) ??
           PushNotificationDeliveryOption.normal,
-    )..metaArrays = (json['meta_arrays'] as List<dynamic>?)
+    )..metaArrays = (json['metaArrays'] as List<dynamic>?)
         ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
         .toList();
 
 Map<String, dynamic> _$ScheduledFileMessageUpdateParamsToJson(
         ScheduledFileMessageUpdateParams instance) =>
     <String, dynamic>{
-      'scheduled_at': instance.scheduledAt,
+      'scheduledAt': instance.scheduledAt,
       'url': instance.url,
-      'file_name': instance.fileName,
-      'file_size': instance.fileSize,
-      'mime_type': instance.mimeType,
-      'custom_type': instance.customType,
+      'fileName': instance.fileName,
+      'fileSize': instance.fileSize,
+      'mimeType': instance.mimeType,
+      'customType': instance.customType,
       'data': instance.data,
-      'mention_type': instance.mentionType,
-      'mentioned_user_ids': instance.mentionedUserIds,
-      'meta_arrays': instance.metaArrays?.map((e) => e.toJson()).toList(),
-      'apple_critical_alert_options':
-          instance.appleCriticalAlertOptions?.toJson(),
-      'push_notification_delivery_option':
-          _$PushNotificationDeliveryOptionEnumMap[
-              instance.pushNotificationDeliveryOption]!,
+      'mentionType': instance.mentionType,
+      'mentionedUserIds': instance.mentionedUserIds,
+      'metaArrays': instance.metaArrays,
+      'appleCriticalAlertOptions': instance.appleCriticalAlertOptions,
+      'pushNotificationDeliveryOption': _$PushNotificationDeliveryOptionEnumMap[
+          instance.pushNotificationDeliveryOption]!,
     };
 
 const _$PushNotificationDeliveryOptionEnumMap = {

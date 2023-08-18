@@ -7,34 +7,34 @@ part of 'group_channel.dart';
 // **************************************************************************
 
 GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
-      channelUrl: json['channel_url'] as String,
-      lastMessage: json['last_message'] == null
+      channelUrl: json['channelUrl'] as String,
+      lastMessage: json['lastMessage'] == null
           ? null
-          : BaseMessage.fromJson(json['last_message'] as Map<String, dynamic>),
-      isSuper: json['is_super'] as bool? ?? false,
-      isBroadcast: json['is_broadcast'] as bool? ?? false,
-      isPublic: json['is_public'] as bool? ?? false,
-      isDistinct: json['is_distinct'] as bool? ?? false,
-      isDiscoverable: json['is_discoverable'] as bool? ?? false,
-      isExclusive: json['is_exclusive'] as bool? ?? false,
-      isAccessCodeRequired: json['is_access_code_required'] as bool? ?? false,
-      unreadMessageCount: json['unread_message_count'] as int? ?? 0,
-      unreadMentionCount: json['unread_mention_count'] as int? ?? 0,
+          : BaseMessage.fromJson(json['lastMessage'] as Map<String, dynamic>),
+      isSuper: json['isSuper'] as bool? ?? false,
+      isBroadcast: json['isBroadcast'] as bool? ?? false,
+      isPublic: json['isPublic'] as bool? ?? false,
+      isDistinct: json['isDistinct'] as bool? ?? false,
+      isDiscoverable: json['isDiscoverable'] as bool? ?? false,
+      isExclusive: json['isExclusive'] as bool? ?? false,
+      isAccessCodeRequired: json['isAccessCodeRequired'] as bool? ?? false,
+      unreadMessageCount: json['unreadMessageCount'] as int? ?? 0,
+      unreadMentionCount: json['unreadMentionCount'] as int? ?? 0,
       members: (json['members'] as List<dynamic>?)
               ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      memberCount: json['member_count'] as int? ?? 0,
-      joinedMemberCount: json['joined_member_count'] as int? ?? 0,
+      memberCount: json['memberCount'] as int? ?? 0,
+      joinedMemberCount: json['joinedMemberCount'] as int? ?? 0,
       myPushTriggerOption: $enumDecodeNullable(
               _$GroupChannelPushTriggerOptionEnumMap,
               json['push_trigger_option']) ??
           GroupChannelPushTriggerOption.defaultValue,
-      isChatNotification: json['is_chat_notification'] as bool? ?? false,
+      isChatNotification: json['isChatNotification'] as bool? ?? false,
       myMemberState:
           $enumDecodeNullable(_$MemberStateEnumMap, json['member_state']) ??
               MemberState.none,
-      myRole: $enumDecodeNullable(_$RoleEnumMap, json['my_role'],
+      myRole: $enumDecodeNullable(_$RoleEnumMap, json['myRole'],
               unknownValue: Role.none) ??
           Role.none,
       myMutedState: json['is_muted'] == null
@@ -49,17 +49,17 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
       inviter: json['inviter'] == null
           ? null
           : Member.fromJson(json['inviter'] as Map<String, dynamic>),
-      invitedAt: json['invited_at'] as int? ?? 0,
+      invitedAt: json['invitedAt'] as int? ?? 0,
       joinedAt: json['joined_ts'] as int? ?? 0,
-      isHidden: json['is_hidden'] as bool? ?? false,
+      isHidden: json['isHidden'] as bool? ?? false,
       hiddenState: $enumDecodeNullable(
-              _$GroupChannelHiddenStateEnumMap, json['hidden_state'],
+              _$GroupChannelHiddenStateEnumMap, json['hiddenState'],
               unknownValue: GroupChannelHiddenState.unhidden) ??
           GroupChannelHiddenState.unhidden,
       myLastRead: json['user_last_read'] as int? ?? 0,
       messageOffsetTimestamp: json['ts_message_offset'] as int?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
-      pinnedMessageIds: (json['pinned_message_ids'] as List<dynamic>?)
+      messageSurvivalSeconds: json['messageSurvivalSeconds'] as int? ?? -1,
+      pinnedMessageIds: (json['pinnedMessageIds'] as List<dynamic>?)
               ?.map((e) => e as int)
               .toList() ??
           const [],
@@ -68,12 +68,12 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
           : BaseMessage.fromJson(
               json['latest_pinned_message'] as Map<String, dynamic>),
       name: json['name'] as String? ?? '',
-      coverUrl: json['cover_url'] as String? ?? '',
-      createdAt: json['created_at'] as int?,
+      coverUrl: json['coverUrl'] as String? ?? '',
+      createdAt: json['createdAt'] as int?,
       data: json['data'] as String? ?? '',
-      customType: json['custom_type'] as String? ?? '',
+      customType: json['customType'] as String? ?? '',
       isFrozen: json['freeze'] as bool? ?? false,
-      isEphemeral: json['is_ephemeral'] as bool? ?? false,
+      isEphemeral: json['isEphemeral'] as bool? ?? false,
     );
 
 const _$GroupChannelPushTriggerOptionEnumMap = {

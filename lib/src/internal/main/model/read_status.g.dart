@@ -9,8 +9,8 @@ part of 'read_status.dart';
 ReadStatus _$ReadStatusFromJson(Map<String, dynamic> json) => ReadStatus(
       userId: userToUserId(json['user'] as Map<String, dynamic>?),
       timestamp: json['ts'] as int? ?? 0,
-      channelUrl: json['channel_url'] as String,
-      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
+      channelUrl: json['channelUrl'] as String,
+      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channelType']),
     );
 
 const _$ChannelTypeEnumMap = {

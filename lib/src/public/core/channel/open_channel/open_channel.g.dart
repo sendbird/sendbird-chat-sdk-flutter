@@ -7,17 +7,17 @@ part of 'open_channel.dart';
 // **************************************************************************
 
 OpenChannel _$OpenChannelFromJson(Map<String, dynamic> json) => OpenChannel(
-      participantCount: json['participant_count'] as int,
+      participantCount: json['participantCount'] as int,
       operators: (json['operators'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      channelUrl: json['channel_url'] as String,
+      channelUrl: json['channelUrl'] as String,
       name: json['name'] as String? ?? '',
-      coverUrl: json['cover_url'] as String? ?? '',
-      createdAt: json['created_at'] as int?,
+      coverUrl: json['coverUrl'] as String? ?? '',
+      createdAt: json['createdAt'] as int?,
       data: json['data'] as String? ?? '',
-      customType: json['custom_type'] as String? ?? '',
+      customType: json['customType'] as String? ?? '',
       isFrozen: json['freeze'] as bool? ?? false,
-      isEphemeral: json['is_ephemeral'] as bool? ?? false,
+      isEphemeral: json['isEphemeral'] as bool? ?? false,
     );

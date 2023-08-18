@@ -7,7 +7,7 @@ part of 'session_event.dart';
 // **************************************************************************
 
 SessionEvent _$SessionEventFromJson(Map<String, dynamic> json) => SessionEvent(
-      newKey: json['new_key'] as String?,
+      newKey: json['newKey'] as String?,
       eKey: json['ekey'] as String?,
       key: json['key'] as String?,
     );

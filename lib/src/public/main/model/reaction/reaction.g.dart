@@ -8,9 +8,9 @@ part of 'reaction.dart';
 
 Reaction _$ReactionFromJson(Map<String, dynamic> json) => Reaction(
       key: json['key'] as String,
-      userIds: (json['user_ids'] as List<dynamic>?)
+      userIds: (json['userIds'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      updatedAt: json['updated_at'] as int,
+      updatedAt: json['updatedAt'] as int,
     );

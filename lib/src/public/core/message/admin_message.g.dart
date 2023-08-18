@@ -7,33 +7,32 @@ part of 'admin_message.dart';
 // **************************************************************************
 
 AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
-      messageId: json['message_id'] as int? ?? 0,
+      messageId: json['messageId'] as int? ?? 0,
       message: json['message'] as String,
-      channelUrl: json['channel_url'] as String,
+      channelUrl: json['channelUrl'] as String,
       channelType: $enumDecodeNullable(
-              _$ChannelTypeEnumMap, json['channel_type'],
+              _$ChannelTypeEnumMap, json['channelType'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
       sendingStatus:
-          $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
-      requestId: json['request_id'] as String?,
-      mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
+          $enumDecodeNullable(_$SendingStatusEnumMap, json['sendingStatus']),
+      requestId: json['requestId'] as String?,
+      mentionedUsers: (json['mentionedUsers'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       mentionType:
-          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
-      parentMessageId: json['parent_message_id'] as int?,
+          $enumDecodeNullable(_$MentionTypeEnumMap, json['mentionType']),
+      createdAt: json['createdAt'] as int? ?? 0,
+      updatedAt: json['updatedAt'] as int? ?? 0,
+      parentMessageId: json['parentMessageId'] as int?,
       parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
-      threadInfo: json['thread_info'] == null
+      threadInfo: json['threadInfo'] == null
           ? null
-          : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
-      customType: json['custom_type'] as String?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
-      forceUpdateLastMessage:
-          json['force_update_last_message'] as bool? ?? false,
+          : ThreadInfo.fromJson(json['threadInfo'] as Map<String, dynamic>),
+      customType: json['customType'] as String?,
+      messageSurvivalSeconds: json['messageSurvivalSeconds'] as int? ?? -1,
+      forceUpdateLastMessage: json['forceUpdateLastMessage'] as bool? ?? false,
       isSilent: json['silent'] as bool? ?? false,
       isOperatorMessage: json['is_op_msg'] as bool? ?? false,
       data: TypeChecker.fromJsonToNullableString(json['data']),
@@ -50,7 +49,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       ..allMetaArrays = (json['sorted_metaarray'] as List<dynamic>?)
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
-      ..errorCode = json['error_code'] as int?
+      ..errorCode = json['errorCode'] as int?
       ..sender = json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>);

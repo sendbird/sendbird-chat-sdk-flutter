@@ -17,6 +17,6 @@ GroupChannelChangeLogs _$GroupChannelChangeLogsFromJson(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      hasMore: json['has_more'] as bool? ?? false,
+      hasMore: json['hasMore'] as bool? ?? false,
       token: json['next'] as String?,
     );

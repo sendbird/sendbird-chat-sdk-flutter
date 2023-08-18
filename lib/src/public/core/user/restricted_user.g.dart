@@ -8,31 +8,31 @@ part of 'restricted_user.dart';
 
 RestrictedUser _$RestrictedUserFromJson(Map<String, dynamic> json) =>
     RestrictedUser(
-      userId: json['user_id'] as String,
+      userId: json['userId'] as String,
       nickname: json['nickname'] as String,
-      profileUrl: json['profile_url'] as String? ?? '',
+      profileUrl: json['profileUrl'] as String? ?? '',
       connectionStatus: json['is_online'] == null
           ? UserConnectionStatus.notAvailable
           : boolToConnectionStatus(json['is_online'] as bool?),
-      lastSeenAt: json['last_seen_at'] as int?,
-      preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
+      lastSeenAt: json['lastSeenAt'] as int?,
+      preferredLanguages: (json['preferredLanguages'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      friendDiscoveryKey: json['friend_discovery_key'] as String? ?? '',
-      friendName: json['friend_name'] as String? ?? '',
+      friendDiscoveryKey: json['friendDiscoveryKey'] as String? ?? '',
+      friendName: json['friendName'] as String? ?? '',
       metaData: (json['metadata'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),
           ) ??
           const {},
       requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
-    )..isActive = json['is_active'] as bool?;
+    )..isActive = json['isActive'] as bool?;
 
 RestrictionInfo _$RestrictionInfoFromJson(Map<String, dynamic> json) =>
     RestrictionInfo(
       description: json['description'] as String?,
-      endAt: json['end_at'] as int?,
+      endAt: json['endAt'] as int?,
       restrictionType: $enumDecodeNullable(
-              _$RestrictionTypeEnumMap, json['restriction_type']) ??
+              _$RestrictionTypeEnumMap, json['restrictionType']) ??
           RestrictionType.muted,
     );
 

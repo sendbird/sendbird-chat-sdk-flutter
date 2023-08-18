@@ -14,36 +14,35 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
       thumbnails: (json['thumbnails'] as List<dynamic>?)
           ?.map((e) => Thumbnail.fromJson(e as Map<String, dynamic>))
           .toList(),
-      requireAuth: json['require_auth'] as bool? ?? false,
-      requestId: json['request_id'] as String?,
+      requireAuth: json['requireAuth'] as bool? ?? false,
+      requestId: json['requestId'] as String?,
       message: json['message'] as String?,
-      messageId: json['message_id'] as int? ?? 0,
+      messageId: json['messageId'] as int? ?? 0,
       sendingStatus:
-          $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
+          $enumDecodeNullable(_$SendingStatusEnumMap, json['sendingStatus']),
       sender: json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>),
-      channelUrl: json['channel_url'] as String,
+      channelUrl: json['channelUrl'] as String,
       channelType: $enumDecodeNullable(
-              _$ChannelTypeEnumMap, json['channel_type'],
+              _$ChannelTypeEnumMap, json['channelType'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
-      mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
+      mentionedUsers: (json['mentionedUsers'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       mentionType:
-          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
-      parentMessageId: json['parent_message_id'] as int?,
-      threadInfo: json['thread_info'] == null
+          $enumDecodeNullable(_$MentionTypeEnumMap, json['mentionType']),
+      createdAt: json['createdAt'] as int? ?? 0,
+      updatedAt: json['updatedAt'] as int? ?? 0,
+      parentMessageId: json['parentMessageId'] as int?,
+      threadInfo: json['threadInfo'] == null
           ? null
-          : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
-      customType: json['custom_type'] as String?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
-      forceUpdateLastMessage:
-          json['force_update_last_message'] as bool? ?? false,
+          : ThreadInfo.fromJson(json['threadInfo'] as Map<String, dynamic>),
+      customType: json['customType'] as String?,
+      messageSurvivalSeconds: json['messageSurvivalSeconds'] as int? ?? -1,
+      forceUpdateLastMessage: json['forceUpdateLastMessage'] as bool? ?? false,
       isSilent: json['silent'] as bool? ?? false,
       isOperatorMessage: json['is_op_msg'] as bool? ?? false,
       data: TypeChecker.fromJsonToNullableString(json['data']),
@@ -60,7 +59,7 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
       ..allMetaArrays = (json['sorted_metaarray'] as List<dynamic>?)
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
-      ..errorCode = json['error_code'] as int?
+      ..errorCode = json['errorCode'] as int?
       ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {};
 
@@ -85,9 +84,9 @@ const _$MentionTypeEnumMap = {
 
 Thumbnail _$ThumbnailFromJson(Map<String, dynamic> json) => Thumbnail(
       json['url'] as String,
-      json['plain_url'] as String?,
+      json['plainUrl'] as String?,
       (json['height'] as num?)?.toDouble(),
       (json['width'] as num?)?.toDouble(),
-      (json['real_height'] as num?)?.toDouble(),
-      (json['real_width'] as num?)?.toDouble(),
+      (json['realHeight'] as num?)?.toDouble(),
+      (json['realWidth'] as num?)?.toDouble(),
     );

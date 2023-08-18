@@ -7,7 +7,7 @@ part of 'app_info.dart';
 // **************************************************************************
 
 AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
-      premiumFeatureList: (json['premium_feature_list'] as List<dynamic>?)
+      premiumFeatureList: (json['premiumFeatureList'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -16,8 +16,8 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      emojiHash: json['emoji_hash'] as String,
-      useReaction: json['use_reaction'] as bool,
+      emojiHash: json['emojiHash'] as String,
+      useReaction: json['useReaction'] as bool,
       notificationInfo: json['notifications'] == null
           ? null
           : NotificationInfo.fromJson(

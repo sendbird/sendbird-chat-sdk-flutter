@@ -34,7 +34,7 @@ PollVoterListQueryResponse _$PollVoterListQueryResponseFromJson(
               .toList() ??
           const [],
       next: json['next'] as String?,
-      voteCount: json['vote_count'] as int?,
+      voteCount: json['voteCount'] as int?,
     );
 
 UserListQueryResponse<T> _$UserListQueryResponseFromJson<T extends User>(
@@ -75,8 +75,8 @@ MessageSearchQueryResponse _$MessageSearchQueryResponseFromJson(
               ?.map((e) => BaseMessage.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      hasNext: json['has_next'] as bool? ?? false,
-      totalCount: json['total_count'] as int? ?? -1,
+      hasNext: json['hasNext'] as bool? ?? false,
+      totalCount: json['totalCount'] as int? ?? -1,
       next: json['end_cursor'] as String?,
     );
 
@@ -92,7 +92,7 @@ MetaDataResponse _$MetaDataResponseFromJson(Map<String, dynamic> json) =>
 ScheduledMessageResponse _$ScheduledMessageResponseFromJson(
         Map<String, dynamic> json) =>
     ScheduledMessageResponse(
-      scheduledMessages: (json['scheduled_messages'] as List<dynamic>?)
+      scheduledMessages: (json['scheduledMessages'] as List<dynamic>?)
               ?.map((e) => BaseMessage.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -103,6 +103,6 @@ UploadResponse _$UploadResponseFromJson(Map<String, dynamic> json) =>
     UploadResponse(
       url: json['url'] as String,
       thumbnails: json['thumbnails'] as List<dynamic>? ?? [],
-      requireAuth: json['require_auth'] as bool,
-      fileSize: json['file_size'] as int,
+      requireAuth: json['requireAuth'] as bool,
+      fileSize: json['fileSize'] as int,
     );

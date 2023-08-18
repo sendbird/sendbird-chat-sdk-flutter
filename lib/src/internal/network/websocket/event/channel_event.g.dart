@@ -7,8 +7,8 @@ part of 'channel_event.dart';
 // **************************************************************************
 
 ChannelEvent _$ChannelEventFromJson(Map<String, dynamic> json) => ChannelEvent(
-      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
-      channelUrl: json['channel_url'] as String,
+      channelType: $enumDecode(_$ChannelTypeEnumMap, json['channelType']),
+      channelUrl: json['channelUrl'] as String,
       category: channelEventValueOf(json['cat'] as int),
       data: json['data'] as Map<String, dynamic>? ?? {},
       ts: json['ts'] as int?,

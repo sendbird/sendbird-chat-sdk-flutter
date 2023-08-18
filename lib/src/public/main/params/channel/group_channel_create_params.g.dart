@@ -9,21 +9,21 @@ part of 'group_channel_create_params.dart';
 GroupChannelCreateParams _$GroupChannelCreateParamsFromJson(
         Map<String, dynamic> json) =>
     GroupChannelCreateParams()
-      ..isSuper = json['is_super'] as bool?
-      ..isBroadcast = json['is_broadcast'] as bool?
-      ..isExclusive = json['is_exclusive'] as bool?
-      ..isPublic = json['is_public'] as bool?
-      ..isDistinct = json['is_distinct'] as bool?
-      ..isEphemeral = json['is_ephemeral'] as bool?
-      ..isDiscoverable = json['is_discoverable'] as bool?
-      ..isStrict = json['is_strict'] as bool?
-      ..accessCode = json['access_code'] as String?
-      ..channelUrl = json['channel_url'] as String?
-      ..customType = json['custom_type'] as String?
+      ..isSuper = json['isSuper'] as bool?
+      ..isBroadcast = json['isBroadcast'] as bool?
+      ..isExclusive = json['isExclusive'] as bool?
+      ..isPublic = json['isPublic'] as bool?
+      ..isDistinct = json['isDistinct'] as bool?
+      ..isEphemeral = json['isEphemeral'] as bool?
+      ..isDiscoverable = json['isDiscoverable'] as bool?
+      ..isStrict = json['isStrict'] as bool?
+      ..accessCode = json['accessCode'] as String?
+      ..channelUrl = json['channelUrl'] as String?
+      ..customType = json['customType'] as String?
       ..data = json['data'] as String?
       ..name = json['name'] as String?
       ..userIds =
-          (json['user_ids'] as List<dynamic>?)?.map((e) => e as String).toList()
+          (json['userIds'] as List<dynamic>?)?.map((e) => e as String).toList()
       ..operatorUserIds = (json['operator_ids'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList();
@@ -31,19 +31,19 @@ GroupChannelCreateParams _$GroupChannelCreateParamsFromJson(
 Map<String, dynamic> _$GroupChannelCreateParamsToJson(
         GroupChannelCreateParams instance) =>
     <String, dynamic>{
-      'is_super': instance.isSuper,
-      'is_broadcast': instance.isBroadcast,
-      'is_exclusive': instance.isExclusive,
-      'is_public': instance.isPublic,
-      'is_distinct': instance.isDistinct,
-      'is_ephemeral': instance.isEphemeral,
-      'is_discoverable': instance.isDiscoverable,
-      'is_strict': instance.isStrict,
-      'access_code': instance.accessCode,
-      'channel_url': instance.channelUrl,
-      'custom_type': instance.customType,
+      'isSuper': instance.isSuper,
+      'isBroadcast': instance.isBroadcast,
+      'isExclusive': instance.isExclusive,
+      'isPublic': instance.isPublic,
+      'isDistinct': instance.isDistinct,
+      'isEphemeral': instance.isEphemeral,
+      'isDiscoverable': instance.isDiscoverable,
+      'isStrict': instance.isStrict,
+      'accessCode': instance.accessCode,
+      'channelUrl': instance.channelUrl,
+      'customType': instance.customType,
       'data': instance.data,
       'name': instance.name,
-      'user_ids': instance.userIds,
+      'userIds': instance.userIds,
       'operator_ids': instance.operatorUserIds,
     };

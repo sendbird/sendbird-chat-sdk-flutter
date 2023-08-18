@@ -35,7 +35,7 @@ class ReactionEvent {
   final ReactionEventAction operation;
 
   /// The updated timestamp of the reaction event in milliseconds.
-  final int updatedAt;
+  final int? updatedAt;
 
   ReactionEvent({
     required this.channelType,

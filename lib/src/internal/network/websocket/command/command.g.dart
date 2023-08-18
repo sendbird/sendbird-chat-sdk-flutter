@@ -10,8 +10,8 @@ Command _$CommandFromJson(Map<String, dynamic> json) => Command(
       cmd: json['cmd'] as String,
       requestId: json['req_id'] as String?,
       timestamp: json['ts'] as int?,
-      requireAuth: json['require_auth'] as bool?,
+      requireAuth: json['requireAuth'] as bool?,
       errorCode: json['code'] as int?,
       errorMessage: json['message'] as String?,
-      replyToChannel: json['reply_to_channel'] as bool? ?? false,
+      replyToChannel: json['replyToChannel'] as bool? ?? false,
     );

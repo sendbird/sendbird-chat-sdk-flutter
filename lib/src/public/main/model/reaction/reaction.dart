@@ -32,16 +32,16 @@ class Reaction {
   }
 
   bool merge(ReactionEvent event) {
-    if (updatedAt < event.updatedAt) {
-      updatedAt = event.updatedAt;
+    if (event.updatedAt != null && updatedAt < event.updatedAt!) {
+      updatedAt = event.updatedAt!;
     }
 
     final userUpdatedAt = updatedAts[event.userId] ?? 0;
-    if (userUpdatedAt > event.updatedAt) {
+    if (event.updatedAt != null && userUpdatedAt > event.updatedAt!) {
       return false;
     }
 
-    updatedAts[event.userId] = event.updatedAt;
+    updatedAts[event.userId] = event.updatedAt ?? userUpdatedAt;
 
     if (event.operation == ReactionEventAction.add) {
       userIds.add(event.userId);
@@ -51,18 +51,14 @@ class Reaction {
     return true;
   }
 
-  factory Reaction.fromJson(Map<String, dynamic> json) =>
-      _$ReactionFromJson(json);
+  factory Reaction.fromJson(Map<String, dynamic> json) => _$ReactionFromJson(json);
 
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
 
     final eq = const ListEquality().equals;
-    return other is Reaction &&
-        other.key == key &&
-        eq(other.userIds, userIds) &&
-        other.updatedAt == updatedAt;
+    return other is Reaction && other.key == key && eq(other.userIds, userIds) && other.updatedAt == updatedAt;
   }
 
   @override
