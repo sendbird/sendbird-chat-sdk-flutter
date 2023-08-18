@@ -1,3 +1,11 @@
+## v4.0.7 (Aug 18, 2023)
+
+### Features
+- Added `notificationData` in `BaseMessage`.
+
+### Improvements
+- Fixed the bug regarding `unreadMessageCount` in `FeedChannel`.
+
 ## v4.0.6 (Aug 16, 2023)
 
 ### Features
