@@ -575,14 +575,17 @@ abstract class BaseMessage {
         if (subData != null) {
           Map<String, dynamic>? subDataMap = jsonDecode(subData);
           if (subDataMap != null) {
-            final Map<String, String>? templateVariablesMap =
-                (subDataMap['template_variables'] as Map<String, dynamic>?)
-                    ?.map((key, value) => MapEntry(key, value as String));
+            final List<String>? tags = (subDataMap['tags'] as List<dynamic>?)
+                ?.map((value) => value as String)
+                .toList();
 
             message.notificationData = NotificationData(
               templateKey: subDataMap['template_key'] as String? ?? '',
-              templateVariables: templateVariablesMap ?? {},
+              templateVariables:
+                  subDataMap['template_variables'] as Map<String, dynamic>? ??
+                      {},
               label: subDataMap['label'] as String?,
+              tags: tags,
             );
           }
         }
