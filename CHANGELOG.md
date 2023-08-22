@@ -1,3 +1,12 @@
+## v4.0.8 (Aug 22, 2023)
+
+### Features
+- Replaced `Map<String, String> templateVariables` with `Map<String, dynamic> templateVariables` in `NotificationData`.
+- Added `tags` in `NotificationData`.
+
+### Improvements
+- Improved stability.
+
 ## v4.0.7 (Aug 18, 2023)
 
 ### Features

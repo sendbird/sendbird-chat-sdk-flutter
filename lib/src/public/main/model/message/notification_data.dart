@@ -10,16 +10,21 @@ class NotificationData {
   final String templateKey;
 
   /// templateVariables
-  /// @since 4.0.7
-  final Map<String, String> templateVariables;
+  /// @since 4.0.8
+  final Map<String, dynamic> templateVariables;
 
   /// label
   /// @since 4.0.7
   String? label;
 
+  /// tags
+  /// @since 4.0.8
+  List<String> tags;
+
   NotificationData({
     required this.templateKey,
     required this.templateVariables,
     this.label,
-  });
+    List<String>? tags,
+  }) : tags = tags ?? [];
 }
