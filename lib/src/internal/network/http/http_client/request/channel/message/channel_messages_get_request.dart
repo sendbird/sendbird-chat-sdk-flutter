@@ -22,6 +22,7 @@ class ChannelMessagesGetRequest extends ApiRequest {
     int timestamp = -1,
     int messageId = 0,
     int parentMessageId = 0,
+    bool checkingHasNext = false,
   }) : super(chat: chat) {
     if (messageId <= 0 && timestamp < 0) {
       throw InvalidParameterException();
@@ -32,6 +33,7 @@ class ChannelMessagesGetRequest extends ApiRequest {
     queryParams = params;
     queryParams['is_sdk'] = true;
     queryParams['include_poll_details'] = true;
+    queryParams['checking_has_next'] = checkingHasNext;
 
     if (messageId > 0) {
       queryParams['message_id'] = messageId;
@@ -45,11 +47,26 @@ class ChannelMessagesGetRequest extends ApiRequest {
   }
 
   @override
-  Future<List<BaseMessage>> response(Map<String, dynamic> res) async {
+  Future<ChannelMessagesGetResponse> response(Map<String, dynamic> res) async {
     final baseMessages = (res['messages'] as List)
         .map((e) => BaseMessage.getMessageFromJsonWithChat(chat, e,
             channelType: channelType))
         .toList();
-    return List<BaseMessage>.from(baseMessages);
+    final hasNext = res['has_next'] as bool?;
+
+    return ChannelMessagesGetResponse(
+      messages: List<BaseMessage>.from(baseMessages),
+      hasNext: hasNext,
+    );
   }
+}
+
+class ChannelMessagesGetResponse {
+  final List<BaseMessage> messages;
+  final bool? hasNext;
+
+  ChannelMessagesGetResponse({
+    required this.messages,
+    this.hasNext,
+  });
 }

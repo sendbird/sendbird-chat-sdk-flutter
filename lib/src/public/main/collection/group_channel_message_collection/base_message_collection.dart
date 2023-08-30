@@ -34,12 +34,17 @@ class BaseMessageCollection {
   MessageListParams get params => _initializeParams;
 
   BaseChannel get baseChannel => _channel;
+
   BaseMessageCollectionHandler get baseHandler => _handler;
 
   set hasNext(value) => _hasNext = value;
+
   MessageListParams get loadPreviousParams => _loadPreviousParams;
+
   MessageListParams get loadNextParams => _loadNextParams;
+
   Chat get chat => _chat;
+
   BaseMessage? get latestMessage => _latestMessage;
 
   final BaseChannel _channel;
@@ -95,14 +100,16 @@ class BaseMessageCollection {
 
     _initializeParams.inclusive = true;
 
-    final messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _initializeParams.toJson(),
       timestamp: _startingPoint,
+      checkingHasNext: true,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -143,6 +150,8 @@ class BaseMessageCollection {
       _hasNext = false;
     }
 
+    if (res.hasNext != null) _hasNext = res.hasNext!;
+
     if (messages.isNotEmpty) {
       _chat.collectionManager.sendEventsToMessageCollection(
         messageCollection: this,
@@ -173,14 +182,15 @@ class BaseMessageCollection {
       ..nextResultSize = 0
       ..inclusive = true;
 
-    List<BaseMessage> messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _loadPreviousParams.toJson(),
       timestamp: _oldestMessage!.createdAt,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -229,14 +239,16 @@ class BaseMessageCollection {
       ..previousResultSize = 0
       ..inclusive = true;
 
-    List<BaseMessage> messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _loadNextParams.toJson(),
       timestamp: _latestMessage!.createdAt,
+      checkingHasNext: true,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -251,6 +263,8 @@ class BaseMessageCollection {
     } else {
       _hasNext = false;
     }
+
+    if (res.hasNext != null) _hasNext = res.hasNext!;
 
     _isLoading = false;
 

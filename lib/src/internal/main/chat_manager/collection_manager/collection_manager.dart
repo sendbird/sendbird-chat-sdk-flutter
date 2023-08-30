@@ -299,6 +299,7 @@ class InternalGroupChannelHandlerForCollectionManager
             eventSource: CollectionEventSource.eventMessageReceived,
             sendingStatus: SendingStatus.succeeded,
             addedMessages: [message],
+            isReversedAddedMessages: messageCollection.params.reverse,
           );
           break;
         }
@@ -639,6 +640,7 @@ class InternalFeedChannelHandlerForCollectionManager
             eventSource: CollectionEventSource.eventMessageReceived,
             sendingStatus: SendingStatus.succeeded,
             addedMessages: [message],
+            isReversedAddedMessages: messageCollection.params.reverse,
           );
           break;
         }

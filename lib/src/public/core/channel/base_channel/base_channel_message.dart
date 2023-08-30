@@ -487,14 +487,15 @@ extension BaseChannelMessage on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return await chat.apiClient
-        .send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       chat,
       channelType: channelType,
       channelUrl: channelUrl,
       params: params.toJson(),
       timestamp: timestamp,
     ));
+    return res.messages;
   }
 
   /// Retrieves previous or next messages based on the message ID in a specific channel.
@@ -514,7 +515,7 @@ extension BaseChannelMessage on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return await chat.apiClient.send<List<BaseMessage>>(
+    final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
       ChannelMessagesGetRequest(
         chat,
         channelType: channelType,
@@ -523,6 +524,7 @@ extension BaseChannelMessage on BaseChannel {
         messageId: messageId,
       ),
     );
+    return res.messages;
   }
 
   /// Requests message change logs after given token or timestamp

@@ -73,7 +73,7 @@ class PreviousMessageListQuery extends BaseQuery {
       ..replyType = replyType
       ..showSubChannelMessagesOnly = showSubChannelMessagesOnly;
 
-    final res = await chat.apiClient.send<List<BaseMessage>>(
+    final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
       ChannelMessagesGetRequest(
         chat,
         channelType: channelType,
@@ -82,16 +82,17 @@ class PreviousMessageListQuery extends BaseQuery {
         timestamp: messageTimestamp ?? 0,
       ),
     );
+    final messages = res.messages;
 
-    if (res.isNotEmpty) {
-      final oldestMessage = reverse ? res.last : res.first;
+    if (messages.isNotEmpty) {
+      final oldestMessage = reverse ? messages.last : messages.first;
       messageTimestamp = oldestMessage.createdAt;
     } else {
       messageTimestamp = null;
     }
 
     isLoading = false;
-    hasNext = res.length == limit;
-    return res;
+    hasNext = messages.length == limit;
+    return messages;
   }
 }
