@@ -179,6 +179,7 @@ extension MessageCollectionManager on CollectionManager {
 
     if (messages == null) {
       messageCollection.hasNext = true;
+
       if (!messageCollection.isDisposed) {
         if (messageCollection.baseHandler is MessageCollectionHandler) {
           (messageCollection.baseHandler as MessageCollectionHandler)

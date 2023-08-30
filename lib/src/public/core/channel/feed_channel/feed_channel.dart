@@ -124,9 +124,10 @@ class FeedChannel extends BaseChannel {
         final isDefault = category['is_default'] as bool?;
 
         if (id != null && name != null && isDefault != null) {
+          final customType = isDefault ? '*' : id.toString();
           final notificationCategory = NotificationCategory(
             id: id,
-            customType: id.toString(),
+            customType: customType,
             name: name,
             isDefault: isDefault,
           );

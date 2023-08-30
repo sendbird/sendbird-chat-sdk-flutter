@@ -382,7 +382,7 @@ abstract class BaseMessage {
   ) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
 
-    final result = await chat.apiClient.send<List<BaseMessage>>(
+    final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
       ChannelMessagesGetRequest(
         chat,
         channelType: channelType,
@@ -392,10 +392,11 @@ abstract class BaseMessage {
         parentMessageId: messageId,
       ),
     );
+    final messages = res.messages;
 
     return ThreadedMessages(
-      parentMessage: result.first,
-      threadMessages: result.sublist(1),
+      parentMessage: messages.first,
+      threadMessages: messages.sublist(1),
     );
   }
 

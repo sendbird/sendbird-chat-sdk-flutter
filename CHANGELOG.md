@@ -1,3 +1,10 @@
+## v4.0.9 (Aug 30, 2023)
+
+### Improvements
+- Fixed the bug regarding the `hasNext` in `BaseMessageCollection`.
+- Fixed the bug when the `reverse` is `true` in `MessageListParams` regarding `BaseMessageCollection`.
+- Improved stability.
+
 ## v4.0.8 (Aug 22, 2023)
 
 ### Features
