@@ -25,4 +25,24 @@ class NotificationCategory {
     required this.name,
     required this.isDefault,
   });
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
+
+    return other is NotificationCategory &&
+        other.id == id &&
+        other.customType == customType &&
+        other.name == name &&
+        other.isDefault == isDefault;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        customType,
+        name,
+        isDefault,
+      );
 }
