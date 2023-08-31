@@ -1,5 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
@@ -204,13 +205,21 @@ class FeedChannel extends BaseChannel {
     if (identical(other, this)) return true;
     if (!(super == (other))) return false;
 
-    return other is FeedChannel && other.groupChannel == groupChannel;
+    final eq = const ListEquality().equals;
+    return other is FeedChannel &&
+        other.groupChannel == groupChannel &&
+        other.isTemplateLabelEnabled == isTemplateLabelEnabled &&
+        other.isCategoryFilterEnabled == isCategoryFilterEnabled &&
+        eq(other.notificationCategories, notificationCategories);
   }
 
   @override
   int get hashCode => Object.hash(
         super.hashCode,
         groupChannel.hashCode,
+        isTemplateLabelEnabled,
+        isCategoryFilterEnabled,
+        notificationCategories,
       );
 
   @override
@@ -218,6 +227,11 @@ class FeedChannel extends BaseChannel {
     super.copyWith(other);
     if (other is FeedChannel) {
       groupChannel.copyWith(other.groupChannel);
+
+      isTemplateLabelEnabled = other.isTemplateLabelEnabled;
+      isCategoryFilterEnabled = other.isCategoryFilterEnabled;
+      notificationCategories =
+          List<NotificationCategory>.from(other.notificationCategories);
     }
   }
 }

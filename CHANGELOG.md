@@ -1,3 +1,8 @@
+## v4.0.10 (Aug 31, 2023)
+
+### Improvements
+- Fixed the bug regarding the `FeedChannel` caching.
+
 ## v4.0.9 (Aug 30, 2023)
 
 ### Improvements
