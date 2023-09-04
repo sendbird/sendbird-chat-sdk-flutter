@@ -18,7 +18,7 @@ dependencies:
   flutter:
     sdk: flutter
   collection: ^1.17.0
-  uuid: ^3.0.7
+  uuid: ^4.0.0
   json_annotation: ^4.8.1
   encrypt: ^5.0.1
   shared_preferences: ^2.1.2
