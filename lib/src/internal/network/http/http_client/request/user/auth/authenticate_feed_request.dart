@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 
@@ -15,7 +16,7 @@ class AuthenticateFeedRequest extends ApiRequest {
     String? accessToken,
     String? apiHost,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/$userId/login';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/login';
 
     isAuthenticateFeed = true; // Check
 

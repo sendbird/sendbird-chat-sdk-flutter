@@ -156,15 +156,20 @@ class SessionManager {
       throw ConnectionRequiredException();
     }
 
-    var id = '';
-    if (userId.length >= 24) {
-      id = userId.substring(0, 24);
+    List<int> userId24Data = [];
+    final userIdData = utf8.encode(userId);
+    const dataLength = 24;
+    if (userIdData.length >= dataLength) {
+      userId24Data.addAll(userIdData.sublist(0, dataLength));
     } else {
-      id = userId + getRandomString(24 - userId.length);
+      final randomStringData =
+          utf8.encode(getRandomString(dataLength - userIdData.length));
+      userId24Data
+        ..addAll(userIdData)
+        ..addAll(randomStringData);
     }
 
-    final userIdData = utf8.encode(id);
-    final base64UserId = base64.encode(userIdData);
+    final base64UserId = base64.encode(userId24Data);
     prefs.setString(_userIdKeyPath, base64UserId);
 
     final key = Key.fromUtf8(base64UserId);

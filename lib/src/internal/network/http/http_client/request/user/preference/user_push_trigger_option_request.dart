@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -21,7 +22,7 @@ class UserPushTriggerOptionSetRequest extends ApiRequest {
     PushTriggerOption option, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
     body = {'push_trigger_option': _pushTriggerOptionEnumMap[option]};
   }
 }
@@ -34,7 +35,7 @@ class UserPushTriggerOptionGetRequest extends ApiRequest {
     Chat chat, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
   }
 
   @override

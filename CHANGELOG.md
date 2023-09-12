@@ -1,3 +1,8 @@
+## v4.0.11 (Sep 12, 2023)
+
+### Improvements
+- Fixed the bug regarding the url encoding of `userId`.
+
 ## v4.0.10 (Aug 31, 2023)
 
 ### Improvements

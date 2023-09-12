@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/do_not_disturb.dart';
@@ -19,7 +20,7 @@ class UserDoNotDisturbSetRequest extends ApiRequest {
     String timezone = 'UTC',
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
     body = {
       'do_not_disturb': enable,
       'start_hour': startHour,
@@ -39,7 +40,7 @@ class UserDoNotDisturbGetRequest extends ApiRequest {
     Chat chat, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
   }
 
   @override

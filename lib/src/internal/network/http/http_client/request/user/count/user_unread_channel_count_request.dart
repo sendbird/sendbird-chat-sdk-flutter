@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -16,8 +17,7 @@ class UserTotalUnreadChannelCountGetRequest extends ApiRequest {
     GroupChannelTotalUnreadChannelCountParams? params,
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url =
-        'users/${userId ?? chat.chatContext.currentUserId}/unread_channel_count';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/unread_channel_count';
     final customTypes = params?.channelCustomTypes ?? [];
     final superFilter = params?.superChannelFilter ?? SuperChannelFilter.all;
     queryParams = {

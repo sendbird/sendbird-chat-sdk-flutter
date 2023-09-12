@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/snooze_period.dart';
@@ -16,7 +17,7 @@ class UserSnoozePeriodSetRequest extends ApiRequest {
     DateTime? endDate,
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
     body = {
       'snooze_enabled': enable,
       if (startDate != null)
@@ -34,7 +35,7 @@ class UserSnoozePeriodGetRequest extends ApiRequest {
     Chat chat, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push_preference';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push_preference';
   }
 
   @override
