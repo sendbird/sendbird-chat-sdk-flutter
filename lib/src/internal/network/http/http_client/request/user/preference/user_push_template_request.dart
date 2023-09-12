@@ -1,8 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 
 class UserPushTemplateSetRequest extends ApiRequest {
   @override
@@ -13,7 +14,7 @@ class UserPushTemplateSetRequest extends ApiRequest {
     String name, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push/template';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push/template';
     body = {'name': name};
   }
 }
@@ -26,7 +27,7 @@ class UserPushTemplateGetRequest extends ApiRequest {
     Chat chat, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push/template';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push/template';
   }
 
   @override

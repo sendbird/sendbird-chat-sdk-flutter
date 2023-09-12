@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -24,7 +25,7 @@ class GroupChannelCountReferenceRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url =
-        'users/${userId ?? chat.chatContext.currentUserId}/count_preference/$channelUrl';
+        'users/${getUrlEncodedUserId(chat, userId)}/count_preference/$channelUrl';
     body = {'count_preference': countPreferenceEnumMap[prefs]};
   }
 

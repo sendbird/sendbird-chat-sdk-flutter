@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -24,7 +25,7 @@ class GroupChannelPushTriggerOptionGetRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url =
-        'users/${userId ?? chat.chatContext.currentUserId}/push_preference/$channelUrl';
+        'users/${getUrlEncodedUserId(chat, userId)}/push_preference/$channelUrl';
   }
 
   @override
@@ -49,7 +50,7 @@ class GroupChannelPushTriggerOptionSetRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url =
-        'users/${userId ?? chat.chatContext.currentUserId}/push_preference/$channelUrl';
+        'users/${getUrlEncodedUserId(chat, userId)}/push_preference/$channelUrl';
     body = {
       'push_trigger_option': _groupChannelPushTriggerOptionEnumMap[option]
     };
