@@ -9,12 +9,14 @@ class UploadStatRequest extends ApiRequest {
   @override
   HttpMethod get method => HttpMethod.post;
 
+  static const statUrl = 'sdk/statistics';
+
   UploadStatRequest(
     Chat chat, {
     required String deviceId,
     required List<BaseStat> stats,
   }) : super(chat: chat) {
-    url = 'sdk/statistics';
+    url = statUrl;
     body = {
       'device_id': deviceId,
       'log_entries': stats.map((stat) => stat.toJson()).toList(),

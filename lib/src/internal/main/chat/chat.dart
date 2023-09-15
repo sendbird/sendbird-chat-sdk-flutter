@@ -58,7 +58,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.11';
+const sdkVersion = '4.0.12';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -117,13 +117,14 @@ class Chat with WidgetsBindingObserver {
     sessionManager = SessionManager(chat: this);
     commandManager = CommandManager(chat: this);
     eventManager = EventManager(sessionManager: sessionManager);
+    statManager = StatManager(chat: this);
     apiClient = ApiClient(
       chatContext: chatContext,
       sessionManager: sessionManager,
+      statManager: statManager,
     ); // HttpClient
     eventDispatcher = EventDispatcher(chat: this);
     collectionManager = CollectionManager(chat: this);
-    statManager = StatManager(chat: this);
 
     _listenConnectivityChangedEvent();
   }

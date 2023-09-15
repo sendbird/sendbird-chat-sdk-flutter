@@ -5,19 +5,24 @@ import 'dart:async';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 
 class ApiClient {
+  final StatManager? _statManager;
   final HttpClient _httpClient;
 
   ApiClient({
     required ChatContext chatContext,
     required SessionManager sessionManager,
-  }) : _httpClient = HttpClient(
+    StatManager? statManager,
+  })  : _statManager = statManager,
+        _httpClient = HttpClient(
           chatContext: chatContext,
           sessionManager: sessionManager,
+          statManager: statManager,
         );
 
   void cleanUp() {
@@ -31,8 +36,13 @@ class ApiClient {
 
   // possible other solution T is return type
   Future<T> send<T>(ApiRequest request) async {
+    final url = '/${request.version}/${request.url}';
+    final uri = _httpClient.toUri(
+      url,
+      queryParams: request.queryParams,
+    );
+
     try {
-      final url = '/${request.version}/${request.url}';
       // inject current user id if field is empty when only needs
       // need to clarify the condition
       if (request.method != HttpMethod.get &&
@@ -46,7 +56,7 @@ class ApiClient {
       switch (request.method) {
         case HttpMethod.get:
           json = await _httpClient.get(
-            url: url,
+            uri: uri,
             queryParams: request.queryParams,
             headers: request.headers,
           );
@@ -55,7 +65,7 @@ class ApiClient {
         case HttpMethod.post:
           if (!request.isMultipart) {
             json = await _httpClient.post(
-              url: url,
+              uri: uri,
               queryParams: request.queryParams,
               body: request.body,
               headers: request.headers,
@@ -64,9 +74,9 @@ class ApiClient {
           } else {
             json = await _httpClient.requestMultipart(
               method: request.method,
-              url: url,
-              body: request.body,
+              uri: uri,
               queryParams: request.queryParams,
+              body: request.body,
               headers: request.headers,
               progressHandler: request.progressHandler,
             );
@@ -76,7 +86,7 @@ class ApiClient {
         case HttpMethod.put:
           if (!request.isMultipart) {
             json = await _httpClient.put(
-              url: url,
+              uri: uri,
               queryParams: request.queryParams,
               body: request.body,
               headers: request.headers,
@@ -84,9 +94,9 @@ class ApiClient {
           } else {
             json = await _httpClient.requestMultipart(
               method: request.method,
-              url: url,
-              body: request.body,
+              uri: uri,
               queryParams: request.queryParams,
+              body: request.body,
               headers: request.headers,
               progressHandler: request.progressHandler,
             );
@@ -95,31 +105,48 @@ class ApiClient {
 
         case HttpMethod.delete:
           json = await _httpClient.delete(
-            url: url,
+            uri: uri,
             queryParams: request.queryParams,
             body: request.body,
             headers: request.headers,
           );
           break;
-
-        // case HttpMethod.patch:
-        //   json = await _httpClient.patch(
-        //     url: url,
-        //     queryParams: request.queryParams,
-        //     body: request.body,
-        //     headers: request.headers,
-        //   );
-        //   break;
       }
 
       final res = await request.response(json);
+
+      _statManager?.endApiResultStat(
+        endpoint: uri.toString(),
+        method: request.method.name.toUpperCase(),
+        success: true,
+      );
+
       return res as T;
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');
+
       if (e is SendbirdException) {
+        _statManager?.endApiResultStat(
+          endpoint: uri.toString(),
+          method: request.method.name.toUpperCase(),
+          success: false,
+          errorCode: e.code,
+          errorDescription: e.message,
+        );
+
         rethrow;
       } else {
-        throw RequestFailedException(message: e.toString());
+        final exception = RequestFailedException(message: e.toString());
+
+        _statManager?.endApiResultStat(
+          endpoint: uri.toString(),
+          method: request.method.name.toUpperCase(),
+          success: false,
+          errorCode: exception.code,
+          errorDescription: exception.message,
+        );
+
+        throw exception;
       }
     }
   }

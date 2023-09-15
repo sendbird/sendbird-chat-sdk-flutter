@@ -158,17 +158,35 @@ class ConnectionManager {
 
     runZonedGuarded(() {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
+
+      chat.statManager.startWsConnectStat(hostUrl: url);
       webSocketClient.connect(url);
     }, (e, s) async {
       sbLog.e(StackTrace.current, 'e: $e');
+
       changeState(DisconnectedState(chat: chat));
       if (chat.chatContext.loginCompleter != null &&
           !chat.chatContext.loginCompleter!.isCompleted) {
         if (e is SendbirdException) {
+          chat.statManager.endWsConnectStat(
+            hostUrl: url,
+            success: false,
+            errorCode: e.code,
+            errorDescription: e.message,
+          );
+
           chat.chatContext.loginCompleter?.completeError(e);
         } else {
-          chat.chatContext.loginCompleter
-              ?.completeError(WebSocketFailedException(message: e.toString()));
+          final exception = WebSocketFailedException(message: e.toString());
+
+          chat.statManager.endWsConnectStat(
+            hostUrl: url,
+            success: false,
+            errorCode: exception.code,
+            errorDescription: exception.message,
+          );
+
+          chat.chatContext.loginCompleter?.completeError(exception);
         }
       }
     });
@@ -176,11 +194,24 @@ class ConnectionManager {
     final user = await chat.chatContext.loginCompleter!.future
         .timeout(Duration(seconds: chat.chatContext.options.connectionTimeout),
             onTimeout: () async {
+      final e = LoginTimeoutException();
+
+      chat.statManager.endWsConnectStat(
+        hostUrl: url,
+        success: false,
+        errorCode: e.code,
+        errorDescription: e.name,
+      );
+
       await doDisconnect(logout: true);
-      throw LoginTimeoutException();
+      throw e;
     });
 
     // After 'LOGI' received
+    chat.statManager.endWsConnectStat(
+      hostUrl: url,
+      success: true,
+    );
     return user;
   }
 
