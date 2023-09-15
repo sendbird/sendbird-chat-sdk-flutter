@@ -672,7 +672,6 @@ class CommandManager {
     }
   }
 
-// System
   Future<void> _processSystemEvent(Command cmd) async {
     final event = ChannelEvent.fromJsonWithChat(_chat, cmd.payload);
 

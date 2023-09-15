@@ -40,12 +40,23 @@ class NotificationStat extends DefaultStat {
     return result;
   }
 
+  // {
+  //   'stat_type' : 'noti:stats',
+  //   'ts': int, // timestamp for log creation,
+  //   'data' : {
+  //     'action': String, // 'clicked'
+  //     'template_key': String,
+  //     'channel_url': String,
+  //     'tags': List<String>,
+  //     'message_id': int,
+  //     'source': 'notification',
+  //     'message_ts': int,
+  //   },
+  // }
   static NotificationStat? fromJson({
     required int ts,
     required Map<String, dynamic> data,
   }) {
-    sbLog.d(StackTrace.current);
-
     try {
       final String? action = data['action'] as String?;
       final String? templateKey = data['template_key'] as String?;

@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/api_result_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/base_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat_prefs.dart';
@@ -11,6 +11,8 @@ import 'package:sendbird_chat_sdk/src/internal/main/stats/notification_stat.dart
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/ws_connect_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/upload_stat_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
@@ -22,14 +24,18 @@ class StatManager {
     'allow_sdk_noti_stats_log_publish': {StatType.notificationStats},
   };
   static const int _errStatUploadNotAllowed = 403200;
+  static const int _initialMinStatCount = 100;
 
   final Chat _chat;
   final int _maxStatCountPerRequest = 1000;
-  final int _minStatCount = 100;
+  int _minStatCount = _initialMinStatCount;
+  final int _intervalCountToTryAgain = 20;
   final int _minInterval = const Duration(hours: 3).inMilliseconds;
   final int _lowerThreshold = 10;
 
   StatState state = StatState.pending;
+  bool _isLoaded = false;
+
   Future<void> _setState(value) async {
     state = value;
     switch (value) {
@@ -51,12 +57,10 @@ class StatManager {
   final List<DefaultStat> cachedDefaultStats = [];
   final DefaultStatPrefs defaultStatPrefs;
 
-  bool _isLoaded = false;
   bool _isFlushing = false;
 
-  CancelableOperation? _appendPendingDefaultStatsOperation;
-  CancelableOperation? _doAppendStatOperation;
-  CancelableOperation? _sendStatsOperation;
+  final Map<String, int> _apiResultStartTsMap = {};
+  final Map<String, int> _wsConnectStartTsMap = {};
 
   StatManager({required Chat chat})
       : _chat = chat,
@@ -68,19 +72,16 @@ class StatManager {
     required Map<String, dynamic> data,
   }) async {
     sbLog.d(StackTrace.current, 'type: $type');
-
-    _doAppendStatOperation = CancelableOperation.fromFuture(
-      _doAppendStat(type: type, data: data),
-    );
-    return await _doAppendStatOperation?.value;
+    return await _doAppendStat(type: type, data: data);
   }
+
   //- Public
 
   Future<bool> _doAppendStat({
     required String type,
     required Map<String, dynamic> data,
   }) async {
-    sbLog.d(StackTrace.current, 'type: $type');
+    sbLog.d(StackTrace.current);
 
     bool result = false;
     final statType = StatUtils.getStatType(type);
@@ -91,18 +92,6 @@ class StatManager {
         result = await _append(stat);
       }
     }
-
-    if (result) {
-      if (stat is NotificationStat) {
-        sbLog.i(
-          StackTrace.current,
-          'type: $type, _state: $state, result: $result, stat: ${stat.toJson().toString()}',
-        );
-      }
-    } else {
-      sbLog.w(
-          StackTrace.current, 'type: $type, _state: $state, result: $result');
-    }
     return result;
   }
 
@@ -111,7 +100,15 @@ class StatManager {
 
     switch (statType) {
       case StatType.apiResult:
+        return ApiResultStat.fromJson(
+          ts: DateTime.now().millisecondsSinceEpoch,
+          data: data,
+        );
       case StatType.wsConnect:
+        return WsConnectStat.fromJson(
+          ts: DateTime.now().millisecondsSinceEpoch,
+          data: data,
+        );
       case StatType.featureLocalCache:
         return null;
       case StatType.notificationStats:
@@ -136,14 +133,23 @@ class StatManager {
   }
 
   Future<bool> _doAppend(BaseStat stat) async {
-    sbLog.d(StackTrace.current);
+    bool result = false;
 
     switch (state) {
       case StatState.pending:
         if (stat is DefaultStat) {
           pendingDefaultStats.add(stat);
           await defaultStatPrefs.appendStat(stat);
-          return true;
+
+          sbLog.d(
+              StackTrace.current,
+              '[StatTest][Append] state: $state'
+              ' pendingDefaultStats: ${pendingDefaultStats.length},'
+              ' cachedDefaultStats: ${cachedDefaultStats.length},'
+              ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
+              ' stat: \n${jsonEncoder.convert(stat.toJson())}');
+
+          result = true;
         }
         break;
       case StatState.enabled:
@@ -152,21 +158,27 @@ class StatManager {
           cachedDefaultStats.add(stat);
           await defaultStatPrefs.appendStat(stat);
 
-          await _checkToSendStats();
-          return true;
+          sbLog.d(
+              StackTrace.current,
+              '[StatTest][Append] state: $state'
+              ' pendingDefaultStats: ${pendingDefaultStats.length},'
+              ' cachedDefaultStats: ${cachedDefaultStats.length},'
+              ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
+              ' stat: \n${jsonEncoder.convert(stat.toJson())}');
+
+          await _checkToSendStats(stat);
+          result = true;
         }
         break;
       case StatState.disabled:
         break;
     }
-    return false;
+    return result;
   }
 
-  Future<void> _checkToSendStats() async {
-    sbLog.d(StackTrace.current);
-
+  Future<void> _checkToSendStats(BaseStat stat) async {
     final count = cachedDefaultStats.length;
-    sbLog.d(StackTrace.current, 'count: $count');
+    sbLog.d(StackTrace.current, 'cachedDefaultStats: $count');
 
     if (state == StatState.enabled && count >= _lowerThreshold) {
       final lastSentAt = await defaultStatPrefs.lastSentAt;
@@ -174,11 +186,17 @@ class StatManager {
       sbLog.d(StackTrace.current, 'interval(sec): ${interval / 1000}');
 
       final canSendRegardingInterval = (interval > _minInterval);
-      final canSendRegardingCount = (count == _minStatCount ||
-          (count > _minStatCount && count % 20 == 0));
+      final canSendRegardingCount = (count >= _minStatCount);
 
       if (canSendRegardingInterval || canSendRegardingCount) {
-        _sendStatsOperation = CancelableOperation.fromFuture(_sendStats());
+        if (stat is ApiResultStat &&
+            stat.endpoint.contains(UploadStatRequest.statUrl)) {
+          // Defensive code
+          sbLog.w(StackTrace.current, 'Ignored the stat for statistics API');
+          return;
+        }
+
+        await _sendStats();
       }
     }
   }
@@ -202,6 +220,8 @@ class StatManager {
         UploadStatRequest(_chat, deviceId: deviceId, stats: copiedStats),
       );
     } catch (e) {
+      _minStatCount += _intervalCountToTryAgain;
+
       exception = e;
       if (e is SendbirdException && e.code == _errStatUploadNotAllowed) {
         sbLog.w(StackTrace.current, 'errStatUploadNotAllowed: 403200');
@@ -212,8 +232,7 @@ class StatManager {
     }
 
     if (exception == null) {
-      sbLog.i(StackTrace.current,
-          '[Sent] deviceId: $deviceId, count: ${copiedStats.length}');
+      _minStatCount = _initialMinStatCount;
 
       final List<DefaultStat> remainingStats = [];
       try {
@@ -229,6 +248,13 @@ class StatManager {
       await defaultStatPrefs
           .updateLastSentAt(DateTime.now().millisecondsSinceEpoch);
       await defaultStatPrefs.putStats(remainingStats);
+
+      sbLog.d(
+          StackTrace.current,
+          '[StatTest][Sent] deviceId: $deviceId,'
+          ' pendingDefaultStats: ${pendingDefaultStats.length},'
+          ' cachedDefaultStats: ${cachedDefaultStats.length},'
+          ' defaultStatPrefs: ${await defaultStatPrefs.statCount}');
     }
 
     _isFlushing = false;
@@ -254,43 +280,30 @@ class StatManager {
     sbLog.d(StackTrace.current);
     await _setState(StatState.disabled);
   }
+
   //- EventDispatcher
 
   Future<void> _onStatOn() async {
     sbLog.d(StackTrace.current);
 
-    await _loadOnce();
-
-    _appendPendingDefaultStatsOperation =
-        CancelableOperation.fromFuture(_appendPendingDefaultStats());
-  }
-
-  Future<void> _loadOnce() async {
-    if (_isLoaded) return;
-
-    pendingDefaultStats.addAll(await defaultStatPrefs.stats);
-    sbLog.d(StackTrace.current,
-        '_pendingDefaultStats.length: ${pendingDefaultStats.length}');
-
-    _isLoaded = true;
-  }
-
-  Future<void> _appendPendingDefaultStats() async {
-    sbLog.d(StackTrace.current);
-
-    for (final stat in pendingDefaultStats) {
-      await _append(stat);
+    if (_isLoaded == false) {
+      pendingDefaultStats.addAll(await defaultStatPrefs.stats);
+      _isLoaded = true;
     }
+
+    cachedDefaultStats.addAll(pendingDefaultStats);
     pendingDefaultStats.clear();
+
+    sbLog.d(
+        StackTrace.current,
+        '[StatTest][StatOn] '
+        ' pendingDefaultStats: ${pendingDefaultStats.length},'
+        ' cachedDefaultStats: ${cachedDefaultStats.length},'
+        ' defaultStatPrefs: ${await defaultStatPrefs.statCount}');
   }
 
   Future<void> _onStatOff() async {
     sbLog.d(StackTrace.current);
-
-    await _appendPendingDefaultStatsOperation?.cancel();
-    await _doAppendStatOperation?.cancel();
-    await _sendStatsOperation?.cancel();
-
     await _clearAll();
   }
 
@@ -358,4 +371,86 @@ class StatManager {
     sbLog.d(StackTrace.current, 'result: $result');
     return result;
   }
+
+  //+ WsConnectStat
+  void startWsConnectStat({
+    required String hostUrl,
+  }) {
+    sbLog.d(StackTrace.current);
+
+    if (_wsConnectStartTsMap[hostUrl] == null) {
+      _wsConnectStartTsMap[hostUrl] = DateTime.now().millisecondsSinceEpoch;
+    }
+  }
+
+  void endWsConnectStat({
+    required String hostUrl,
+    required bool success,
+    int? errorCode,
+    String? errorDescription,
+  }) async {
+    sbLog.d(StackTrace.current);
+
+    final startTs = _wsConnectStartTsMap[hostUrl];
+    if (startTs == null) return;
+
+    final latency = DateTime.now().millisecondsSinceEpoch - startTs;
+
+    await appendStat(
+      type: StatUtils.getStatTypeString(StatType.wsConnect),
+      data: <String, dynamic>{
+        'host_url': hostUrl,
+        'success': success,
+        'latency': latency,
+        'error_code': errorCode,
+        'error_description': errorDescription,
+      },
+    );
+
+    _wsConnectStartTsMap.remove(hostUrl);
+  }
+
+  //- WsConnectStat
+
+  //+ ApiResultStat
+  void startApiResultStat({
+    required String endpoint,
+  }) {
+    sbLog.d(StackTrace.current);
+
+    if (_wsConnectStartTsMap[endpoint] == null) {
+      _apiResultStartTsMap[endpoint] = DateTime.now().millisecondsSinceEpoch;
+    }
+  }
+
+  void endApiResultStat({
+    required String endpoint,
+    required String method,
+    required bool success,
+    int? errorCode,
+    String? errorDescription,
+  }) async {
+    sbLog.d(StackTrace.current);
+
+    final startTs = _apiResultStartTsMap[endpoint];
+    if (startTs == null) return;
+
+    final latency = DateTime.now().millisecondsSinceEpoch - startTs;
+
+    await appendStat(
+      type: StatUtils.getStatTypeString(StatType.apiResult),
+      data: <String, dynamic>{
+        'endpoint': endpoint,
+        'method': method,
+        'success': success,
+        'latency': latency,
+        'error_code': errorCode,
+        'error_description': errorDescription,
+      },
+    );
+
+    _apiResultStartTsMap.remove(endpoint);
+  }
+
+//- ApiResultStat
 }

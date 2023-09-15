@@ -525,9 +525,20 @@ abstract class BaseMessage {
       json['is_reply_to_channel'] = json['reply_to_channel'];
     }
 
-    BaseMessage message;
-    final type = commandType ?? json['type'] as String;
+    String? type = commandType;
+    if (type == null) {
+      final Map<String, dynamic>? file = json['file'];
+      if (file != null && file.isNotEmpty) {
+        // The 'type' value of FileMessage payload can be 'FILE' or 'image/jpeg'.
+        type = CommandType.fileMessage.value;
+      } else {
+        type = json['type'] as String;
+      }
+    }
 
+    // final type = commandType ?? json['type'] as String;
+
+    BaseMessage message;
     if (chat != null) {
       if (T == UserMessage || CommandString.isUserMessage(type)) {
         message = UserMessage.fromJsonWithChat(chat, json) as T;
