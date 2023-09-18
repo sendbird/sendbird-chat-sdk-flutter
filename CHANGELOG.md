@@ -1,3 +1,7 @@
+## [3.2.18] - Sep 18, 2023
+
+- Fixed the bug regarding uploadSizeLimit
+
 ## [3.2.17] - Aug 14, 2023
 
 - Fix issue with no named parameter for JsonKey

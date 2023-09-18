@@ -10,7 +10,6 @@ class ApiClient {
   String? baseUrl;
   String? sessionKey;
   String? token;
-  int uploadSizeLimit = 30;
   Map<String, String> headers = {};
 
   SendbirdState? state;
@@ -23,13 +22,11 @@ class ApiClient {
     String? appId,
     String? token,
     String? baseUrl,
-    int? uploadSizeLimit,
     Map<String, String>? headers,
   }) {
     if (appId != null) this.appId = appId;
     if (token != null) this.token = token;
     if (baseUrl != null) this.baseUrl = baseUrl;
-    if (uploadSizeLimit != null) this.uploadSizeLimit = uploadSizeLimit;
     if (headers != null) this.headers = headers;
 
     client
