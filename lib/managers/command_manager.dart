@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:sendbird_sdk/constant/contants.dart';
-
 import 'package:sendbird_sdk/constant/enums.dart';
 import 'package:sendbird_sdk/constant/error_code.dart';
 import 'package:sendbird_sdk/core/channel/base/base_channel.dart';
@@ -227,7 +227,9 @@ class CommandManager with SdkAccessor {
       fnc = _processUpdatePoll;
     } else if (cmd.isVote) {
       fnc = _processVote;
-    } else {/*not handle command*/}
+    } else {
+      /*not handle command*/
+    }
 
     if (fnc != null) {
       final op = AsyncTask<Command>(func: fnc, arg: cmd);
@@ -325,13 +327,13 @@ class CommandManager with SdkAccessor {
       ..userId = user.userId
       ..sessionKey = event.sessionKey
       ..lastConnectedAt = event.loginTimestamp
-      ..uploadSizeLimit = event.appInfo.uploadSizeLimit
+      ..uploadSizeLimit = event.appInfo.uploadSizeLimit * 1024 * 1024
       ..connected = true
       ..connecting = false
       ..reconnecting = false;
 
     sdk.api.currentUserId = user.userId;
-    sdk.api.initialize(uploadSizeLimit: event.appInfo.uploadSizeLimit);
+    sdk.api.initialize();
 
     sdk.sessionManager
       ..setUserId(user.userId)

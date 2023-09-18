@@ -71,7 +71,7 @@ Installing the Chat SDK is a simple process if you’re familiar with using exte
 
 ```yaml
 dependencies:
-  sendbird_sdk: ^3.0.11
+  sendbird_sdk: ^3.2.18
 ```
 
 - Run `flutter pub get` command in your project directory.
