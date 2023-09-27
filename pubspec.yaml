@@ -1,6 +1,6 @@
 name: sendbird_chat_sdk
 description: With Sendbird Chat for Flutter, you can easily build an in-app chat with all the essential messaging features.
-version: 4.0.12
+version: 4.0.13
 homepage: https://sendbird.com
 repository: https://github.com/sendbird/sendbird-chat-sdk-flutter
 documentation: https://sendbird.com/docs/chat/sdk/v4/flutter/getting-started/send-first-message
