@@ -1,7 +1,16 @@
+## v4.0.13 (Sep 27, 2023)
+
+### Features
+- Added `MessageSearchQuery`
+- Added `includeMetaArray`, `includeReactions` and `includeThreadInfo` in `PreviousMessageListQuery`
+
+### Improvements
+- Improved stability
+
 ## v4.0.12 (Sep 15, 2023)
 
 ### Improvements
-- Fixed the bug regarding parent FileMessage type
+- Fixed the bug regarding parent `FileMessage` type
 - Updated regarding statistics
 
 ## v4.0.11 (Sep 12, 2023)

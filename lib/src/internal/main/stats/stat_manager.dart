@@ -220,7 +220,9 @@ class StatManager {
         UploadStatRequest(_chat, deviceId: deviceId, stats: copiedStats),
       );
     } catch (e) {
-      _minStatCount += _intervalCountToTryAgain;
+      if (copiedStats.length >= _minStatCount) {
+        _minStatCount += _intervalCountToTryAgain;
+      }
 
       exception = e;
       if (e is SendbirdException && e.code == _errStatUploadNotAllowed) {

@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 
 /// MyConnectionState
 enum MyConnectionState {
@@ -211,11 +212,14 @@ enum GroupChannelListQuerySearchField {
   channelName,
 }
 
-// /// MessageSearchQueryOrder
-// enum MessageSearchQueryOrder {
-//   score,
-//   timestamp,
-// }
+/// The order in which the query result will be based on.
+/// [score] query returns the result as by their matching score.
+/// [timestamp] query returns the result as by [BaseMessage]'s timestamp.
+/// @since 4.0.13
+enum MessageSearchQueryOrder {
+  score,
+  timestamp,
+}
 
 /// PushTokenRegistrationStatus
 enum PushTokenRegistrationStatus {

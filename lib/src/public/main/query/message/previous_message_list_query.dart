@@ -32,11 +32,24 @@ class PreviousMessageListQuery extends BaseQuery {
   /// Sender user ids filter.
   List<String> senderIdsFilter = [];
 
-  /// Determines whether to include current message's parent information
+  //+ BaseMessageFetchParams
+
+  /// Whether the meta arrays should be included in the results.
+  bool includeMetaArray = false;
+
+  /// Whether the reaction data should be included in the results.
+  bool includeReactions = false;
+
+  /// Whether the thread information should be included in the results.
+  bool includeThreadInfo = false;
+
+  /// Whether the information of a parent message should be included in the reply messages included in the results.
   bool includeParentMessageInfo = false;
 
-  /// Determines message's reply type
+  /// Determines the reply types to include in the results.
   ReplyType replyType = ReplyType.none;
+
+  //- BaseMessageFetchParams
 
   /// If set to true, only messages that belong to current user's subchannel is fetched.
   /// If set to false, all messages will be fetched. Default is false.
@@ -66,12 +79,16 @@ class PreviousMessageListQuery extends BaseQuery {
     final params = MessageListParams()
       ..previousResultSize = limit
       ..reverse = reverse
-      ..customTypes = customTypesFilter
       ..messageType = messageTypeFilter
+      ..customTypes = customTypesFilter
       ..senderIds = senderIdsFilter
+      ..showSubChannelMessagesOnly = showSubChannelMessagesOnly
+      // BaseMessageFetchParams
+      ..includeMetaArray = includeMetaArray
+      ..includeReactions = includeReactions
+      ..includeThreadInfo = includeThreadInfo
       ..includeParentMessageInfo = includeParentMessageInfo
-      ..replyType = replyType
-      ..showSubChannelMessagesOnly = showSubChannelMessagesOnly;
+      ..replyType = replyType;
 
     final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
       ChannelMessagesGetRequest(
