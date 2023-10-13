@@ -95,18 +95,20 @@ class WebSocketClient {
 
     _stopPing();
 
-    try {
+    bool result = false;
+    runZonedGuarded(() async {
       //This should trigger callback for Done()
       //And set _connected to false before returning from close
       await _socket?.sink.close(code, reason);
-      _subscription?.cancel();
-      _socket = null;
       logger.i('Socket closed ' + reason);
-      return true;
-    } catch (e) {
-      onReceiveError(e);
-      return false;
-    }
+      result = true;
+    }, (error, stack) {
+      onReceiveError(error);
+    });
+
+    _subscription?.cancel();
+    _socket = null;
+    return result;
   }
 
   void send(String data) {

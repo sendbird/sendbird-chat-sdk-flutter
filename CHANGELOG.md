@@ -1,3 +1,7 @@
+## [3.2.19] - Oct 13, 2023
+
+- Fixed the bug regarding WebSocket error handling.
+
 ## [3.2.18] - Sep 18, 2023
 
 - Fixed the bug regarding uploadSizeLimit
