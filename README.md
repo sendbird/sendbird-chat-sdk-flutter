@@ -3,6 +3,9 @@
 [![Platform](https://img.shields.io/badge/platform-flutter-blue)](https://flutter.dev/)
 [![Language](https://img.shields.io/badge/language-dart-blue)](https://dart.dev/)
 
+> **Warning**
+> Sendbird Chat SDK v3 for Flutter is no longer supported as a new version is released. Check out our latest Chat SDK v4 [here](https://pub.dev/packages/sendbird_chat_sdk)
+
 ## Table of contents
 
 1. [Introduction](#introduction)
@@ -38,8 +41,8 @@ Through Chat SDK for flutter, you can efficiently integrate real-time chat into 
 The minimum requirements for Chat SDK for Flutter are:
 
 - Xcode or Android studio
-- Dart 2.10.4 or above
-- Flutter 1.22.0 or higher
+- Dart 2.18.0 or above
+- Flutter 3.3.0 or higher
 
 ## Getting started
 
@@ -71,7 +74,7 @@ Installing the Chat SDK is a simple process if you’re familiar with using exte
 
 ```yaml
 dependencies:
-  sendbird_sdk: ^3.2.18
+  sendbird_sdk: ^3.2.19
 ```
 
 - Run `flutter pub get` command in your project directory.

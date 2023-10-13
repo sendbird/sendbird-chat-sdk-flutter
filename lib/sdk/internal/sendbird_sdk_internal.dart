@@ -25,7 +25,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../constant/contants.dart';
 
-const sdk_version = '3.2.18';
+const sdk_version = '3.2.19';
 const platform = 'flutter';
 
 /// This allows a value of type T or T? to be treated as a value of type T?.
@@ -274,20 +274,31 @@ class SendbirdSdkInternal with WidgetsBindingObserver {
     final fullWsHost = wsHostUrl + '/?' + Uri(queryParameters: params).query;
 
     logger.i('websocket connecting.. ');
-    try {
+    runZonedGuarded(() async {
       await _webSocket?.connect(fullWsHost);
-    } catch (e) {
+    }, (error, stack) {
+      if (_loginCompleter != null && !_loginCompleter!.isCompleted) {
+        _loginCompleter!.completeError(error);
+      }
+
       _state.connecting = false;
       _state.reconnecting = false;
       _loginCompleter = null;
       _forceReconnect = false;
-      rethrow;
-    }
+    });
 
     final user = await _loginCompleter!.future.timeout(
         Duration(seconds: options.connectionTimeout), onTimeout: () async {
       logger.e('login timeout');
       throw LoginTimeoutError();
+    }).onError((error, stackTrace) {
+      if (error is SBError) {
+        throw error;
+      } else if (error is Exception) {
+        throw WebSocketError(message: error.toString());
+      } else {
+        throw WebSocketConnectionFailed();
+      }
     });
 
     logger.i('websocket connected and get user from sendbird server');
