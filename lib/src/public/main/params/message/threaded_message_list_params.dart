@@ -39,6 +39,10 @@ class ThreadedMessageListParams extends BaseMessageFetchParams {
   /// When the user ID filtering is not needed, the value should be set to null.
   List<String>? senderIds;
 
+  static ThreadedMessageListParams fromJson(Map<String, dynamic> json) {
+    return _$ThreadedMessageListParamsFromJson(json);
+  }
+
   @override
   Map<String, dynamic> toJson() {
     replyType = ReplyType.all;

@@ -29,7 +29,6 @@ class NotificationCategory {
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
-    if (!(super == (other))) return false;
 
     return other is NotificationCategory &&
         other.id == id &&

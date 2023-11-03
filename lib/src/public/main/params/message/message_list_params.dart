@@ -45,6 +45,10 @@ class MessageListParams extends BaseMessageFetchParams {
   @JsonKey(name: 'show_subchannel_messages_only')
   bool showSubChannelMessagesOnly = false;
 
+  static MessageListParams fromJson(Map<String, dynamic> json) {
+    return _$MessageListParamsFromJson(json);
+  }
+
   @override
   Map<String, dynamic> toJson() {
     final json = super.toJson();

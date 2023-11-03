@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
@@ -44,6 +46,7 @@ import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_ch
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -173,18 +176,16 @@ abstract class BaseChannel implements Cacheable {
     isEphemeral = false,
     this.fromCache = false,
     this.dirty = false,
-  })
-      : _coverUrl = coverUrl,
+  })  : _coverUrl = coverUrl,
         _data = data,
         _customType = customType,
         _isFrozen = isFrozen,
         _isEphemeral = isEphemeral;
 
   /// ChannelType
-  ChannelType get channelType =>
-      this is GroupChannel
-          ? ChannelType.group
-          : this is OpenChannel
+  ChannelType get channelType => this is GroupChannel
+      ? ChannelType.group
+      : this is OpenChannel
           ? ChannelType.open
           : ChannelType.feed;
 
@@ -214,10 +215,11 @@ abstract class BaseChannel implements Cacheable {
     }
   }
 
-  static Future<BaseChannel> getBaseChannel(ChannelType channelType,
-      String channelUrl, {
-        Chat? chat,
-      }) async {
+  static Future<BaseChannel> getBaseChannel(
+    ChannelType channelType,
+    String channelUrl, {
+    Chat? chat,
+  }) async {
     switch (channelType) {
       case ChannelType.group:
         return GroupChannel.getChannel(channelUrl, chat: chat);
@@ -228,10 +230,11 @@ abstract class BaseChannel implements Cacheable {
     }
   }
 
-  static Future<BaseChannel> refreshChannel(ChannelType channelType,
-      String channelUrl, {
-        Chat? chat,
-      }) async {
+  static Future<BaseChannel> refreshChannel(
+    ChannelType channelType,
+    String channelUrl, {
+    Chat? chat,
+  }) async {
     switch (channelType) {
       case ChannelType.group:
         return GroupChannel.refresh(channelUrl, chat: chat);
@@ -264,8 +267,7 @@ abstract class BaseChannel implements Cacheable {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(
+  int get hashCode => Object.hash(
         channelUrl,
         name,
         coverUrl,
@@ -297,5 +299,23 @@ abstract class BaseChannel implements Cacheable {
 
     fromCache = other.fromCache;
     dirty = other.dirty;
+  }
+
+  Map<String, dynamic> toJson();
+
+  Uint8List serialize() {
+    return Uint8List.fromList(jsonEncode(toJson()).codeUnits);
+  }
+
+  static BaseChannel? buildFromSerializedData(Uint8List data) {
+    final json = jsonDecode(String.fromCharCodes(data));
+    if (json['channel_type'] == ChannelType.group.name) {
+      return GroupChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['channel_type'] == ChannelType.open.name) {
+      return OpenChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['channel_type'] == ChannelType.feed.name) {
+      return FeedChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    }
+    return null;
   }
 }

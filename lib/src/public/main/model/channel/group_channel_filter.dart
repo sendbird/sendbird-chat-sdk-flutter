@@ -78,6 +78,10 @@ class GroupChannelFilter {
   @JsonKey(name: 'metadata_value_startswith')
   String? metaDataValueStartsWithFilter;
 
+  static GroupChannelFilter fromJson(Map<String, dynamic> json) {
+    return _$GroupChannelFilterFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$GroupChannelFilterToJson(this);
     if (json['metadata_key'] == null) {

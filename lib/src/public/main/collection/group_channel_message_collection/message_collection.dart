@@ -7,6 +7,10 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 
 /// Message collection that handles message lists.
 class MessageCollection extends BaseMessageCollection {
+  /// The list of succeeded message list in this collection.
+  @override
+  final List<BaseMessage> messageList = [];
+
   /// The [GroupChannel] tracked by this [MessageCollection].
   GroupChannel get channel => baseChannel as GroupChannel;
 

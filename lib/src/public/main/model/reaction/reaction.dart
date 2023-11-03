@@ -8,7 +8,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.
 part 'reaction.g.dart';
 
 /// Objects representing a reaction.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Reaction {
   /// The key of the reaction.
   final String key;
@@ -53,6 +53,8 @@ class Reaction {
 
   factory Reaction.fromJson(Map<String, dynamic> json) =>
       _$ReactionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReactionToJson(this);
 
   @override
   bool operator ==(other) {

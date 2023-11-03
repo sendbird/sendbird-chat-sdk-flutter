@@ -14,6 +14,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_create_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/open_channel_update_params.dart';
 
@@ -21,7 +22,7 @@ part 'open_channel.g.dart';
 part 'open_channel_operation.dart';
 
 /// Represents an open channel.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class OpenChannel extends BaseChannel {
   /// The total number of participants in this channel.
   int participantCount;
@@ -140,6 +141,13 @@ class OpenChannel extends BaseChannel {
 
   factory OpenChannel.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
     return OpenChannel.fromJson(json)..set(chat);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final json = _$OpenChannelToJson(this);
+    json['channel_type'] = ChannelType.open.name; // Check
+    return json;
   }
 
   @override

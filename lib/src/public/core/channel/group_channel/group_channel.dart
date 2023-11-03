@@ -48,6 +48,8 @@ import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_chan
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
@@ -79,9 +81,10 @@ part 'group_channel_typing.dart';
 part 'package:sendbird_chat_sdk/src/internal/main/extensions/group_channel_extensions.dart';
 
 /// Represents a group channel.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class GroupChannel extends BaseChannel {
   /// The last message of the channel.
+  @JsonKey(fromJson: toNullableBaseMessage)
   BaseMessage? lastMessage;
 
   /// Checks whether this channel is a super [GroupChannel].
@@ -145,7 +148,7 @@ class GroupChannel extends BaseChannel {
   Role myRole;
 
   /// My muted state in this channel.
-  @JsonKey(fromJson: boolToMuteState, name: 'is_muted')
+  @JsonKey(fromJson: boolToMuteState, toJson: muteStateToBool, name: 'is_muted')
   MuteState myMutedState;
 
   /// Checks whether unread message count is enabled for this channel.
@@ -189,7 +192,7 @@ class GroupChannel extends BaseChannel {
   List<int> pinnedMessageIds;
 
   /// The last message among channel's pinned messages.
-  @JsonKey(name: 'latest_pinned_message')
+  @JsonKey(fromJson: toNullableBaseMessage, name: 'latest_pinned_message')
   BaseMessage? lastPinnedMessage;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -197,7 +200,6 @@ class GroupChannel extends BaseChannel {
 
   int _lastStartTypingTimestamp;
   int _lastEndTypingTimestamp;
-  int _lastMarkAsReadTimestamp;
 
   GroupChannel({
     required String channelUrl,
@@ -241,7 +243,6 @@ class GroupChannel extends BaseChannel {
     bool isEphemeral = false,
   })  : _lastStartTypingTimestamp = 0,
         _lastEndTypingTimestamp = 0,
-        _lastMarkAsReadTimestamp = 0,
         super(
           channelUrl: channelUrl,
           name: name,
@@ -375,6 +376,13 @@ class GroupChannel extends BaseChannel {
 
   factory GroupChannel.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
     return GroupChannel.fromJson(json)..set(chat);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final json = _$GroupChannelToJson(this);
+    json['channel_type'] = ChannelType.group.name; // Check
+    return json;
   }
 
   @override

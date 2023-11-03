@@ -10,6 +10,8 @@ export 'src/public/core/channel/open_channel/open_channel.dart';
 export 'src/public/core/message/admin_message.dart';
 export 'src/public/core/message/base_message.dart';
 export 'src/public/core/message/file_message.dart';
+export 'src/public/core/message/notification_message.dart';
+export 'src/public/core/message/root_message.dart';
 export 'src/public/core/message/user_message.dart';
 export 'src/public/core/user/member.dart';
 export 'src/public/core/user/restricted_user.dart';

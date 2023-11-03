@@ -9,7 +9,7 @@ class NotificationStat extends DefaultStat {
   final String templateKey;
   final String channelUrl;
   final List<String> tags;
-  final int messageId;
+  final String messageId;
   final String source;
   final int messageTs;
 
@@ -65,7 +65,7 @@ class NotificationStat extends DefaultStat {
               ?.map((tag) => tag as String)
               .toList() ??
           [];
-      final int? messageId = data['message_id'] as int?;
+      final String? messageId = data['message_id'];
       final String? source = data['source'] as String?;
       final int? messageTs = data['message_ts'] as int?;
 

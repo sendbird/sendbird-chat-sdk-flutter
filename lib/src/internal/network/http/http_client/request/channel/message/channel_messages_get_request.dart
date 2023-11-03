@@ -4,7 +4,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 
@@ -48,21 +48,21 @@ class ChannelMessagesGetRequest extends ApiRequest {
 
   @override
   Future<ChannelMessagesGetResponse> response(Map<String, dynamic> res) async {
-    final baseMessages = (res['messages'] as List)
-        .map((e) => BaseMessage.getMessageFromJsonWithChat(chat, e,
+    final messages = (res['messages'] as List)
+        .map((e) => RootMessage.getMessageFromJsonWithChat(chat, e,
             channelType: channelType))
         .toList();
     final hasNext = res['has_next'] as bool?;
 
     return ChannelMessagesGetResponse(
-      messages: List<BaseMessage>.from(baseMessages),
+      messages: messages,
       hasNext: hasNext,
     );
   }
 }
 
 class ChannelMessagesGetResponse {
-  final List<BaseMessage> messages;
+  final List<RootMessage> messages;
   final bool? hasNext;
 
   ChannelMessagesGetResponse({

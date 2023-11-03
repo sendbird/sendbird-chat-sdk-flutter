@@ -8,12 +8,6 @@ extension GroupChannelRead on GroupChannel {
   Future<void> markAsRead() async {
     sbLog.i(StackTrace.current);
 
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if (now - _lastMarkAsReadTimestamp <= 1000) {
-      throw MarkAsReadRateLimitExceededException();
-    }
-
-    _lastMarkAsReadTimestamp = now;
     final cmd = Command.buildRead(channelUrl);
     await chat.commandManager.sendCommand(cmd);
   }

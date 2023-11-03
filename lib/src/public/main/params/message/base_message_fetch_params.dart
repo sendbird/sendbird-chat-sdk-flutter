@@ -25,6 +25,10 @@ class BaseMessageFetchParams {
   @JsonKey(name: 'include_reply_type')
   ReplyType? replyType;
 
+  static BaseMessageFetchParams fromJson(Map<String, dynamic> json) {
+    return _$BaseMessageFetchParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$BaseMessageFetchParamsToJson(this);
     if (replyType != null) {

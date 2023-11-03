@@ -22,7 +22,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 //------------------------------//
 // GroupChannel changeLogs
 //------------------------------//
-  void requestGroupChannelChangeLogs(
+  Future<void> _requestGroupChannelChangeLogs(
       {CollectionEventSource? eventSource}) async {
     final params = GroupChannelChangeLogsParams();
     final List<GroupChannel> updatedChannels = [];

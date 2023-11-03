@@ -6,7 +6,7 @@ import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 part 'thread_info.g.dart';
 
 /// Represents a thread info of a message.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ThreadInfo {
   /// The total number of replies in a specific thread.
   /// A value of 0 indicates there is no reply in the thread.
@@ -31,6 +31,8 @@ class ThreadInfo {
 
   factory ThreadInfo.fromJson(Map<String, dynamic> json) =>
       _$ThreadInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ThreadInfoToJson(this);
 
   @override
   bool operator ==(other) {

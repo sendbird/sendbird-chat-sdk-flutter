@@ -332,3 +332,10 @@ enum LogLevel {
   warning,
   info,
 }
+
+/// NotificationMessageStatus
+/// @since 4.1.0
+enum NotificationMessageStatus {
+  sent,
+  read,
+}

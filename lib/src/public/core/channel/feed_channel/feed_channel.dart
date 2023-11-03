@@ -3,22 +3,28 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/sendbird_statistics.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/feed_channel/feed_channel_mark_as_read_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/feed_channel/feed_channel_refresh_request.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
-import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
-import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/notification_category.dart';
 
 /// Represents a feed channel.
 /// @since 4.0.3
 class FeedChannel extends BaseChannel {
+  static const _logImpressionMessagesLimit = 30;
+  static const _logCustomMessagesLimit = 30;
+  static const _logCustomTopicLengthLimit = 15;
+
   /// The unique channel URL.
   /// @since 4.0.3
   @override
@@ -59,13 +65,13 @@ class FeedChannel extends BaseChannel {
   /// @since 4.0.3
   int get myLastRead => groupChannel.myLastRead;
 
-  /// The last message of the channel.
-  /// @since 4.0.3
-  BaseMessage? get lastMessage => groupChannel.lastMessage;
-
   /// The unread message count for this channel for the current [User].
   /// @since 4.0.3
   int get unreadMessageCount => groupChannel.unreadMessageCount;
+
+  /// The last message of the channel.
+  /// @since 4.1.0
+  NotificationMessage? lastMessage;
 
   /// isTemplateLabelEnabled
   /// @since 4.0.6
@@ -81,15 +87,14 @@ class FeedChannel extends BaseChannel {
   List<NotificationCategory> notificationCategories;
 
   GroupChannel groupChannel;
-  int _lastMarkAsReadTimestamp;
 
   FeedChannel({
     required this.groupChannel,
-    this.isCategoryFilterEnabled,
+    this.lastMessage,
     this.isTemplateLabelEnabled,
+    this.isCategoryFilterEnabled,
     List<NotificationCategory>? notificationCategories,
   })  : notificationCategories = notificationCategories ?? [],
-        _lastMarkAsReadTimestamp = 0,
         super(
           channelUrl: groupChannel.channelUrl,
           name: groupChannel.name,
@@ -110,6 +115,13 @@ class FeedChannel extends BaseChannel {
   factory FeedChannel.fromJson(Map<String, dynamic> json) {
     return _fromJson(SendbirdChat().chat, json)
       ..set(SendbirdChat().chat); // Set the singleton chat
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final json = groupChannel.toJson();
+    json['channel_type'] = ChannelType.feed.name; // Check
+    return json;
   }
 
   static FeedChannel _fromJson(Chat chat, Map<String, dynamic> json) {
@@ -139,8 +151,11 @@ class FeedChannel extends BaseChannel {
 
     return FeedChannel(
       groupChannel: GroupChannel.fromJsonWithChat(chat, json),
-      isCategoryFilterEnabled: json['is_category_filter_enabled'] as bool?,
+      lastMessage: json['last_message'] != null
+          ? NotificationMessage.fromJsonWithChat(chat, json['last_message'])
+          : null,
       isTemplateLabelEnabled: json['is_template_label_enabled'] as bool?,
+      isCategoryFilterEnabled: json['is_category_filter_enabled'] as bool?,
       notificationCategories: notificationCategories,
     );
   }
@@ -186,18 +201,142 @@ class FeedChannel extends BaseChannel {
   }
 
   /// Sends mark as read to this channel.
-  /// @since 4.0.3
+  /// @since 4.1.0
   Future<void> markAsRead() async {
     sbLog.i(StackTrace.current);
 
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if (now - _lastMarkAsReadTimestamp <= 1000) {
-      throw MarkAsReadRateLimitExceededException();
-    }
+    final res = await chat.apiClient
+        .send<Map<String, dynamic>>(FeedChannelMarkAsReadRequest(
+      chat,
+      channelUrl: channelUrl,
+    ));
+    final ts = res['ts'] ?? 0;
 
-    _lastMarkAsReadTimestamp = now;
-    final cmd = Command.buildRead(channelUrl);
-    await chat.commandManager.sendCommand(cmd);
+    chat.collectionManager.markAsReadForFeedChannel(channelUrl, null);
+
+    if (chat.currentUser != null) {
+      final status = ReadStatus(
+        userId: chat.currentUser!.userId,
+        timestamp: ts,
+        channelUrl: channelUrl,
+        channelType: channelType,
+      );
+      status.saveToCache(chat);
+    }
+    groupChannel.myLastRead = ts;
+
+    if (groupChannel.unreadMessageCount > 0 ||
+        groupChannel.unreadMentionCount > 0) {
+      groupChannel.clearUnreadCount();
+      // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+    }
+  }
+
+  /// Sends mark as read to this channel by messages.
+  /// @since 4.1.0
+  Future<void> markAsReadBy(List<NotificationMessage> messages) async {
+    sbLog.i(StackTrace.current);
+
+    final List<String> messageIds = [];
+    for (final message in messages) {
+      if (message.messageStatus == NotificationMessageStatus.sent) {
+        messageIds.add(message.notificationId);
+      }
+    }
+    if (messageIds.isEmpty) return;
+
+    final res = await chat.apiClient
+        .send<Map<String, dynamic>>(FeedChannelMarkAsReadRequest(
+      chat,
+      channelUrl: channelUrl,
+      messageIds: messageIds,
+    ));
+    final unreadMessageCount = res['unread_message_count'];
+
+    chat.collectionManager.markAsReadForFeedChannel(channelUrl, messageIds);
+
+    if (unreadMessageCount != null &&
+        unreadMessageCount != groupChannel.unreadMessageCount) {
+      groupChannel.unreadMessageCount = unreadMessageCount;
+      // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+    }
+  }
+
+  /// logImpression
+  /// @since 4.1.0
+  Future<bool> logImpression(List<NotificationMessage> messages) async {
+    if (messages.isNotEmpty && messages.length <= _logImpressionMessagesLimit) {
+      bool result = true;
+      for (final message in messages) {
+        final Map<String, dynamic> data = {
+          'action': 'impression',
+          'template_key': message.notificationData?.templateKey ?? '',
+          'channel_url': message.channelUrl,
+          'tags': message.notificationData?.tags ?? [],
+          'message_id': message.notificationId,
+          'source': 'notification',
+          'message_ts': message.createdAt,
+        };
+
+        if (!await SendbirdStatistics.appendStat(
+          type: 'noti:stats',
+          data: data,
+        )) {
+          result = false;
+        }
+      }
+      return result;
+    }
+    return false;
+  }
+
+  /// logCustom
+  /// @since 4.1.0
+  Future<bool> logCustom(
+    List<NotificationMessage> messages,
+    String topic,
+  ) async {
+    if (messages.isNotEmpty &&
+        messages.length <= _logCustomMessagesLimit &&
+        topic.isNotEmpty &&
+        topic.length <= _logCustomTopicLengthLimit) {
+      bool result = true;
+      for (final message in messages) {
+        final Map<String, dynamic> data = {
+          'action': 'custom',
+          'topic': topic,
+          'template_key': message.notificationData?.templateKey ?? '',
+          'channel_url': message.channelUrl,
+          'tags': message.notificationData?.tags ?? [],
+          'message_id': message.notificationId,
+          'source': 'notification',
+          'message_ts': message.createdAt,
+        };
+
+        if (!await SendbirdStatistics.appendStat(
+          type: 'noti:stats',
+          data: data,
+        )) {
+          result = false;
+        }
+      }
+      return result;
+    }
+    return false;
+  }
+
+  bool shouldUpdateLastMessage(NotificationMessage message) {
+    final lm = lastMessage;
+    if (lm == null) {
+      return true;
+    } else if (lm.createdAt < message.createdAt) {
+      return true;
+    } else if (lm.createdAt == message.createdAt &&
+        lm.notificationId == message.notificationId &&
+        lm.updatedAt < message.updatedAt) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -208,6 +347,7 @@ class FeedChannel extends BaseChannel {
     final eq = const ListEquality().equals;
     return other is FeedChannel &&
         other.groupChannel == groupChannel &&
+        other.lastMessage == lastMessage &&
         other.isTemplateLabelEnabled == isTemplateLabelEnabled &&
         other.isCategoryFilterEnabled == isCategoryFilterEnabled &&
         eq(other.notificationCategories, notificationCategories);
@@ -217,6 +357,7 @@ class FeedChannel extends BaseChannel {
   int get hashCode => Object.hash(
         super.hashCode,
         groupChannel.hashCode,
+        lastMessage,
         isTemplateLabelEnabled,
         isCategoryFilterEnabled,
         notificationCategories,
@@ -227,7 +368,7 @@ class FeedChannel extends BaseChannel {
     super.copyWith(other);
     if (other is FeedChannel) {
       groupChannel.copyWith(other.groupChannel);
-
+      lastMessage = other.lastMessage;
       isTemplateLabelEnabled = other.isTemplateLabelEnabled;
       isCategoryFilterEnabled = other.isCategoryFilterEnabled;
       notificationCategories =

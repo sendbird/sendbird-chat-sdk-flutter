@@ -1,3 +1,21 @@
+## v4.1.0 (Nov 3, 2023)
+
+### Features
+
+#### NotificationMessage
+- Added `NotificationMessage` with `notificationId`, `messageStatus` and `notificationData`
+- Added `markAsReadBy()`, `logImpression()` and `logCustom()` in `FeedChannel`
+- Replaced `BaseMessage? lastMessage` with `NotificationMessage? lastMessage` in `FeedChannel`
+- Replaced `List<BaseMessage> messageList` with `List<NotificationMessage> messageList` in `NotificationCollection`
+- Modified `onMessagesAdded()`, `onMessagesUpdated()` and `onMessagesDeleted()` in `NotificationCollectionHandler`
+- Modified `onMessageReceived()` and `onChannelChanged()` in `FeedChannelHandler`
+
+### Deprecated Methods
+- Removed `onTotalUnreadMessageCountUpdated()` in `UserEventHandler`
+
+### Improvements
+- Improved stability
+
 ## v4.0.13 (Sep 27, 2023)
 
 ### Features

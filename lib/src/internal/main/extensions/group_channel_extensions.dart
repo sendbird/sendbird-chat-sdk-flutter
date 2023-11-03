@@ -21,24 +21,29 @@ extension GroupChannelExtensions on GroupChannel {
     return false;
   }
 
-  bool updateUnreadCount(BaseMessage message) {
+  bool updateUnreadCount(RootMessage message) {
     final currentUser = chat.chatContext.currentUser;
 
-    if (!message.isSilent) {
-      if (message is AdminMessage) {
-        _increaseUnreadMessageCount();
-        return true;
-      }
+    if (message is BaseMessage) {
+      if (!message.isSilent) {
+        if (message is AdminMessage) {
+          _increaseUnreadMessageCount();
+          return true;
+        }
 
-      if (message.sender?.isCurrentUser == false) {
-        _increaseUnreadMessageCount();
-        return true;
-      }
+        if (message.sender?.isCurrentUser == false) {
+          _increaseUnreadMessageCount();
+          return true;
+        }
 
-      if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
-        increaseUnreadMentionCount();
-        return true;
+        if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
+          increaseUnreadMentionCount();
+          return true;
+        }
       }
+    } else if (message is NotificationMessage) {
+      _increaseUnreadMessageCount();
+      return true;
     }
     return false;
   }
@@ -150,7 +155,7 @@ extension GroupChannelExtensions on GroupChannel {
   void _increaseUnreadMessageCount() {
     if (canChangeUnreadMessageCount) {
       unreadMessageCount++;
-    } else {}
+    }
   }
 
   void _refreshMemberCounts() {

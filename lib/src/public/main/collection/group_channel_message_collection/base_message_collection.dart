@@ -8,9 +8,9 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 
 /// The base message collection that handles message lists.
 /// @since 4.0.3
-class BaseMessageCollection {
+abstract class BaseMessageCollection {
   /// The list of succeeded message list in this collection.
-  final List<BaseMessage> messageList = [];
+  List<RootMessage> get messageList;
 
   /// The starting point of the collection.
   int get startingPoint => _startingPoint;
@@ -45,7 +45,7 @@ class BaseMessageCollection {
 
   Chat get chat => _chat;
 
-  BaseMessage? get latestMessage => _latestMessage;
+  RootMessage? get latestMessage => _latestMessage;
 
   final BaseChannel _channel;
   final BaseMessageCollectionHandler _handler;
@@ -60,8 +60,8 @@ class BaseMessageCollection {
   bool _isLoading = false;
   bool _hasPrevious = false;
   bool _hasNext = false;
-  BaseMessage? _oldestMessage;
-  BaseMessage? _latestMessage;
+  RootMessage? _oldestMessage;
+  RootMessage? _latestMessage;
 
   BaseMessageCollection({
     required BaseChannel channel,
@@ -282,7 +282,7 @@ class BaseMessageCollection {
 
   bool canAddMessage(
     CollectionEventSource eventSource,
-    BaseMessage addedMessage,
+    RootMessage addedMessage,
   ) {
     if (eventSource == CollectionEventSource.messageLoadPrevious ||
         eventSource == CollectionEventSource.messageLoadNext) {
@@ -304,11 +304,11 @@ class BaseMessageCollection {
     return true;
   }
 
-  int _getExistedMessageCountInMessageList(List<BaseMessage> loadedMessages) {
+  int _getExistedMessageCountInMessageList(List<RootMessage> loadedMessages) {
     int existedMessageCount = 0;
     for (final loadedMessage in loadedMessages) {
       for (final message in messageList) {
-        if (loadedMessage.messageId == message.messageId) {
+        if (loadedMessage.getMessageId() == message.getMessageId()) {
           existedMessageCount++;
           break;
         }

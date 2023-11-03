@@ -1,21 +1,20 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/utils/type_checker.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_message_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
@@ -27,7 +26,6 @@ import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 import 'package:sendbird_chat_sdk/src/public/main/handler/channel_handler.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/scheduled_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
-import 'package:sendbird_chat_sdk/src/public/main/model/message/notification_data.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/og/og_meta_data.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
@@ -41,7 +39,7 @@ import 'package:sendbird_chat_sdk/src/public/main/params/message/threaded_messag
 part 'package:sendbird_chat_sdk/src/internal/main/extensions/base_message_extensions.dart';
 
 /// Base class for messages.
-abstract class BaseMessage {
+abstract class BaseMessage extends RootMessage {
   /// The request ID of the message.
   final String? requestId;
 
@@ -54,23 +52,6 @@ abstract class BaseMessage {
 
   /// The sending status of the message.
   SendingStatus? sendingStatus;
-
-  /// The channel URL of the channel this message belongs to.
-  final String channelUrl;
-
-  /// The [ChannelType] of the channel this message belongs to.
-  @JsonKey(defaultValue: ChannelType.group, unknownEnumValue: ChannelType.group)
-  ChannelType channelType;
-
-  /// The mention type. Refer to [MentionType].
-  @JsonKey(unknownEnumValue: null)
-  final MentionType? mentionType;
-
-  /// The creation time of the message in milliseconds.
-  final int createdAt;
-
-  /// The updated time of the message in milliseconds.
-  final int updatedAt;
 
   /// Determines whether the current message is a replied message and also a message was replied to the channel.
   @JsonKey(name: 'is_reply_to_channel', defaultValue: false)
@@ -97,13 +78,6 @@ abstract class BaseMessage {
   /// The thread info of the message.
   ThreadInfo? threadInfo;
 
-  /// All [MessageMetaArray]s of the message.
-  @JsonKey(name: 'sorted_metaarray')
-  List<MessageMetaArray>? allMetaArrays;
-
-  /// The custom type of the message.
-  final String? customType;
-
   /// The message's survival seconds.
   @JsonKey(defaultValue: -1)
   final int? messageSurvivalSeconds;
@@ -124,10 +98,6 @@ abstract class BaseMessage {
   @JsonKey(name: 'is_op_msg')
   final bool isOperatorMessage;
 
-  /// The custom data of the message.
-  @JsonKey(fromJson: TypeChecker.fromJsonToNullableString)
-  String? data;
-
   /// The [OGMetaData] of the message. (https://ogp.me/)
   /// Might be null if
   /// 1. Application does not support OG-TAG. (all new applications support OG-TAG by default)
@@ -144,63 +114,46 @@ abstract class BaseMessage {
   @JsonKey(includeFromJson: false, includeToJson: false)
   ScheduledInfo? scheduledInfo;
 
-  /// [extendedMessage] is used for Sendbird UiKit.
-  /// Only featured in [GroupChannel]
-  @JsonKey(name: "extended_message", defaultValue: {})
-  Map<String, dynamic> extendedMessage;
-
-  /// notificationData
-  /// @since 4.0.7
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  NotificationData? notificationData;
-
   final bool forceUpdateLastMessage;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Sender? _sender;
 
-  @JsonKey(defaultValue: [], name: 'mentioned_users')
-  List<User> _mentionedUsers;
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  late Chat chat;
-
   BaseMessage({
+    required super.channelUrl,
+    required super.channelType,
     required this.message,
     required this.sendingStatus,
-    required this.channelUrl,
-    required this.channelType,
+    super.data,
+    super.customType,
+    super.mentionType,
+    super.mentionedUsers,
+    super.allMetaArrays,
+    super.extendedMessage,
+    super.createdAt,
+    super.updatedAt,
     Sender? sender,
-    List<User> mentionedUsers = const <User>[],
     this.requestId,
     this.messageId = 0,
-    this.mentionType,
     this.isReplyToChannel = false,
-    this.createdAt = 0,
-    this.updatedAt = 0,
     this.parentMessageId,
     Map<String, dynamic>? parentMessage,
     this.threadInfo,
-    this.allMetaArrays,
-    this.customType,
     this.messageSurvivalSeconds,
     this.forceUpdateLastMessage = false,
     this.isSilent = false,
     this.errorCode,
     this.isOperatorMessage = false,
-    this.data,
     this.ogMetaData,
     this.reactions = const <Reaction>[],
     this.scheduledInfo,
-    this.extendedMessage = const {},
-  })  : _sender = sender,
-        _mentionedUsers = mentionedUsers {
+  }) : _sender = sender {
     if (parentMessage != null && parentMessageId != null) {
       parentMessage['message_id'] = parentMessageId;
       parentMessage['channel_url'] = channelUrl;
       parentMessage['channel_type'] = channelType;
 
-      this.parentMessage = BaseMessage.fromJson(parentMessage);
+      this.parentMessage = RootMessage.fromJson(parentMessage) as BaseMessage;
     }
 
     if (sendingStatus == null) {
@@ -214,14 +167,18 @@ abstract class BaseMessage {
     }
   }
 
+  MessageType get messageType => this is UserMessage
+      ? MessageType.user
+      : this is FileMessage
+          ? MessageType.file
+          : MessageType.admin;
+
+  @override
   void set(Chat chat) {
-    this.chat = chat;
+    super.set(chat);
+
     parentMessage?.set(chat);
     _sender?.set(chat);
-
-    for (final element in _mentionedUsers) {
-      element.set(chat);
-    }
 
     final users = threadInfo?.mostRepliesUsers;
     if (users != null) {
@@ -254,27 +211,6 @@ abstract class BaseMessage {
       }
     }
     return _sender;
-  }
-
-  set mentionedUsers(value) => _mentionedUsers = value;
-
-  /// The mentioned users of the message.
-  List<User> get mentionedUsers {
-    if (chat.chatContext.options.useMemberInfoInMessage) {
-      final channel =
-          chat.channelCache.find<BaseChannel>(channelKey: channelUrl);
-      if (channel is GroupChannel) {
-        for (final mentionedUser in _mentionedUsers) {
-          final member = channel.getMember(mentionedUser.userId);
-          if (member != null) {
-            mentionedUser.nickname = member.nickname;
-            mentionedUser.profileUrl = member.profileUrl;
-            mentionedUser.metaData = member.metaData;
-          }
-        }
-      }
-    }
-    return _mentionedUsers;
   }
 
   /// Whether the message is resendable.
@@ -392,7 +328,7 @@ abstract class BaseMessage {
         parentMessageId: messageId,
       ),
     );
-    final messages = res.messages;
+    final messages = List<BaseMessage>.from(res.messages);
 
     return ThreadedMessages(
       parentMessage: messages.first,
@@ -440,6 +376,7 @@ abstract class BaseMessage {
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
+    if (!(super == (other))) return false;
 
     final eq = const ListEquality().equals;
     return other is BaseMessage &&
@@ -447,14 +384,6 @@ abstract class BaseMessage {
         other.message == message &&
         other.sendingStatus == sendingStatus &&
         other._sender == _sender &&
-        other.channelUrl == channelUrl &&
-        other.channelType == channelType &&
-        other.mentionType == mentionType &&
-        eq(other._mentionedUsers, _mentionedUsers) &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt &&
-        other.customType == customType &&
-        other.data == data &&
         other.isSilent == isSilent &&
         other.threadInfo == threadInfo &&
         eq(other.reactions, reactions);
@@ -462,148 +391,30 @@ abstract class BaseMessage {
 
   @override
   int get hashCode => Object.hash(
+        super.hashCode,
         messageId,
         message,
         sendingStatus,
         _sender,
-        channelUrl,
-        channelType,
-        _mentionedUsers,
-        mentionType,
-        createdAt,
-        updatedAt,
         isSilent,
-        customType,
-        data,
         parentMessageId,
         threadInfo,
-        allMetaArrays,
         reactions,
       );
 
-  static T getMessageFromJsonWithChat<T extends BaseMessage>(
-    Chat chat,
-    Map<String, dynamic> json, {
-    ChannelType? channelType,
-    String? commandType,
-  }) {
-    return _fromJson<T>(
-      json,
-      chat: chat,
-      channelType: channelType,
-      commandType: commandType,
-    );
+  Uint8List serialize() {
+    return Uint8List.fromList(jsonEncode(toJson()).codeUnits);
   }
 
-  factory BaseMessage.fromJson(Map<String, dynamic> json) {
-    return _fromJson<BaseMessage>(json);
-  }
-
-  factory BaseMessage.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
-    return BaseMessage.fromJson(json)..set(chat);
-  }
-
-  static T _fromJson<T extends BaseMessage>(
-    Map<String, dynamic> json, {
-    Chat? chat,
-    ChannelType? channelType,
-    String? commandType,
-  }) {
-    // BaseMessage backward compatibility
-    if (json['custom'] != null) json['data'] = json['custom'];
-    if (json['ts'] != null) json['created_at'] = json['ts'];
-    if (json['msg_id'] != null) json['message_id'] = json['msg_id'];
-    if (json['req_id'] != null) json['request_id'] = json['req_id'];
-
-    // Insert type if channel is provided manually
-    if (channelType != null) {
-      json['channel_type'] = channelType.asString();
+  static BaseMessage? buildFromSerializedData(Uint8List data) {
+    final json = jsonDecode(String.fromCharCodes(data));
+    if (json['message_type'] == MessageType.user.name) {
+      return UserMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['message_type'] == MessageType.file.name) {
+      return FileMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['message_type'] == MessageType.admin.name) {
+      return AdminMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
     }
-
-    // Insert reply_to_channel manually
-    if (json['reply_to_channel'] != null) {
-      json['is_reply_to_channel'] = json['reply_to_channel'];
-    }
-
-    String? type = commandType;
-    if (type == null) {
-      final Map<String, dynamic>? file = json['file'];
-      if (file != null && file.isNotEmpty) {
-        // The 'type' value of FileMessage payload can be 'FILE' or 'image/jpeg'.
-        type = CommandType.fileMessage.value;
-      } else {
-        type = json['type'] as String;
-      }
-    }
-
-    // final type = commandType ?? json['type'] as String;
-
-    BaseMessage message;
-    if (chat != null) {
-      if (T == UserMessage || CommandString.isUserMessage(type)) {
-        message = UserMessage.fromJsonWithChat(chat, json) as T;
-      } else if (T == FileMessage || CommandString.isFileMessage(type)) {
-        message = FileMessage.fromJsonWithChat(chat, json) as T;
-      } else if (T == AdminMessage || CommandString.isAdminMessage(type)) {
-        message = AdminMessage.fromJsonWithChat(chat, json) as T;
-      } else {
-        throw InvalidMessageTypeException();
-      }
-    } else {
-      if (CommandString.isUserMessage(type)) {
-        message = UserMessage.fromJson(json);
-      } else if (CommandString.isFileMessage(type)) {
-        message = FileMessage.fromJson(json);
-      } else if (CommandString.isAdminMessage(type)) {
-        message = AdminMessage.fromJson(json);
-      } else {
-        throw InvalidMessageTypeException();
-      }
-    }
-
-    final metaArray = json['metaarray'];
-    final metaArrayKeys = List<String>.from(json['metaarray_key_order'] ?? []);
-
-    // NOTE: sorted_metaarray is from API, metaarray list is local,
-    // metaarray map is from Web, so had to handle separately.
-    if (metaArray is List) {
-      // Local cmd case
-      message.allMetaArrays = metaArray
-          .map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } else if (metaArray is Map && metaArrayKeys.isNotEmpty) {
-      // WebSocket cmd result case
-      message.allMetaArrays = metaArrayKeys.map((e) {
-        final value = List<String>.from(metaArray[e]);
-        return MessageMetaArray(key: e, value: value);
-      }).toList();
-    }
-
-    // notificationData
-    if (message.extendedMessage.isNotEmpty) {
-      if (message.extendedMessage['sub_type'] != null &&
-          (message.extendedMessage['sub_type'] as int) == 0) {
-        final subData = message.extendedMessage['sub_data'];
-        if (subData != null) {
-          Map<String, dynamic>? subDataMap = jsonDecode(subData);
-          if (subDataMap != null) {
-            final List<String>? tags = (subDataMap['tags'] as List<dynamic>?)
-                ?.map((value) => value as String)
-                .toList();
-
-            message.notificationData = NotificationData(
-              templateKey: subDataMap['template_key'] as String? ?? '',
-              templateVariables:
-                  subDataMap['template_variables'] as Map<String, dynamic>? ??
-                      {},
-              label: subDataMap['label'] as String?,
-              tags: tags,
-            );
-          }
-        }
-      }
-    }
-
-    return message as T;
+    return null;
   }
 }
