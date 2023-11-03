@@ -2,6 +2,7 @@
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
@@ -61,7 +62,7 @@ class PollVoterListQueryResponse {
       _$PollVoterListQueryResponseFromJson(json);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class UserListQueryResponse<T extends User> {
   @_UserConverter()
   List<T> users;
@@ -81,9 +82,11 @@ class UserListQueryResponse<T extends User> {
     }
     return res;
   }
+
+  Map<String, dynamic> toJson() => _$UserListQueryResponseToJson(this);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ChannelListQueryResponse<T extends BaseChannel> {
   @JsonKey(name: 'channels')
   @_ChannelConverter()
@@ -104,9 +107,11 @@ class ChannelListQueryResponse<T extends BaseChannel> {
     }
     return res;
   }
+
+  Map<String, dynamic> toJson() => _$ChannelListQueryResponseToJson(this);
 }
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class FeedChannelListQueryResponse {
   @JsonKey(name: 'channels')
   @FeedChannelConverter()
@@ -127,10 +132,13 @@ class FeedChannelListQueryResponse {
     }
     return res;
   }
+
+  Map<String, dynamic> toJson() => _$FeedChannelListQueryResponseToJson(this);
 }
 
 @JsonSerializable(createToJson: false)
 class MessageSearchQueryResponse {
+  @JsonKey(fromJson: toBaseMessageList)
   List<BaseMessage> results;
 
   bool hasNext;
@@ -167,7 +175,7 @@ class MetaDataResponse {
 
 @JsonSerializable(createToJson: false)
 class ScheduledMessageResponse {
-  @JsonKey(defaultValue: [])
+  @JsonKey(fromJson: toBaseMessageList, defaultValue: [])
   List<BaseMessage> scheduledMessages;
 
   String? next;

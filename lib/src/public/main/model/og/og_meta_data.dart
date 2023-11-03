@@ -8,7 +8,7 @@ part 'og_meta_data.g.dart';
 /// Represents a OGMetaData of a url.
 /// For Specifications, see [https://ogp.me/](https://ogp.me/).
 /// Currently we only support images.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class OGMetaData {
   /// The title of the object as it should appear within the graph. ex: "The Rock".
   @JsonKey(name: 'og:title')
@@ -39,4 +39,6 @@ class OGMetaData {
 
   factory OGMetaData.fromJson(Map<String, dynamic> json) =>
       _$OGMetaDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OGMetaDataToJson(this);
 }

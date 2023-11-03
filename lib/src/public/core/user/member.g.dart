@@ -35,6 +35,25 @@ Member _$MemberFromJson(Map<String, dynamic> json) => Member(
       requireAuth: json['require_auth_for_profile_image'] as bool? ?? false,
     )..isActive = json['is_active'] as bool?;
 
+Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
+      'user_id': instance.userId,
+      'nickname': instance.nickname,
+      'profile_url': instance.profileUrl,
+      'is_online': connectionStatusToBool(instance.connectionStatus),
+      'last_seen_at': instance.lastSeenAt,
+      'is_active': instance.isActive,
+      'preferred_languages': instance.preferredLanguages,
+      'friend_discovery_key': instance.friendDiscoveryKey,
+      'friend_name': instance.friendName,
+      'metadata': instance.metaData,
+      'require_auth_for_profile_image': instance.requireAuth,
+      'state': _$MemberStateEnumMap[instance.memberState]!,
+      'is_blocked_by_me': instance.isBlockedByMe,
+      'is_blocking_me': instance.isBlockingMe,
+      'is_muted': instance.isMuted,
+      'role': _$RoleEnumMap[instance.role]!,
+    };
+
 const _$MemberStateEnumMap = {
   MemberState.none: 'none',
   MemberState.invited: 'invited',

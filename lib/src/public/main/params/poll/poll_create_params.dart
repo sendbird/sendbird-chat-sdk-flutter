@@ -38,6 +38,10 @@ class PollCreateParams {
     this.closeAt = -1, // Default value
   });
 
+  static PollCreateParams fromJson(Map<String, dynamic> json) {
+    return _$PollCreateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$PollCreateParamsToJson(this);
     json.removeWhere((key, value) => value == null);

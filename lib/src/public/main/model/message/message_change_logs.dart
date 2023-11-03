@@ -1,7 +1,12 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 
 part 'message_change_logs.g.dart';
 
@@ -9,12 +14,14 @@ part 'message_change_logs.g.dart';
 @JsonSerializable(createToJson: false)
 class MessageChangeLogs {
   /// The updated messages.
-  @JsonKey(defaultValue: [], name: 'updated')
-  final List<BaseMessage> updatedMessages;
+  /// [BaseMessage] for [BaseChannel], [NotificationMessage] for [FeedChannel].
+  @JsonKey(fromJson: toRootMessageList, defaultValue: [], name: 'updated')
+  final List<RootMessage> updatedMessages;
 
   /// The deleted message IDs.
-  @JsonKey(fromJson: _deletedMessageIds, name: 'deleted')
-  final List<int> deletedMessageIds;
+  /// [int] for [BaseMessage], [String] for [NotificationMessage].
+  @JsonKey(fromJson: toDeletedMessageIds, name: 'deleted')
+  final List<dynamic> deletedMessageIds;
 
   /// True if it has more changelogs.
   @JsonKey(defaultValue: false)
@@ -34,6 +41,3 @@ class MessageChangeLogs {
   static MessageChangeLogs fromJson(Map<String, dynamic> json) =>
       _$MessageChangeLogsFromJson(json);
 }
-
-List<int> _deletedMessageIds(List<dynamic> json) =>
-    json.map((e) => e['message_id'] as int).toList();

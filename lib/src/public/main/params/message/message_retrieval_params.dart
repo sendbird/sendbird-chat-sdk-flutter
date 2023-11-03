@@ -24,6 +24,10 @@ class MessageRetrievalParams extends BaseMessageFetchParams {
     required this.messageId,
   });
 
+  static MessageRetrievalParams fromJson(Map<String, dynamic> json) {
+    return _$MessageRetrievalParamsFromJson(json);
+  }
+
   @override
   Map<String, dynamic> toJson() {
     final json = super.toJson();

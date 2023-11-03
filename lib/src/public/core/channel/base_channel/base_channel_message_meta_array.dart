@@ -27,8 +27,8 @@ extension BaseChannelMessageMetaArray on BaseChannel {
 
     var result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      return BaseMessage.getMessageFromJsonWithChat(chat, result.payload,
-          commandType: result.cmd);
+      return RootMessage.getMessageFromJsonWithChat(chat, result.payload,
+          commandType: result.cmd) as BaseMessage;
     } else {
       throw WebSocketFailedException();
     }
@@ -57,8 +57,8 @@ extension BaseChannelMessageMetaArray on BaseChannel {
 
     var result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      return BaseMessage.getMessageFromJsonWithChat(chat, result.payload,
-          commandType: result.cmd);
+      return RootMessage.getMessageFromJsonWithChat(chat, result.payload,
+          commandType: result.cmd) as BaseMessage;
     } else {
       throw WebSocketFailedException();
     }
@@ -85,8 +85,8 @@ extension BaseChannelMessageMetaArray on BaseChannel {
 
     var result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      return BaseMessage.getMessageFromJsonWithChat(chat, result.payload,
-          commandType: result.cmd);
+      return RootMessage.getMessageFromJsonWithChat(chat, result.payload,
+          commandType: result.cmd) as BaseMessage;
     } else {
       throw WebSocketFailedException();
     }
@@ -113,8 +113,8 @@ extension BaseChannelMessageMetaArray on BaseChannel {
 
     var result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      return BaseMessage.getMessageFromJsonWithChat(chat, result.payload,
-          commandType: result.cmd);
+      return RootMessage.getMessageFromJsonWithChat(chat, result.payload,
+          commandType: result.cmd) as BaseMessage;
     } else {
       throw WebSocketFailedException();
     }

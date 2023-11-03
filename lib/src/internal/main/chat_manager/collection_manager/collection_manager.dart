@@ -30,6 +30,9 @@ class CollectionManager {
   final Map<String, int> lastRequestTsForPollChangeLogs = {};
   final Map<String, int> lastRequestTsForMessagesGap = {};
 
+  bool isGroupChannelCollectionsRefreshing = false;
+  bool isBaseMessageCollectionsRefreshing = false;
+
   CollectionManager({required Chat chat}) : _chat = chat {
     _chat.eventManager.addInternalChannelHandler(
       identifierForInternalGroupChannelHandlerForCollectionManager,
@@ -44,36 +47,79 @@ class CollectionManager {
 //------------------------------//
 // Reconnected
 //------------------------------//
-  void onReconnected() {
-    sbLog.d(StackTrace.current, 'onReconnected()');
-    _refreshGroupChannelCollections();
-    _refreshBaseMessageCollections();
+  Future<void> onLogin() async {
+    sbLog.d(StackTrace.current);
   }
 
-  void _refreshGroupChannelCollections() {
-    if (groupChannelCollections.isNotEmpty) {
-      requestGroupChannelChangeLogs();
+  Future<void> onReconnected() async {
+    sbLog.d(StackTrace.current);
+
+    await refresh();
+  }
+
+  Future<void> refresh() async {
+    sbLog.d(StackTrace.current);
+
+    List<Future<dynamic>> futures = [];
+
+    futures.add(_refreshGroupChannelCollections());
+    futures.add(_refreshBaseMessageCollections());
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
     }
   }
 
-  void _refreshBaseMessageCollections() {
+  Future<void> _refreshGroupChannelCollections() async {
+    isGroupChannelCollectionsRefreshing = true;
+
+    List<Future<dynamic>> futures = [];
+
+    if (groupChannelCollections.isNotEmpty) {
+      futures.add(_requestGroupChannelChangeLogs());
+    }
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
+    }
+
+    isGroupChannelCollectionsRefreshing = false;
+  }
+
+  Future<void> _refreshBaseMessageCollections() async {
+    isBaseMessageCollectionsRefreshing = true;
+
+    List<Future<dynamic>> futures = [];
+
     for (final collection in baseMessageCollections) {
       if (collection.isInitialized) {
-        _requestMessageChangeLogs(collection);
-        _requestPollChangeLogs(collection);
-        _requestMessagesGap(collection);
+        futures.add(_requestMessageChangeLogs(collection));
+        futures.add(_requestPollChangeLogs(collection));
+        futures.add(_requestMessagesGap(collection));
       }
     }
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
+    }
+
+    isBaseMessageCollectionsRefreshing = false;
   }
 
-  void refreshNotificationCollections() {
+  Future<void> refreshNotificationCollections() async {
+    List<Future<dynamic>> futures = [];
+
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
-          _requestMessageChangeLogs(collection);
-          _requestMessagesGap(collection);
+          futures.add(_requestMessageChangeLogs(collection));
+          futures.add(_requestMessagesGap(collection));
         }
       }
+    }
+
+    if (futures.isNotEmpty) {
+      await Future.wait(futures);
     }
   }
 
@@ -98,6 +144,43 @@ class CollectionManager {
       await Future.wait(futures);
     }
   }
+
+  void markAsReadForFeedChannel(String channelUrl, List<String>? messageIds) {
+    for (final collection in baseMessageCollections) {
+      if (collection is NotificationCollection) {
+        if (collection.isInitialized) {
+          if (collection.baseChannel.channelUrl == channelUrl) {
+            // bool isUpdated = false;
+
+            if (messageIds == null) {
+              // All
+              for (final message in collection.messageList) {
+                if (message.messageStatus == NotificationMessageStatus.sent) {
+                  message.messageStatus = NotificationMessageStatus.read;
+                  // isUpdated = true;
+                }
+              }
+            } else {
+              for (final message in collection.messageList) {
+                if (messageIds.contains(message.notificationId)) {
+                  if (message.messageStatus == NotificationMessageStatus.sent) {
+                    message.messageStatus = NotificationMessageStatus.read;
+                    // isUpdated = true;
+                  }
+                }
+              }
+            }
+
+            // if (isUpdated) {
+            //   _chat.eventManager
+            //       .notifyReadStatusUpdated(collection.baseChannel);
+            // }
+            break;
+          }
+        }
+      }
+    }
+  }
 }
 
 //------------------------------//
@@ -115,7 +198,7 @@ class InternalGroupChannelHandlerForCollectionManager
 // BaseChannelHandler - channel
 //------------------------------//
   @override
-  void onMentionReceived(BaseChannel channel, BaseMessage message) {
+  void onMentionReceived(BaseChannel channel, RootMessage message) {
     if (channel is GroupChannel) {
       _collectionManager.sendEventsToGroupChannelCollectionList(
         eventSource: CollectionEventSource.eventMentionReceived,
@@ -288,8 +371,8 @@ class InternalGroupChannelHandlerForCollectionManager
 // BaseChannelHandler - message
 //------------------------------//
   @override
-  void onMessageReceived(BaseChannel channel, BaseMessage message) async {
-    if (channel is GroupChannel) {
+  void onMessageReceived(BaseChannel channel, RootMessage message) async {
+    if (channel is GroupChannel || channel is FeedChannel) {
       for (final messageCollection
           in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
@@ -308,8 +391,8 @@ class InternalGroupChannelHandlerForCollectionManager
   }
 
   @override
-  void onMessageUpdated(BaseChannel channel, BaseMessage message) async {
-    if (channel is GroupChannel) {
+  void onMessageUpdated(BaseChannel channel, RootMessage message) async {
+    if (channel is GroupChannel || channel is FeedChannel) {
       for (final messageCollection
           in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
@@ -352,8 +435,8 @@ class InternalGroupChannelHandlerForCollectionManager
           in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           for (final message in messageCollection.messageList) {
-            if (message.messageId == event.messageId) {
-              message.applyReactionEvent(event);
+            if (message.getMessageId() == event.messageId) {
+              (message as BaseMessage).applyReactionEvent(event);
 
               _collectionManager.sendEventsToMessageCollection(
                 messageCollection: messageCollection,
@@ -379,8 +462,8 @@ class InternalGroupChannelHandlerForCollectionManager
           in _collectionManager.baseMessageCollections) {
         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
           for (final message in messageCollection.messageList) {
-            if (message.messageId == event.targetMessageId) {
-              message.applyThreadInfoUpdateEvent(event);
+            if (message.getMessageId() == event.targetMessageId) {
+              (message as BaseMessage).applyThreadInfoUpdateEvent(event);
 
               _collectionManager.sendEventsToMessageCollection(
                 messageCollection: messageCollection,
@@ -512,7 +595,7 @@ class InternalGroupChannelHandlerForCollectionManager
     for (final messageCollection in _collectionManager.baseMessageCollections) {
       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
         for (final message in messageCollection.messageList) {
-          if (message.messageId == event.messageId) {
+          if (message.getMessageId() == event.messageId) {
             if (message is UserMessage && message.poll != null) {
               message.poll!.applyPollVoteEvent(event);
             }
@@ -537,7 +620,7 @@ class InternalGroupChannelHandlerForCollectionManager
     for (final messageCollection in _collectionManager.baseMessageCollections) {
       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
         for (final message in messageCollection.messageList) {
-          if (message.messageId == event.messageId) {
+          if (message.getMessageId() == event.messageId) {
             if (message is UserMessage && message.poll != null) {
               message.poll!.applyPollUpdateEvent(event);
             }
@@ -575,23 +658,23 @@ class InternalFeedChannelHandlerForCollectionManager
       : _collectionManager = collectionManager;
 
 //------------------------------//
-// BaseChannelHandler - channel
+// FeedChannelHandler - channel
 //------------------------------//
-  @override
-  void onMentionReceived(BaseChannel channel, BaseMessage message) {
-    if (channel is FeedChannel) {
-      for (final messageCollection
-          in _collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
-          _collectionManager.sendEventsToMessageCollectionList(
-            eventSource: CollectionEventSource.eventMentionReceived,
-            updatedChannels: [channel],
-          );
-          break;
-        }
-      }
-    }
-  }
+//   @override
+//   void onMentionReceived(BaseChannel channel, NotificationMessage message) {
+//     if (channel is FeedChannel) {
+//       for (final messageCollection
+//           in _collectionManager.baseMessageCollections) {
+//         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
+//           _collectionManager.sendEventsToMessageCollectionList(
+//             eventSource: CollectionEventSource.eventMentionReceived,
+//             updatedChannels: [channel],
+//           );
+//           break;
+//         }
+//       }
+//     }
+//   }
 
   @override
   void onChannelChanged(BaseChannel channel) {
@@ -609,27 +692,28 @@ class InternalFeedChannelHandlerForCollectionManager
     }
   }
 
-  @override
-  void onChannelDeleted(String channelUrl, ChannelType channelType) {
-    if (channelType == ChannelType.feed) {
-      for (final messageCollection
-          in _collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channelUrl) {
-          _collectionManager.sendEventsToMessageCollectionList(
-            eventSource: CollectionEventSource.eventChannelDeleted,
-            deletedChannelUrls: [channelUrl],
-          );
-          break;
-        }
-      }
-    }
-  }
+  // @override
+  // void onChannelDeleted(String channelUrl, ChannelType channelType) {
+  //   if (channelType == ChannelType.feed) {
+  //     for (final messageCollection
+  //         in _collectionManager.baseMessageCollections) {
+  //       if (messageCollection.baseChannel.channelUrl == channelUrl) {
+  //         _collectionManager.sendEventsToMessageCollectionList(
+  //           eventSource: CollectionEventSource.eventChannelDeleted,
+  //           deletedChannelUrls: [channelUrl],
+  //         );
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
 
 //------------------------------//
-// BaseChannelHandler - message
+// FeedChannelHandler - message
 //------------------------------//
   @override
-  void onMessageReceived(BaseChannel channel, BaseMessage message) async {
+  void onMessageReceived(
+      BaseChannel channel, NotificationMessage message) async {
     if (channel is FeedChannel) {
       for (final messageCollection
           in _collectionManager.baseMessageCollections) {
@@ -648,43 +732,44 @@ class InternalFeedChannelHandlerForCollectionManager
     }
   }
 
-  @override
-  void onMessageUpdated(BaseChannel channel, BaseMessage message) async {
-    if (channel is FeedChannel) {
-      for (final messageCollection
-          in _collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
-          _collectionManager.sendEventsToMessageCollection(
-            messageCollection: messageCollection,
-            baseChannel: channel,
-            eventSource: CollectionEventSource.eventMessageUpdated,
-            sendingStatus: SendingStatus.succeeded,
-            updatedMessages: [message],
-          );
-          break;
-        }
-      }
-    }
-  }
+// @override
+// void onMessageUpdated(
+//     BaseChannel channel, NotificationMessage message) async {
+//   if (channel is FeedChannel) {
+//     for (final messageCollection
+//         in _collectionManager.baseMessageCollections) {
+//       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
+//         _collectionManager.sendEventsToMessageCollection(
+//           messageCollection: messageCollection,
+//           baseChannel: channel,
+//           eventSource: CollectionEventSource.eventMessageUpdated,
+//           sendingStatus: SendingStatus.succeeded,
+//           updatedMessages: [message],
+//         );
+//         break;
+//       }
+//     }
+//   }
+// }
 
-  @override
-  void onMessageDeleted(BaseChannel channel, int messageId) async {
-    if (channel is FeedChannel) {
-      for (final messageCollection
-          in _collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
-          _collectionManager.sendEventsToMessageCollection(
-            messageCollection: messageCollection,
-            baseChannel: channel,
-            eventSource: CollectionEventSource.eventMessageDeleted,
-            sendingStatus: SendingStatus.succeeded,
-            deletedMessageIds: [messageId],
-          );
-          break;
-        }
-      }
-    }
-  }
+// @override
+// void onMessageDeleted(BaseChannel channel, String notificationId) async {
+//   if (channel is FeedChannel) {
+//     for (final messageCollection
+//         in _collectionManager.baseMessageCollections) {
+//       if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
+//         _collectionManager.sendEventsToMessageCollection(
+//           messageCollection: messageCollection,
+//           baseChannel: channel,
+//           eventSource: CollectionEventSource.eventMessageDeleted,
+//           sendingStatus: SendingStatus.succeeded,
+//           deletedMessageIds: [notificationId],
+//         );
+//         break;
+//       }
+//     }
+//   }
+// }
 
 //------------------------------//
 // FeedChannelHandler - channel

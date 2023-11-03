@@ -4,6 +4,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/scheduled_message_retrieval_params.dart';
 
@@ -38,6 +39,6 @@ class GroupChannelScheduledMessageGetRequest extends ApiRequest {
       'scheduled_at': res['scheduled_at'],
     };
 
-    return BaseMessage.fromJsonWithChat(chat, res);
+    return RootMessage.fromJsonWithChat(chat, res) as BaseMessage;
   }
 }

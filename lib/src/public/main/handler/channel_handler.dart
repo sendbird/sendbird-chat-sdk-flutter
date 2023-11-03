@@ -2,11 +2,13 @@
 
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 
+abstract class RootChannelHandler {}
+
 /// The BaseChannel handler.
 /// This handler provides callbacks for events related [OpenChannel] or [GroupChannel].
 /// All callbacks are called only when the currently logged-in [User] is a participant or member of `OpenChannel` or `GroupChannel` respectively.
 /// To add or remove this handler, refer to [SendbirdChat.addChannelHandler] and [SendbirdChat.removeChannelHandler].
-abstract class BaseChannelHandler {
+abstract class BaseChannelHandler extends RootChannelHandler {
   /// A callback for when a message is received.
   void onMessageReceived(BaseChannel channel, BaseMessage message);
 
@@ -91,7 +93,7 @@ abstract class BaseChannelHandler {
 
 /// The GroupChannel handler.
 abstract class GroupChannelHandler extends BaseChannelHandler {
-  /// A callback for when read receipts are updated on `GroupChannel`.
+  /// A callback for when read receipts are updated on [GroupChannel].
   /// To use the updated read receipt, refer to [GroupChannelRead.getReadStatus],
   /// [GroupChannelRead.getReadMembers], [GroupChannelRead.getUnreadMembers].
   void onReadStatusUpdated(GroupChannel channel) {}
@@ -163,5 +165,13 @@ abstract class OpenChannelHandler extends BaseChannelHandler {
 }
 
 /// The FeedChannel handler.
-/// @since 4.0.3
-abstract class FeedChannelHandler extends BaseChannelHandler {}
+/// @since 4.1.0
+abstract class FeedChannelHandler extends RootChannelHandler {
+  /// A callback for when a message is received.
+  /// @since 4.1.0
+  void onMessageReceived(FeedChannel channel, NotificationMessage message);
+
+  /// A callback for when channel property is changed.
+  /// @since 4.1.0
+  void onChannelChanged(FeedChannel channel) {}
+}

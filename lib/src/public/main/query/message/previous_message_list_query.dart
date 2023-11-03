@@ -99,7 +99,7 @@ class PreviousMessageListQuery extends BaseQuery {
         timestamp: messageTimestamp ?? 0,
       ),
     );
-    final messages = res.messages;
+    final messages = List<BaseMessage>.from(res.messages);
 
     if (messages.isNotEmpty) {
       final oldestMessage = reverse ? messages.last : messages.first;

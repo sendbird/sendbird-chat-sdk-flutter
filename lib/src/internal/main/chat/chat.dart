@@ -22,8 +22,8 @@ import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart'
 import 'package:sendbird_chat_sdk/src/internal/network/http/api_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/feed_channel/feed_channel_change_logs_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_change_logs_request.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_delivery_request.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_read_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_mark_as_delivered_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_mark_as_read_all_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_total_count_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/invitation/channel_invitation_preference_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/emoji/emoji_category_request.dart';
@@ -58,7 +58,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.0.13';
+const sdkVersion = '4.1.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -87,6 +87,7 @@ class Chat with WidgetsBindingObserver {
 
   bool? _isObserverRegistered;
   ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  int lastMarkAsReadTimestamp;
 
   // This allows a value of type T or T? to be treated as a value of type T?.
   // We use this so that APIs that have become non-nullable can still be used
@@ -110,7 +111,8 @@ class Chat with WidgetsBindingObserver {
   Chat({
     required String appId,
     required SendbirdChatOptions options,
-  }) : chatId = globalChatId++ {
+  })  : chatId = globalChatId++,
+        lastMarkAsReadTimestamp = 0 {
     chatContext = ChatContext(appId: appId, options: options);
     channelCache = ChannelCache();
     connectionManager = ConnectionManager(chat: this); // WebSocketClient

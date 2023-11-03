@@ -25,6 +25,10 @@ class OpenChannelUpdateParams {
   @JsonKey(name: 'operator_ids')
   List<String>? operatorUserIds;
 
+  static OpenChannelUpdateParams fromJson(Map<String, dynamic> json) {
+    return _$OpenChannelUpdateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$OpenChannelUpdateParamsToJson(this);
     if (coverImage != null && coverImage!.hasBinary) {

@@ -51,15 +51,29 @@ extension ChatChannel on Chat {
 
   Future<void> markAsReadAll() async {
     sbLog.i(StackTrace.current);
-    await apiClient.send(
-        GroupChannelMarkAsReadRequest(this, userId: chatContext.currentUserId));
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (now - lastMarkAsReadTimestamp <= 1000) {
+      throw MarkAsReadRateLimitExceededException();
+    }
+    lastMarkAsReadTimestamp = now;
+
+    await apiClient.send(GroupChannelMarkAsReadAllRequest(this,
+        userId: chatContext.currentUserId));
   }
 
   Future<void> markAsRead({required List<String> channelUrls}) async {
     sbLog.i(StackTrace.current, 'channelUrls: $channelUrls');
 
     if (channelUrls.isEmpty) throw InvalidParameterException();
-    await apiClient.send(GroupChannelMarkAsReadRequest(
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (now - lastMarkAsReadTimestamp <= 1000) {
+      throw MarkAsReadRateLimitExceededException();
+    }
+    lastMarkAsReadTimestamp = now;
+
+    await apiClient.send(GroupChannelMarkAsReadAllRequest(
       this,
       channelUrls: channelUrls,
       userId: chatContext.currentUserId,
@@ -141,8 +155,8 @@ extension ChatChannel on Chat {
   }
 
   int get subscribedCustomTypeTotalUnreadMessageCount {
-    final result =
-        chatContext.unreadMessageCountInfo.customTypes.values.reduce((a, b) => a + b);
+    final result = chatContext.unreadMessageCountInfo.customTypes.values
+        .reduce((a, b) => a + b);
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }

@@ -8,6 +8,11 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 /// Notification collection that handles message lists.
 /// @since 4.0.3
 class NotificationCollection extends BaseMessageCollection {
+  /// The list of succeeded message list in this collection.
+  /// @since 4.1.0
+  @override
+  final List<NotificationMessage> messageList = [];
+
   /// The [FeedChannel] tracked by this [NotificationCollection].
   /// @since 4.0.3
   FeedChannel get channel => baseChannel as FeedChannel;

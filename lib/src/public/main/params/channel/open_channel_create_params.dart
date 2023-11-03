@@ -28,6 +28,10 @@ class OpenChannelCreateParams {
   @JsonKey(name: 'operator_ids')
   List<String>? operatorUserIds;
 
+  static OpenChannelCreateParams fromJson(Map<String, dynamic> json) {
+    return _$OpenChannelCreateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$OpenChannelCreateParamsToJson(this);
     if (coverImage != null && coverImage!.hasBinary) {

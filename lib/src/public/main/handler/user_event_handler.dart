@@ -13,14 +13,6 @@ abstract class UserEventHandler {
   /// The friends discovered event.
   void onFriendsDiscovered(List<User> friends);
 
-  /// Gets the subscribed total number of unread message of all `GroupChannel`s the current user has joined,
-  /// and number of unread message of `GroupChannel` for all subscribed custom type.
-  @Deprecated('As of 4.0.3, replaced by [onTotalUnreadMessageCountChanged]')
-  void onTotalUnreadMessageCountUpdated(
-    int totalCount,
-    Map<String, int> totalCountByCustomType,
-  ) {}
-
   /// Gets the subscribed total number of unread message of all [GroupChannel]s and [FeedChannel]s the current user has joined,
   /// and number of unread message of [GroupChannel] for all subscribed custom type.
   /// @since 4.0.3

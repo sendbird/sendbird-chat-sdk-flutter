@@ -47,6 +47,13 @@ UserListQueryResponse<T> _$UserListQueryResponseFromJson<T extends User>(
       next: json['next'] as String?,
     );
 
+Map<String, dynamic> _$UserListQueryResponseToJson<T extends User>(
+        UserListQueryResponse<T> instance) =>
+    <String, dynamic>{
+      'users': instance.users.map(_UserConverter<T>().toJson).toList(),
+      'next': instance.next,
+    };
+
 ChannelListQueryResponse<T>
     _$ChannelListQueryResponseFromJson<T extends BaseChannel>(
             Map<String, dynamic> json) =>
@@ -58,6 +65,13 @@ ChannelListQueryResponse<T>
           next: json['next'] as String?,
         );
 
+Map<String, dynamic> _$ChannelListQueryResponseToJson<T extends BaseChannel>(
+        ChannelListQueryResponse<T> instance) =>
+    <String, dynamic>{
+      'channels': instance.channels.map(_ChannelConverter<T>().toJson).toList(),
+      'next': instance.next,
+    };
+
 FeedChannelListQueryResponse _$FeedChannelListQueryResponseFromJson(
         Map<String, dynamic> json) =>
     FeedChannelListQueryResponse(
@@ -68,13 +82,20 @@ FeedChannelListQueryResponse _$FeedChannelListQueryResponseFromJson(
       next: json['next'] as String?,
     );
 
+Map<String, dynamic> _$FeedChannelListQueryResponseToJson(
+        FeedChannelListQueryResponse instance) =>
+    <String, dynamic>{
+      'channels':
+          instance.channels.map(const FeedChannelConverter().toJson).toList(),
+      'next': instance.next,
+    };
+
 MessageSearchQueryResponse _$MessageSearchQueryResponseFromJson(
         Map<String, dynamic> json) =>
     MessageSearchQueryResponse(
-      results: (json['results'] as List<dynamic>?)
-              ?.map((e) => BaseMessage.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      results: json['results'] == null
+          ? const []
+          : toBaseMessageList(json['results'] as List),
       hasNext: json['has_next'] as bool? ?? false,
       totalCount: json['total_count'] as int? ?? -1,
       next: json['end_cursor'] as String?,
@@ -92,10 +113,9 @@ MetaDataResponse _$MetaDataResponseFromJson(Map<String, dynamic> json) =>
 ScheduledMessageResponse _$ScheduledMessageResponseFromJson(
         Map<String, dynamic> json) =>
     ScheduledMessageResponse(
-      scheduledMessages: (json['scheduled_messages'] as List<dynamic>?)
-              ?.map((e) => BaseMessage.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      scheduledMessages: json['scheduled_messages'] == null
+          ? []
+          : toBaseMessageList(json['scheduled_messages'] as List),
       next: json['next'] as String?,
     );
 

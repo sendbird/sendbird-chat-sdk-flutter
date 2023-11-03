@@ -7,6 +7,8 @@ import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_chan
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/restricted_user.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -22,7 +24,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.
 import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info_updated_event.dart';
 
 class EventManager {
-  final Map<String, BaseChannelHandler> _channelHandlers = {};
+  final Map<String, RootChannelHandler> _channelHandlers = {};
   final Map<String, ConnectionHandler> _connectionHandlers = {};
   final Map<String, UserEventHandler> _userHandlers = {};
 
@@ -34,21 +36,29 @@ class EventManager {
   EventManager({required SessionManager sessionManager})
       : _accessTokenRequester = sessionManager.accessTokenRequester;
 
-  void addChannelHandler(String identifier, BaseChannelHandler handler) {
-    _channelHandlers[identifier] = handler;
+  void addChannelHandler(String identifier, RootChannelHandler handler) {
+    if (handler is BaseChannelHandler) {
+      _channelHandlers[identifier] = handler;
+    } else if (handler is FeedChannelHandler) {
+      _channelHandlers[identifier] = handler;
+    }
   }
 
   void addInternalChannelHandler(
-      String identifier, BaseChannelHandler handler) {
+      String identifier, RootChannelHandler handler) {
     _internalChannelHandlerIdentifiers.add(identifier);
-    addChannelHandler(identifier, handler);
+    if (handler is BaseChannelHandler) {
+      addChannelHandler(identifier, handler);
+    } else if (handler is FeedChannelHandler) {
+      addChannelHandler(identifier, handler);
+    }
   }
 
   BaseChannelHandler? getChannelHandler(String identifier) {
     if (_internalChannelHandlerIdentifiers.contains(identifier)) {
       return null;
     }
-    return _channelHandlers[identifier];
+    return _channelHandlers[identifier] as BaseChannelHandler?;
   }
 
   void removeChannelHandler(String identifier) {
@@ -113,21 +123,29 @@ class EventManager {
   }
 
   // BaseChannelHandler
-  void notifyMessageReceived(BaseChannel channel, BaseMessage message) {
+  void notifyMessageReceived(BaseChannel channel, RootMessage message) {
     sbLog.i(StackTrace.current,
-        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${message.message}');
+        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${(message is BaseMessage) ? message.message : ''}');
 
-    for (final element in _channelHandlers.values) {
-      element.onMessageReceived(channel, message);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler && message is BaseMessage) {
+        e.onMessageReceived(channel, message);
+      } else if (e is FeedChannelHandler &&
+          channel is FeedChannel &&
+          message is NotificationMessage) {
+        e.onMessageReceived(channel, message);
+      }
     }
   }
 
-  void notifyMessageUpdate(BaseChannel channel, BaseMessage message) {
+  void notifyMessageUpdate(BaseChannel channel, RootMessage message) {
     sbLog.i(StackTrace.current,
-        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${message.message}');
+        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${(message is BaseMessage) ? message.message : ''}');
 
-    for (final element in _channelHandlers.values) {
-      element.onMessageUpdated(channel, message);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler && message is BaseMessage) {
+        e.onMessageUpdated(channel, message);
+      }
     }
   }
 
@@ -135,25 +153,33 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[messageId] $messageId');
 
-    for (final element in _channelHandlers.values) {
-      element.onMessageDeleted(channel, messageId);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onMessageDeleted(channel, messageId);
+      }
     }
   }
 
-  void notifyMentionReceived(BaseChannel channel, BaseMessage message) {
+  void notifyMentionReceived(BaseChannel channel, RootMessage message) {
     sbLog.i(StackTrace.current,
-        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${message.message}');
+        '\n-[channelUrl] ${channel.channelUrl}\n-[message] ${(message is BaseMessage) ? message.message : ''}');
 
-    for (final element in _channelHandlers.values) {
-      element.onMentionReceived(channel, message);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler && message is BaseMessage) {
+        e.onMentionReceived(channel, message);
+      }
     }
   }
 
   void notifyChannelChanged(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      element.onChannelChanged(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onChannelChanged(channel);
+      } else if (e is FeedChannelHandler && channel is FeedChannel) {
+        e.onChannelChanged(channel);
+      }
     }
   }
 
@@ -161,8 +187,10 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] $channelUrl\n-[channelType] $channelType');
 
-    for (final element in _channelHandlers.values) {
-      element.onChannelDeleted(channelUrl, channelType);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onChannelDeleted(channelUrl, channelType);
+      }
     }
   }
 
@@ -171,8 +199,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onReactionUpdated(channel, event);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onReactionUpdated(channel, event);
+      }
     }
   }
 
@@ -182,8 +212,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onUserMuted(channel, restrictedUser);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onUserMuted(channel, restrictedUser);
+      }
     }
   }
 
@@ -193,8 +225,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onUserUnmuted(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onUserUnmuted(channel, user);
+      }
     }
   }
 
@@ -204,8 +238,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onUserBanned(channel, restrictedUser);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onUserBanned(channel, restrictedUser);
+      }
     }
   }
 
@@ -215,8 +251,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onUserUnbanned(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onUserUnbanned(channel, user);
+      }
     }
   }
 
@@ -225,8 +263,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onChannelFrozen(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onChannelFrozen(channel);
+      }
     }
   }
 
@@ -235,8 +275,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onChannelUnfrozen(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onChannelUnfrozen(channel);
+      }
     }
   }
 
@@ -246,14 +288,16 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
+    for (final e in _channelHandlers.values) {
       final created = Map<String, String>.from(data['created'] ?? {});
       final updated = Map<String, String>.from(data['updated'] ?? {});
       final deleted = List<String>.from(data['deleted'] ?? []);
 
-      if (created.isNotEmpty) element.onMetaDataCreated(channel, created);
-      if (updated.isNotEmpty) element.onMetaDataUpdated(channel, updated);
-      if (deleted.isNotEmpty) element.onMetaDataDeleted(channel, deleted);
+      if (e is BaseChannelHandler) {
+        if (created.isNotEmpty) e.onMetaDataCreated(channel, created);
+        if (updated.isNotEmpty) e.onMetaDataUpdated(channel, updated);
+        if (deleted.isNotEmpty) e.onMetaDataDeleted(channel, deleted);
+      }
     }
   }
 
@@ -264,14 +308,16 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
+    for (final e in _channelHandlers.values) {
       final created = Map<String, int>.from(data['created'] ?? {});
       final updated = Map<String, int>.from(data['updated'] ?? {});
       final deleted = List<String>.from(data['deleted'] ?? []);
 
-      if (created.isNotEmpty) element.onMetaCountersCreated(channel, created);
-      if (updated.isNotEmpty) element.onMetaCountersUpdated(channel, updated);
-      if (deleted.isNotEmpty) element.onMetaCountersDeleted(channel, deleted);
+      if (e is BaseChannelHandler) {
+        if (created.isNotEmpty) e.onMetaCountersCreated(channel, created);
+        if (updated.isNotEmpty) e.onMetaCountersUpdated(channel, updated);
+        if (deleted.isNotEmpty) e.onMetaCountersDeleted(channel, deleted);
+      }
     }
   }
 
@@ -280,8 +326,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onOperatorUpdated(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onOperatorUpdated(channel);
+      }
     }
   }
 
@@ -291,8 +339,10 @@ class EventManager {
 
     if (channel is FeedChannel) return;
 
-    for (final element in _channelHandlers.values) {
-      element.onThreadInfoUpdated(channel, event);
+    for (final e in _channelHandlers.values) {
+      if (e is BaseChannelHandler) {
+        e.onThreadInfoUpdated(channel, event);
+      }
     }
   }
 
@@ -300,28 +350,22 @@ class EventManager {
   void notifyReadStatusUpdated(BaseChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    if (channel is GroupChannel) {
-      for (final element in _channelHandlers.values) {
-        if (element is GroupChannelHandler) {
-          element.onReadStatusUpdated(channel);
-        }
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler && channel is GroupChannel) {
+        e.onReadStatusUpdated(channel);
       }
+      // else if (e is FeedChannelHandler && channel is FeedChannel) {
+      //   e.onReadStatusUpdated(channel);
+      // }
     }
-    // else if (channel is FeedChannel) {
-    //   for (final element in _channelHandlers.values) {
-    //     if (element is FeedChannelHandler) {
-    //       element.onReadStatusUpdated(channel);
-    //     }
-    //   }
-    // }
   }
 
   void notifyDeliveryStatusUpdated(GroupChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onDeliveryStatusUpdated(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onDeliveryStatusUpdated(channel);
       }
     }
   }
@@ -329,9 +373,9 @@ class EventManager {
   void notifyChannelTypingStatusUpdated(GroupChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onTypingStatusUpdated(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onTypingStatusUpdated(channel);
       }
     }
   }
@@ -341,9 +385,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[invitees] ${invitees.map((e) => e.userId)}, \n-[inviter] ${inviter?.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onUserReceivedInvitation(channel, invitees, inviter);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onUserReceivedInvitation(channel, invitees, inviter);
       }
     }
   }
@@ -356,9 +400,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[invitee] ${invitee.userId}, \n-[inviter] ${inviter?.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onUserDeclinedInvitation(channel, invitee, inviter);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onUserDeclinedInvitation(channel, invitee, inviter);
       }
     }
   }
@@ -367,9 +411,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onUserJoined(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onUserJoined(channel, user);
       }
     }
   }
@@ -378,9 +422,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onUserLeft(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onUserLeft(channel, user);
       }
     }
   }
@@ -388,9 +432,9 @@ class EventManager {
   void notifyChannelHidden(GroupChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onChannelHidden(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onChannelHidden(channel);
       }
     }
   }
@@ -399,9 +443,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrls] ${channels.map((e) => e.channelUrl)}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onChannelMemberCountChanged(channels);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onChannelMemberCountChanged(channels);
       }
     }
   }
@@ -409,9 +453,9 @@ class EventManager {
   void notifyPollVoted(GroupChannel channel, PollVoteEvent event) {
     sbLog.i(StackTrace.current, '\n-[pollId] ${event.pollId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onPollVoted(channel, event);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onPollVoted(channel, event);
       }
     }
   }
@@ -419,9 +463,9 @@ class EventManager {
   void notifyPollUpdated(GroupChannel channel, PollUpdateEvent event) {
     sbLog.i(StackTrace.current, '\n-[pollId] ${event.pollId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onPollUpdated(channel, event);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onPollUpdated(channel, event);
       }
     }
   }
@@ -429,9 +473,9 @@ class EventManager {
   void notifyPollDeleted(GroupChannel channel, int pollId) {
     sbLog.i(StackTrace.current, '\n-[pollId] $pollId');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onPollDeleted(channel, pollId);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onPollDeleted(channel, pollId);
       }
     }
   }
@@ -439,9 +483,9 @@ class EventManager {
   void notifyPinnedMessageUpdated(GroupChannel channel) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is GroupChannelHandler) {
-        element.onPinnedMessageUpdated(channel);
+    for (final e in _channelHandlers.values) {
+      if (e is GroupChannelHandler) {
+        e.onPinnedMessageUpdated(channel);
       }
     }
   }
@@ -451,9 +495,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is OpenChannelHandler) {
-        element.onUserEntered(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is OpenChannelHandler) {
+        e.onUserEntered(channel, user);
       }
     }
   }
@@ -462,9 +506,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrl] ${channel.channelUrl}\n-[userId] ${user.userId}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is OpenChannelHandler) {
-        element.onUserExited(channel, user);
+    for (final e in _channelHandlers.values) {
+      if (e is OpenChannelHandler) {
+        e.onUserExited(channel, user);
       }
     }
   }
@@ -473,9 +517,9 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[channelUrls] ${channels.map((e) => e.channelUrl)}');
 
-    for (final element in _channelHandlers.values) {
-      if (element is OpenChannelHandler) {
-        element.onChannelParticipantCountChanged(channels);
+    for (final e in _channelHandlers.values) {
+      if (e is OpenChannelHandler) {
+        e.onChannelParticipantCountChanged(channels);
       }
     }
   }
@@ -484,40 +528,40 @@ class EventManager {
   void notifyConnected(String userId) {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
-    for (final element in _connectionHandlers.values) {
-      element.onConnected(userId);
+    for (final e in _connectionHandlers.values) {
+      e.onConnected(userId);
     }
   }
 
   void notifyDisconnected(String userId) {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
-    for (final element in _connectionHandlers.values) {
-      element.onDisconnected(userId);
+    for (final e in _connectionHandlers.values) {
+      e.onDisconnected(userId);
     }
   }
 
   void notifyReconnectStarted() {
     sbLog.i(StackTrace.current);
 
-    for (final element in _connectionHandlers.values) {
-      element.onReconnectStarted();
+    for (final e in _connectionHandlers.values) {
+      e.onReconnectStarted();
     }
   }
 
   void notifyReconnectSucceeded() {
     sbLog.i(StackTrace.current);
 
-    for (final element in _connectionHandlers.values) {
-      element.onReconnectSucceeded();
+    for (final e in _connectionHandlers.values) {
+      e.onReconnectSucceeded();
     }
   }
 
   void notifyReconnectFailed() {
     sbLog.i(StackTrace.current);
 
-    for (final element in _connectionHandlers.values) {
-      element.onReconnectFailed();
+    for (final e in _connectionHandlers.values) {
+      e.onReconnectFailed();
     }
   }
 
@@ -527,20 +571,16 @@ class EventManager {
     sbLog.i(StackTrace.current,
         '\n-[groupChannelUnreadMessageCount] ${unreadMessageCount.totalCountForGroupChannels}\n-[feedChannelUnreadMessageCount] ${unreadMessageCount.totalCountForFeedChannels}\n-[totalCountByCustomType] ${unreadMessageCount.totalCountByCustomType}');
 
-    for (final element in _userHandlers.values) {
-      element.onTotalUnreadMessageCountChanged(unreadMessageCount);
-      element.onTotalUnreadMessageCountUpdated(
-        unreadMessageCount.totalCountForGroupChannels,
-        unreadMessageCount.totalCountByCustomType,
-      );
+    for (final e in _userHandlers.values) {
+      e.onTotalUnreadMessageCountChanged(unreadMessageCount);
     }
   }
 
   void notifyFriendsDiscovered(List<User> friends) {
     sbLog.i(StackTrace.current, '\n-[friends] ${friends.map((e) => e.userId)}');
 
-    for (final element in _userHandlers.values) {
-      element.onFriendsDiscovered(friends);
+    for (final e in _userHandlers.values) {
+      e.onFriendsDiscovered(friends);
     }
   }
 

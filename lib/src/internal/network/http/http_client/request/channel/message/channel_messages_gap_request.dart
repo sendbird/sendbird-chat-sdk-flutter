@@ -4,7 +4,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 class ChannelMessagesGapRequest extends ApiRequest {
@@ -48,7 +48,7 @@ class ChannelMessagesGapRequest extends ApiRequest {
   }
 
   @override
-  Future<List<BaseMessage>?> response(Map<String, dynamic> res) async {
+  Future<List<RootMessage>?> response(Map<String, dynamic> res) async {
     final isHugeGap = res['is_huge_gap'] as bool;
 
     // final prevMessages = (res['prev_messages'] as List)
@@ -56,7 +56,7 @@ class ChannelMessagesGapRequest extends ApiRequest {
     //         channelType: channelType))
     //     .toList();
     final nextMessages = (res['next_messages'] as List)
-        .map((e) => BaseMessage.getMessageFromJsonWithChat(chat, e,
+        .map((e) => RootMessage.getMessageFromJsonWithChat(chat, e,
             channelType: channelType))
         .toList();
 

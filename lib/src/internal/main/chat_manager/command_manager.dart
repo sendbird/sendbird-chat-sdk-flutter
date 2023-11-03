@@ -28,6 +28,8 @@ import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_chan
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/restricted_user.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
@@ -352,7 +354,7 @@ class CommandManager {
     });
 
     try {
-      final message = BaseMessage.getMessageFromJsonWithChat(
+      final message = RootMessage.getMessageFromJsonWithChat(
         _chat,
         cmd.payload,
         commandType: cmd.cmd,
@@ -361,10 +363,23 @@ class CommandManager {
       if (event.requestId != null) {
         // If sent by api then added id to cache -> done
         if (message.channelType == ChannelType.group) {
-          sendCommand(Command.buildMessageMACK(
-            message.channelUrl,
-            message.messageId,
-          ));
+          dynamic messageId = message.getMessageId();
+          if (messageId is int) {
+            sendCommand(Command.buildMessageMACK(
+              message.channelUrl,
+              messageId,
+            ));
+          }
+        }
+      }
+
+      bool shouldCallChannelChanged = false;
+
+      if (message.channelType == ChannelType.group) {
+        final cachedChannel = _chat.channelCache
+            .find<GroupChannel>(channelKey: message.channelUrl);
+        if (cachedChannel == null || cachedChannel.dirty) {
+          shouldCallChannelChanged = true;
         }
       }
 
@@ -373,8 +388,6 @@ class CommandManager {
         message.channelUrl,
         chat: _chat,
       );
-
-      bool shouldCallChannelChanged = false;
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {
@@ -386,9 +399,16 @@ class CommandManager {
 
         groupChannel.updateMember(event.sender);
 
-        if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
-          shouldCallChannelChanged = true;
-          groupChannel.lastMessage = message;
+        if (channel is GroupChannel && message is BaseMessage) {
+          if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
+            shouldCallChannelChanged = true;
+            groupChannel.lastMessage = message;
+          }
+        } else if (channel is FeedChannel && message is NotificationMessage) {
+          if (channel.shouldUpdateLastMessage(message)) {
+            shouldCallChannelChanged = true;
+            channel.lastMessage = message;
+          }
         }
 
         if (groupChannel.fromCache && groupChannel.updateUnreadCount(message)) {
@@ -400,9 +420,11 @@ class CommandManager {
         _chat.eventManager.notifyMessageReceived(channel, message);
       }
 
-      final currentUser = _chat.chatContext.currentUser;
-      if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
-        _chat.eventManager.notifyMentionReceived(channel, message);
+      if (channel is GroupChannel && message is BaseMessage) {
+        final currentUser = _chat.chatContext.currentUser;
+        if (message.mentioned(user: currentUser, byOtherUser: message.sender)) {
+          _chat.eventManager.notifyMentionReceived(channel, message);
+        }
       }
 
       if (shouldCallChannelChanged) {
@@ -421,7 +443,7 @@ class CommandManager {
     });
 
     try {
-      final message = BaseMessage.getMessageFromJsonWithChat(
+      final message = RootMessage.getMessageFromJsonWithChat(
         _chat,
         cmd.payload,
         commandType: cmd.cmd,
@@ -444,31 +466,33 @@ class CommandManager {
           bool shouldCallChannelChanged = false;
           bool shouldCallMentionReceived = false;
 
-          if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
-            shouldCallChannelChanged = true;
-            groupChannel.lastMessage = message;
-          }
-
-          final timestamp = groupChannel.myReadReceipt();
-
-          if (message.hasUpdatedLaterThan(timestamp) &&
-              event.sender?.isCurrentUser == false &&
-              !message.isSilent) {
-            if (event.hasChangedMentionType() == MentionType.channel &&
-                event.previousMentionedContains(currentUser)) {
-              if (groupChannel.fromCache) {
-                groupChannel.increaseUnreadMentionCount();
-              }
+          if (message is BaseMessage) {
+            if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
               shouldCallChannelChanged = true;
-              shouldCallMentionReceived = true;
-            } else if (event.hasChangedMentionType() == MentionType.users &&
-                !event.previousMentionedContains(currentUser) &&
-                event.mentionedContains(currentUser)) {
-              if (groupChannel.fromCache) {
-                groupChannel.increaseUnreadMentionCount();
+              groupChannel.lastMessage = message;
+            }
+
+            final timestamp = groupChannel.myReadReceipt();
+
+            if (message.hasUpdatedLaterThan(timestamp) &&
+                event.sender?.isCurrentUser == false &&
+                !message.isSilent) {
+              if (event.hasChangedMentionType() == MentionType.channel &&
+                  event.previousMentionedContains(currentUser)) {
+                if (groupChannel.fromCache) {
+                  groupChannel.increaseUnreadMentionCount();
+                }
+                shouldCallChannelChanged = true;
+                shouldCallMentionReceived = true;
+              } else if (event.hasChangedMentionType() == MentionType.users &&
+                  !event.previousMentionedContains(currentUser) &&
+                  event.mentionedContains(currentUser)) {
+                if (groupChannel.fromCache) {
+                  groupChannel.increaseUnreadMentionCount();
+                }
+                shouldCallChannelChanged = true;
+                shouldCallMentionReceived = true;
               }
-              shouldCallChannelChanged = true;
-              shouldCallMentionReceived = true;
             }
           }
 
@@ -1214,7 +1238,8 @@ class CommandManager {
           groupChannel.pinnedMessageIds =
               event.data["pinned_message_ids"].cast<int>();
           groupChannel.lastPinnedMessage =
-              BaseMessage.fromJson(event.data["latest_pinned_message"]);
+              RootMessage.fromJson(event.data["latest_pinned_message"])
+                  as BaseMessage;
         }
 
         groupChannel.pinnedMessageUpdatedAt = event.ts ?? 0;

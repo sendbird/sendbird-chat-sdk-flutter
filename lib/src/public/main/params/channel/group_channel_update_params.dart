@@ -46,6 +46,10 @@ class GroupChannelUpdateParams {
 
   GroupChannelUpdateParams();
 
+  static GroupChannelUpdateParams fromJson(Map<String, dynamic> json) {
+    return _$GroupChannelUpdateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$GroupChannelUpdateParamsToJson(this);
     if (coverImage != null && coverImage!.hasBinary) {

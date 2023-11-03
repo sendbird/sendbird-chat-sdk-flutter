@@ -5,8 +5,8 @@ import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
-import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/file_message_create_params.dart';
 
@@ -48,7 +48,7 @@ class ChannelFileMessageSendRequest extends ApiRequest {
 
   @override
   Future<FileMessage> response(Map<String, dynamic> res) async {
-    return BaseMessage.getMessageFromJsonWithChat<FileMessage>(chat, res,
-        channelType: channelType);
+    return RootMessage.getMessageFromJsonWithChat<FileMessage>(chat, res,
+        channelType: channelType) as FileMessage;
   }
 }

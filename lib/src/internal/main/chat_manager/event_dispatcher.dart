@@ -16,6 +16,7 @@ class EventDispatcher {
 
   Future<void> onLogin(LoginEvent event) async {
     sbLog.d(StackTrace.current);
+    _chat.collectionManager.onLogin();
     await _chat.statManager.onLogin(event);
   }
 

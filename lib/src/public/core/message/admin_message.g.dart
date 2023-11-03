@@ -46,14 +46,46 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
           [],
       extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
     )
-      ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
       ..allMetaArrays = (json['sorted_metaarray'] as List<dynamic>?)
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
+      ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
       ..errorCode = json['error_code'] as int?
       ..sender = json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
+    <String, dynamic>{
+      'channel_url': instance.channelUrl,
+      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
+      'data': instance.data,
+      'custom_type': instance.customType,
+      'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'mentioned_users':
+          instance.mentionedUsers.map((e) => e.toJson()).toList(),
+      'sorted_metaarray':
+          instance.allMetaArrays?.map((e) => e.toJson()).toList(),
+      'extended_message': instance.extendedMessage,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'request_id': instance.requestId,
+      'message_id': instance.messageId,
+      'message': instance.message,
+      'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],
+      'is_reply_to_channel': instance.isReplyToChannel,
+      'parent_message_id': instance.parentMessageId,
+      'parent_message_info': instance.parentMessage?.toJson(),
+      'thread_info': instance.threadInfo?.toJson(),
+      'message_survival_seconds': instance.messageSurvivalSeconds,
+      'silent': instance.isSilent,
+      'error_code': instance.errorCode,
+      'is_op_msg': instance.isOperatorMessage,
+      'og_tag': instance.ogMetaData?.toJson(),
+      'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
+      'force_update_last_message': instance.forceUpdateLastMessage,
+      'user': instance.sender?.toJson(),
+    };
 
 const _$ChannelTypeEnumMap = {
   ChannelType.group: 'group',

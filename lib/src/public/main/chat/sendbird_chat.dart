@@ -350,7 +350,7 @@ class SendbirdChat {
 // Event Handler
 //------------------------------//
   /// Adds a channel handler. All added handlers will be notified when events occur.
-  static void addChannelHandler(String identifier, BaseChannelHandler handler) {
+  static void addChannelHandler(String identifier, RootChannelHandler handler) {
     sbLog.i(StackTrace.current, 'identifier: $identifier');
     _instance._chat.addChannelHandler(identifier, handler);
   }

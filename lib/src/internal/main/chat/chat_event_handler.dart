@@ -3,7 +3,7 @@
 part of 'chat.dart';
 
 extension ChatEventHandler on Chat {
-  void addChannelHandler(String identifier, BaseChannelHandler handler) {
+  void addChannelHandler(String identifier, RootChannelHandler handler) {
     sbLog.i(StackTrace.current, 'identifier: $identifier');
     eventManager.addChannelHandler(identifier, handler);
   }
