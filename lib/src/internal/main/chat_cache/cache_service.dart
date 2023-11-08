@@ -54,7 +54,6 @@ extension Operation on Cacheable {
 
   void removeFromCache(Chat chat) {
     final cacheKey = this is BaseChannel ? null : key;
-    chat.channelCache
-        .delete(channelKey: primaryKey, key: cacheKey, data: this);
+    chat.channelCache.delete(channelKey: primaryKey, key: cacheKey, data: this);
   }
 }

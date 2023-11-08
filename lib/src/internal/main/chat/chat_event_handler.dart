@@ -23,8 +23,7 @@ extension ChatEventHandler on Chat {
     eventManager.removeAllChannelHandlers();
   }
 
-  void addConnectionHandler(
-      String identifier, ConnectionHandler handler) {
+  void addConnectionHandler(String identifier, ConnectionHandler handler) {
     sbLog.i(StackTrace.current, 'identifier: $identifier');
     eventManager.addConnectionHandler(identifier, handler);
   }

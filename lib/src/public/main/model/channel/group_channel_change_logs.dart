@@ -32,7 +32,8 @@ class GroupChannelChangeLogs {
     this.token,
   });
 
-  static GroupChannelChangeLogs fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
+  static GroupChannelChangeLogs fromJsonWithChat(
+      Chat chat, Map<String, dynamic> json) {
     final res = _$GroupChannelChangeLogsFromJson(json);
 
     for (final channel in res.updatedChannels) {
