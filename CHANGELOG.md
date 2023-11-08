@@ -1,3 +1,8 @@
+## v4.1.1 (Nov 8, 2023)
+
+### Improvements
+- Updated `connectivity_plus` package to `5.0.1`
+
 ## v4.1.0 (Nov 3, 2023)
 
 ### Features

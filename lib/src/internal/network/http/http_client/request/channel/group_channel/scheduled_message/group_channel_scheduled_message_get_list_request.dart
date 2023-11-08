@@ -10,7 +10,8 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
   @override
   HttpMethod get method => HttpMethod.get;
 
-  final scheduledMessageListOrderEnumMap = <ScheduledMessageListQueryOrder, String>{
+  final scheduledMessageListOrderEnumMap =
+      <ScheduledMessageListQueryOrder, String>{
     ScheduledMessageListQueryOrder.createdAt: 'created_at',
     ScheduledMessageListQueryOrder.scheduledAt: 'scheduled_at',
   };
@@ -31,7 +32,8 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
     bool? reverse,
     List<ScheduledStatus>? status,
     MessageTypeFilter? messageType,
-    ScheduledMessageListQueryOrder? order = ScheduledMessageListQueryOrder.createdAt,
+    ScheduledMessageListQueryOrder? order =
+        ScheduledMessageListQueryOrder.createdAt,
   }) : super(chat: chat) {
     url = 'scheduled_messages';
 

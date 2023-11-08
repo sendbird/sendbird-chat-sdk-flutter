@@ -14,7 +14,7 @@ class PollVoteEvent {
 
   /// Id of the message that contains the [Poll].
   int messageId;
-  
+
   Map<String, dynamic> json;
 
   PollVoteEvent({

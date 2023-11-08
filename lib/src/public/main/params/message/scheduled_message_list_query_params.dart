@@ -17,7 +17,8 @@ class ScheduledMessageListQueryParams {
   MessageTypeFilter? messageTypeFilter = MessageTypeFilter.all;
 
   /// The result order of scheduled messages. Defaults to [ScheduledMessageListQueryOrder.createdAt].
-  ScheduledMessageListQueryOrder? order = ScheduledMessageListQueryOrder.createdAt;
+  ScheduledMessageListQueryOrder? order =
+      ScheduledMessageListQueryOrder.createdAt;
 
   /// The maximum number of items per queried page.
   int? limit;

@@ -42,8 +42,7 @@ class MutedUserListQuery extends BaseQuery {
       token: token,
     );
 
-    final res =
-        await chat.apiClient.send<UserListQueryResponse<User>>(req);
+    final res = await chat.apiClient.send<UserListQueryResponse<User>>(req);
     isLoading = false;
     token = res.next;
     hasNext = res.next != '';
