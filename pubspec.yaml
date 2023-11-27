@@ -23,7 +23,7 @@ dependencies:
   encrypt: ^5.0.1
   shared_preferences: ^2.2.2
   http: ^0.13.6
-  logger: ^1.4.0
+  logger: ^2.0.2+1
   mime: ^1.0.4
   connectivity_plus: ^5.0.1
   http_parser: ^4.0.2
