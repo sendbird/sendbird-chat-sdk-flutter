@@ -254,29 +254,44 @@ abstract class BaseChannel implements Cacheable {
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
+    if (other is! BaseChannel) return false;
 
-    return other is BaseChannel &&
-        other.channelUrl == channelUrl &&
+    bool result = true;
+    if (this is! FeedChannel && other is! FeedChannel) {
+      result = other.coverUrl == coverUrl &&
+          other.data == data &&
+          other.customType == customType &&
+          other.isFrozen == isFrozen &&
+          other.isEphemeral == isEphemeral;
+    }
+
+    return other.channelUrl == channelUrl &&
         other.name == name &&
-        other.coverUrl == coverUrl &&
         other.createdAt == createdAt &&
-        other.data == data &&
-        other.customType == customType &&
-        other.isFrozen == isFrozen &&
-        other.isEphemeral == isEphemeral;
+        result;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode {
+    if (this is FeedChannel) {
+      return Object.hash(
         channelUrl,
         name,
-        coverUrl,
         createdAt,
+      );
+    } else {
+      return Object.hash(
+        channelUrl,
+        name,
+        createdAt,
+        coverUrl,
         data,
         customType,
         isFrozen,
         isEphemeral,
       );
+    }
+  }
 
   @override
   String get key => 'channel/$channelType$channelUrl';
@@ -288,14 +303,17 @@ abstract class BaseChannel implements Cacheable {
   void copyWith(dynamic other) {
     if (other is! BaseChannel) return;
 
+    if (this is! FeedChannel && other is! FeedChannel) {
+      coverUrl = other.coverUrl;
+      data = other.data;
+      customType = other.customType;
+      isFrozen = other.isFrozen;
+      isEphemeral = other.isEphemeral;
+    }
+
     channelUrl = other.channelUrl;
     name = other.name;
     createdAt = other.createdAt;
-    _coverUrl = other._coverUrl;
-    _data = other._data;
-    _customType = other._customType;
-    _isFrozen = other._isFrozen;
-    _isEphemeral = other._isEphemeral;
 
     fromCache = other.fromCache;
     dirty = other.dirty;

@@ -1,3 +1,15 @@
+## v4.1.2 (Dec 12, 2023)
+
+### Features
+- Added `createdBefore` and `createdAfter` in `GroupChannelListQuery` and `PublicGroupChannelListQuery`
+- Added `markAsClicked()` in `FeedChannel`
+- Replaced `markAsReadBy()` with `markAsRead()` in `FeedChannel`
+
+### Improvements
+- Fix the bugs regarding FeedChannel
+- Fix the bugs regarding ReactionEvent
+- Improved stability
+
 ## v4.1.1 (Nov 8, 2023)
 
 ### Improvements

@@ -43,7 +43,6 @@ export 'src/public/main/handler/session_handler.dart';
 export 'src/public/main/handler/user_event_handler.dart';
 export 'src/public/main/model/channel/feed_channel_change_logs.dart';
 export 'src/public/main/model/channel/group_channel_change_logs.dart';
-export 'src/public/main/model/channel/group_channel_filter.dart';
 export 'src/public/main/model/channel/group_channel_unread_item_count.dart';
 export 'src/public/main/model/channel/notification_category.dart';
 export 'src/public/main/model/chat/do_not_disturb.dart';

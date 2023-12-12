@@ -10,7 +10,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
-import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_filter.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/group_channel_filter.dart';
 
 class GroupChannelListRequest extends ApiRequest {
   @override
