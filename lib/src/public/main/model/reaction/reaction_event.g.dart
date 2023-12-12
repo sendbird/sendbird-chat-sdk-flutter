@@ -13,11 +13,13 @@ ReactionEvent _$ReactionEventFromJson(Map<String, dynamic> json) =>
               unknownValue: ChannelType.group) ??
           ChannelType.group,
       channelUrl: json['channel_url'] as String? ?? '',
-      messageId: json['msg_id'] as int,
-      key: json['reaction'] as String,
-      userId: json['user_id'] as String,
-      operation: $enumDecode(_$ReactionEventActionEnumMap, json['operation']),
-      updatedAt: json['updated_at'] as int,
+      messageId: json['msg_id'] as int? ?? 0,
+      key: json['reaction'] as String? ?? '',
+      userId: json['user_id'] as String? ?? '',
+      operation: $enumDecodeNullable(
+              _$ReactionEventActionEnumMap, json['operation']) ??
+          ReactionEventAction.delete,
+      updatedAt: json['updated_at'] as int? ?? 0,
     );
 
 const _$ChannelTypeEnumMap = {

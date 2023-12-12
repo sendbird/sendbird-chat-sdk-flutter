@@ -33,7 +33,9 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList()
       ..metaDataValueStartsWithFilter =
-          json['metadata_value_startswith'] as String?;
+          json['metadata_value_startswith'] as String?
+      ..createdBefore = json['created_before'] as int?
+      ..createdAfter = json['created_after'] as int?;
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
     <String, dynamic>{
@@ -53,6 +55,8 @@ Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
       'metadata_key': instance.metaDataKey,
       'metadata_values': instance.metaDataValues,
       'metadata_value_startswith': instance.metaDataValueStartsWithFilter,
+      'created_before': instance.createdBefore,
+      'created_after': instance.createdAfter,
     };
 
 const _$MyMemberStateFilterEnumMap = {

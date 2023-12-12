@@ -21,6 +21,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/channel/notification_cat
 /// Represents a feed channel.
 /// @since 4.0.3
 class FeedChannel extends BaseChannel {
+  static const _markAsClickedMessagesLimit = 30;
   static const _logImpressionMessagesLimit = 30;
   static const _logCustomMessagesLimit = 30;
   static const _logCustomTopicLengthLimit = 15;
@@ -200,50 +201,22 @@ class FeedChannel extends BaseChannel {
     );
   }
 
-  /// Sends mark as read to this channel.
+  /// Sends mark as read all to this channel.
+  /// If [messages] is not null, the [messages] will be marked as read to this channel.
   /// @since 4.1.0
-  Future<void> markAsRead() async {
+  Future<void> markAsRead({List<NotificationMessage>? messages}) async {
     sbLog.i(StackTrace.current);
 
-    final res = await chat.apiClient
-        .send<Map<String, dynamic>>(FeedChannelMarkAsReadRequest(
-      chat,
-      channelUrl: channelUrl,
-    ));
-    final ts = res['ts'] ?? 0;
-
-    chat.collectionManager.markAsReadForFeedChannel(channelUrl, null);
-
-    if (chat.currentUser != null) {
-      final status = ReadStatus(
-        userId: chat.currentUser!.userId,
-        timestamp: ts,
-        channelUrl: channelUrl,
-        channelType: channelType,
-      );
-      status.saveToCache(chat);
-    }
-    groupChannel.myLastRead = ts;
-
-    if (groupChannel.unreadMessageCount > 0 ||
-        groupChannel.unreadMentionCount > 0) {
-      groupChannel.clearUnreadCount();
-      // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
-    }
-  }
-
-  /// Sends mark as read to this channel by messages.
-  /// @since 4.1.0
-  Future<void> markAsReadBy(List<NotificationMessage> messages) async {
-    sbLog.i(StackTrace.current);
-
-    final List<String> messageIds = [];
-    for (final message in messages) {
-      if (message.messageStatus == NotificationMessageStatus.sent) {
-        messageIds.add(message.notificationId);
+    List<String>? messageIds;
+    if (messages != null) {
+      messageIds = [];
+      for (final message in messages) {
+        if (message.messageStatus == NotificationMessageStatus.sent) {
+          messageIds.add(message.notificationId);
+        }
       }
+      if (messageIds.isEmpty) return;
     }
-    if (messageIds.isEmpty) return;
 
     final res = await chat.apiClient
         .send<Map<String, dynamic>>(FeedChannelMarkAsReadRequest(
@@ -251,15 +224,65 @@ class FeedChannel extends BaseChannel {
       channelUrl: channelUrl,
       messageIds: messageIds,
     ));
-    final unreadMessageCount = res['unread_message_count'];
 
     chat.collectionManager.markAsReadForFeedChannel(channelUrl, messageIds);
 
-    if (unreadMessageCount != null &&
-        unreadMessageCount != groupChannel.unreadMessageCount) {
-      groupChannel.unreadMessageCount = unreadMessageCount;
-      // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+    if (messageIds == null) {
+      final ts = res['ts'] ?? 0;
+
+      if (chat.currentUser != null) {
+        final status = ReadStatus(
+          userId: chat.currentUser!.userId,
+          timestamp: ts,
+          channelUrl: channelUrl,
+          channelType: channelType,
+        );
+        status.saveToCache(chat);
+      }
+      groupChannel.myLastRead = ts;
+
+      if (groupChannel.unreadMessageCount > 0 ||
+          groupChannel.unreadMentionCount > 0) {
+        groupChannel.clearUnreadCount();
+        // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+      }
+    } else {
+      final unreadMessageCount = res['unread_message_count'] ?? 0;
+
+      if (unreadMessageCount != null &&
+          unreadMessageCount != groupChannel.unreadMessageCount) {
+        groupChannel.unreadMessageCount = unreadMessageCount;
+        // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+      }
     }
+  }
+
+  /// markAsClicked
+  /// @since 4.1.2
+  Future<bool> markAsClicked(List<NotificationMessage> messages) async {
+    if (messages.isNotEmpty && messages.length <= _markAsClickedMessagesLimit) {
+      bool result = true;
+      for (final message in messages) {
+        final Map<String, dynamic> data = {
+          'action': 'clicked',
+          'template_key': message.notificationData?.templateKey ?? '',
+          'channel_url': message.channelUrl,
+          'tags': message.notificationData?.tags ?? [],
+          'message_id': message.notificationId,
+          'source': 'notification',
+          'message_ts': message.createdAt,
+        };
+
+        if (!await SendbirdStatistics.appendStat(
+          type: 'noti:stats',
+          data: data,
+        )) {
+          result = false;
+        }
+      }
+      return result;
+    }
+    return false;
   }
 
   /// logImpression
