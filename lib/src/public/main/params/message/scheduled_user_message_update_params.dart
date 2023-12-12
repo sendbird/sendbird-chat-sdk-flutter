@@ -46,6 +46,10 @@ class ScheduledUserMessageUpdateParams {
     this.pushNotificationDeliveryOption,
   });
 
+  static ScheduledUserMessageUpdateParams fromJson(Map<String, dynamic> json) {
+    return _$ScheduledUserMessageUpdateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     var json = _$ScheduledUserMessageUpdateParamsToJson(this);
     json.removeWhere((key, value) => value == null);

@@ -14,3 +14,11 @@ OGMetaData _$OGMetaDataFromJson(Map<String, dynamic> json) => OGMetaData(
           ? null
           : OGImage.fromJson(json['og:image'] as Map<String, dynamic>),
     );
+
+Map<String, dynamic> _$OGMetaDataToJson(OGMetaData instance) =>
+    <String, dynamic>{
+      'og:title': instance.title,
+      'og:url': instance.url,
+      'og:description': instance.description,
+      'og:image': instance.ogImage?.toJson(),
+    };

@@ -6,6 +6,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_cli
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/user_message_create_params.dart';
@@ -40,7 +41,7 @@ class ChannelUserMessageSendRequest extends ApiRequest {
 
   @override
   Future<BaseMessage> response(Map<String, dynamic> res) async {
-    return BaseMessage.getMessageFromJsonWithChat<UserMessage>(chat, res,
-        channelType: channelType);
+    return RootMessage.getMessageFromJsonWithChat<UserMessage>(chat, res,
+        channelType: channelType) as BaseMessage;
   }
 }

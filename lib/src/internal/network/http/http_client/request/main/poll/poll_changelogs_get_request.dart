@@ -21,8 +21,7 @@ class PollChangelogsGetRequest extends ApiRequest {
     int? ts,
     int limit = pollChangeLogsLimit,
   }) : super(chat: chat) {
-    url =
-        "${channelType.urlString}/$channelUrl/polls/changelogs";
+    url = "${channelType.urlString}/$channelUrl/polls/changelogs";
     queryParams = {
       'token': token,
       'change_ts': ts,

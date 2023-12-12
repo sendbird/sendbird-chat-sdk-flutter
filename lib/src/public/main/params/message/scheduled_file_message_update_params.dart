@@ -62,6 +62,10 @@ class ScheduledFileMessageUpdateParams {
     this.pushNotificationDeliveryOption = PushNotificationDeliveryOption.normal,
   });
 
+  static ScheduledFileMessageUpdateParams fromJson(Map<String, dynamic> json) {
+    return _$ScheduledFileMessageUpdateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     var json = _$ScheduledFileMessageUpdateParamsToJson(this);
     json.removeWhere((key, value) => value == null);

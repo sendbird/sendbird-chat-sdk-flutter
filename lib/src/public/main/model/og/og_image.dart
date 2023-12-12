@@ -17,7 +17,7 @@ abstract class OGDisplayable {
 
 /// Represents a Open Graph Image of [OGMetaData].
 /// For Specifications, see [https://ogp.me/](https://ogp.me/).
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class OGImage implements OGDisplayable, OGMedia {
   /// An image URL which represents the object within the Open Graph.
   @override
@@ -52,4 +52,6 @@ class OGImage implements OGDisplayable, OGMedia {
 
   factory OGImage.fromJson(Map<String, dynamic> json) =>
       _$OGImageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OGImageToJson(this);
 }

@@ -21,20 +21,23 @@ class ReactionEvent {
   final String channelUrl; // Check
 
   /// The message ID which contains the [Reaction] of this event.
-  @JsonKey(name: 'msg_id')
+  @JsonKey(name: 'msg_id', defaultValue: 0)
   int messageId;
 
   /// The key of the [Reaction] this event belongs to.
-  @JsonKey(name: 'reaction')
+  @JsonKey(name: 'reaction', defaultValue: '')
   final String key;
 
-  /// The user ID of the [User] who have created this reaction event..
+  /// The user ID of the [User] who have created this reaction event.
+  @JsonKey(defaultValue: '')
   final String userId;
 
   /// Refer to [ReactionEventAction].
+  @JsonKey(defaultValue: ReactionEventAction.delete)
   final ReactionEventAction operation;
 
   /// The updated timestamp of the reaction event in milliseconds.
+  @JsonKey(defaultValue: 0)
   final int updatedAt;
 
   ReactionEvent({

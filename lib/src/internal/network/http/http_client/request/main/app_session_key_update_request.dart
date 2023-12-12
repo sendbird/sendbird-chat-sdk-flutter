@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 
@@ -11,13 +12,28 @@ class AppSessionKeyUpdateRequest extends ApiRequest {
   AppSessionKeyUpdateRequest(
     Chat chat, {
     required String appId,
-    required String accessToken,
-    bool expiringSession = false,
+    String? accessToken,
     String? userId,
   }) : super(chat: chat) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/session_key';
-    body = {'expiring_session': expiringSession};
-    headers = {'App-Id': appId, 'Access-Token': accessToken};
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/session_key';
+
+    headers = {'App-Id': appId};
+
+    if (accessToken != null) {
+      headers['Access-Token'] = accessToken;
+    }
+
+    body = {
+      'expiring_session': chat.chatContext.isFeedAuthenticated
+          ? true
+          : (chat.eventManager.getSessionHandler() != null),
+    };
+
+    if (chat.chatContext.isChatConnected) {
+      body['services'] = ['chat', 'feed'];
+    } else if (chat.chatContext.isFeedAuthenticated) {
+      body['services'] = ['feed'];
+    }
   }
 
   @override

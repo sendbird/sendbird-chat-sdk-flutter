@@ -66,6 +66,10 @@ class GroupChannelCreateParams {
 
   GroupChannelCreateParams();
 
+  static GroupChannelCreateParams fromJson(Map<String, dynamic> json) {
+    return _$GroupChannelCreateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     final json = _$GroupChannelCreateParamsToJson(this);
     if (coverImage != null && coverImage!.hasBinary) {

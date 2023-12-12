@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/group_channel_filter.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/enum_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_list_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
@@ -12,7 +13,6 @@ import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_filter.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A class representing query to retrieve [GroupChannel] list for the current [User].
@@ -111,6 +111,14 @@ class GroupChannelListQuery extends BaseQuery {
   /// Whether to include chat notification [GroupChannel].
   /// @since 4.0.3
   bool includeChatNotification = false;
+
+  /// Restricts the search scope to only retrieve group channels which have been created before the specified time, in milliseconds.
+  /// @since 4.1.2
+  int? createdBefore;
+
+  /// Restricts the search scope to only retrieve group channels which have been created after the specified time, in milliseconds.
+  /// @since 4.1.2
+  int? createdAfter;
 
   GroupChannelListQuery({
     Chat? chat,
@@ -221,7 +229,9 @@ class GroupChannelListQuery extends BaseQuery {
       ..hiddenMode = hiddenChannelFilter
       ..metaDataKey = metaDataKey
       ..metaDataValues = metaDataValues
-      ..metaDataValueStartsWithFilter = metaDataValueStartsWith;
+      ..metaDataValueStartsWithFilter = metaDataValueStartsWith
+      ..createdBefore = GroupChannelFilter.toSec(createdBefore)
+      ..createdAfter = GroupChannelFilter.toSec(createdAfter);
 
     final options = [
       if (includeEmpty) ChannelListQueryIncludeOption.includeEmpty,

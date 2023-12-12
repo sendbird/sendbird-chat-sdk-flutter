@@ -27,7 +27,8 @@ class ReconnectTask {
 
   void increaseRetryCount() {
     if (_backOffPeriod < config.maxInterval) {
-      final newBackOff = config.interval * pow(config.multiplier, (_retryCount - 1));
+      final newBackOff =
+          config.interval * pow(config.multiplier, (_retryCount - 1));
       _backOffPeriod = min(newBackOff.toInt(), config.maxInterval.toInt());
     }
     _retryCount++;

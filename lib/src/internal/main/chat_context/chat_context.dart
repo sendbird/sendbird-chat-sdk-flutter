@@ -9,6 +9,11 @@ import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat_options.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 
+enum Service {
+  chat,
+  feed,
+}
+
 class ChatContext {
   String appId;
   SendbirdChatOptions options;
@@ -32,8 +37,9 @@ class ChatContext {
   // 'LOGI' event
   User? currentUser;
   String? currentUserId;
-  String? eKey;
+  List<Service> services = [];
   String? sessionKey;
+  String? eKey;
   AppInfo? appInfo;
   int uploadSizeLimit = 0;
   int? maxUnreadCountOnSuperGroup;
@@ -79,14 +85,23 @@ class ChatContext {
     }
   }
 
+  bool get isChatConnected {
+    return (services.isEmpty || services.contains(Service.chat)); // Check
+  }
+
+  bool get isFeedAuthenticated {
+    return (services.contains(Service.feed));
+  }
+
   void cleanUp() {
     accessToken = null;
     pendingPushToken = null;
 
     currentUser = null;
     currentUserId = null;
-    eKey = null;
+    services.clear();
     sessionKey = null;
+    eKey = null;
     appInfo = null;
     uploadSizeLimit = 0;
     maxUnreadCountOnSuperGroup = null;

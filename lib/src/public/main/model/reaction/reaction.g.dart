@@ -14,3 +14,9 @@ Reaction _$ReactionFromJson(Map<String, dynamic> json) => Reaction(
           [],
       updatedAt: json['updated_at'] as int,
     );
+
+Map<String, dynamic> _$ReactionToJson(Reaction instance) => <String, dynamic>{
+      'key': instance.key,
+      'user_ids': instance.userIds,
+      'updated_at': instance.updatedAt,
+    };

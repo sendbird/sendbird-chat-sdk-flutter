@@ -31,6 +31,10 @@ class PollUpdateParams {
     this.closeAt = -1,
   });
 
+  static PollUpdateParams fromJson(Map<String, dynamic> json) {
+    return _$PollUpdateParamsFromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     return _$PollUpdateParamsToJson(this);
   }

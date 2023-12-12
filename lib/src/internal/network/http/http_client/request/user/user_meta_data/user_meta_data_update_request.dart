@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 
@@ -14,7 +15,7 @@ class UserMetaDataUpdateRequest extends ApiRequest {
     String? userId,
     bool upsert = true,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/metadata';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/metadata';
     body = {'metadata': metaData, 'upsert': upsert};
   }
 

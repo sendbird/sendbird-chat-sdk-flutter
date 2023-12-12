@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
@@ -44,6 +46,7 @@ import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_ch
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -98,6 +101,11 @@ abstract class BaseChannel implements Cacheable {
     return _data;
   }
 
+  set data(value) {
+    checkUnsupportedAction();
+    _data = value;
+  }
+
   /// The custom type of the channel.
   String get customType {
     checkUnsupportedAction();
@@ -125,6 +133,11 @@ abstract class BaseChannel implements Cacheable {
   bool get isEphemeral {
     checkUnsupportedAction();
     return _isEphemeral;
+  }
+
+  set isEphemeral(value) {
+    checkUnsupportedAction();
+    _isEphemeral = value;
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -241,29 +254,44 @@ abstract class BaseChannel implements Cacheable {
   @override
   bool operator ==(other) {
     if (identical(other, this)) return true;
+    if (other is! BaseChannel) return false;
 
-    return other is BaseChannel &&
-        other.channelUrl == channelUrl &&
+    bool result = true;
+    if (this is! FeedChannel && other is! FeedChannel) {
+      result = other.coverUrl == coverUrl &&
+          other.data == data &&
+          other.customType == customType &&
+          other.isFrozen == isFrozen &&
+          other.isEphemeral == isEphemeral;
+    }
+
+    return other.channelUrl == channelUrl &&
         other.name == name &&
-        other.coverUrl == coverUrl &&
         other.createdAt == createdAt &&
-        other.data == data &&
-        other.customType == customType &&
-        other.isFrozen == isFrozen &&
-        other.isEphemeral == isEphemeral;
+        result;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode {
+    if (this is FeedChannel) {
+      return Object.hash(
         channelUrl,
         name,
-        coverUrl,
         createdAt,
+      );
+    } else {
+      return Object.hash(
+        channelUrl,
+        name,
+        createdAt,
+        coverUrl,
         data,
         customType,
         isFrozen,
         isEphemeral,
       );
+    }
+  }
 
   @override
   String get key => 'channel/$channelType$channelUrl';
@@ -275,16 +303,37 @@ abstract class BaseChannel implements Cacheable {
   void copyWith(dynamic other) {
     if (other is! BaseChannel) return;
 
+    if (this is! FeedChannel && other is! FeedChannel) {
+      coverUrl = other.coverUrl;
+      data = other.data;
+      customType = other.customType;
+      isFrozen = other.isFrozen;
+      isEphemeral = other.isEphemeral;
+    }
+
     channelUrl = other.channelUrl;
     name = other.name;
     createdAt = other.createdAt;
-    _coverUrl = other.coverUrl;
-    _data = other.data;
-    _customType = other.customType;
-    _isFrozen = other.isFrozen;
-    _isEphemeral = other.isEphemeral;
 
     fromCache = other.fromCache;
     dirty = other.dirty;
+  }
+
+  Map<String, dynamic> toJson();
+
+  Uint8List serialize() {
+    return Uint8List.fromList(jsonEncode(toJson()).codeUnits);
+  }
+
+  static BaseChannel? buildFromSerializedData(Uint8List data) {
+    final json = jsonDecode(String.fromCharCodes(data));
+    if (json['channel_type'] == ChannelType.group.name) {
+      return GroupChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['channel_type'] == ChannelType.open.name) {
+      return OpenChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    } else if (json['channel_type'] == ChannelType.feed.name) {
+      return FeedChannel.fromJson(jsonDecode(String.fromCharCodes(data)));
+    }
+    return null;
   }
 }

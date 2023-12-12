@@ -15,7 +15,9 @@ extension ChatUser on Chat {
   }) async {
     sbLog.i(StackTrace.current, 'nickname: $nickname');
 
-    if (nickname == null && profileFileInfo == null && preferredLanguages == null) {
+    if (nickname == null &&
+        profileFileInfo == null &&
+        preferredLanguages == null) {
       throw InvalidParameterException();
     }
 
@@ -73,8 +75,7 @@ extension ChatUser on Chat {
 
   Future<DoNotDisturb> getDoNotDisturb() async {
     sbLog.i(StackTrace.current);
-    return await apiClient
-        .send<DoNotDisturb>(UserDoNotDisturbGetRequest(this));
+    return await apiClient.send<DoNotDisturb>(UserDoNotDisturbGetRequest(this));
   }
 
   Future<void> setSnoozePeriod({
@@ -105,7 +106,6 @@ extension ChatUser on Chat {
 
   Future<SnoozePeriod> getSnoozePeriod() async {
     sbLog.i(StackTrace.current);
-    return await apiClient
-        .send<SnoozePeriod>(UserSnoozePeriodGetRequest(this));
+    return await apiClient.send<SnoozePeriod>(UserSnoozePeriodGetRequest(this));
   }
 }

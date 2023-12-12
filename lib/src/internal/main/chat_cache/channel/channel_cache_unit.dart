@@ -6,6 +6,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/open_channel/open_channel.dart';
 
@@ -18,13 +19,7 @@ class ChannelCacheUnit implements CacheUnit {
 
   @override
   void insert(Cacheable data) {
-    if (data is GroupChannel) {
-      if (channel != null) {
-        channel?.copyWith(data);
-      } else {
-        channel = data;
-      }
-    } else if (data is OpenChannel) {
+    if (data is BaseChannel) {
       if (channel != null) {
         channel?.copyWith(data);
       } else {
@@ -75,7 +70,10 @@ class ChannelCacheUnit implements CacheUnit {
 
   @override
   T? find<T extends Cacheable>({String? key}) {
-    if (T == GroupChannel || T == OpenChannel || T == BaseChannel) {
+    if (T == BaseChannel ||
+        T == GroupChannel ||
+        T == OpenChannel ||
+        T == FeedChannel) {
       return channel as T?;
     } else if (T == ReadStatus) {
       return readStatusMap[key] as T?;

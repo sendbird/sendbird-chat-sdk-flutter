@@ -14,3 +14,12 @@ OGImage _$OGImageFromJson(Map<String, dynamic> json) => OGImage(
       width: json['width'] as int? ?? 0,
       height: json['height'] as int? ?? 0,
     );
+
+Map<String, dynamic> _$OGImageToJson(OGImage instance) => <String, dynamic>{
+      'url': instance.url,
+      'secure_url': instance.secureUrl,
+      'type': instance.type,
+      'alt': instance.alt,
+      'width': instance.width,
+      'height': instance.height,
+    };

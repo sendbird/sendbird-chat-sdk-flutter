@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/type_checker.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
@@ -16,7 +17,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info.dart'
 part 'admin_message.g.dart';
 
 /// Object representing an admin message.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class AdminMessage extends BaseMessage {
   AdminMessage({
     required int messageId,
@@ -78,5 +79,12 @@ class AdminMessage extends BaseMessage {
 
   factory AdminMessage.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
     return AdminMessage.fromJson(json)..set(chat);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final json = _$AdminMessageToJson(this);
+    json['message_type'] = MessageType.admin.name; // Check
+    return json;
   }
 }

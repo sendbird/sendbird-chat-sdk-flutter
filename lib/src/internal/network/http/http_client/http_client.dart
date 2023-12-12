@@ -9,6 +9,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.da
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/multipart_request.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
@@ -21,7 +22,6 @@ enum HttpMethod {
   post,
   put,
   delete,
-  // patch,
 }
 
 class HttpClient {
@@ -31,12 +31,15 @@ class HttpClient {
 
   final ChatContext _chatContext;
   final SessionManager _sessionManager;
+  final StatManager? _statManager;
 
   HttpClient({
     required ChatContext chatContext,
     required SessionManager sessionManager,
+    StatManager? statManager,
   })  : _chatContext = chatContext,
-        _sessionManager = sessionManager;
+        _sessionManager = sessionManager,
+        _statManager = statManager;
 
   ChatContext get chatContext => _chatContext;
 
@@ -46,148 +49,139 @@ class HttpClient {
     errorStreamController = null;
   }
 
-  Future<dynamic> get({
-    required String url,
+  Uri toUri(
+    String url, {
     Map<String, dynamic>? queryParams,
-    Map<String, String>? headers,
-  }) async {
-    final uri = Uri(
+  }) {
+    return Uri(
       scheme: 'https',
       host: _chatContext.apiHost,
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
+  }
 
+  Future<dynamic> get({
+    required Uri uri,
+    Map<String, dynamic>? queryParams,
+    Map<String, String>? headers,
+  }) async {
     final request = http.Request('GET', uri);
     request.headers.addAll(_commonHeaders());
     request.headers.addAll(headers ?? {});
 
+    _statManager?.startApiResultStat(
+      endpoint: uri.toString(),
+    );
+
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}');
 
-    final res = await request.send();
-    final result = await http.Response.fromStream(res);
-    return _response(result);
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _copyRequest(request);
+      if (secondRequest != null) {
+        res = await http.Response.fromStream(await secondRequest.send());
+      }
+    }
+    return _response(res);
   }
 
   Future<dynamic> post({
-    required String url,
+    required Uri uri,
     Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
+    bool? isAuthenticateFeed,
   }) async {
-    final uri = Uri(
-      scheme: 'https',
-      host: _chatContext.apiHost,
-      path: url,
-      queryParameters: _convertQueryParams(queryParams),
-    );
-
     final request = http.Request('POST', uri);
     request.body = jsonEncode(body);
-    request.headers.addAll(_commonHeaders());
+    request.headers.addAll(_commonHeaders(
+      isAuthenticateFeed: isAuthenticateFeed,
+    ));
     request.headers.addAll(headers);
+
+    _statManager?.startApiResultStat(
+      endpoint: uri.toString(),
+    );
 
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
-    final res = await request.send();
-    final result = await http.Response.fromStream(res);
-    return _response(result);
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _copyRequest(request);
+      if (secondRequest != null) {
+        res = await http.Response.fromStream(await secondRequest.send());
+      }
+    }
+    return _response(res);
   }
 
   Future<dynamic> put({
-    required String url,
+    required Uri uri,
     Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    final uri = Uri(
-      scheme: 'https',
-      host: _chatContext.apiHost,
-      path: url,
-      queryParameters: _convertQueryParams(queryParams),
-    );
-
     final request = http.Request('PUT', uri);
     request.body = jsonEncode(body);
     request.headers.addAll(_commonHeaders());
     request.headers.addAll(headers);
 
+    _statManager?.startApiResultStat(
+      endpoint: uri.toString(),
+    );
+
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
-    final res = await request.send();
-    final result = await http.Response.fromStream(res);
-    return _response(result);
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _copyRequest(request);
+      if (secondRequest != null) {
+        res = await http.Response.fromStream(await secondRequest.send());
+      }
+    }
+    return _response(res);
   }
 
   Future<dynamic> delete({
-    required String url,
+    required Uri uri,
     Map<String, dynamic> queryParams = const {},
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    final uri = Uri(
-      scheme: 'https',
-      host: _chatContext.apiHost,
-      path: url,
-      queryParameters: _convertQueryParams(queryParams),
-    );
-
     final request = http.Request('DELETE', uri);
     request.headers.addAll(_commonHeaders());
     request.body = jsonEncode(body);
     request.headers.addAll(headers);
 
+    _statManager?.startApiResultStat(
+      endpoint: uri.toString(),
+    );
+
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
-    final res = await request.send();
-    final result = await http.Response.fromStream(res);
-    return _response(result);
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _copyRequest(request);
+      if (secondRequest != null) {
+        res = await http.Response.fromStream(await secondRequest.send());
+      }
+    }
+    return _response(res);
   }
-
-  // Future<dynamic> patch({
-  //   required String url,
-  //   Map<String, dynamic>? queryParams,
-  //   Map<String, dynamic>? body,
-  //   Map<String, String>? headers,
-  // }) async {
-  //   final uri = Uri(
-  //     scheme: 'https',
-  //     host: _chatContext.apiHost,
-  //     path: url,
-  //     queryParameters: _convertQueryParams(queryParams),
-  //   );
-  //
-  //   final request = http.Request('PATCH', uri);
-  //   request.headers.addAll(_commonHeaders());
-  //   request.headers.addAll(headers ?? {});
-  //
-  //   sbLog.d(StackTrace.current,
-  //       '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
-  //
-  //   final res = await request.send();
-  //   final result = await http.Response.fromStream(res);
-  //   return _response(result);
-  // }
 
   Future<dynamic> requestMultipart({
     required HttpMethod method,
-    required String url,
-    Map<String, dynamic>? body,
+    required Uri uri,
     Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? body,
     Map<String, String>? headers,
     ProgressHandler? progressHandler,
   }) async {
-    final uri = Uri(
-      scheme: 'https',
-      host: _chatContext.apiHost,
-      path: url,
-      queryParameters: _convertQueryParams(queryParams ?? {}),
-    );
-
     final request = MultipartRequest(
       method.asString().toUpperCase(),
       uri,
@@ -237,11 +231,15 @@ class HttpClient {
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[method] $method\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
-    final res = await request.send();
-    final result = await http.Response.fromStream(res);
-
+    http.Response res = await http.Response.fromStream(await request.send());
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _copyRequest(request);
+      if (secondRequest != null) {
+        res = await http.Response.fromStream(await secondRequest.send());
+      }
+    }
     uploadingMultipartRequests.remove(reqId);
-    return _response(result);
+    return _response(res);
   }
 
   bool cancelUploadingMultipartRequest(String requestId) {
@@ -259,12 +257,13 @@ class HttpClient {
     uploadingMultipartRequests.clear();
   }
 
-  Map<String, String> _commonHeaders() {
+  Map<String, String> _commonHeaders({bool? isAuthenticateFeed}) {
     final sessionKey = _chatContext.sessionKey;
     final commonHeaders = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      if (sessionKey != null)
+      if (sessionKey != null &&
+          (isAuthenticateFeed == null || isAuthenticateFeed == false))
         'Session-Key': sessionKey
       else if (_chatContext.apiToken != null)
         'Api-Token': _chatContext.apiToken!
@@ -298,15 +297,6 @@ class HttpClient {
       final err =
           SendbirdException(message: body['message'], code: body['code']);
       errorStreamController?.sink.add(err);
-
-      if (err.code == SendbirdError.sessionKeyExpired) {
-        try {
-          await _sessionManager.updateSessionKey();
-        } catch (e) {
-          sbLog.e(StackTrace.current, 'e: $e');
-          rethrow;
-        }
-      }
     }
 
     switch (response.statusCode) {
@@ -323,6 +313,58 @@ class HttpClient {
         throw InternalServerException(
             message: 'Internal server error: ${response.statusCode}');
     }
+  }
+
+  Future<bool> _checkSessionKeyExpired(http.Response response) async {
+    dynamic body;
+
+    try {
+      body = jsonDecode(response.body.toString());
+    } catch (e) {
+      sbLog.e(StackTrace.current, 'e: $e');
+      throw MalformedDataException();
+    }
+
+    if (response.statusCode >= 400 && response.statusCode < 500) {
+      final err =
+          SendbirdException(message: body['message'], code: body['code']);
+      errorStreamController?.sink.add(err);
+
+      if (err.code == SendbirdError.sessionKeyExpired) {
+        try {
+          await _sessionManager.updateSessionKey();
+          return true;
+        } catch (e) {
+          sbLog.e(StackTrace.current, 'e: $e');
+          rethrow;
+        }
+      }
+    }
+    return false;
+  }
+
+  http.BaseRequest? _copyRequest(http.BaseRequest request) {
+    http.BaseRequest requestCopy;
+
+    if (request is http.Request) {
+      requestCopy = http.Request(request.method, request.url)
+        ..encoding = request.encoding
+        ..bodyBytes = request.bodyBytes;
+    } else if (request is http.MultipartRequest) {
+      requestCopy = http.MultipartRequest(request.method, request.url)
+        ..fields.addAll(request.fields)
+        ..files.addAll(request.files);
+    } else {
+      throw NotSupportedException();
+    }
+
+    requestCopy
+      ..persistentConnection = request.persistentConnection
+      ..followRedirects = request.followRedirects
+      ..maxRedirects = request.maxRedirects
+      ..headers.addAll(request.headers)
+      ..headers.addAll(_commonHeaders()); // Apply updated sessionKey
+    return requestCopy;
   }
 
   Map<String, dynamic> _convertQueryParams(Map<String, dynamic>? q) {

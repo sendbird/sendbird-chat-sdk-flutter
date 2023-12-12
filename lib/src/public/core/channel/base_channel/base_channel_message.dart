@@ -62,12 +62,12 @@ extension BaseChannelMessage on BaseChannel {
     );
 
     final pendingUserMessage =
-        BaseMessage.getMessageFromJsonWithChat<UserMessage>(
+        RootMessage.getMessageFromJsonWithChat<UserMessage>(
       chat,
       cmd.payload,
       channelType: channelType,
       commandType: cmd.cmd,
-    );
+    ) as UserMessage;
 
     if (chat.chatContext.currentUser == null) {
       final error = ConnectionRequiredException();
@@ -87,11 +87,11 @@ extension BaseChannelMessage on BaseChannel {
       chat.commandManager.sendCommand(cmd).then((result) {
         if (result == null) return;
 
-        final message = BaseMessage.getMessageFromJsonWithChat<UserMessage>(
+        final message = RootMessage.getMessageFromJsonWithChat<UserMessage>(
           chat,
           result.payload,
           commandType: result.cmd,
-        );
+        ) as UserMessage;
 
         chat.collectionManager.onMessageSentByMe(message);
         if (handler != null) handler(message, null);
@@ -155,12 +155,12 @@ extension BaseChannelMessage on BaseChannel {
 
     final result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      final baseMessage = BaseMessage.getMessageFromJsonWithChat<UserMessage>(
+      final message = RootMessage.getMessageFromJsonWithChat<UserMessage>(
         chat,
         result.payload,
         commandType: cmd.cmd,
-      );
-      return baseMessage;
+      ) as UserMessage;
+      return message;
     } else {
       throw WebSocketFailedException();
     }
@@ -229,12 +229,12 @@ extension BaseChannelMessage on BaseChannel {
             thumbnails: uploadResponse?.thumbnails,
           );
 
-          final message = BaseMessage.getMessageFromJsonWithChat<FileMessage>(
+          final message = RootMessage.getMessageFromJsonWithChat<FileMessage>(
             chat,
             cmd.payload,
             channelType: channelType,
             commandType: cmd.cmd,
-          );
+          ) as FileMessage;
 
           if (chat.chatContext.currentUser == null) {
             final error = ConnectionRequiredException();
@@ -250,11 +250,11 @@ extension BaseChannelMessage on BaseChannel {
               if (result == null) return;
 
               final message =
-                  BaseMessage.getMessageFromJsonWithChat<FileMessage>(
+                  RootMessage.getMessageFromJsonWithChat<FileMessage>(
                 chat,
                 result.payload,
                 commandType: result.cmd,
-              );
+              ) as FileMessage;
 
               chat.collectionManager.onMessageSentByMe(message);
               if (handler != null) handler(message, null);
@@ -380,12 +380,12 @@ extension BaseChannelMessage on BaseChannel {
 
     final result = await chat.commandManager.sendCommand(cmd);
     if (result != null) {
-      final baseMessage = BaseMessage.getMessageFromJsonWithChat<FileMessage>(
+      final message = RootMessage.getMessageFromJsonWithChat<FileMessage>(
         chat,
         result.payload,
         commandType: cmd.cmd,
-      );
-      return baseMessage;
+      ) as FileMessage;
+      return message;
     } else {
       throw WebSocketFailedException();
     }
@@ -473,12 +473,11 @@ extension BaseChannelMessage on BaseChannel {
   /// Retrieves previous or next messages based on the timestamp in a specific channel.
   ///
   /// The [timestamp] to be the reference point for messages to retrieve, in Unix milliseconds format.
-  Future<List<BaseMessage>> getMessagesByTimestamp(
+  Future<List<RootMessage>> getMessagesByTimestamp(
     int timestamp,
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
-    checkUnsupportedAction();
 
     if (timestamp <= 0) {
       throw InvalidParameterException();
@@ -488,25 +487,25 @@ extension BaseChannelMessage on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return await chat.apiClient
-        .send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       chat,
       channelType: channelType,
       channelUrl: channelUrl,
       params: params.toJson(),
       timestamp: timestamp,
     ));
+    return res.messages;
   }
 
   /// Retrieves previous or next messages based on the message ID in a specific channel.
   ///
   /// The [messageId] to be the reference point for messages to retrieve.
-  Future<List<BaseMessage>> getMessagesByMessageId(
+  Future<List<RootMessage>> getMessagesByMessageId(
     int messageId,
     MessageListParams params,
   ) async {
     sbLog.i(StackTrace.current, 'messageId: $messageId');
-    checkUnsupportedAction();
 
     if (messageId <= 0) {
       throw InvalidParameterException();
@@ -516,7 +515,7 @@ extension BaseChannelMessage on BaseChannel {
       params.showSubChannelMessagesOnly = false;
     }
 
-    return await chat.apiClient.send<List<BaseMessage>>(
+    final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
       ChannelMessagesGetRequest(
         chat,
         channelType: channelType,
@@ -525,6 +524,7 @@ extension BaseChannelMessage on BaseChannel {
         messageId: messageId,
       ),
     );
+    return res.messages;
   }
 
   /// Requests message change logs after given token or timestamp
@@ -539,7 +539,6 @@ extension BaseChannelMessage on BaseChannel {
     String? token,
   }) async {
     sbLog.i(StackTrace.current, 'timestamp: $timestamp');
-    checkUnsupportedAction();
 
     return await chat.apiClient.send(
       ChannelMessageChangeLogGetRequest(

@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 
@@ -14,7 +15,7 @@ class ChannelInvitationPreferenceSetRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url =
-        'users/${userId ?? chat.chatContext.currentUserId}/channel_invitation_preference';
+        'users/${getUrlEncodedUserId(chat, userId)}/channel_invitation_preference';
     body = {'auto_accept': autoAccept};
   }
 }
@@ -28,7 +29,7 @@ class ChannelInvitationPreferenceGetRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url =
-        'users/${userId ?? chat.chatContext.currentUserId}/channel_invitation_preference';
+        'users/${getUrlEncodedUserId(chat, userId)}/channel_invitation_preference';
   }
 
   @override

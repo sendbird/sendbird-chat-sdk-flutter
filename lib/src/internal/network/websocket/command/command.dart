@@ -76,7 +76,7 @@ class Command {
       cmd == CommandString.enter ||
       cmd == CommandString.exit ||
       cmd == CommandString.read ||
-      cmd == CommandString.pollVote;
+      cmd == CommandString.pollVoted;
 
   bool get hasError => payload['error'] != null;
 
@@ -95,9 +95,9 @@ class Command {
       cmd == CommandString.fileMessageUpdate ||
       cmd == CommandString.adminMessageUpdate;
 
-  bool get isMemberCountChange => cmd == CommandString.memberCountChange;
+  bool get isMemberCountChanged => cmd == CommandString.memberCountChanged;
 
-  bool get isDeletedMessage => cmd == CommandString.deleteMessage;
+  bool get isMessageDeleted => cmd == CommandString.messageDeleted;
 
   bool get isRead => cmd == CommandString.read;
 
@@ -113,9 +113,9 @@ class Command {
 
   bool get isError => cmd == CommandString.error;
 
-  bool get isVote => cmd == CommandString.pollVote;
+  bool get isPollVoted => cmd == CommandString.pollVoted;
 
-  bool get isUpdatedPoll => cmd == CommandString.pollUpdate;
+  bool get isPollUpdated => cmd == CommandString.pollUpdated;
 
   // Builders
 
@@ -311,7 +311,7 @@ class Command {
     };
 
     return Command(
-      cmd: CommandString.pollVote,
+      cmd: CommandString.pollVoted,
       payload: payload,
     );
   }

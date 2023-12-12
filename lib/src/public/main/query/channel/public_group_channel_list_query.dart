@@ -3,13 +3,13 @@
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/group_channel_filter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/public/public_group_channel_list_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_filter.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A class representing query to retrieve [GroupChannel] list for the current `User`.
@@ -67,6 +67,14 @@ class PublicGroupChannelListQuery extends BaseQuery {
   /// default value is `true`
   bool includeMetaData = true;
 
+  /// Restricts the search scope to only retrieve group channels which have been created before the specified time, in milliseconds.
+  /// @since 4.1.2
+  int? createdBefore;
+
+  /// Restricts the search scope to only retrieve group channels which have been created after the specified time, in milliseconds.
+  /// @since 4.1.2
+  int? createdAfter;
+
   PublicGroupChannelListQuery({
     Chat? chat,
   }) : super(chat: chat ?? SendbirdChat().chat);
@@ -118,7 +126,9 @@ class PublicGroupChannelListQuery extends BaseQuery {
       ..metaDataKey = metaDataKey
       ..metaDataValues = metaDataValues
       ..metaDataValueStartsWithFilter = metaDataValueStartsWith
-      ..publicMode = PublicChannelFilter.public;
+      ..publicMode = PublicChannelFilter.public
+      ..createdBefore = GroupChannelFilter.toSec(createdBefore)
+      ..createdAfter = GroupChannelFilter.toSec(createdAfter);
 
     final res =
         await chat.apiClient.send<ChannelListQueryResponse<GroupChannel>>(

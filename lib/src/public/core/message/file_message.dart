@@ -6,6 +6,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/type_checker.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
@@ -22,7 +23,7 @@ import 'package:uuid/uuid.dart';
 part 'file_message.g.dart';
 
 /// Object representing a file.
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class FileMessage extends BaseMessage {
   /// The file URL.
   final String url;
@@ -146,6 +147,13 @@ class FileMessage extends BaseMessage {
     return FileMessage.fromJson(json)..set(chat);
   }
 
+  @override
+  Map<String, dynamic> toJson() {
+    final json = _$FileMessageToJson(this);
+    json['message_type'] = MessageType.file.name; // Check
+    return json;
+  }
+
   factory FileMessage.fromParams({
     required FileMessageCreateParams params,
     required BaseChannel channel,
@@ -202,7 +210,7 @@ class FileMessage extends BaseMessage {
 }
 
 /// An object represents thumbnail
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class Thumbnail {
   String url;
   String? plainUrl;
@@ -222,6 +230,8 @@ class Thumbnail {
 
   factory Thumbnail.fromJson(Map<String, dynamic> json) =>
       _$ThumbnailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ThumbnailToJson(this);
 
   @override
   bool operator ==(other) {

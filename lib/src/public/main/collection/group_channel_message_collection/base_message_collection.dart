@@ -8,9 +8,9 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 
 /// The base message collection that handles message lists.
 /// @since 4.0.3
-class BaseMessageCollection {
+abstract class BaseMessageCollection {
   /// The list of succeeded message list in this collection.
-  final List<BaseMessage> messageList = [];
+  List<RootMessage> get messageList;
 
   /// The starting point of the collection.
   int get startingPoint => _startingPoint;
@@ -34,13 +34,18 @@ class BaseMessageCollection {
   MessageListParams get params => _initializeParams;
 
   BaseChannel get baseChannel => _channel;
+
   BaseMessageCollectionHandler get baseHandler => _handler;
 
   set hasNext(value) => _hasNext = value;
+
   MessageListParams get loadPreviousParams => _loadPreviousParams;
+
   MessageListParams get loadNextParams => _loadNextParams;
+
   Chat get chat => _chat;
-  BaseMessage? get latestMessage => _latestMessage;
+
+  RootMessage? get latestMessage => _latestMessage;
 
   final BaseChannel _channel;
   final BaseMessageCollectionHandler _handler;
@@ -55,8 +60,8 @@ class BaseMessageCollection {
   bool _isLoading = false;
   bool _hasPrevious = false;
   bool _hasNext = false;
-  BaseMessage? _oldestMessage;
-  BaseMessage? _latestMessage;
+  RootMessage? _oldestMessage;
+  RootMessage? _latestMessage;
 
   BaseMessageCollection({
     required BaseChannel channel,
@@ -95,14 +100,16 @@ class BaseMessageCollection {
 
     _initializeParams.inclusive = true;
 
-    final messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _initializeParams.toJson(),
       timestamp: _startingPoint,
+      checkingHasNext: true,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -143,6 +150,8 @@ class BaseMessageCollection {
       _hasNext = false;
     }
 
+    if (res.hasNext != null) _hasNext = res.hasNext!;
+
     if (messages.isNotEmpty) {
       _chat.collectionManager.sendEventsToMessageCollection(
         messageCollection: this,
@@ -173,14 +182,15 @@ class BaseMessageCollection {
       ..nextResultSize = 0
       ..inclusive = true;
 
-    List<BaseMessage> messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _loadPreviousParams.toJson(),
       timestamp: _oldestMessage!.createdAt,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -229,14 +239,16 @@ class BaseMessageCollection {
       ..previousResultSize = 0
       ..inclusive = true;
 
-    List<BaseMessage> messages =
-        await _chat.apiClient.send<List<BaseMessage>>(ChannelMessagesGetRequest(
+    final res = await _chat.apiClient
+        .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
       _chat,
       channelType: ChannelType.group,
       channelUrl: _channel.channelUrl,
       params: _loadNextParams.toJson(),
       timestamp: _latestMessage!.createdAt,
+      checkingHasNext: true,
     ));
+    final messages = res.messages;
 
     if (_isDisposed) return;
 
@@ -251,6 +263,8 @@ class BaseMessageCollection {
     } else {
       _hasNext = false;
     }
+
+    if (res.hasNext != null) _hasNext = res.hasNext!;
 
     _isLoading = false;
 
@@ -268,7 +282,7 @@ class BaseMessageCollection {
 
   bool canAddMessage(
     CollectionEventSource eventSource,
-    BaseMessage addedMessage,
+    RootMessage addedMessage,
   ) {
     if (eventSource == CollectionEventSource.messageLoadPrevious ||
         eventSource == CollectionEventSource.messageLoadNext) {
@@ -290,11 +304,11 @@ class BaseMessageCollection {
     return true;
   }
 
-  int _getExistedMessageCountInMessageList(List<BaseMessage> loadedMessages) {
+  int _getExistedMessageCountInMessageList(List<RootMessage> loadedMessages) {
     int existedMessageCount = 0;
     for (final loadedMessage in loadedMessages) {
       for (final message in messageList) {
-        if (loadedMessage.messageId == message.messageId) {
+        if (loadedMessage.getMessageId() == message.getMessageId()) {
           existedMessageCount++;
           break;
         }

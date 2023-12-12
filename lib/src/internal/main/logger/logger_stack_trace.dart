@@ -20,7 +20,8 @@ class LoggerStackTrace {
       callerFunctionName: callerFunctionName,
       fileName: fileInfo.isNotEmpty ? fileInfo[0] : '',
       lineNumber: fileInfo.length >= 2 ? fileInfo[1] : '',
-      columnNumber: fileInfo.length >= 3 ? fileInfo[2].replaceFirst(')', '') : '',
+      columnNumber:
+          fileInfo.length >= 3 ? fileInfo[2].replaceFirst(')', '') : '',
     );
   }
 

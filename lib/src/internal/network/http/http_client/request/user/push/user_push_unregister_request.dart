@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -17,8 +18,7 @@ class UserPushTokenUnregisterRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
-    url =
-        'users/${userId ?? chat.chatContext.currentUserId}/push/$typeString/$token';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push/$typeString/$token';
   }
 }
 
@@ -30,6 +30,6 @@ class UserPushTokenUnregisterAllRequest extends ApiRequest {
     Chat chat, {
     String? userId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${userId ?? chat.chatContext.currentUserId}/push';
+    url = 'users/${getUrlEncodedUserId(chat, userId)}/push';
   }
 }
