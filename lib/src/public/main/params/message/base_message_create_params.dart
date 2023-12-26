@@ -36,6 +36,8 @@ class BaseMessageCreateParams {
   /// Whether the message should be pinned to the channel. Defaults to false.
   bool isPinnedMessage = false;
 
+  String? mentionedMessageTemplate;
+
   BaseMessageCreateParams({
     this.data,
     this.customType,
@@ -46,6 +48,7 @@ class BaseMessageCreateParams {
     this.replyToChannel = false,
     this.pushNotificationDeliveryOption = PushNotificationDeliveryOption.normal,
     this.isPinnedMessage = false,
+    this.mentionedMessageTemplate,
   });
 
   /// withMessage
@@ -73,6 +76,7 @@ class BaseMessageCreateParams {
           PushNotificationDeliveryOption.suppress)
         'push_option': pushNotificationDeliveryOption.asString(),
       'pin_message': isPinnedMessage,
+      'mentioned_message_template': mentionedMessageTemplate,
     };
 
     ret.removeWhere((key, value) => value == null);
