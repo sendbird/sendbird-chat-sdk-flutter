@@ -65,7 +65,9 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
       ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {}
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
-      ..errorCode = json['error_code'] as int?;
+      ..errorCode = json['error_code'] as int?
+      ..mentionedMessageTemplate =
+          json['mentioned_message_template'] as String?;
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
     <String, dynamic>{
@@ -100,6 +102,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'translations': instance.translations,
       'translation_target_languages': instance.translationTargetLanguages,
       'poll': instance.poll?.toJson(),
+      'mentioned_message_template': instance.mentionedMessageTemplate,
     };
 
 const _$ChannelTypeEnumMap = {
