@@ -51,6 +51,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       ..allMetaArrays = (json['sorted_metaarray'] as List<dynamic>?)
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
+      ..mentionedMessageTemplate = json['mentioned_message_template'] as String?
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
       ..errorCode = json['error_code'] as int?
       ..sender = json['user'] == null
@@ -71,6 +72,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'extended_message': instance.extendedMessage,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'mentioned_message_template': instance.mentionedMessageTemplate,
       'message_id': instance.messageId,
       'request_id': instance.requestId,
       'message': instance.message,
