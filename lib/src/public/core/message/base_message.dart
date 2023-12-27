@@ -132,6 +132,7 @@ abstract class BaseMessage extends RootMessage {
     super.extendedMessage,
     super.createdAt,
     super.updatedAt,
+    super.mentionedMessageTemplate,
     Sender? sender,
     this.requestId,
     this.messageId = 0,

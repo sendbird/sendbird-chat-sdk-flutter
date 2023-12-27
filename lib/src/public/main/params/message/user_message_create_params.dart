@@ -35,6 +35,7 @@ class UserMessageCreateParams extends BaseMessageCreateParams {
     PushNotificationDeliveryOption pushNotificationDeliveryOption =
         PushNotificationDeliveryOption.normal,
     bool isPinnedMessage = false,
+    String? mentionedMessageTemplate,
   })  : translationTargetLanguages = translationTargetLanguages ?? [],
         super(
           data: data,
@@ -46,6 +47,7 @@ class UserMessageCreateParams extends BaseMessageCreateParams {
           replyToChannel: replyToChannel ?? false,
           pushNotificationDeliveryOption: pushNotificationDeliveryOption,
           isPinnedMessage: isPinnedMessage,
+          mentionedMessageTemplate: mentionedMessageTemplate,
         );
 
   /// withMessage
