@@ -45,6 +45,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info_updat
 class CommandManager {
   final Map<String, Completer<Command?>> _completerMap = {};
   final Map<String, Timer> _ackTimerMap = {};
+  final Map<String, int> _readMap = {};
 
   final Chat _chat;
 
@@ -77,7 +78,11 @@ class CommandManager {
   }
 
   void cleanUp() {
-    _ackTimerMap.removeWhere((key, value) => true);
+    for (final key in _ackTimerMap.keys) {
+      _ackTimerMap[key]?.cancel();
+    }
+    _ackTimerMap.clear();
+    _readMap.clear();
   }
 
   void clearCompleterMap({SendbirdException? e}) {
@@ -100,13 +105,18 @@ class CommandManager {
     sbLog.d(
         StackTrace.current, '\n-[cmd] ${cmd.cmd}\n-[payload] ${cmd.payload}');
 
-    try {
+    runZonedGuarded(() {
       _chat.connectionManager.webSocketClient.send(cmd.encode());
-    } catch (e) {
+    }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
       _ackTimerMap.remove(cmd.requestId)?.cancel();
-      rethrow;
-    }
+
+      if (e is SendbirdException) {
+        throw e;
+      } else {
+        throw SendbirdException(message: e.toString());
+      }
+    });
 
     final reqId = cmd.requestId;
     if (cmd.isAckRequired && reqId != null) {
@@ -114,7 +124,11 @@ class CommandManager {
           Duration(seconds: _chat.chatContext.options.webSocketTimeout), () {
         throw AckTimeoutException();
       });
+
       _ackTimerMap[reqId] = timer;
+      if (cmd.isRead) {
+        _readMap[reqId] = DateTime.now().millisecondsSinceEpoch;
+      }
 
       final completer = Completer<Command>();
       _completerMap[reqId] = completer;
@@ -133,7 +147,25 @@ class CommandManager {
     processUnreadMessageCountPayload(cmd.payload['unread_cnt']);
 
     if (cmd.requestId != null) {
-      _ackTimerMap.remove(cmd.requestId)?.cancel();
+      if (cmd.isRead) {
+        final ackTs = _readMap[cmd.requestId];
+        final List<String> removedReadReqIdList = [];
+
+        for (final reqId in _readMap.keys) {
+          final ts = _readMap[reqId];
+          if (ackTs == null || ts == null || ts <= ackTs) {
+            _ackTimerMap.remove(reqId)?.cancel();
+            removedReadReqIdList.add(reqId);
+          }
+        }
+
+        for (final reqId in removedReadReqIdList) {
+          _readMap.remove(reqId);
+        }
+      } else {
+        _ackTimerMap.remove(cmd.requestId)?.cancel();
+      }
+
       final completer = _completerMap.remove(cmd.requestId);
 
       if (cmd.isError || cmd.hasError) {
@@ -269,6 +301,12 @@ class CommandManager {
       ..reconnectConfig = event.reconnectConfiguration;
 
     _chat.sessionManager.setSessionKey(event.sessionKey);
+
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      await _chat.dbManager.setLoginInfo(_chat.chatContext, event.user);
+    }
+    //- [DBManager]
 
     if (fromWebSocket) {
       _chat.chatContext.reconnectTask =

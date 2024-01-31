@@ -4,6 +4,7 @@
 /// [isFromEvent] is true only when it comes from the socket.
 enum CollectionEventSource {
   // Channel (isFromEvent = false)
+  channelCacheLoadMore(false), // loadMore()
   channelLoadMore(false), // loadMore()
   channelChangeLogs(false), // onReconnectSucceeded()
 
@@ -36,16 +37,19 @@ enum CollectionEventSource {
   eventPinnedMessageUpdated(true), // onChannelUpdated()
 
   // Message (isFromEvent = false)
+  messageCacheInitialize(false), // initialize()
+  messageCacheLoadPrevious(false), // loadPrevious()
+  messageCacheLoadNext(false), // loadNext()
   messageInitialize(false), // initialize()
   messageLoadPrevious(false), // loadPrevious()
   messageLoadNext(false), // loadNext()
   messageChangeLogs(false), // onReconnectSucceeded()
   pollChangeLogs(false), // onReconnectSucceeded()
-  messagesGap(false), // onReconnectSucceeded()
-  // localMessagePendingCreated(false), // TODO: (?)
-  // localMessageFailed(false), // TODO: (?)
-  // localMessageCanceled(false), // TODO: (?)
-  // localMessageResendStarted(false), // TODO: (?)
+  messageFill(false), // onReconnectSucceeded()
+  localMessagePendingCreated(false), // sendUserMessage(), sendFileMessage()
+  localMessageFailed(false), // sendUserMessage(), sendFileMessage()
+  localMessageCanceled(false), // sendFileMessage()
+  localMessageResendStarted(false), // resendUserMessage(), resendFileMessage()
 
   // Message (isFromEvent = true)
   eventMessageSent(true), // onMessageAdded()

@@ -164,29 +164,54 @@ class ConnectionManager {
     }, (e, s) async {
       sbLog.e(StackTrace.current, 'e: $e');
 
-      changeState(DisconnectedState(chat: chat));
-      if (chat.chatContext.loginCompleter != null &&
-          !chat.chatContext.loginCompleter!.isCompleted) {
-        if (e is SendbirdException) {
-          chat.statManager.endWsConnectStat(
-            hostUrl: url,
-            success: false,
-            errorCode: e.code,
-            errorDescription: e.message,
-          );
+      if (isDisconnected() == false) {
+        changeState(DisconnectedState(chat: chat));
 
-          chat.chatContext.loginCompleter?.completeError(e);
-        } else {
-          final exception = WebSocketFailedException(message: e.toString());
+        if (chat.chatContext.loginCompleter != null &&
+            !chat.chatContext.loginCompleter!.isCompleted) {
+          if (e is SendbirdException) {
+            chat.statManager.endWsConnectStat(
+              hostUrl: url,
+              success: false,
+              errorCode: e.code,
+              errorDescription: e.message,
+            );
 
-          chat.statManager.endWsConnectStat(
-            hostUrl: url,
-            success: false,
-            errorCode: exception.code,
-            errorDescription: exception.message,
-          );
+            //+ [DBManager]
+            if (chat.dbManager.isEnabled()) {
+              final user =
+                  await chat.dbManager.getLoginInfoByException(userId, e);
+              if (user != null) {
+                chat.chatContext.loginCompleter?.complete(user);
+                chat.chatContext.loginCompleter = null;
 
-          chat.chatContext.loginCompleter?.completeError(exception);
+                if (chat.chatContext.isChatConnected) {
+                  await chat.connectionManager.reconnect(reset: true);
+                }
+                return;
+              }
+            }
+            //- [DBManager]
+
+            if (chat.chatContext.loginCompleter != null &&
+                !chat.chatContext.loginCompleter!.isCompleted) {
+              chat.chatContext.loginCompleter?.completeError(e);
+            }
+          } else {
+            final exception = WebSocketFailedException(message: e.toString());
+
+            chat.statManager.endWsConnectStat(
+              hostUrl: url,
+              success: false,
+              errorCode: exception.code,
+              errorDescription: exception.message,
+            );
+
+            if (chat.chatContext.loginCompleter != null &&
+                !chat.chatContext.loginCompleter!.isCompleted) {
+              chat.chatContext.loginCompleter?.completeError(exception);
+            }
+          }
         }
       }
     });
@@ -203,7 +228,7 @@ class ConnectionManager {
         errorDescription: e.name,
       );
 
-      await doDisconnect(logout: true);
+      await doDisconnect(clear: true);
       throw e;
     });
 
@@ -215,9 +240,14 @@ class ConnectionManager {
     return user;
   }
 
-  Future<void> doDisconnect({required bool logout}) async {
-    sbLog.i(StackTrace.current,
-        'logout: $logout, userId: ${chat.chatContext.currentUserId}');
+  Future<void> doDisconnect({
+    required bool clear,
+    bool logout = false,
+  }) async {
+    sbLog.i(
+      StackTrace.current,
+      'clear: $clear, logout: $logout, userId: ${chat.chatContext.currentUserId}',
+    );
 
     if (chat.chatContext.loginCompleter != null &&
         !chat.chatContext.loginCompleter!.isCompleted) {
@@ -228,7 +258,7 @@ class ConnectionManager {
     if (isReconnecting()) {
       reconnectTimer?.cancel();
       reconnectTimer = null;
-      if (logout) {
+      if (clear) {
         chat.eventManager.notifyReconnectFailed();
       }
     }
@@ -237,7 +267,7 @@ class ConnectionManager {
 
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
-    if (logout) {
+    if (clear || logout) {
       await chat.eventDispatcher.onLogout();
 
       chat.messageQueueMap.forEach((key, q) => q.cleanUp());
@@ -245,18 +275,26 @@ class ConnectionManager {
       // chat.uploads.forEach((key, value) => _api.cancelUploadingFile(key));
       chat.uploadTaskMap.clear();
 
-      chat.chatContext.cleanUp();
       chat.channelCache.cleanUp();
       chat.sessionManager.cleanUp();
       chat.commandManager.cleanUp();
       chat.apiClient.cleanUp();
+
+      if (logout) {
+        chat.chatContext.cleanUp();
+        //+ [DBManager]
+        if (chat.dbManager.isEnabled()) {
+          await chat.dbManager.clear();
+        }
+        //- [DBManager]
+      }
     } else {
       await chat.eventDispatcher.onDisconnected();
     }
 
     changeState(DisconnectedState(chat: chat));
 
-    if (logout && disconnectedUserId.isNotEmpty) {
+    if (clear && disconnectedUserId.isNotEmpty) {
       chat.eventManager.notifyDisconnected(disconnectedUserId);
     }
   }
@@ -274,7 +312,7 @@ class ConnectionManager {
     final task = chat.chatContext.reconnectTask;
     if (task == null || (task.exceedRetryCount && task.hasRetriedLastChance)) {
       sbLog.w(StackTrace.current, 'exceedRetryCount and hasRetriedLastChance');
-      disconnect(logout: true);
+      disconnect(logout: task != null);
       return false;
     }
 

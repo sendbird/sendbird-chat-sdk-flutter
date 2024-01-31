@@ -10,15 +10,15 @@ part 'thread_info.g.dart';
 class ThreadInfo {
   /// The total number of replies in a specific thread.
   /// A value of 0 indicates there is no reply in the thread.
-  final int replyCount;
+  int replyCount;
 
   /// Users who left a reply in the thread, based on the time the reply was added.
   @JsonKey(name: 'most_replies')
-  final List<User> mostRepliesUsers;
+  List<User> mostRepliesUsers;
 
   /// The time that the last reply was created, in Unix milliseconds format.
   /// A value of 0 indicates there is no reply in the thread.
-  final int lastRepliedAt;
+  int lastRepliedAt;
 
   int? updatedAt;
 

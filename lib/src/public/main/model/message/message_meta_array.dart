@@ -12,7 +12,7 @@ class MessageMetaArray {
   final String key;
 
   /// The meta array value.
-  final List<String> value;
+  List<String> value;
 
   MessageMetaArray({
     required this.key,

@@ -4,5 +4,6 @@ enum StatType {
   apiResult,
   wsConnect,
   featureLocalCache,
+  featureLocalCacheEvent,
   notificationStats,
 }

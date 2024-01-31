@@ -2,7 +2,6 @@
 
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 
 /// Notification collection that handles message lists.
@@ -37,7 +36,7 @@ class NotificationCollection extends BaseMessageCollection {
           channel: channel,
           params: params,
           handler: handler,
-          startingPoint: startingPoint ?? IntMax.max,
+          startingPoint: startingPoint ?? SendbirdChat.maxInt,
           chat: chat ?? SendbirdChat().chat,
         ) {
     sbLog.i(StackTrace.current, 'MessageCollection()');

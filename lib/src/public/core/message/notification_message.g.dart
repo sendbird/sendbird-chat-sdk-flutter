@@ -20,8 +20,10 @@ NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
               json['message_status'] as String),
       data: TypeChecker.fromJsonToNullableString(json['data']),
       customType: json['custom_type'] as String?,
-      mentionType:
-          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
+      mentionType: $enumDecodeNullable(
+              _$MentionTypeEnumMap, json['mention_type'],
+              unknownValue: MentionType.users) ??
+          MentionType.users,
       mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -41,7 +43,7 @@ Map<String, dynamic> _$NotificationMessageToJson(
       'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'data': instance.data,
       'custom_type': instance.customType,
-      'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'mention_type': _$MentionTypeEnumMap[instance.mentionType]!,
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'sorted_metaarray':

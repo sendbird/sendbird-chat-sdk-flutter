@@ -19,6 +19,11 @@ class FeedChannelListQuery extends BaseQuery {
   /// @since 4.0.3
   bool includeEmpty = true;
 
+  //+ [DBManager] This will be supported in FeedChannelCollection because of some limitation.
+  // int _fetchedCount = 0;
+  // int _offset = 0;
+  //- [DBManager]
+
   FeedChannelListQuery({
     Chat? chat,
   }) : super(chat: chat ?? SendbirdChat().chat);
@@ -44,22 +49,49 @@ class FeedChannelListQuery extends BaseQuery {
       ChannelListQueryIncludeOption.includeDeliveryReceipt,
     ];
 
-    final res = await chat.apiClient.send<FeedChannelListQueryResponse>(
-      FeedChannelListRequest(
-        chat,
-        limit: limit,
-        options: options,
-        token: token,
-      ),
-    );
+    FeedChannelListQueryResponse res;
 
-    for (final element in res.channels) {
-      element.set(chat);
+    try {
+      res = await chat.apiClient.send<FeedChannelListQueryResponse>(
+        FeedChannelListRequest(
+          chat,
+          limit: limit,
+          options: options,
+          token: token,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+      for (final element in res.channels) {
+        element.set(chat);
+      }
+
+      //+ [DBManager]
+      // if (chat.dbManager.isEnabled()) {
+      //   await chat.dbManager.upsertFeedChannels(res.channels);
+      //
+      //   _fetchedCount += res.channels.length;
+      //   _offset = _fetchedCount;
+      // }
+      //- [DBManager]
+    } catch (e) {
+      isLoading = false;
+
+      //+ [DBManager]
+      // if (chat.dbManager.isEnabled()) {
+      //   final localChannels =
+      //       await chat.dbManager.getFeedChannels(query: this, offset: _offset);
+      //   _offset += localChannels.length;
+      //
+      //   hasNext = (limit == localChannels.length);
+      //   return localChannels;
+      // }
+      //- [DBManager]
+      rethrow;
     }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.channels;
   }
 }

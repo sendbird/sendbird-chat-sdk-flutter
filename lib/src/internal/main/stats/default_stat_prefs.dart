@@ -4,12 +4,13 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/api_result_stat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/notification_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/api_result_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/default_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/notification_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/ws_connect_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_connect_stat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -86,6 +87,8 @@ class DefaultStatPrefs {
           return WsConnectStat.fromJson(ts: ts, data: data);
         case StatType.featureLocalCache:
           return null;
+        case StatType.featureLocalCacheEvent:
+          return LocalCacheEventStat.fromJson(ts: ts, data: data);
         case StatType.notificationStats:
           return NotificationStat.fromJson(ts: ts, data: data);
       }

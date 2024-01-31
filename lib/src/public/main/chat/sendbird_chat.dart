@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
@@ -40,6 +41,9 @@ class SendbirdChat {
   /// Alternative push template
   static const String pushTemplateAlternative = 'alternative';
 
+  /// Max int value
+  static int get maxInt => kIsWeb ? 9007199254740991 : double.maxFinite.toInt();
+
   static final SendbirdChat _instance = SendbirdChat._internal();
 
   SendbirdChat._internal()
@@ -57,16 +61,22 @@ class SendbirdChat {
 // Chat
 //------------------------------//
   /// Initializes SendbirdChat with given app ID.
-  static void init({
+  static Future<bool> init({
     required String appId,
     SendbirdChatOptions? options,
-  }) {
-    if (appId == _instance._chat.chatContext.appId) {
-      return;
-    }
-
+  }) async {
+    bool result = false;
     _instance._chat.chatContext.appId = appId;
-    if (options != null) _instance._chat.chatContext.options = options;
+    _instance._chat.chatContext.options = options ?? SendbirdChatOptions();
+
+    //+ [DBManager]
+    await _instance._chat.dbManager.init();
+
+    _instance._chat.dbManager.appendLocalCacheStat(
+      useLocalCache: _instance._chat.chatContext.options.useCollectionCaching,
+    );
+    //- [DBManager]
+    return result;
   }
 
   /// Current SDK version.
@@ -690,5 +700,29 @@ class SendbirdChat {
     sbLog.i(StackTrace.current);
 
     _instance._chat.refreshNotificationCollections();
+  }
+
+//------------------------------//
+// useCollectionCaching
+//------------------------------//
+  /// Gets cached data size. (Bytes)
+  /// Refer to [SendbirdChatOptions.useCollectionCaching].
+  /// @since 4.2.0
+  static Future<int?> getCachedDataSize() async {
+    return await _instance._chat.getCachedDataSize();
+  }
+
+  /// Clears all cached data.
+  /// Refer to [SendbirdChatOptions.useCollectionCaching].
+  /// @since 4.2.0
+  static Future<void> clearCachedData() async {
+    await _instance._chat.clearCachedData();
+  }
+
+  /// Clears cached messages regarding [channelUrl].
+  /// Refer to [SendbirdChatOptions.useCollectionCaching].
+  /// @since 4.2.0
+  static Future<void> clearCachedMessages(String channelUrl) async {
+    await _instance._chat.clearCachedMessages(channelUrl);
   }
 }

@@ -40,29 +40,32 @@ class FileMessage extends BaseMessage {
   }
 
   /// Represents the name of the file.
-  final String? name;
+  String? name;
 
   /// Represents the size of the file.
-  final int? size;
+  int? size;
 
   /// Represents the type of the file. **MIME preferred.**
-  final String? type;
+  String? type;
 
   /// Represents the thumbnail information of image file.
   /// To make thumbnail of image when you send it,
   /// please refer to [BaseChannelMessage.sendFileMessage].
-  final List<Thumbnail>? thumbnails;
+  List<Thumbnail>? thumbnails;
 
   /// [FileMessageCreateParams] object that used for sending this message.
   @JsonKey(includeFromJson: false, includeToJson: false)
   FileMessageCreateParams? messageCreateParams;
 
-  final bool requireAuth;
+  bool requireAuth;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   File? file;
 
   FileMessage({
+    required String channelUrl,
+    required ChannelType channelType,
+    required int messageId,
     required this.url,
     this.name,
     this.size = 0,
@@ -72,13 +75,10 @@ class FileMessage extends BaseMessage {
     this.file,
     String? requestId,
     String? message,
-    required int messageId,
     SendingStatus? sendingStatus,
     Sender? sender,
-    required String channelUrl,
-    required ChannelType channelType,
     List<User> mentionedUsers = const [],
-    MentionType? mentionType,
+    MentionType mentionType = MentionType.users,
     List<String>? requestedMentionUserIds,
     int createdAt = 0,
     int updatedAt = 0,

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/default_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 
 class WsConnectStat extends DefaultStat {

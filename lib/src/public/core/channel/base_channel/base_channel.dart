@@ -10,7 +10,6 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/meta_data_cache.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/channel_meta_counter/channel_meta_counter_create_request.dart';
@@ -49,6 +48,8 @@ import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
+import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/collection_event_source.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
@@ -74,7 +75,7 @@ part 'base_channel_operator.dart';
 part 'base_channel_reaction.dart';
 
 /// Objects representing a channel.
-abstract class BaseChannel implements Cacheable {
+class BaseChannel implements Cacheable {
   /// The unique channel URL.
   String channelUrl;
 
@@ -319,7 +320,9 @@ abstract class BaseChannel implements Cacheable {
     dirty = other.dirty;
   }
 
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 
   Uint8List serialize() {
     return Uint8List.fromList(jsonEncode(toJson()).codeUnits);

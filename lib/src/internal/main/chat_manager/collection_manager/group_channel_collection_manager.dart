@@ -8,15 +8,12 @@ extension GroupChannelCollectionManager on CollectionManager {
 //------------------------------//
   void addGroupChannelCollection(GroupChannelCollection collection) {
     groupChannelCollections.add(collection);
-
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if (lastRequestTsForGroupChannelChangeLogs == 0) {
-      lastRequestTsForGroupChannelChangeLogs = now;
-    }
+    _setInitialGroupChannelChangeLogsTs();
   }
 
   void removeGroupChannelCollection(GroupChannelCollection collection) {
     groupChannelCollections.remove(collection);
+    _setInitialMessageChangeLogsAndMessagesGapTs();
   }
 
 //------------------------------//
@@ -31,9 +28,14 @@ extension GroupChannelCollectionManager on CollectionManager {
     GroupChannelChangeLogs changeLogs;
     String? token;
 
-    do {
-      final now = DateTime.now().millisecondsSinceEpoch;
+    //+ [DBManager]
+    final info = await _chat.dbManager.getChannelInfo();
+    if (info != null) {
+      token = info.lastChannelToken;
+    }
+    //- [DBManager]
 
+    do {
       if (token == null) {
         changeLogs = await _chat.getMyGroupChannelChangeLogs(
           params,
@@ -49,9 +51,20 @@ extension GroupChannelCollectionManager on CollectionManager {
       updatedChannels.addAll(changeLogs.updatedChannels);
       deletedChannelUrls.addAll(changeLogs.deletedChannelUrls);
 
-      lastRequestTsForGroupChannelChangeLogs = now;
       token = changeLogs.token;
     } while (changeLogs.hasMore);
+
+    //+ [DBManager]
+    if (token != null && token.isNotEmpty) {
+      ChannelInfo? channelInfo = await _chat.dbManager.getChannelInfo();
+      if (channelInfo != null) {
+        channelInfo.lastChannelToken = token;
+      } else {
+        channelInfo = ChannelInfo(lastChannelToken: token);
+      }
+      await _chat.dbManager.upsertChannelInfo(channelInfo);
+    }
+    //- [DBManager]
 
     sendEventsToGroupChannelCollectionList(
       eventSource: eventSource ?? CollectionEventSource.channelChangeLogs,
@@ -68,7 +81,21 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
-  }) {
+  }) async {
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      if (deletedChannelUrls != null) {
+        await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
+      }
+      if (addedChannels != null) {
+        await _chat.dbManager.upsertGroupChannels(addedChannels);
+      }
+      if (updatedChannels != null) {
+        await _chat.dbManager.upsertGroupChannels(updatedChannels);
+      }
+    }
+    //- [DBManager]
+
     if ((addedChannels != null && addedChannels.isNotEmpty) ||
         (updatedChannels != null && updatedChannels.isNotEmpty) ||
         (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty)) {
@@ -102,10 +129,44 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
-  }) {
+  }) async {
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      if (eventSource == CollectionEventSource.channelLoadMore ||
+          eventSource == CollectionEventSource.channelCacheLoadMore) {
+        if (deletedChannelUrls != null) {
+          await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
+        }
+        if (addedChannels != null) {
+          await _chat.dbManager.upsertGroupChannels(addedChannels);
+        }
+        if (updatedChannels != null) {
+          // Not used
+          await _chat.dbManager.upsertGroupChannels(updatedChannels);
+        }
+      }
+    }
+    //- [DBManager]
+
     final List<GroupChannel> addedChannelsForEvent = [];
     final List<GroupChannel> updatedChannelsForEvent = [];
     final List<String> deletedChannelUrlsForEvent = [];
+
+    // [First] delete
+    if (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty) {
+      for (final deletedChannelUrl in deletedChannelUrls) {
+        for (int index = 0;
+            index < channelCollection.channelList.length;
+            index++) {
+          final channel = channelCollection.channelList[index];
+          if (channel.channelUrl == deletedChannelUrl) {
+            channelCollection.channelList.removeAt(index);
+            deletedChannelUrlsForEvent.add(deletedChannelUrl);
+            break;
+          }
+        }
+      }
+    }
 
     if (addedChannels != null && addedChannels.isNotEmpty) {
       for (final addedChannel in addedChannels) {
@@ -118,10 +179,7 @@ extension GroupChannelCollectionManager on CollectionManager {
         }
 
         if (!isChannelExists) {
-          if (channelCollection.channelList.isEmpty) {
-            addedChannelsForEvent.add(addedChannel);
-          } else if (channelCollection.canAddChannel(
-              eventSource, addedChannel)) {
+          if (channelCollection.canAddChannel(eventSource, addedChannel)) {
             addedChannelsForEvent.add(addedChannel);
           }
         }
@@ -144,7 +202,8 @@ extension GroupChannelCollectionManager on CollectionManager {
             // Need to compare channel properties with updatedChannel
             // when eventSource is CollectionEventSource.channelChangeLogs (?)
 
-            if (channelCollection.canAddChannel(eventSource, updatedChannel)) {
+            if (channelCollection.canAddChannel(eventSource, updatedChannel,
+                checkToUpdateChannel: true)) {
               channelCollection.channelList[index] = updatedChannel;
               updatedChannelsForEvent.add(updatedChannel);
             } else {
@@ -170,17 +229,24 @@ extension GroupChannelCollectionManager on CollectionManager {
       }
     }
 
-    if (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty) {
-      for (final deletedChannelUrl in deletedChannelUrls) {
-        for (int index = 0;
-            index < channelCollection.channelList.length;
-            index++) {
-          final channel = channelCollection.channelList[index];
-          if (channel.channelUrl == deletedChannelUrl) {
-            channelCollection.channelList.removeAt(index);
-            deletedChannelUrlsForEvent.add(deletedChannelUrl);
-            break;
-          }
+    if (deletedChannelUrlsForEvent.isNotEmpty) {
+      if (!channelCollection.isDisposed) {
+        //+ [DBManager]
+        CollectionEventSource source = eventSource;
+        if (eventSource == CollectionEventSource.channelLoadMore) {
+          source = CollectionEventSource.channelCacheLoadMore;
+        }
+        //- [DBManager]
+
+        //+ [DBManager]
+        if (source == CollectionEventSource.channelCacheLoadMore) {
+          // Do not send this event.
+          // Customer does not need this event.
+        }
+        //- [DBManager]
+        else {
+          channelCollection.handler.onChannelsDeleted(
+              GroupChannelContext(source), deletedChannelUrlsForEvent);
         }
       }
     }
@@ -200,13 +266,6 @@ extension GroupChannelCollectionManager on CollectionManager {
       if (!channelCollection.isDisposed) {
         channelCollection.handler.onChannelsUpdated(
             GroupChannelContext(eventSource), updatedChannelsForEvent);
-      }
-    }
-
-    if (deletedChannelUrlsForEvent.isNotEmpty) {
-      if (!channelCollection.isDisposed) {
-        channelCollection.handler.onChannelsDeleted(
-            GroupChannelContext(eventSource), deletedChannelUrlsForEvent);
       }
     }
   }

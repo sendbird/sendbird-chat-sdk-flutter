@@ -9,13 +9,13 @@ part 'scheduled_info.g.dart';
 @JsonSerializable(createToJson: false)
 class ScheduledInfo {
   /// The ID of the scheduled message.
-  final int scheduledMessageId;
+  int scheduledMessageId;
 
   /// The scheduled time of this message.
-  final int scheduledAt;
+  int scheduledAt;
 
   /// The scheduled message sending status.
-  final ScheduledStatus scheduledStatus;
+  ScheduledStatus scheduledStatus;
 
   ScheduledInfo({
     required this.scheduledMessageId,

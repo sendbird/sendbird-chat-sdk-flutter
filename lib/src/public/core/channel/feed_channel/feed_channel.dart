@@ -13,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/notification_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -174,7 +175,25 @@ class FeedChannel extends BaseChannel {
       channel.groupChannel.fromCache = true;
       return channel;
     }
-    return await FeedChannel.refresh(channelUrl, chat: chat);
+
+    try {
+      final channel = await FeedChannel.refresh(channelUrl, chat: chat);
+      return channel;
+    } catch (e) {
+      //+ [DBManager]
+      if (chat.dbManager.isEnabled()) {
+        if (chat.currentUser != null) {
+          final channel = await chat.dbManager.getFeedChannel(channelUrl);
+          if (channel != null) {
+            channel.fromCache = true;
+            channel.groupChannel.fromCache = true;
+            return channel;
+          }
+        }
+      }
+      //- [DBManager]
+      rethrow;
+    }
   }
 
   /// Refreshes all the data of this channel.
@@ -186,7 +205,7 @@ class FeedChannel extends BaseChannel {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
 
-    return await chat.apiClient.send<FeedChannel>(
+    final channel = await chat.apiClient.send<FeedChannel>(
       FeedChannelRefreshRequest(
         chat,
         channelUrl,
@@ -199,20 +218,31 @@ class FeedChannel extends BaseChannel {
         passive: false,
       ),
     );
+
+    //+ [DBManager]
+    if (chat.dbManager.isEnabled()) {
+      await chat.dbManager.upsertFeedChannels([channel]);
+    }
+    //- [DBManager]
+
+    return channel;
   }
 
-  /// Sends mark as read all to this channel.
+  /// Sends mark as read to this channel.
   /// If [messages] is not null, the [messages] will be marked as read to this channel.
   /// @since 4.1.0
   Future<void> markAsRead({List<NotificationMessage>? messages}) async {
     sbLog.i(StackTrace.current);
 
     List<String>? messageIds;
+    List<RootMessage>? updatedMessages;
     if (messages != null) {
       messageIds = [];
+      updatedMessages = [];
       for (final message in messages) {
         if (message.messageStatus == NotificationMessageStatus.sent) {
           messageIds.add(message.notificationId);
+          updatedMessages.add(message);
         }
       }
       if (messageIds.isEmpty) return;
@@ -226,6 +256,7 @@ class FeedChannel extends BaseChannel {
     ));
 
     chat.collectionManager.markAsReadForFeedChannel(channelUrl, messageIds);
+    chat.collectionManager.onMessagesUpdated(channelUrl, updatedMessages);
 
     if (messageIds == null) {
       final ts = res['ts'] ?? 0;
@@ -244,7 +275,11 @@ class FeedChannel extends BaseChannel {
       if (groupChannel.unreadMessageCount > 0 ||
           groupChannel.unreadMentionCount > 0) {
         groupChannel.clearUnreadCount();
-        // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+
+        // When [isChatConnected], [_processChannelPropChanged] is called.
+        if (chat.chatContext.isFeedAuthenticated) {
+          chat.eventManager.notifyChannelChanged(this);
+        }
       }
     } else {
       final unreadMessageCount = res['unread_message_count'] ?? 0;
@@ -252,7 +287,11 @@ class FeedChannel extends BaseChannel {
       if (unreadMessageCount != null &&
           unreadMessageCount != groupChannel.unreadMessageCount) {
         groupChannel.unreadMessageCount = unreadMessageCount;
-        // chat.eventManager.notifyChannelChanged(this); // Refer to [_processChannelPropChanged]
+
+        // When [isChatConnected], [_processChannelPropChanged] is called.
+        if (chat.chatContext.isFeedAuthenticated) {
+          chat.eventManager.notifyChannelChanged(this);
+        }
       }
     }
   }

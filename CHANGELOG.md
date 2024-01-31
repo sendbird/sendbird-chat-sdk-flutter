@@ -1,3 +1,20 @@
+## v4.2.0 (Jan 31, 2024)
+
+### Features
+
+#### Local Caching for Android and iOS (Not supported for Web yet)
+> Local caching enables Sendbird Chat SDK for Flutter to cache and retrieve group channel and message data locally. Its benefits include reducing refresh time and allowing a client app to create a channel list or a chat view that can work online as well as offline.
+> The local caching feature is used by default.
+
+- Added `useCollectionCaching` in `SendbirdChatOptions` (The default value is `true`)
+- Added `getCachedDataSize()`, `clearCachedData()` and `clearCachedMessages()` in `SendbirdChat`
+- Added `getFailedMessages()`, `removeFailedMessages()` and `removeAllFailedMessages()` in `MessageCollection`
+- Added `markAsRead() in `BaseMessageCollection`
+
+### Improvements
+- Fixed the bugs regarding FeedChannel
+- Improved stability
+
 ## v4.1.2 (Dec 12, 2023)
 
 ### Features

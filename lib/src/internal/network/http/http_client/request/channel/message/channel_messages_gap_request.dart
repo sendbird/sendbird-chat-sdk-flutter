@@ -25,7 +25,7 @@ class ChannelMessagesGapRequest extends ApiRequest {
     int? nextStartTs, // oldest in next direction
     int? nextEndTs, // latest in next direction
     int? nextCacheCount, // inclusive next cache count
-    this.checkingContinuousMessages = false, // useLocalCache (?)
+    this.checkingContinuousMessages = false, // useLocalCache
   }) : super(chat: chat) {
     url = '${channelType.urlString}/$channelUrl/messages_gap';
 
@@ -48,25 +48,57 @@ class ChannelMessagesGapRequest extends ApiRequest {
   }
 
   @override
-  Future<List<RootMessage>?> response(Map<String, dynamic> res) async {
+  Future<ChannelMessagesGapResponse> response(Map<String, dynamic> res) async {
     final isHugeGap = res['is_huge_gap'] as bool;
 
-    // final prevMessages = (res['prev_messages'] as List)
-    //     .map((e) => BaseMessage.getMessageFromJsonWithChat(chat, e,
-    //         channelType: channelType))
-    //     .toList();
+    final prevMessages = (res['prev_messages'] as List)
+        .map((e) => RootMessage.getMessageFromJsonWithChat(chat, e,
+            channelType: channelType))
+        .toList();
+
     final nextMessages = (res['next_messages'] as List)
         .map((e) => RootMessage.getMessageFromJsonWithChat(chat, e,
             channelType: channelType))
         .toList();
 
-    // final prevHasMore = res['prev_hasmore'] as bool;
-    // final nextHasMore = res['next_hasmore'] as bool;
-    // final isPrevContinuous = checkingContinuousMessages &&
-    //     res['is_continuous_prev_messages'] as bool;
-    // final isNextContinuous = checkingContinuousMessages &&
-    //     res['is_continuous_next_messages'] as bool;
+    final prevHasMore = res['prev_hasmore'] as bool;
+    final nextHasMore = res['next_hasmore'] as bool;
 
-    return isHugeGap ? null : nextMessages;
+    bool? isPrevContinuous;
+    bool? isNextContinuous;
+    if (checkingContinuousMessages) {
+      isPrevContinuous = res['is_continuous_prev_messages'] as bool;
+      isNextContinuous = res['is_continuous_next_messages'] as bool;
+    }
+
+    return ChannelMessagesGapResponse(
+      isHugeGap: isHugeGap,
+      prevMessages: prevMessages,
+      nextMessages: nextMessages,
+      prevHasMore: prevHasMore,
+      nextHasMore: nextHasMore,
+      isPrevContinuous: isPrevContinuous,
+      isNextContinuous: isNextContinuous,
+    );
   }
+}
+
+class ChannelMessagesGapResponse {
+  final List<RootMessage> prevMessages;
+  final List<RootMessage> nextMessages;
+  final bool? prevHasMore;
+  final bool? nextHasMore;
+  final bool? isPrevContinuous;
+  final bool? isNextContinuous;
+  final bool isHugeGap;
+
+  ChannelMessagesGapResponse({
+    required this.prevMessages,
+    required this.nextMessages,
+    required this.prevHasMore,
+    required this.nextHasMore,
+    this.isPrevContinuous,
+    this.isNextContinuous,
+    required this.isHugeGap,
+  });
 }

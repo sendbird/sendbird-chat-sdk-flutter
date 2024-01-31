@@ -12,23 +12,23 @@ part 'og_meta_data.g.dart';
 class OGMetaData {
   /// The title of the object as it should appear within the graph. ex: "The Rock".
   @JsonKey(name: 'og:title')
-  final String? title;
+  String? title;
 
   /// The canonical URL of the object that can be used as its permanent ID in the graph.
   /// ex: "http://www.imdb.com/title/tt0117500/"
   @JsonKey(name: 'og:url')
-  final String? url;
+  String? url;
 
   /// A one to two sentence description of the object.
   /// ex: "Sean Connery found fame and fortune
   /// as the suave, sophisticated British agent, James Bond."
   @JsonKey(name: 'og:description')
-  final String? description;
+  String? description;
 
   /// An [ogImage] object that contains information about the image that this Open Graph
   /// points to.
   @JsonKey(name: 'og:image')
-  final OGImage? ogImage;
+  OGImage? ogImage;
 
   OGMetaData({
     this.title,

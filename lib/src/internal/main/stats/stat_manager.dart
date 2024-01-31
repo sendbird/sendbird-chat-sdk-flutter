@@ -3,15 +3,19 @@
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/api_result_stat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/base_stat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/daily_record_stat_prefs.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/default_stat_prefs.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/notification_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/base_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/daily_record/daily_record_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/daily_record/local_cache_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/api_result_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/default_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/notification_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_connect_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/ws_connect_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/upload_stat_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
@@ -20,7 +24,10 @@ import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 class StatManager {
   static const Map<String, Set<StatType>> _sdkStatsAttributeTable = {
     'allow_sdk_request_log_publish': {StatType.apiResult, StatType.wsConnect},
-    'allow_sdk_feature_local_cache_log_publish': {StatType.featureLocalCache},
+    'allow_sdk_feature_local_cache_log_publish': {
+      StatType.featureLocalCache,
+      StatType.featureLocalCacheEvent,
+    },
     'allow_sdk_noti_stats_log_publish': {StatType.notificationStats},
   };
   static const int _errStatUploadNotAllowed = 403200;
@@ -56,6 +63,7 @@ class StatManager {
   final List<DefaultStat> pendingDefaultStats = [];
   final List<DefaultStat> cachedDefaultStats = [];
   final DefaultStatPrefs defaultStatPrefs;
+  final DailyRecordStatPrefs dailyRecordStatPrefs;
 
   bool _isFlushing = false;
 
@@ -64,7 +72,8 @@ class StatManager {
 
   StatManager({required Chat chat})
       : _chat = chat,
-        defaultStatPrefs = DefaultStatPrefs();
+        defaultStatPrefs = DefaultStatPrefs(),
+        dailyRecordStatPrefs = DailyRecordStatPrefs();
 
   //+ Public
   Future<bool> appendStat({
@@ -110,7 +119,15 @@ class StatManager {
           data: data,
         );
       case StatType.featureLocalCache:
-        return null;
+        return LocalCacheStat.fromJson(
+          ts: DateTime.now().millisecondsSinceEpoch,
+          data: data,
+        );
+      case StatType.featureLocalCacheEvent:
+        return LocalCacheEventStat.fromJson(
+          ts: DateTime.now().millisecondsSinceEpoch,
+          data: data,
+        );
       case StatType.notificationStats:
         return NotificationStat.fromJson(
           ts: DateTime.now().millisecondsSinceEpoch,
@@ -150,6 +167,9 @@ class StatManager {
               ' stat: \n${jsonEncoder.convert(stat.toJson())}');
 
           result = true;
+        } else if (stat is DailyRecordStat) {
+          await dailyRecordStatPrefs.upsert(stat);
+          result = true;
         }
         break;
       case StatState.enabled:
@@ -168,6 +188,11 @@ class StatManager {
 
           await _checkToSendStats(stat);
           result = true;
+        } else if (stat is DailyRecordStat) {
+          await dailyRecordStatPrefs.upsert(stat);
+
+          await _checkToSendStats(stat);
+          result = true;
         }
         break;
       case StatState.disabled:
@@ -177,8 +202,13 @@ class StatManager {
   }
 
   Future<void> _checkToSendStats(BaseStat stat) async {
-    final count = cachedDefaultStats.length;
-    sbLog.d(StackTrace.current, 'cachedDefaultStats: $count');
+    final dailyRecordStatCount =
+        await dailyRecordStatPrefs.uploadCandidateStatCount;
+    final count = cachedDefaultStats.length + dailyRecordStatCount;
+    sbLog.d(
+        StackTrace.current, 'cachedDefaultStats: ${cachedDefaultStats.length}');
+    sbLog.d(StackTrace.current, 'dailyRecordStatCount: $dailyRecordStatCount');
+    sbLog.d(StackTrace.current, 'count: $count');
 
     if (state == StatState.enabled && count >= _lowerThreshold) {
       final lastSentAt = await defaultStatPrefs.lastSentAt;
@@ -211,13 +241,18 @@ class StatManager {
     await _clearDisallowedStats(); // Defensive code
 
     final deviceId = await defaultStatPrefs.deviceId;
-    final copiedStats =
-        cachedDefaultStats.take(_maxStatCountPerRequest).toList();
+    final dailyRecordStats = (await dailyRecordStatPrefs.uploadCandidateStats)
+        .take(_maxStatCountPerRequest)
+        .toList();
+    final copiedStats = cachedDefaultStats
+        .take(_maxStatCountPerRequest - dailyRecordStats.length)
+        .toList();
 
     Object? exception;
     try {
+      final stats = [...dailyRecordStats, ...copiedStats];
       await _chat.apiClient.send(
-        UploadStatRequest(_chat, deviceId: deviceId, stats: copiedStats),
+        UploadStatRequest(_chat, deviceId: deviceId, stats: stats),
       );
     } catch (e) {
       if (copiedStats.length >= _minStatCount) {
@@ -250,13 +285,15 @@ class StatManager {
       await defaultStatPrefs
           .updateLastSentAt(DateTime.now().millisecondsSinceEpoch);
       await defaultStatPrefs.putStats(remainingStats);
+      await dailyRecordStatPrefs.remove(dailyRecordStats);
 
       sbLog.d(
           StackTrace.current,
           '[StatTest][Sent] deviceId: $deviceId,'
           ' pendingDefaultStats: ${pendingDefaultStats.length},'
           ' cachedDefaultStats: ${cachedDefaultStats.length},'
-          ' defaultStatPrefs: ${await defaultStatPrefs.statCount}');
+          ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
+          ' dailyRecordStatPrefs: ${(await dailyRecordStatPrefs.stats).length}');
     }
 
     _isFlushing = false;
@@ -316,6 +353,7 @@ class StatManager {
     cachedDefaultStats.clear();
 
     await defaultStatPrefs.clearAll();
+    await dailyRecordStatPrefs.clearAll();
   }
 
   Future<void> _checkLoginEvent(LoginEvent event) async {
@@ -356,6 +394,7 @@ class StatManager {
         .removeWhere((stat) => allowedStatTypes.contains(stat.type) == false);
 
     await defaultStatPrefs.clearDisallowedStats(allowedStatTypes);
+    await dailyRecordStatPrefs.clearDisallowedStats(allowedStatTypes);
   }
 
   bool _isSdkStatsAllowed() {

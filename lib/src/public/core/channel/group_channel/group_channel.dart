@@ -264,13 +264,30 @@ class GroupChannel extends BaseChannel {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
 
-    final channel =
+    GroupChannel? channel =
         chat.channelCache.find<GroupChannel>(channelKey: channelUrl);
     if (channel != null && !channel.dirty) {
       channel.fromCache = true;
       return channel;
     }
-    return await GroupChannel.refresh(channelUrl, chat: chat);
+
+    try {
+      final channel = await GroupChannel.refresh(channelUrl, chat: chat);
+      return channel;
+    } catch (e) {
+      //+ [DBManager]
+      if (chat.dbManager.isEnabled()) {
+        if (chat.currentUser != null) {
+          final channel = await chat.dbManager.getGroupChannel(channelUrl);
+          if (channel != null) {
+            channel.fromCache = true;
+            return channel;
+          }
+        }
+      }
+      //- [DBManager]
+      rethrow;
+    }
   }
 
   /// Refreshes all the data of this channel.
@@ -281,7 +298,7 @@ class GroupChannel extends BaseChannel {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
 
-    return await chat.apiClient.send<GroupChannel>(
+    final channel = await chat.apiClient.send<GroupChannel>(
       GroupChannelRefreshRequest(
         chat,
         channelUrl,
@@ -294,6 +311,14 @@ class GroupChannel extends BaseChannel {
         passive: false,
       ),
     );
+
+    //+ [DBManager]
+    if (chat.dbManager.isEnabled()) {
+      await chat.dbManager.upsertGroupChannels([channel]);
+    }
+    //- [DBManager]
+
+    return channel;
   }
 
   /// Creates `GroupChannel` with GroupChannelCreateParams.

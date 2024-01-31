@@ -19,9 +19,9 @@ import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
 
 /// Class representing a root message.
-abstract class RootMessage {
+class RootMessage {
   /// The channel URL of the channel this message belongs to.
-  final String channelUrl;
+  String channelUrl;
 
   /// The [ChannelType] of the channel this message belongs to.
   @JsonKey(defaultValue: ChannelType.group, unknownEnumValue: ChannelType.group)
@@ -32,11 +32,11 @@ abstract class RootMessage {
   String? data;
 
   /// The custom type of the message.
-  final String? customType;
+  String? customType;
 
   /// The mention type. Refer to [MentionType].
-  @JsonKey(unknownEnumValue: null)
-  final MentionType? mentionType;
+  @JsonKey(unknownEnumValue: MentionType.users)
+  MentionType mentionType;
 
   @JsonKey(name: 'mentioned_users', defaultValue: [])
   List<User> _mentionedUsers;
@@ -70,10 +70,10 @@ abstract class RootMessage {
   Map<String, dynamic> extendedMessage;
 
   /// The creation time of the message in milliseconds.
-  final int createdAt;
+  int createdAt;
 
   /// The updated time of the message in milliseconds.
-  final int updatedAt;
+  int updatedAt;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   late Chat chat;
@@ -83,7 +83,7 @@ abstract class RootMessage {
     required this.channelType,
     this.data,
     this.customType,
-    this.mentionType,
+    this.mentionType = MentionType.users,
     List<User> mentionedUsers = const <User>[],
     this.allMetaArrays,
     Map<String, dynamic>? extendedMessage,
@@ -111,7 +111,28 @@ abstract class RootMessage {
     return (this as BaseMessage).messageId;
   }
 
-  Map<String, dynamic> toJson();
+  MessageType get messageType => this is UserMessage
+      ? MessageType.user
+      : this is FileMessage
+          ? MessageType.file
+          : this is AdminMessage
+              ? MessageType.admin
+              : this is NotificationMessage
+                  ? MessageType.notification
+                  : throw MalformedDataException();
+
+  String get rootId {
+    if (this is BaseMessage) {
+      return (this as BaseMessage).messageId.toString();
+    } else if (this is NotificationMessage) {
+      return (this as NotificationMessage).notificationId;
+    }
+    throw MalformedDataException();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {};
+  }
 
   static RootMessage getMessageFromJsonWithChat<T extends BaseMessage>(
     Chat chat,
@@ -260,4 +281,5 @@ enum MessageType {
   user,
   file,
   admin,
+  notification,
 }

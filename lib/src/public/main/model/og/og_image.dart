@@ -21,25 +21,25 @@ abstract class OGDisplayable {
 class OGImage implements OGDisplayable, OGMedia {
   /// An image URL which represents the object within the Open Graph.
   @override
-  final String? url;
+  String? url;
 
   /// An alternate url to use if the webpage requires HTTPS.
   @override
-  final String? secureUrl;
+  String? secureUrl;
 
   /// A MIME type for this image.
-  final String? type;
+  String? type;
 
   /// A description of what is in the image (not a caption).
-  final String? alt;
+  String? alt;
 
   /// The number of pixels wide.
   @override
-  final int width;
+  int width;
 
   /// The number of pixels high.
   @override
-  final int height;
+  int height;
 
   OGImage({
     this.url,

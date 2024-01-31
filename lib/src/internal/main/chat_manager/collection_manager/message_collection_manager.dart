@@ -8,11 +8,6 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
   void addMessageCollection(BaseMessageCollection collection) {
     baseMessageCollections.add(collection);
-
-    final now = DateTime.now().millisecondsSinceEpoch;
-    lastRequestTsForMessageChangeLogs[collection.baseChannel.channelUrl] = now;
-    lastRequestTsForPollChangeLogs[collection.baseChannel.channelUrl] = now;
-    lastRequestTsForMessagesGap[collection.baseChannel.channelUrl] = now;
   }
 
   void removeMessageCollection(BaseMessageCollection collection) {
@@ -50,13 +45,19 @@ extension MessageCollectionManager on CollectionManager {
     MessageChangeLogs changeLogs;
     String? token;
 
-    do {
-      final now = DateTime.now().millisecondsSinceEpoch;
+    //+ [DBManager]
+    final info =
+        await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
+    if (info != null) {
+      token = info.lastMessageToken;
+    }
+    //- [DBManager]
 
+    do {
       if (token == null) {
         changeLogs = await channel.getMessageChangeLogs(
           params,
-          timestamp: lastRequestTsForMessageChangeLogs[channel.channelUrl] ?? 0,
+          timestamp: lastRequestTsForMessageChangeLogs,
         );
       } else {
         changeLogs = await channel.getMessageChangeLogs(
@@ -68,9 +69,18 @@ extension MessageCollectionManager on CollectionManager {
       updatedMessages.addAll(changeLogs.updatedMessages);
       deletedMessageIds.addAll(changeLogs.deletedMessageIds);
 
-      lastRequestTsForMessageChangeLogs[channel.channelUrl] = now;
       token = changeLogs.token;
     } while (changeLogs.hasMore);
+
+    //+ [DBManager]
+    if (info != null) {
+      await _chat.dbManager.upsertMessageChangeLogInfo(MessageChangeLogInfo(
+        channelUrl: channel.channelUrl,
+        lastMessageToken: token,
+        lastPollToken: info.lastPollToken,
+      ));
+    }
+    //- [DBManager]
 
     sendEventsToMessageCollection(
       messageCollection: messageCollection,
@@ -104,12 +114,18 @@ extension MessageCollectionManager on CollectionManager {
     PollChangeLogs changeLogs;
     String? token;
 
-    do {
-      final now = DateTime.now().millisecondsSinceEpoch;
+    //+ [DBManager]
+    final info =
+        await _chat.dbManager.getMessageChangeLogInfo(groupChannel.channelUrl);
+    if (info != null) {
+      token = info.lastPollToken;
+    }
+    //- [DBManager]
 
+    do {
       if (token == null) {
         changeLogs = await groupChannel.getPollChangeLogsSinceTimestamp(
-          lastRequestTsForPollChangeLogs[groupChannel.channelUrl] ?? 0,
+          lastRequestTsForPollChangeLogs,
         );
       } else {
         changeLogs = await groupChannel.getPollChangeLogsSinceToken(
@@ -131,9 +147,18 @@ extension MessageCollectionManager on CollectionManager {
 
       // changeLogs.deletedPollIds => changeLogs.deletedMessageIds
 
-      lastRequestTsForPollChangeLogs[groupChannel.channelUrl] = now;
       token = changeLogs.token;
     } while (changeLogs.hasMore);
+
+    //+ [DBManager]
+    if (info != null) {
+      await _chat.dbManager.upsertMessageChangeLogInfo(MessageChangeLogInfo(
+        channelUrl: groupChannel.channelUrl,
+        lastMessageToken: info.lastMessageToken,
+        lastPollToken: token,
+      ));
+    }
+    //- [DBManager]
 
     sendEventsToMessageCollection(
       messageCollection: messageCollection,
@@ -151,33 +176,64 @@ extension MessageCollectionManager on CollectionManager {
   Future<void> _requestMessagesGap(
     BaseMessageCollection messageCollection,
   ) async {
-    final now = DateTime.now().millisecondsSinceEpoch;
+    final List<String> deletedPrevMessageIds = [];
+    final List<String> deletedNextMessageIds = [];
 
-    final channel = messageCollection.baseChannel;
-    int nextEndTs = messageCollection.latestMessage != null
-        ? messageCollection.latestMessage!.createdAt
-        : min(lastRequestTsForMessagesGap[channel.channelUrl] ?? 0,
-            messageCollection.startingPoint);
-    int nextCacheCount = messageCollection.latestMessage != null ? 1 : 0;
+    int? prevStartTs = messageCollection.oldestMessage?.createdAt;
+    int? prevEndTs = messageCollection.oldestSyncedTimestamp ?? prevStartTs;
+    int prevCacheCount = messageCollection.messageList.where((message) {
+      if (prevStartTs != null &&
+          message.createdAt >= prevStartTs &&
+          prevEndTs != null &&
+          message.createdAt <= prevEndTs) {
+        if (message is! BaseMessage ||
+            message.sendingStatus == SendingStatus.succeeded) {
+          deletedPrevMessageIds.add(message.rootId);
+          return true;
+        }
+      }
+      return false;
+    }).length;
 
-    final messages = await _chat.apiClient.send<List<RootMessage>?>(
+    int? nextEndTs = messageCollection.latestMessage?.createdAt;
+    int? nextStartTs = messageCollection.latestSyncedTimestamp ?? nextEndTs;
+    int nextCacheCount = messageCollection.messageList.where((message) {
+      if (nextStartTs != null &&
+          message.createdAt >= nextStartTs &&
+          nextEndTs != null &&
+          message.createdAt <= nextEndTs) {
+        if (message is! BaseMessage ||
+            message.sendingStatus == SendingStatus.succeeded) {
+          deletedNextMessageIds.add(message.rootId);
+          return true;
+        }
+      }
+      return false;
+    }).length;
+
+    nextStartTs ??= messageCollection.latestMessage?.createdAt ??
+        lastRequestTsForMessagesGap;
+    prevStartTs ??= nextStartTs;
+    prevEndTs ??= nextStartTs;
+    nextEndTs ??= nextStartTs;
+
+    final res = await _chat.apiClient.send<ChannelMessagesGapResponse>(
       ChannelMessagesGapRequest(
         _chat,
         channelType: ChannelType.group,
         channelUrl: messageCollection.baseChannel.channelUrl,
-        messageListParams: messageCollection.loadNextParams.toJson(),
-        prevStartTs: nextEndTs,
-        prevEndTs: nextEndTs,
-        prevCacheCount: nextCacheCount,
-        nextStartTs: nextEndTs,
-        nextEndTs: IntMax.max,
+        messageListParams: messageCollection.params.toJson(),
+        prevStartTs: prevStartTs,
+        prevEndTs: prevEndTs,
+        prevCacheCount: prevCacheCount,
+        nextStartTs: nextStartTs,
+        nextEndTs: messageCollection.hasNext ? nextEndTs : SendbirdChat.maxInt,
         nextCacheCount: nextCacheCount,
+        checkingContinuousMessages: _chat.dbManager.isEnabled(), // [DBManager]
       ),
     );
 
-    lastRequestTsForMessagesGap[channel.channelUrl] = now;
-
-    if (messages == null) {
+    if (res.isHugeGap) {
       messageCollection.hasNext = true;
 
       if (!messageCollection.isDisposed) {
@@ -191,16 +247,159 @@ extension MessageCollectionManager on CollectionManager {
         }
       }
     } else {
-      messageCollection.hasNext = false;
+      final List<RootMessage> prevMessages = [...res.prevMessages];
+      final List<RootMessage> nextMessages = [...res.nextMessages];
 
-      sendEventsToMessageCollection(
-        messageCollection: messageCollection,
-        baseChannel: channel,
-        eventSource: CollectionEventSource.messagesGap,
-        sendingStatus: SendingStatus.succeeded,
-        addedMessages: messages,
-        isReversedAddedMessages: messageCollection.loadNextParams.reverse,
-      );
+      if (prevMessages.isNotEmpty &&
+          res.prevHasMore != null &&
+          res.prevHasMore!) {
+        // Fill messages from latestTs to oldestTs
+        final oldestTs = prevStartTs;
+        final latestTs = prevMessages.map((message) => message.createdAt).min;
+
+        const resultSize = 100;
+        final params = MessageListParams()
+          ..previousResultSize = resultSize
+          ..nextResultSize = 0
+          ..inclusive = true;
+
+        bool hasPrevious = false;
+        do {
+          ChannelMessagesGetResponse? res = await _chat.apiClient
+              .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
+            _chat,
+            channelType: ChannelType.group,
+            channelUrl: messageCollection.baseChannel.channelUrl,
+            params: params.toJson(),
+            timestamp: latestTs,
+            checkingHasNext: false,
+            checkingContinuousMessages: false,
+          ));
+
+          if (res.messages.isNotEmpty) {
+            hasPrevious = (res.messages.length == resultSize);
+
+            for (int i = res.messages.length - 1; i >= 0; i--) {
+              final message = res.messages[i];
+              if (message.createdAt >= oldestTs) {
+                bool found = false;
+                for (final prevMessage in prevMessages) {
+                  if (prevMessage.rootId == message.rootId) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  prevMessages.insert(0, message);
+                }
+              } else {
+                hasPrevious = false;
+              }
+            }
+          }
+        } while (hasPrevious);
+      }
+
+      if (nextMessages.isNotEmpty &&
+          res.nextHasMore != null &&
+          res.nextHasMore!) {
+        // Fill messages from oldestTs to latestTs
+        final oldestTs = nextMessages.map((message) => message.createdAt).max;
+        final latestTs = nextEndTs;
+
+        const resultSize = 100;
+        final params = MessageListParams()
+          ..previousResultSize = 0
+          ..nextResultSize = resultSize
+          ..inclusive = true;
+
+        bool hasNext = false;
+        do {
+          ChannelMessagesGetResponse? res = await _chat.apiClient
+              .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
+            _chat,
+            channelType: ChannelType.group,
+            channelUrl: messageCollection.baseChannel.channelUrl,
+            params: params.toJson(),
+            timestamp: oldestTs,
+            checkingHasNext: true,
+            checkingContinuousMessages: false,
+          ));
+
+          if (res.messages.isNotEmpty) {
+            if (res.hasNext != null) {
+              hasNext = res.hasNext!;
+            } else {
+              hasNext = (res.messages.length == resultSize);
+            }
+
+            for (final message in res.messages) {
+              if (message.createdAt <= latestTs) {
+                bool found = false;
+                for (final nextMessage in nextMessages) {
+                  if (nextMessage.rootId == message.rootId) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  nextMessages.add(message);
+                }
+              } else {
+                hasNext = false;
+              }
+            }
+          }
+        } while (hasNext);
+      }
+
+      if (prevMessages.isNotEmpty) {
+        // For offline messaging
+        final List<RootMessage> updatedMessages = [];
+        if (deletedPrevMessageIds.isNotEmpty) {
+          final removedMessage = prevMessages.removeLast();
+          updatedMessages.add(removedMessage);
+          deletedPrevMessageIds
+              .removeWhere((id) => removedMessage.rootId == id);
+        }
+
+        sendEventsToMessageCollection(
+          messageCollection: messageCollection,
+          baseChannel: messageCollection.baseChannel,
+          eventSource: CollectionEventSource.messageFill,
+          sendingStatus: SendingStatus.succeeded,
+          addedMessages: prevMessages,
+          isReversedAddedMessages:
+              !messageCollection.loadPreviousParams.reverse,
+          isContinuousAddedMessages: res.isPrevContinuous ?? false,
+          // Added ! because of loadPrevious()
+          updatedMessages: updatedMessages,
+          deletedMessageIds: deletedPrevMessageIds,
+        );
+      }
+
+      if (nextMessages.isNotEmpty) {
+        // For offline messaging
+        final List<RootMessage> updatedMessages = [];
+        if (deletedNextMessageIds.isNotEmpty) {
+          final removedMessage = nextMessages.removeAt(0);
+          updatedMessages.add(removedMessage);
+          deletedNextMessageIds
+              .removeWhere((id) => removedMessage.rootId == id);
+        }
+
+        sendEventsToMessageCollection(
+          messageCollection: messageCollection,
+          baseChannel: messageCollection.baseChannel,
+          eventSource: CollectionEventSource.messageFill,
+          sendingStatus: SendingStatus.succeeded,
+          addedMessages: nextMessages,
+          isReversedAddedMessages: messageCollection.loadNextParams.reverse,
+          isContinuousAddedMessages: res.isNextContinuous ?? false,
+          updatedMessages: updatedMessages,
+          deletedMessageIds: deletedNextMessageIds,
+        );
+      }
     }
   }
 
@@ -211,7 +410,24 @@ extension MessageCollectionManager on CollectionManager {
     required CollectionEventSource eventSource,
     List<BaseChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
-  }) {
+  }) async {
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      if (updatedChannels != null) {
+        for (final channel in updatedChannels) {
+          if (channel is GroupChannel) {
+            await _chat.dbManager.upsertGroupChannels([channel]);
+          } else if (channel is FeedChannel) {
+            await _chat.dbManager.upsertFeedChannels([channel]);
+          }
+        }
+      }
+      if (deletedChannelUrls != null) {
+        await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
+      }
+    }
+    //- [DBManager]
+
     if (updatedChannels != null && updatedChannels.isNotEmpty) {
       for (final updatedChannel in updatedChannels) {
         for (final messageCollection in baseMessageCollections) {
@@ -263,19 +479,91 @@ extension MessageCollectionManager on CollectionManager {
 //------------------------------//
 // Send events to message collection
 //------------------------------//
-  void sendEventsToMessageCollection({
+  Future<void> sendEventsToMessageCollection({
     required BaseMessageCollection messageCollection,
     required BaseChannel baseChannel,
     required CollectionEventSource eventSource,
     required SendingStatus sendingStatus,
     List<RootMessage>? addedMessages,
     bool isReversedAddedMessages = false,
+    bool isContinuousAddedMessages = false,
     List<RootMessage>? updatedMessages,
     List<dynamic>? deletedMessageIds,
-  }) {
+  }) async {
     List<RootMessage> addedMessagesForEvent = [];
     final List<RootMessage> updatedMessagesForEvent = [];
     final List<RootMessage> deletedMessagesForEvent = [];
+
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      // [First] delete
+      if (deletedMessageIds != null && deletedMessageIds.isNotEmpty) {
+        if (eventSource != CollectionEventSource.messageInitialize &&
+            eventSource != CollectionEventSource.messageLoadPrevious &&
+            eventSource != CollectionEventSource.messageLoadNext) {
+          List<String> deletedStringIds = deletedMessageIds
+              .map((id) => (id is String) ? id : id.toString())
+              .toList();
+
+          // MessageChunk
+          await _chat.dbManager.deleteMessagesInChunk(
+            channelUrl: baseChannel.channelUrl,
+            rootIds: deletedStringIds.where((id) {
+              if (addedMessages != null && isContinuousAddedMessages) {
+                for (final message in addedMessages) {
+                  if (id == message.rootId) {
+                    return false;
+                  }
+                }
+              }
+              return true;
+            }).toList(),
+          );
+
+          await _chat.dbManager.deleteMessages(baseChannel, deletedStringIds);
+        }
+      }
+
+      if (addedMessages != null && addedMessages.isNotEmpty) {
+        await _chat.dbManager.upsertMessages(addedMessages);
+
+        if (isContinuousAddedMessages) {
+          // For offline messaging
+          if (updatedMessages != null && updatedMessages.isNotEmpty) {
+            addedMessages.addAll(updatedMessages);
+          }
+
+          // MessageChunk
+          await _chat.dbManager.upsertMessagesInChunk(
+            channelUrl: baseChannel.channelUrl,
+            messages: addedMessages,
+          );
+        }
+      }
+
+      if (updatedMessages != null && updatedMessages.isNotEmpty) {
+        await _chat.dbManager.upsertMessages(updatedMessages);
+      }
+    }
+    //- [DBManager]
+
+    if (deletedMessageIds != null && deletedMessageIds.isNotEmpty) {
+      for (final deletedMessageId in deletedMessageIds) {
+        for (int index = 0;
+            index < messageCollection.messageList.length;
+            index++) {
+          final message = messageCollection.messageList[index];
+          final id = deletedMessageId is String
+              ? deletedMessageId
+              : deletedMessageId.toString();
+          if (message.rootId == id) {
+            deletedMessagesForEvent.add(message);
+            messageCollection.messageList.removeAt(index);
+            break;
+          }
+        }
+      }
+    }
 
     if (addedMessages != null && addedMessages.isNotEmpty) {
       for (final addedMessage in addedMessages) {
@@ -288,11 +576,11 @@ extension MessageCollectionManager on CollectionManager {
         }
 
         if (!isMessageExists) {
-          if (messageCollection.messageList.isEmpty) {
+          if (messageCollection.canAddMessage(eventSource, addedMessage)) {
             addedMessagesForEvent.add(addedMessage);
-          } else if (messageCollection.canAddMessage(
-              eventSource, addedMessage)) {
-            addedMessagesForEvent.add(addedMessage);
+          } else if (eventSource == CollectionEventSource.eventMessageSent) {
+            deletedMessagesForEvent.clear(); // Defensive
+            deletedMessagesForEvent.add(addedMessage);
           }
         }
       }
@@ -314,63 +602,111 @@ extension MessageCollectionManager on CollectionManager {
 
     if (updatedMessages != null && updatedMessages.isNotEmpty) {
       for (final updatedMessage in updatedMessages) {
+        bool found = false;
         for (int index = 0;
             index < messageCollection.messageList.length;
             index++) {
           final message = messageCollection.messageList[index];
           if (message.getMessageId() == updatedMessage.getMessageId()) {
-            if (eventSource == CollectionEventSource.pollChangeLogs ||
-                eventSource == CollectionEventSource.eventPollVoted ||
-                eventSource == CollectionEventSource.eventPollUpdated) {
-              if (message is UserMessage &&
-                  message.poll != null &&
-                  updatedMessage is UserMessage &&
-                  updatedMessage.poll != null &&
-                  message.poll!.updatedAt <= updatedMessage.poll!.updatedAt) {
-                messageCollection.messageList[index] = updatedMessage;
-                updatedMessagesForEvent.add(updatedMessage);
-                break;
-              }
-            } else if (eventSource ==
-                CollectionEventSource.eventReactionUpdated) {
-              // TODO: updatedAt check (?)
+            found = true;
+            if (messageCollection.canUpdateMessage(
+                eventSource, message, updatedMessage)) {
               messageCollection.messageList[index] = updatedMessage;
               updatedMessagesForEvent.add(updatedMessage);
-              break;
-            } else if (eventSource ==
-                CollectionEventSource.eventThreadInfoUpdated) {
-              // TODO: updatedAt check (?)
-              messageCollection.messageList[index] = updatedMessage;
-              updatedMessagesForEvent.add(updatedMessage);
-              break;
-            } else if (message.updatedAt < updatedMessage.updatedAt) {
-              messageCollection.messageList[index] = updatedMessage;
-              updatedMessagesForEvent.add(updatedMessage);
-              break;
+            } else {
+              deletedMessagesForEvent.clear(); // Defensive
+              deletedMessagesForEvent.add(updatedMessage);
+            }
+            break;
+          }
+        }
+
+        if (!found) {
+          if (messageCollection.canAddMessage(eventSource, updatedMessage)) {
+            addedMessagesForEvent.clear(); // Defensive
+            addedMessagesForEvent.add(updatedMessage);
+
+            if (messageCollection is NotificationCollection) {
+              addedMessagesForEvent =
+                  List<NotificationMessage>.from(addedMessagesForEvent);
+            } else {
+              // MessageCollection
+              addedMessagesForEvent =
+                  List<BaseMessage>.from(addedMessagesForEvent);
+            }
+
+            if (isReversedAddedMessages) {
+              messageCollection.messageList.insertAll(0, addedMessagesForEvent);
+            } else {
+              messageCollection.messageList.addAll(addedMessagesForEvent);
             }
           }
         }
       }
     }
 
-    if (deletedMessageIds != null && deletedMessageIds.isNotEmpty) {
-      for (final deletedMessageId in deletedMessageIds) {
-        for (int index = 0;
-            index < messageCollection.messageList.length;
-            index++) {
-          final message = messageCollection.messageList[index];
-          if (message.getMessageId() == deletedMessageId) {
-            deletedMessagesForEvent.add(message);
-            messageCollection.messageList.removeAt(index);
-            break;
+    //+ [DBManager]
+    if (eventSource == CollectionEventSource.messageFill) {
+      messageCollection.setValuesFromMessageList(); // Check
+    }
+    //- [DBManager]
+
+    if (deletedMessagesForEvent.isNotEmpty) {
+      if (!messageCollection.isDisposed) {
+        //+ [DBManager]
+        CollectionEventSource source = eventSource;
+        if (eventSource == CollectionEventSource.messageInitialize) {
+          source = CollectionEventSource.messageCacheInitialize;
+        } else if (eventSource == CollectionEventSource.messageLoadPrevious) {
+          source = CollectionEventSource.messageCacheLoadPrevious;
+        } else if (eventSource == CollectionEventSource.messageLoadNext) {
+          source = CollectionEventSource.messageCacheLoadNext;
+        }
+        //- [DBManager]
+
+        //+ [DBManager]
+        if (source == CollectionEventSource.localMessagePendingCreated) {
+          // Do not send this event.
+          // [eventMessageSent] will be changed to a updated event if success.
+        } else if (source == CollectionEventSource.messageCacheInitialize ||
+            source == CollectionEventSource.messageCacheLoadPrevious ||
+            source == CollectionEventSource.messageCacheLoadNext ||
+            source == CollectionEventSource.messageFill) {
+          // Do not send this event.
+          // Customer does not need this event.
+        }
+        //- [DBManager]
+        else {
+          if (messageCollection.baseHandler is MessageCollectionHandler &&
+              baseChannel is GroupChannel) {
+            (messageCollection.baseHandler as MessageCollectionHandler)
+                .onMessagesDeleted(
+              MessageContext(source, sendingStatus),
+              baseChannel,
+              List<BaseMessage>.from(deletedMessagesForEvent),
+            );
+          } else if (messageCollection.baseHandler
+                  is NotificationCollectionHandler &&
+              baseChannel is FeedChannel) {
+            (messageCollection.baseHandler as NotificationCollectionHandler)
+                .onMessagesDeleted(
+              NotificationContext(source, sendingStatus),
+              baseChannel,
+              List<NotificationMessage>.from(deletedMessagesForEvent),
+            );
           }
         }
       }
     }
 
     if (addedMessagesForEvent.isNotEmpty) {
+      messageCollection.sort();
+
       if (!messageCollection.isDisposed) {
-        if (messageCollection.baseHandler is MessageCollectionHandler &&
+        if (eventSource == CollectionEventSource.eventMessageSent) {
+          updatedMessagesForEvent.clear(); // Defensive
+          updatedMessagesForEvent.addAll(addedMessagesForEvent);
+        } else if (messageCollection.baseHandler is MessageCollectionHandler &&
             baseChannel is GroupChannel) {
           (messageCollection.baseHandler as MessageCollectionHandler)
               .onMessagesAdded(
@@ -392,6 +728,8 @@ extension MessageCollectionManager on CollectionManager {
     }
 
     if (updatedMessagesForEvent.isNotEmpty) {
+      messageCollection.sort();
+
       if (!messageCollection.isDisposed) {
         if (messageCollection.baseHandler is MessageCollectionHandler &&
             baseChannel is GroupChannel) {
@@ -409,29 +747,6 @@ extension MessageCollectionManager on CollectionManager {
             NotificationContext(eventSource, sendingStatus),
             baseChannel,
             List<NotificationMessage>.from(updatedMessagesForEvent),
-          );
-        }
-      }
-    }
-
-    if (deletedMessagesForEvent.isNotEmpty) {
-      if (!messageCollection.isDisposed) {
-        if (messageCollection.baseHandler is MessageCollectionHandler &&
-            baseChannel is GroupChannel) {
-          (messageCollection.baseHandler as MessageCollectionHandler)
-              .onMessagesDeleted(
-            MessageContext(eventSource, sendingStatus),
-            baseChannel,
-            List<BaseMessage>.from(deletedMessagesForEvent),
-          );
-        } else if (messageCollection.baseHandler
-                is NotificationCollectionHandler &&
-            baseChannel is FeedChannel) {
-          (messageCollection.baseHandler as NotificationCollectionHandler)
-              .onMessagesDeleted(
-            NotificationContext(eventSource, sendingStatus),
-            baseChannel,
-            List<NotificationMessage>.from(deletedMessagesForEvent),
           );
         }
       }

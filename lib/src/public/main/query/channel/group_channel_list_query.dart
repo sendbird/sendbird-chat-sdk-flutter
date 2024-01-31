@@ -24,10 +24,6 @@ class GroupChannelListQuery extends BaseQuery {
   GroupChannelListQueryOrder order =
       GroupChannelListQueryOrder.latestLastMessage;
 
-  /// [GroupChannelListQueryType] of [User] IDs filter.
-  /// Refer to [setUserIdsIncludeFilter]
-  GroupChannelListQueryType queryType = GroupChannelListQueryType.and;
-
   /// List of channel URL filter. It will return `null` if channel URL filter hasn't been set before.
   /// [GroupChannel] list containing only and exactly the passed [GroupChannel] URLs will be returned.
   List<String> channelUrlsFilter = [];
@@ -68,6 +64,10 @@ class GroupChannelListQuery extends BaseQuery {
 
   /// [User] IDs include filter.
   List<String> userIdsIncludeFilter = [];
+
+  /// [GroupChannelListQueryType] of [User] IDs filter.
+  /// Refer to [setUserIdsIncludeFilter]
+  GroupChannelListQueryType queryType = GroupChannelListQueryType.and;
 
   /// [User] IDs exact filter.[GroupChannel] list containing only and exactly the passed [User] IDs will be returned.
   /// This does not cooperate with other filters.
@@ -244,29 +244,40 @@ class GroupChannelListQuery extends BaseQuery {
       ChannelListQueryIncludeOption.includeDeliveryReceipt,
     ];
 
-    final res =
-        await chat.apiClient.send<ChannelListQueryResponse<GroupChannel>>(
-      GroupChannelListRequest(
-        chat,
-        limit: limit,
-        filter: filter,
-        options: options,
-        queryType: queryType,
-        token: token,
-        order: order,
-        channelUrls: channelUrlsFilter,
-        searchFields: searchFields,
-        searchQuery: searchQuery,
-      ),
-    );
+    ChannelListQueryResponse<GroupChannel> res;
+    try {
+      res = await chat.apiClient.send<ChannelListQueryResponse<GroupChannel>>(
+        GroupChannelListRequest(
+          chat,
+          limit: limit,
+          filter: filter,
+          options: options,
+          queryType: queryType,
+          token: token,
+          order: order,
+          channelUrls: channelUrlsFilter,
+          searchFields: searchFields,
+          searchQuery: searchQuery,
+        ),
+      );
 
-    for (final element in res.channels) {
-      element.set(chat);
+      token = res.next;
+      hasNext = res.next != '';
+      for (final channel in res.channels) {
+        channel.set(chat);
+      }
+
+      //+ [DBManager]
+      if (chat.dbManager.isEnabled()) {
+        await chat.dbManager.upsertGroupChannels(res.channels);
+      }
+      //- [DBManager]
+    } catch (_) {
+      isLoading = false;
+      rethrow;
     }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.channels;
   }
 }
