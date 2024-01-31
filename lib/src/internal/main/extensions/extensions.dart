@@ -1,16 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:flutter/foundation.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 extension ObjectAsString on Object {
   String asString() => toString().split('.').last;
-}
-
-extension IntMax on int {
-  static int get max {
-    return kIsWeb ? 9007199254740991.round() : 1.7976931348623157e+308.round();
-  }
 }
 
 extension ChannelTypeUrlString on ChannelType {

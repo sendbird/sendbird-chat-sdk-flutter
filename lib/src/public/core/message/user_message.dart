@@ -33,7 +33,7 @@ class UserMessage extends BaseMessage {
   /// The list of target translation languages with the language codes.
   /// The messages that have been sent or scheduled with translation option will have this list.
   /// (refer to [BaseChannelMessage.sendUserMessage])
-  final List<String>? translationTargetLanguages;
+  List<String>? translationTargetLanguages;
 
   /// The poll that belongs to this message object.
   Poll? poll;
@@ -43,16 +43,16 @@ class UserMessage extends BaseMessage {
   UserMessageCreateParams? messageCreateParams;
 
   UserMessage({
-    required this.translations,
-    required int messageId,
-    required String message,
     required String channelUrl,
     required ChannelType channelType,
+    required int messageId,
+    required String message,
+    required this.translations,
     Sender? sender,
     SendingStatus? sendingStatus,
     String? requestId,
     List<User> mentionedUsers = const [],
-    MentionType? mentionType,
+    MentionType mentionType = MentionType.users,
     List<String>? requestedMentionUserIds,
     int createdAt = 0,
     int updatedAt = 0,

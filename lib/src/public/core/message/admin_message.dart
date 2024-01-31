@@ -20,14 +20,14 @@ part 'admin_message.g.dart';
 @JsonSerializable()
 class AdminMessage extends BaseMessage {
   AdminMessage({
-    required int messageId,
-    required String message,
     required String channelUrl,
     required ChannelType channelType,
+    required int messageId,
+    required String message,
     SendingStatus? sendingStatus,
     String? requestId,
     List<User> mentionedUsers = const [],
-    MentionType? mentionType,
+    MentionType mentionType = MentionType.users,
     List<String>? requestedMentionUserIds,
     int createdAt = 0,
     int updatedAt = 0,

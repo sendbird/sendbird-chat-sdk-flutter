@@ -7,13 +7,13 @@ part of 'admin_message.dart';
 // **************************************************************************
 
 AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
-      messageId: json['message_id'] as int? ?? 0,
-      message: json['message'] as String,
       channelUrl: json['channel_url'] as String,
       channelType: $enumDecodeNullable(
               _$ChannelTypeEnumMap, json['channel_type'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
+      messageId: json['message_id'] as int? ?? 0,
+      message: json['message'] as String,
       sendingStatus:
           $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
       requestId: json['request_id'] as String?,
@@ -21,8 +21,10 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      mentionType:
-          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
+      mentionType: $enumDecodeNullable(
+              _$MentionTypeEnumMap, json['mention_type'],
+              unknownValue: MentionType.users) ??
+          MentionType.users,
       createdAt: json['created_at'] as int? ?? 0,
       updatedAt: json['updated_at'] as int? ?? 0,
       parentMessageId: json['parent_message_id'] as int?,
@@ -61,7 +63,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'data': instance.data,
       'custom_type': instance.customType,
-      'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'mention_type': _$MentionTypeEnumMap[instance.mentionType]!,
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'sorted_metaarray':
@@ -69,8 +71,8 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'extended_message': instance.extendedMessage,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
-      'request_id': instance.requestId,
       'message_id': instance.messageId,
+      'request_id': instance.requestId,
       'message': instance.message,
       'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],
       'is_reply_to_channel': instance.isReplyToChannel,

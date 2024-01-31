@@ -52,7 +52,7 @@ class BaseMessageCreateParams {
   BaseMessageCreateParams.withMessage(BaseMessage message) {
     data = message.data;
     customType = message.customType;
-    mentionType = message.mentionType ?? MentionType.users;
+    mentionType = message.mentionType;
     mentionedUserIds = message.mentionedUsers.map((e) => e.userId).toList();
     metaArrays = message.allMetaArrays;
     parentMessageId = message.parentMessageId;

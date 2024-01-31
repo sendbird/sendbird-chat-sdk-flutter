@@ -12,6 +12,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.da
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/connection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/db_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_dispatcher.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
@@ -50,6 +51,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:universal_io/io.dart';
 
 part 'chat_auth.dart';
+part 'chat_caching.dart';
 part 'chat_channel.dart';
 part 'chat_connection.dart';
 part 'chat_emoji.dart';
@@ -58,7 +60,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.1.2';
+const sdkVersion = '4.2.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -94,6 +96,13 @@ class Chat with WidgetsBindingObserver {
   // with `!` and `?` to support older versions of the API as well.
   T? _ambiguate<T>(T? value) => value; // (?)
 
+  // isTest
+  bool get isTest {
+    return kIsWeb
+        ? const String.fromEnvironment('FLUTTER_TEST') == 'true'
+        : Platform.environment['FLUTTER_TEST'] == 'true';
+  }
+
   // Check dependencies
   late ChatContext chatContext;
   late ChannelCache channelCache;
@@ -105,6 +114,7 @@ class Chat with WidgetsBindingObserver {
   late EventDispatcher eventDispatcher;
   late CollectionManager collectionManager;
   late StatManager statManager;
+  late DBManager dbManager;
 
   final int chatId;
 
@@ -127,6 +137,7 @@ class Chat with WidgetsBindingObserver {
     ); // HttpClient
     eventDispatcher = EventDispatcher(chat: this);
     collectionManager = CollectionManager(chat: this);
+    dbManager = DBManager(chat: this);
 
     _listenConnectivityChangedEvent();
   }
@@ -189,16 +200,7 @@ class Chat with WidgetsBindingObserver {
   void _listenConnectivityChangedEvent() {
     sbLog.d(StackTrace.current);
 
-    String flutterTest = const String.fromEnvironment('FLUTTER_TEST');
-    if (flutterTest.isEmpty && kIsWeb) {
-      flutterTest = '';
-    }
-
-    // NOTE: do not run connectivity on test
-    final isTest = kIsWeb
-        ? flutterTest == 'true'
-        : Platform.environment['FLUTTER_TEST'] == 'true';
-
+    // Do not run connectivity on test
     if (!isTest) {
       sbLog.d(
           StackTrace.current, 'Connectivity().onConnectivityChanged.listen()');

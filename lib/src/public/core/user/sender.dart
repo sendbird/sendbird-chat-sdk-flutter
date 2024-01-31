@@ -16,7 +16,7 @@ part 'sender.g.dart';
 @JsonSerializable(createToJson: false)
 class Sender extends User {
   /// Whether this sender is blocked by [SendbirdChat.currentUser].
-  final bool isBlockedByMe;
+  bool isBlockedByMe;
 
   /// The [Role] of this sender in the current channel.
   /// If the sender's role status changes after the field value allocation,

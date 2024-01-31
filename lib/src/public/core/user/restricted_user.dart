@@ -58,13 +58,13 @@ class RestrictedUser extends User {
 @JsonSerializable(createToJson: false)
 class RestrictionInfo {
   /// Description of the restriction.
-  final String? description;
+  String? description;
 
   /// End time of the restriction.
-  final int? endAt;
+  int? endAt;
 
   /// [RestrictionType] of the current user.
-  final RestrictionType restrictionType;
+  RestrictionType restrictionType;
 
   RestrictionInfo({
     this.description,

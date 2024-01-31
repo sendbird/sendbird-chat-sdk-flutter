@@ -45,6 +45,15 @@ extension ChatAuth on Chat {
         apiHost: apiHost,
       ));
     } on SendbirdException catch (e) {
+      //+ [DBManager]
+      if (dbManager.isEnabled()) {
+        final user = await dbManager.getLoginInfoByException(userId, e);
+        if (user != null) {
+          return user;
+        }
+      }
+      //- [DBManager]
+
       if (e.code == SendbirdError.accessTokenNotValid) {
         eventManager.notifySessionError(InvalidAccessTokenException());
         throw InvalidAccessTokenException();

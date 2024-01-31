@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
@@ -58,7 +57,7 @@ class PreviousMessageListQuery extends BaseQuery {
 
   /// The time of a request.
   /// After each call of [next], this value will change to the oldest [BaseMessage.createdAt] value of the message that have been fetched.
-  int? messageTimestamp = IntMax.max;
+  int? messageTimestamp = SendbirdChat.maxInt;
 
   PreviousMessageListQuery({
     required this.channelType,

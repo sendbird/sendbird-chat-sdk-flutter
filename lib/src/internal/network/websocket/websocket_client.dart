@@ -111,12 +111,12 @@ class WebSocketClient {
       throw WebSocketFailedException();
     }
 
-    try {
+    runZonedGuarded(() {
       _webSocketChannel?.sink.add(data);
-    } catch (e) {
+    }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
       throw WebSocketFailedException(message: e.toString());
-    }
+    });
   }
 
   bool isConnected() {

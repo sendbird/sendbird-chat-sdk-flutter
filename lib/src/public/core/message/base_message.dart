@@ -39,16 +39,16 @@ import 'package:sendbird_chat_sdk/src/public/main/params/message/threaded_messag
 part 'package:sendbird_chat_sdk/src/internal/main/extensions/base_message_extensions.dart';
 
 /// Base class for messages.
-abstract class BaseMessage extends RootMessage {
-  /// The request ID of the message.
-  final String? requestId;
-
+class BaseMessage extends RootMessage {
   /// The ID of the message.
   @JsonKey(defaultValue: 0) // or msg_id
-  final int messageId;
+  int messageId;
+
+  /// The request ID of the message.
+  String? requestId;
 
   /// The message text of the message.
-  final String message;
+  String message;
 
   /// The sending status of the message.
   SendingStatus? sendingStatus;
@@ -58,19 +58,20 @@ abstract class BaseMessage extends RootMessage {
   bool isReplyToChannel;
 
   /// The parent message's ID if this is a reply message.
-  final int? parentMessageId;
+  int? parentMessageId;
 
   /// The parent message of this message.
   /// Only `NonNull` if this message is a reply message.
   /// It does **not** contain all properties of the parent message.
   /// Only contains:
-  /// - [BaseMessage.message].
-  /// - [BaseMessage.sender]. (null if the parent message is an [AdminMessage]).
-  /// - [BaseMessage.createdAt].
-  /// - File information if it's a [FileMessage].
-  /// - [FileMessage.name].
-  /// - [FileMessage.type].
-  /// - [FileMessage.url].
+  /// [BaseMessage.message].
+  /// [BaseMessage.sender]. (null if the parent message is an [AdminMessage]).
+  /// [BaseMessage.createdAt].
+  /// File information if it's a [FileMessage].
+  /// [FileMessage.name].
+  /// [FileMessage.type].
+  /// [FileMessage.url].
+  /// [FileMessage.data].
   /// This is only for accessing parent message's information (READ ONLY) and should not to be used to modify the parent message.
   @JsonKey(name: 'parent_message_info')
   BaseMessage? parentMessage;
@@ -80,11 +81,11 @@ abstract class BaseMessage extends RootMessage {
 
   /// The message's survival seconds.
   @JsonKey(defaultValue: -1)
-  final int? messageSurvivalSeconds;
+  int? messageSurvivalSeconds;
 
   /// Checks whether the message is silent or not.
   @JsonKey(name: 'silent')
-  final bool isSilent;
+  bool isSilent;
 
   /// The error code of them message if the [sendingStatus] is [SendingStatus.failed].
   int? errorCode;
@@ -96,15 +97,15 @@ abstract class BaseMessage extends RootMessage {
   /// So if the sender's operator status changed after sending a message,
   /// the value of the property and the result of [Sender.role] might differ.
   @JsonKey(name: 'is_op_msg')
-  final bool isOperatorMessage;
+  bool isOperatorMessage;
 
   /// The [OGMetaData] of the message. (https://ogp.me/)
   /// Might be null if
-  /// 1. Application does not support OG-TAG. (all new applications support OG-TAG by default)
-  /// 2. The message does not contain a valid url.
-  /// 3. The server did not fetch the OG-Tag yet.
+  /// Application does not support OG-TAG. (all new applications support OG-TAG by default)
+  /// The message does not contain a valid url.
+  /// The server did not fetch the OG-Tag yet.
   @JsonKey(name: 'og_tag')
-  final OGMetaData? ogMetaData;
+  OGMetaData? ogMetaData;
 
   /// The reactions on the message.
   @JsonKey(defaultValue: [])
@@ -133,8 +134,8 @@ abstract class BaseMessage extends RootMessage {
     super.createdAt,
     super.updatedAt,
     Sender? sender,
-    this.requestId,
     this.messageId = 0,
+    this.requestId,
     this.isReplyToChannel = false,
     this.parentMessageId,
     Map<String, dynamic>? parentMessage,
@@ -166,12 +167,6 @@ abstract class BaseMessage extends RootMessage {
       }
     }
   }
-
-  MessageType get messageType => this is UserMessage
-      ? MessageType.user
-      : this is FileMessage
-          ? MessageType.file
-          : MessageType.admin;
 
   @override
   void set(Chat chat) {

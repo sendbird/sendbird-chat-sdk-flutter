@@ -29,6 +29,13 @@ extension ChatChannel on Chat {
     for (final element in res.updatedChannels) {
       element.saveToCache(this);
     }
+
+    //+ [DBManager]
+    if (dbManager.isEnabled()) {
+      await dbManager.upsertGroupChannels(res.updatedChannels);
+    }
+    //- [DBManager]
+
     return res;
   }
 
@@ -46,6 +53,13 @@ extension ChatChannel on Chat {
     for (final element in res.updatedChannels) {
       element.saveToCache(this);
     }
+
+    //+ [DBManager]
+    if (dbManager.isEnabled()) {
+      await dbManager.upsertFeedChannels(res.updatedChannels);
+    }
+    //- [DBManager]
+
     return res;
   }
 

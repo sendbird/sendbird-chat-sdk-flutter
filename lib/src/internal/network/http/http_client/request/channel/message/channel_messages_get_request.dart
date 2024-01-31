@@ -13,6 +13,7 @@ class ChannelMessagesGetRequest extends ApiRequest {
   HttpMethod get method => HttpMethod.get;
 
   ChannelType channelType;
+  bool checkingContinuousMessages;
 
   ChannelMessagesGetRequest(
     Chat chat, {
@@ -23,6 +24,7 @@ class ChannelMessagesGetRequest extends ApiRequest {
     int messageId = 0,
     int parentMessageId = 0,
     bool checkingHasNext = false,
+    this.checkingContinuousMessages = false, // useLocalCache
   }) : super(chat: chat) {
     if (messageId <= 0 && timestamp < 0) {
       throw InvalidParameterException();
@@ -44,6 +46,8 @@ class ChannelMessagesGetRequest extends ApiRequest {
     if (parentMessageId > 0) {
       queryParams['parent_message_id'] = parentMessageId;
     }
+
+    queryParams['checking_continuous_messages'] = checkingContinuousMessages;
   }
 
   @override
@@ -54,9 +58,15 @@ class ChannelMessagesGetRequest extends ApiRequest {
         .toList();
     final hasNext = res['has_next'] as bool?;
 
+    bool? isContinuous;
+    if (checkingContinuousMessages) {
+      isContinuous = res['is_continuous_messages'] as bool;
+    }
+
     return ChannelMessagesGetResponse(
       messages: messages,
       hasNext: hasNext,
+      isContinuous: isContinuous,
     );
   }
 }
@@ -64,9 +74,11 @@ class ChannelMessagesGetRequest extends ApiRequest {
 class ChannelMessagesGetResponse {
   final List<RootMessage> messages;
   final bool? hasNext;
+  final bool? isContinuous;
 
   ChannelMessagesGetResponse({
     required this.messages,
     this.hasNext,
+    this.isContinuous,
   });
 }

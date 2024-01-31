@@ -7,6 +7,12 @@ part of 'file_message.dart';
 // **************************************************************************
 
 FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
+      channelUrl: json['channel_url'] as String,
+      channelType: $enumDecodeNullable(
+              _$ChannelTypeEnumMap, json['channel_type'],
+              unknownValue: ChannelType.group) ??
+          ChannelType.group,
+      messageId: json['message_id'] as int? ?? 0,
       url: json['url'] as String,
       name: json['name'] as String?,
       size: json['size'] as int? ?? 0,
@@ -17,23 +23,19 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
       requireAuth: json['require_auth'] as bool? ?? false,
       requestId: json['request_id'] as String?,
       message: json['message'] as String?,
-      messageId: json['message_id'] as int? ?? 0,
       sendingStatus:
           $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
       sender: json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>),
-      channelUrl: json['channel_url'] as String,
-      channelType: $enumDecodeNullable(
-              _$ChannelTypeEnumMap, json['channel_type'],
-              unknownValue: ChannelType.group) ??
-          ChannelType.group,
       mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      mentionType:
-          $enumDecodeNullable(_$MentionTypeEnumMap, json['mention_type']),
+      mentionType: $enumDecodeNullable(
+              _$MentionTypeEnumMap, json['mention_type'],
+              unknownValue: MentionType.users) ??
+          MentionType.users,
       createdAt: json['created_at'] as int? ?? 0,
       updatedAt: json['updated_at'] as int? ?? 0,
       parentMessageId: json['parent_message_id'] as int?,
@@ -70,7 +72,7 @@ Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
       'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
       'data': instance.data,
       'custom_type': instance.customType,
-      'mention_type': _$MentionTypeEnumMap[instance.mentionType],
+      'mention_type': _$MentionTypeEnumMap[instance.mentionType]!,
       'mentioned_users':
           instance.mentionedUsers.map((e) => e.toJson()).toList(),
       'sorted_metaarray':
@@ -78,8 +80,8 @@ Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
       'extended_message': instance.extendedMessage,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
-      'request_id': instance.requestId,
       'message_id': instance.messageId,
+      'request_id': instance.requestId,
       'message': instance.message,
       'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],
       'is_reply_to_channel': instance.isReplyToChannel,
@@ -102,18 +104,18 @@ Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
       'require_auth': instance.requireAuth,
     };
 
+const _$ChannelTypeEnumMap = {
+  ChannelType.group: 'group',
+  ChannelType.open: 'open',
+  ChannelType.feed: 'feed',
+};
+
 const _$SendingStatusEnumMap = {
   SendingStatus.none: 'none',
   SendingStatus.pending: 'pending',
   SendingStatus.failed: 'failed',
   SendingStatus.succeeded: 'succeeded',
   SendingStatus.canceled: 'canceled',
-};
-
-const _$ChannelTypeEnumMap = {
-  ChannelType.group: 'group',
-  ChannelType.open: 'open',
-  ChannelType.feed: 'feed',
 };
 
 const _$MentionTypeEnumMap = {

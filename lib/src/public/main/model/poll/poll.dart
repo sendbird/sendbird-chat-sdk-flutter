@@ -36,7 +36,7 @@ class Poll {
   PollStatus status;
 
   /// A id of the message that contains this poll
-  final int? messageId;
+  int? messageId;
 
   /// An additional json data to accompany the poll.
   PollData? data;
@@ -48,7 +48,7 @@ class Poll {
   List<PollOption> options = [];
 
   /// UserId of the poll creator. `null` if the creator account is removed.
-  final String? createdBy;
+  String? createdBy;
 
   /// True if this poll allows user suggestion, false otherwise.
   bool allowUserSuggestion = false;

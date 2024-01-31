@@ -5,7 +5,7 @@ import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 void main() async {
   runZonedGuarded(() async {
     // Initialize the SendbirdChat SDK with your Application ID.
-    SendbirdChat.init(appId: 'APP-ID');
+    await SendbirdChat.init(appId: 'APP-ID');
 
     // Connect to the Sendbird server with a User ID.
     await SendbirdChat.connect('USER-ID');

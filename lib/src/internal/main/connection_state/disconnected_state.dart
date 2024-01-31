@@ -39,7 +39,7 @@ class DisconnectedState extends BaseConnectionState {
   @override
   Future<void> disconnect({required logout}) async {
     sbLog.i(StackTrace.current);
-    await chat.connectionManager.doDisconnect(logout: logout);
+    await chat.connectionManager.doDisconnect(clear: logout, logout: logout);
   }
 
   @override
@@ -51,7 +51,7 @@ class DisconnectedState extends BaseConnectionState {
   @override
   Future<void> enterBackground() async {
     sbLog.i(StackTrace.current);
-    await chat.connectionManager.doDisconnect(logout: false);
+    await chat.connectionManager.doDisconnect(clear: false);
   }
 
   @override

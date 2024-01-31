@@ -47,6 +47,7 @@ extension BaseChannelMessage on BaseChannel {
   UserMessage sendUserMessage(
     UserMessageCreateParams params, {
     UserMessageHandler? handler,
+    int? resendMessageId,
   }) {
     sbLog.i(StackTrace.current, 'message: ${params.message}');
     checkUnsupportedAction();
@@ -69,12 +70,60 @@ extension BaseChannelMessage on BaseChannel {
       commandType: cmd.cmd,
     ) as UserMessage;
 
+    if (this is GroupChannel) {
+      pendingUserMessage.messageId =
+          resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
+
+      for (final messageCollection
+          in chat.collectionManager.baseMessageCollections) {
+        if (messageCollection.baseChannel.channelUrl == channelUrl) {
+          if (resendMessageId != null) {
+            chat.collectionManager.sendEventsToMessageCollection(
+              messageCollection: messageCollection,
+              baseChannel: this,
+              eventSource: CollectionEventSource.localMessageResendStarted,
+              sendingStatus: SendingStatus.pending,
+              updatedMessages: [pendingUserMessage],
+            );
+          } else {
+            chat.collectionManager.sendEventsToMessageCollection(
+              messageCollection: messageCollection,
+              baseChannel: this,
+              eventSource: CollectionEventSource.localMessagePendingCreated,
+              sendingStatus: SendingStatus.pending,
+              addedMessages: [pendingUserMessage],
+            );
+          }
+          break;
+        }
+      }
+    }
+
     if (chat.chatContext.currentUser == null) {
       final error = ConnectionRequiredException();
       pendingUserMessage
         ..errorCode = error.code
         ..sendingStatus = SendingStatus.failed;
-      if (handler != null) handler(pendingUserMessage, error);
+
+      if (this is GroupChannel) {
+        for (final messageCollection
+            in chat.collectionManager.baseMessageCollections) {
+          if (messageCollection.baseChannel.channelUrl == channelUrl) {
+            chat.collectionManager.sendEventsToMessageCollection(
+              messageCollection: messageCollection,
+              baseChannel: this,
+              eventSource: CollectionEventSource.localMessageFailed,
+              sendingStatus: SendingStatus.failed,
+              updatedMessages: [pendingUserMessage],
+            );
+            break;
+          }
+        }
+      }
+
+      if (handler != null) {
+        handler(pendingUserMessage, error);
+      }
       return pendingUserMessage;
     }
 
@@ -84,8 +133,26 @@ extension BaseChannelMessage on BaseChannel {
     pendingUserMessage.messageCreateParams = params;
 
     runZonedGuarded(() {
-      chat.commandManager.sendCommand(cmd).then((result) {
-        if (result == null) return;
+      chat.commandManager.sendCommand(cmd).then((result) async {
+        if (result == null) {
+          return;
+        }
+
+        if (this is GroupChannel) {
+          for (final messageCollection
+              in chat.collectionManager.baseMessageCollections) {
+            if (messageCollection.baseChannel.channelUrl == channelUrl) {
+              await chat.collectionManager.sendEventsToMessageCollection(
+                messageCollection: messageCollection,
+                baseChannel: this,
+                eventSource: CollectionEventSource.localMessagePendingCreated,
+                sendingStatus: SendingStatus.succeeded,
+                deletedMessageIds: [pendingUserMessage.rootId],
+              );
+              break;
+            }
+          }
+        }
 
         final message = RootMessage.getMessageFromJsonWithChat<UserMessage>(
           chat,
@@ -94,7 +161,9 @@ extension BaseChannelMessage on BaseChannel {
         ) as UserMessage;
 
         chat.collectionManager.onMessageSentByMe(message);
-        if (handler != null) handler(message, null);
+        if (handler != null) {
+          handler(message, null);
+        }
       });
     }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
@@ -103,7 +172,26 @@ extension BaseChannelMessage on BaseChannel {
         pendingUserMessage
           ..errorCode = e.code ?? SendbirdError.unknownError
           ..sendingStatus = SendingStatus.failed;
-        if (handler != null) handler(pendingUserMessage, e);
+
+        if (this is GroupChannel) {
+          for (final messageCollection
+              in chat.collectionManager.baseMessageCollections) {
+            if (messageCollection.baseChannel.channelUrl == channelUrl) {
+              chat.collectionManager.sendEventsToMessageCollection(
+                messageCollection: messageCollection,
+                baseChannel: this,
+                eventSource: CollectionEventSource.localMessageFailed,
+                sendingStatus: SendingStatus.failed,
+                updatedMessages: [pendingUserMessage],
+              );
+              break;
+            }
+          }
+        }
+
+        if (handler != null) {
+          handler(pendingUserMessage, e);
+        }
       }
     });
 
@@ -134,6 +222,7 @@ extension BaseChannelMessage on BaseChannel {
     return sendUserMessage(
       params,
       handler: handler,
+      resendMessageId: message.messageId,
     );
   }
 
@@ -171,6 +260,7 @@ extension BaseChannelMessage on BaseChannel {
     FileMessageCreateParams params, {
     FileMessageHandler? handler,
     ProgressHandler? progressHandler,
+    int? resendMessageId,
   }) {
     sbLog.i(StackTrace.current,
         'params.uploadFile.name: ${params.fileInfo.fileName}');
@@ -187,6 +277,35 @@ extension BaseChannelMessage on BaseChannel {
     pendingFileMessage.sender =
         Sender.fromUser(chat.chatContext.currentUser, this);
     pendingFileMessage.messageCreateParams = params;
+
+    if (this is GroupChannel) {
+      pendingFileMessage.messageId =
+          resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
+
+      for (final messageCollection
+          in chat.collectionManager.baseMessageCollections) {
+        if (messageCollection.baseChannel.channelUrl == channelUrl) {
+          if (resendMessageId != null) {
+            chat.collectionManager.sendEventsToMessageCollection(
+              messageCollection: messageCollection,
+              baseChannel: this,
+              eventSource: CollectionEventSource.localMessageResendStarted,
+              sendingStatus: SendingStatus.pending,
+              updatedMessages: [pendingFileMessage],
+            );
+          } else {
+            chat.collectionManager.sendEventsToMessageCollection(
+              messageCollection: messageCollection,
+              baseChannel: this,
+              eventSource: CollectionEventSource.localMessagePendingCreated,
+              sendingStatus: SendingStatus.pending,
+              addedMessages: [pendingFileMessage],
+            );
+          }
+          break;
+        }
+      }
+    }
 
     bool isCanceled = false;
     runZonedGuarded(() async {
@@ -205,9 +324,28 @@ extension BaseChannelMessage on BaseChannel {
                 .timeout(
               Duration(seconds: chat.chatContext.options.fileTransferTimeout),
               onTimeout: () {
+                pendingFileMessage.sendingStatus = SendingStatus.failed;
+
+                if (this is GroupChannel) {
+                  for (final messageCollection
+                      in chat.collectionManager.baseMessageCollections) {
+                    if (messageCollection.baseChannel.channelUrl ==
+                        channelUrl) {
+                      chat.collectionManager.sendEventsToMessageCollection(
+                        messageCollection: messageCollection,
+                        baseChannel: this,
+                        eventSource: CollectionEventSource.localMessageFailed,
+                        sendingStatus: SendingStatus.failed,
+                        updatedMessages: [pendingFileMessage],
+                      );
+                      break;
+                    }
+                  }
+                }
+
                 if (handler != null) {
                   handler(
-                    pendingFileMessage..sendingStatus = SendingStatus.failed,
+                    pendingFileMessage,
                     SendbirdException(code: SendbirdError.fileUploadTimeout),
                   );
                 }
@@ -229,35 +367,76 @@ extension BaseChannelMessage on BaseChannel {
             thumbnails: uploadResponse?.thumbnails,
           );
 
-          final message = RootMessage.getMessageFromJsonWithChat<FileMessage>(
+          final messageBeforeSent =
+              RootMessage.getMessageFromJsonWithChat<FileMessage>(
             chat,
             cmd.payload,
             channelType: channelType,
             commandType: cmd.cmd,
-          ) as FileMessage;
+          ) as FileMessage
+                ..messageId = pendingFileMessage.messageId;
 
           if (chat.chatContext.currentUser == null) {
             final error = ConnectionRequiredException();
-            message
+            messageBeforeSent
               ..errorCode = error.code
               ..sendingStatus = SendingStatus.failed;
-            if (handler != null) handler(message, error);
-            return message;
+
+            if (this is GroupChannel) {
+              for (final messageCollection
+                  in chat.collectionManager.baseMessageCollections) {
+                if (messageCollection.baseChannel.channelUrl == channelUrl) {
+                  chat.collectionManager.sendEventsToMessageCollection(
+                    messageCollection: messageCollection,
+                    baseChannel: this,
+                    eventSource: CollectionEventSource.localMessageFailed,
+                    sendingStatus: SendingStatus.failed,
+                    updatedMessages: [messageBeforeSent],
+                  );
+                  break;
+                }
+              }
+            }
+
+            if (handler != null) {
+              handler(messageBeforeSent, error);
+            }
+            return messageBeforeSent;
           }
 
           if (chat.connectionManager.isConnected()) {
-            chat.commandManager.sendCommand(cmd).then((result) {
+            chat.commandManager.sendCommand(cmd).then((result) async {
               if (result == null) return;
+
+              if (this is GroupChannel) {
+                for (final messageCollection
+                    in chat.collectionManager.baseMessageCollections) {
+                  if (messageCollection.baseChannel.channelUrl == channelUrl) {
+                    await chat.collectionManager.sendEventsToMessageCollection(
+                      messageCollection: messageCollection,
+                      baseChannel: this,
+                      eventSource:
+                          CollectionEventSource.localMessagePendingCreated,
+                      sendingStatus: SendingStatus.succeeded,
+                      deletedMessageIds: [messageBeforeSent.rootId],
+                    );
+                    break;
+                  }
+                }
+              }
 
               final message =
                   RootMessage.getMessageFromJsonWithChat<FileMessage>(
                 chat,
                 result.payload,
+                channelType: channelType,
                 commandType: result.cmd,
               ) as FileMessage;
 
               chat.collectionManager.onMessageSentByMe(message);
-              if (handler != null) handler(message, null);
+              if (handler != null) {
+                handler(message, null);
+              }
             });
           } else {
             final request = ChannelFileMessageSendRequest(
@@ -270,12 +449,49 @@ extension BaseChannelMessage on BaseChannel {
             );
             final message = await chat.apiClient.send<FileMessage>(request);
 
+            if (this is GroupChannel) {
+              for (final messageCollection
+                  in chat.collectionManager.baseMessageCollections) {
+                if (messageCollection.baseChannel.channelUrl == channelUrl) {
+                  await chat.collectionManager.sendEventsToMessageCollection(
+                    messageCollection: messageCollection,
+                    baseChannel: this,
+                    eventSource:
+                        CollectionEventSource.localMessagePendingCreated,
+                    sendingStatus: SendingStatus.succeeded,
+                    deletedMessageIds: [messageBeforeSent.rootId],
+                  );
+                  break;
+                }
+              }
+            }
+
             chat.collectionManager.onMessageSentByMe(message);
-            if (handler != null) handler(message, null);
+            if (handler != null) {
+              handler(message, null);
+            }
           }
         },
         onCancel: () {
           isCanceled = true;
+          pendingFileMessage.sendingStatus = SendingStatus.canceled;
+
+          if (this is GroupChannel) {
+            for (final messageCollection
+                in chat.collectionManager.baseMessageCollections) {
+              if (messageCollection.baseChannel.channelUrl == channelUrl) {
+                chat.collectionManager.sendEventsToMessageCollection(
+                  messageCollection: messageCollection,
+                  baseChannel: this,
+                  eventSource: CollectionEventSource.localMessageCanceled,
+                  sendingStatus: SendingStatus.canceled,
+                  deletedMessageIds: [pendingFileMessage.rootId],
+                );
+                break;
+              }
+            }
+          }
+
           if (handler != null) {
             handler(pendingFileMessage, OperationCanceledException());
           }
@@ -294,7 +510,26 @@ extension BaseChannelMessage on BaseChannel {
         pendingFileMessage
           ..errorCode = e.code ?? SendbirdError.unknownError
           ..sendingStatus = SendingStatus.failed;
-        if (handler != null) handler(pendingFileMessage, e);
+
+        if (this is GroupChannel) {
+          for (final messageCollection
+              in chat.collectionManager.baseMessageCollections) {
+            if (messageCollection.baseChannel.channelUrl == channelUrl) {
+              chat.collectionManager.sendEventsToMessageCollection(
+                messageCollection: messageCollection,
+                baseChannel: this,
+                eventSource: CollectionEventSource.localMessageFailed,
+                sendingStatus: SendingStatus.failed,
+                updatedMessages: [pendingFileMessage],
+              );
+              break;
+            }
+          }
+        }
+
+        if (handler != null) {
+          handler(pendingFileMessage, e);
+        }
       }
     });
 
@@ -356,6 +591,7 @@ extension BaseChannelMessage on BaseChannel {
       params,
       progressHandler: progressHandler,
       handler: handler,
+      resendMessageId: message.messageId,
     );
   }
 
@@ -547,7 +783,7 @@ extension BaseChannelMessage on BaseChannel {
         channelUrl: channelUrl,
         params: params,
         token: token,
-        timestamp: timestamp ?? IntMax.max,
+        timestamp: timestamp ?? SendbirdChat.maxInt,
       ),
     );
   }

@@ -1,12 +1,13 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
+import 'package:sendbird_chat_sdk/src/internal/db/schema/channel/meta/channel_info.dart';
+import 'package:sendbird_chat_sdk/src/internal/db/schema/message/meta/message_changelog_info.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_gap_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
 import 'package:uuid/uuid.dart';
 
 part 'group_channel_collection_manager.dart';
@@ -26,9 +27,9 @@ class CollectionManager {
 
   // MessageCollection
   final List<BaseMessageCollection> baseMessageCollections = [];
-  final Map<String, int> lastRequestTsForMessageChangeLogs = {};
-  final Map<String, int> lastRequestTsForPollChangeLogs = {};
-  final Map<String, int> lastRequestTsForMessagesGap = {};
+  int lastRequestTsForMessageChangeLogs = 0;
+  int lastRequestTsForPollChangeLogs = 0;
+  int lastRequestTsForMessagesGap = 0;
 
   bool isGroupChannelCollectionsRefreshing = false;
   bool isBaseMessageCollectionsRefreshing = false;
@@ -44,25 +45,44 @@ class CollectionManager {
     );
   }
 
+  void _setInitialGroupChannelChangeLogsTs() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    lastRequestTsForGroupChannelChangeLogs = now;
+  }
+
+  void _setInitialMessageChangeLogsAndMessagesGapTs() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    lastRequestTsForMessageChangeLogs = now;
+    lastRequestTsForPollChangeLogs = now;
+    lastRequestTsForMessagesGap = now;
+  }
+
 //------------------------------//
 // Reconnected
 //------------------------------//
   Future<void> onLogin() async {
     sbLog.d(StackTrace.current);
+
+    //+ [DBManager]
+    if (_chat.dbManager.isEnabled()) {
+      await _chat.dbManager.checkDBFileSize();
+      await _refresh();
+    }
+    //- [DBManager]
   }
 
   Future<void> onReconnected() async {
     sbLog.d(StackTrace.current);
 
-    await refresh();
+    await _refresh();
   }
 
-  Future<void> refresh() async {
+  Future<void> _refresh() async {
     sbLog.d(StackTrace.current);
 
     List<Future<dynamic>> futures = [];
 
-    futures.add(_refreshGroupChannelCollections());
+    futures.add(refreshGroupChannelCollections());
     futures.add(_refreshBaseMessageCollections());
 
     if (futures.isNotEmpty) {
@@ -70,7 +90,7 @@ class CollectionManager {
     }
   }
 
-  Future<void> _refreshGroupChannelCollections() async {
+  Future<void> refreshGroupChannelCollections() async {
     isGroupChannelCollectionsRefreshing = true;
 
     List<Future<dynamic>> futures = [];
@@ -89,59 +109,51 @@ class CollectionManager {
   Future<void> _refreshBaseMessageCollections() async {
     isBaseMessageCollectionsRefreshing = true;
 
-    List<Future<dynamic>> futures = [];
-
     for (final collection in baseMessageCollections) {
       if (collection.isInitialized) {
-        futures.add(_requestMessageChangeLogs(collection));
-        futures.add(_requestPollChangeLogs(collection));
-        futures.add(_requestMessagesGap(collection));
+        await _requestMessageChangeLogs(collection);
+        await _requestPollChangeLogs(collection);
+        await _requestMessagesGap(collection);
       }
-    }
-
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
     }
 
     isBaseMessageCollectionsRefreshing = false;
   }
 
-  Future<void> refreshNotificationCollections() async {
-    List<Future<dynamic>> futures = [];
+  Future<void> refreshBaseMessageCollection(
+      BaseMessageCollection collection) async {
+    for (final collection in baseMessageCollections) {
+      if (collection.isInitialized) {
+        await _requestMessageChangeLogs(collection);
+        await _requestPollChangeLogs(collection);
+      }
+    }
+  }
 
+  Future<void> refreshNotificationCollections() async {
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
-          futures.add(_requestMessageChangeLogs(collection));
-          futures.add(_requestMessagesGap(collection));
+          await _requestMessageChangeLogs(collection);
+          await _requestMessagesGap(collection);
         }
       }
-    }
-
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
     }
   }
 
   Future<void> refreshNotificationCollection({
     required String channelUrl,
   }) async {
-    List<Future<dynamic>> futures = [];
-
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
           if (collection.baseChannel.channelUrl == channelUrl) {
-            futures.add(_requestMessageChangeLogs(collection));
-            futures.add(_requestMessagesGap(collection));
+            await _requestMessageChangeLogs(collection);
+            await _requestMessagesGap(collection);
             break;
           }
         }
       }
-    }
-
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
     }
   }
 
@@ -175,6 +187,33 @@ class CollectionManager {
             //   _chat.eventManager
             //       .notifyReadStatusUpdated(collection.baseChannel);
             // }
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  void onMessagesUpdated(String channelUrl, List<RootMessage>? messages) async {
+    sbLog.d(StackTrace.current, 'onMessagesUpdated()');
+
+    for (final collection in baseMessageCollections) {
+      if (collection is NotificationCollection) {
+        if (collection.isInitialized) {
+          if (collection.baseChannel.channelUrl == channelUrl) {
+            if (collection.baseHandler is NotificationCollectionHandler &&
+                collection.baseChannel is FeedChannel) {
+              (collection.baseHandler as NotificationCollectionHandler)
+                  .onMessagesUpdated(
+                      NotificationContext(
+                        CollectionEventSource.eventMessageUpdated,
+                        SendingStatus.succeeded,
+                      ),
+                      collection.baseChannel as FeedChannel,
+                      messages != null
+                          ? List<NotificationMessage>.from(messages)
+                          : collection.messageList);
+            }
             break;
           }
         }
@@ -420,7 +459,7 @@ class InternalGroupChannelHandlerForCollectionManager
             baseChannel: channel,
             eventSource: CollectionEventSource.eventMessageDeleted,
             sendingStatus: SendingStatus.succeeded,
-            deletedMessageIds: [messageId],
+            deletedMessageIds: [messageId.toString()],
           );
           break;
         }
@@ -663,48 +702,30 @@ class InternalFeedChannelHandlerForCollectionManager
 //   @override
 //   void onMentionReceived(BaseChannel channel, NotificationMessage message) {
 //     if (channel is FeedChannel) {
-//       for (final messageCollection
-//           in _collectionManager.baseMessageCollections) {
-//         if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
-//           _collectionManager.sendEventsToMessageCollectionList(
-//             eventSource: CollectionEventSource.eventMentionReceived,
-//             updatedChannels: [channel],
-//           );
-//           break;
-//         }
-//       }
+//       _collectionManager.sendEventsToMessageCollectionList(
+//         eventSource: CollectionEventSource.eventMentionReceived,
+//         updatedChannels: [channel],
+//       );
 //     }
 //   }
 
   @override
   void onChannelChanged(BaseChannel channel) {
     if (channel is FeedChannel) {
-      for (final messageCollection
-          in _collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
-          _collectionManager.sendEventsToMessageCollectionList(
-            eventSource: CollectionEventSource.eventChannelChanged,
-            updatedChannels: [channel],
-          );
-          break;
-        }
-      }
+      _collectionManager.sendEventsToMessageCollectionList(
+        eventSource: CollectionEventSource.eventChannelChanged,
+        updatedChannels: [channel],
+      );
     }
   }
 
   // @override
   // void onChannelDeleted(String channelUrl, ChannelType channelType) {
   //   if (channelType == ChannelType.feed) {
-  //     for (final messageCollection
-  //         in _collectionManager.baseMessageCollections) {
-  //       if (messageCollection.baseChannel.channelUrl == channelUrl) {
-  //         _collectionManager.sendEventsToMessageCollectionList(
-  //           eventSource: CollectionEventSource.eventChannelDeleted,
-  //           deletedChannelUrls: [channelUrl],
-  //         );
-  //         break;
-  //       }
-  //     }
+  //     _collectionManager.sendEventsToMessageCollectionList(
+  //       eventSource: CollectionEventSource.eventChannelDeleted,
+  //       deletedChannelUrls: [channelUrl],
+  //     );
   //   }
   // }
 

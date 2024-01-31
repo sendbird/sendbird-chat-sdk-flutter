@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/stats/base_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/base_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 

@@ -14,6 +14,8 @@ class ApiClient {
   final StatManager? _statManager;
   final HttpClient _httpClient;
 
+  bool throwExceptionForTest = false;
+
   ApiClient({
     required ChatContext chatContext,
     required SessionManager sessionManager,
@@ -36,6 +38,10 @@ class ApiClient {
 
   // possible other solution T is return type
   Future<T> send<T>(ApiRequest request) async {
+    if (throwExceptionForTest) {
+      throw Exception();
+    }
+
     final url = '/${request.version}/${request.url}';
     final uri = _httpClient.toUri(
       url,
