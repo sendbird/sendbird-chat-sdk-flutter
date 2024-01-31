@@ -4,7 +4,7 @@
 
 #### Local Caching for Android and iOS (Not supported for Web yet)
 > Local caching enables Sendbird Chat SDK for Flutter to cache and retrieve group channel and message data locally. Its benefits include reducing refresh time and allowing a client app to create a channel list or a chat view that can work online as well as offline.
-> The local caching feature is used by default.
+> The local caching feature is enabled by default.
 
 - Added `useCollectionCaching` in `SendbirdChatOptions` (The default value is `true`)
 - Added `getCachedDataSize()`, `clearCachedData()` and `clearCachedMessages()` in `SendbirdChat`
