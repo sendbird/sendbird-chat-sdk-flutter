@@ -1157,7 +1157,7 @@ class CommandManager {
       );
 
       final cachedMetaData = _chat.channelCache
-              .find<MetaDataCache<String>>(channelKey: event.channelUrl) ??
+              .find<MetaDataCache>(channelKey: event.channelUrl) ??
           MetaDataCache(
             channelType: event.channelType,
             channelUrl: event.channelUrl,

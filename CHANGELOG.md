@@ -1,3 +1,8 @@
+## v4.2.1 (Fed 5, 2024)
+
+### Improvements
+- Fixed the bug where `getCachedMetaData()` in `BaseChannel` is not being updated when deleting metadata.
+
 ## v4.2.0 (Jan 31, 2024)
 
 ### Features
@@ -9,7 +14,7 @@
 - Added `useCollectionCaching` in `SendbirdChatOptions` (The default value is `true`)
 - Added `getCachedDataSize()`, `clearCachedData()` and `clearCachedMessages()` in `SendbirdChat`
 - Added `getFailedMessages()`, `removeFailedMessages()` and `removeAllFailedMessages()` in `MessageCollection`
-- Added `markAsRead() in `BaseMessageCollection`
+- Added `markAsRead()` in `BaseMessageCollection`
 
 ### Improvements
 - Fixed the bugs regarding FeedChannel
