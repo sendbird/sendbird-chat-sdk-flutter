@@ -58,7 +58,7 @@ class Poll {
 
   /// Contains optionIds which the current user voted on.
   /// If the current user has not voted, this list will be empty.
-  @JsonKey(defaultValue: [])
+  @JsonKey(name: 'voted_option_ids', defaultValue: [])
   List<int>? votedPollOptionIds;
 
   Poll({
@@ -149,9 +149,12 @@ class Poll {
       if (event.json['poll']['allow_multiple_votes'] != null) {
         allowMultipleVotes = event.json['poll']['allow_multiple_votes'];
       }
-      if (event.json['poll']['voted_poll_option_ids'] != null) {
-        votedPollOptionIds = event.json['poll']['voted_poll_option_ids'];
-      }
+
+      // voted_option_ids is not coming from PEDI, so validate it by SDK itself
+      final optionIds = options.map((option) => option.id).toSet();
+      final validVotedOptionIds =
+          votedPollOptionIds?.toSet().intersection(optionIds).toList();
+      votedPollOptionIds = validVotedOptionIds;
 
       return true;
     } else {
@@ -174,6 +177,13 @@ class Poll {
           int voteCount = element['vote_count'];
           options.firstWhere((e) => (e.id == optionId)).voteCount = voteCount;
         }
+      }
+
+      if (event.json['voted_option_ids'] != null) {
+        votedPollOptionIds = (event.json['voted_option_ids'] as List<dynamic>?)
+                ?.map((e) => e as int)
+                .toList() ??
+            [];
       }
     } else {
       return false;
