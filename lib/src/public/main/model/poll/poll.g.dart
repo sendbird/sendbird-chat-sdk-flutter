@@ -25,7 +25,7 @@ Poll _$PollFromJson(Map<String, dynamic> json) => Poll(
       createdBy: json['created_by'] as String?,
       allowUserSuggestion: json['allow_user_suggestion'] as bool? ?? false,
       allowMultipleVotes: json['allow_multiple_votes'] as bool? ?? false,
-      votedPollOptionIds: (json['voted_poll_option_ids'] as List<dynamic>?)
+      votedPollOptionIds: (json['voted_option_ids'] as List<dynamic>?)
               ?.map((e) => e as int)
               .toList() ??
           [],
@@ -45,7 +45,7 @@ Map<String, dynamic> _$PollToJson(Poll instance) => <String, dynamic>{
       'created_by': instance.createdBy,
       'allow_user_suggestion': instance.allowUserSuggestion,
       'allow_multiple_votes': instance.allowMultipleVotes,
-      'voted_poll_option_ids': instance.votedPollOptionIds,
+      'voted_option_ids': instance.votedPollOptionIds,
     };
 
 const _$PollStatusEnumMap = {

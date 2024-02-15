@@ -1,7 +1,12 @@
+## v4.2.2 (Fed 15, 2024)
+
+### Improvements
+- Fixed the bug where `votedPollOptionIds` in `Poll` is always empty
+
 ## v4.2.1 (Fed 5, 2024)
 
 ### Improvements
-- Fixed the bug where `getCachedMetaData()` in `BaseChannel` is not being updated when deleting metadata.
+- Fixed the bug where `getCachedMetaData()` in `BaseChannel` is not being updated when deleting metadata
 
 ## v4.2.0 (Jan 31, 2024)
 
