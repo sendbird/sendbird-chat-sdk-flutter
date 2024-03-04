@@ -33,21 +33,29 @@ class ScheduledMessageListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<ScheduledMessageResponse>(
-      GroupChannelScheduledMessageListGetRequest(
-        chat,
-        limit: limit,
-        channelUrl: params?.channelUrl,
-        reverse: params?.reverse,
-        status: params?.scheduledStatus,
-        messageType: params?.messageTypeFilter,
-        order: params?.order,
-        token: token,
-      ),
-    );
+    ScheduledMessageResponse res;
+    try {
+      res = await chat.apiClient.send<ScheduledMessageResponse>(
+        GroupChannelScheduledMessageListGetRequest(
+          chat,
+          limit: limit,
+          channelUrl: params?.channelUrl,
+          reverse: params?.reverse,
+          status: params?.scheduledStatus,
+          messageType: params?.messageTypeFilter,
+          order: params?.order,
+          token: token,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
+
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.scheduledMessages;
   }
 }

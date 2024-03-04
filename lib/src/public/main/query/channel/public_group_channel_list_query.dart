@@ -130,26 +130,31 @@ class PublicGroupChannelListQuery extends BaseQuery {
       ..createdBefore = GroupChannelFilter.toSec(createdBefore)
       ..createdAfter = GroupChannelFilter.toSec(createdAfter);
 
-    final res =
-        await chat.apiClient.send<ChannelListQueryResponse<GroupChannel>>(
-      PublicGroupChannelListRequest(
-        chat,
-        limit: limit,
-        order: order,
-        token: token,
-        channelUrls: channelUrlsFilter,
-        options: options,
-        filter: filter,
-      ),
-    );
+    ChannelListQueryResponse<GroupChannel> res;
+    try {
+      res = await chat.apiClient.send<ChannelListQueryResponse<GroupChannel>>(
+        PublicGroupChannelListRequest(
+          chat,
+          limit: limit,
+          order: order,
+          token: token,
+          channelUrls: channelUrlsFilter,
+          options: options,
+          filter: filter,
+        ),
+      );
 
-    for (final element in res.channels) {
-      element.set(chat);
+      token = res.next;
+      hasNext = res.next != '';
+      for (final element in res.channels) {
+        element.set(chat);
+      }
+    } catch (_) {
+      isLoading = false;
+      rethrow;
     }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.channels;
   }
 }

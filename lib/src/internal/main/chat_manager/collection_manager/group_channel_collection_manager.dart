@@ -179,7 +179,7 @@ extension GroupChannelCollectionManager on CollectionManager {
         }
 
         if (!isChannelExists) {
-          if (channelCollection.canAddChannel(eventSource, addedChannel)) {
+          if (await channelCollection.canAddChannel(eventSource, addedChannel)) {
             addedChannelsForEvent.add(addedChannel);
           }
         }
@@ -202,7 +202,7 @@ extension GroupChannelCollectionManager on CollectionManager {
             // Need to compare channel properties with updatedChannel
             // when eventSource is CollectionEventSource.channelChangeLogs (?)
 
-            if (channelCollection.canAddChannel(eventSource, updatedChannel,
+            if (await channelCollection.canAddChannel(eventSource, updatedChannel,
                 checkToUpdateChannel: true)) {
               channelCollection.channelList[index] = updatedChannel;
               updatedChannelsForEvent.add(updatedChannel);
@@ -218,7 +218,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 
         if (eventSource == CollectionEventSource.channelChangeLogs &&
             !isUpdatedChannelInChannelList) {
-          if (channelCollection.canAddChannel(eventSource, updatedChannel)) {
+          if (await channelCollection.canAddChannel(eventSource, updatedChannel)) {
             addedChannelsForEvent.add(updatedChannel);
           }
         }

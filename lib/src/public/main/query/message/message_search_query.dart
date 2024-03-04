@@ -79,31 +79,37 @@ class MessageSearchQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<MessageSearchQueryResponse>(
-      MessageSearchRequest(
-        chat,
-        limit: limit,
-        keyword: keyword,
-        channelUrl: channelUrl,
-        channelCustomType: channelCustomType,
-        beforeToken: null,
-        afterToken: token,
-        token: null,
-        startAt: messageTimestampFrom,
-        endAt: messageTimestampTo,
-        sortField: _messageSearchQueryOrderEnumMap[order],
-        reverse: reverse,
-        exactMatch: exactMatch,
-        advancedQuery: advancedQuery,
-        targetFields: targetFields,
-      ),
-    );
+    MessageSearchQueryResponse res;
+    try {
+      res = await chat.apiClient.send<MessageSearchQueryResponse>(
+        MessageSearchRequest(
+          chat,
+          limit: limit,
+          keyword: keyword,
+          channelUrl: channelUrl,
+          channelCustomType: channelCustomType,
+          beforeToken: null,
+          afterToken: token,
+          token: null,
+          startAt: messageTimestampFrom,
+          endAt: messageTimestampTo,
+          sortField: _messageSearchQueryOrderEnumMap[order],
+          reverse: reverse,
+          exactMatch: exactMatch,
+          advancedQuery: advancedQuery,
+          targetFields: targetFields,
+        ),
+      );
+      
+      hasNext = res.hasNext;
+      totalCount = res.totalCount;
+      token = res.next;
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-
-    hasNext = res.hasNext;
-    totalCount = res.totalCount;
-    token = res.next;
     return res.results;
   }
 }

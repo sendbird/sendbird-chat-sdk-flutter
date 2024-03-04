@@ -49,21 +49,28 @@ class ApplicationUserListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<UserListQueryResponse>(
-      ApplicationUserListRequest(
-        chat,
-        limit: limit,
-        token: token,
-        userIds: userIdsFilter,
-        metaDataKey: metaDataKeyFilter,
-        metaDataValues: metaDataValuesFilter,
-        nicknameStartsWith: nicknameStartsWithFilter,
-      ),
-    );
+    UserListQueryResponse res;
+    try {
+      res = await chat.apiClient.send<UserListQueryResponse>(
+        ApplicationUserListRequest(
+          chat,
+          limit: limit,
+          token: token,
+          userIds: userIdsFilter,
+          metaDataKey: metaDataKeyFilter,
+          metaDataValues: metaDataValuesFilter,
+          nicknameStartsWith: nicknameStartsWithFilter,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.users;
   }
 }

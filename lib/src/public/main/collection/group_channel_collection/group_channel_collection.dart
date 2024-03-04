@@ -234,11 +234,11 @@ class GroupChannelCollection {
     }
   }
 
-  bool canAddChannel(
+  Future<bool> canAddChannel(
     CollectionEventSource eventSource,
     GroupChannel addedChannel, {
     bool checkToUpdateChannel = false,
-  }) {
+  }) async {
     if (eventSource == CollectionEventSource.channelCacheLoadMore ||
         eventSource == CollectionEventSource.channelLoadMore) {
       return true;
@@ -294,6 +294,14 @@ class GroupChannelCollection {
           // TODO: (?)
           // return true
           break;
+      }
+    }
+
+    if (eventSource == CollectionEventSource.channelChangeLogs) {
+      if (await _chat.dbManager.canAddChannel(
+              query: _query, channelUrl: addedChannel.channelUrl) ==
+          false) {
+        return false;
       }
     }
 

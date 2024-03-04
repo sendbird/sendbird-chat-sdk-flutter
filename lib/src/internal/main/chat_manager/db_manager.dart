@@ -256,6 +256,16 @@ class DBManager {
     return [];
   }
 
+  Future<bool> canAddChannel({
+    required GroupChannelListQuery query,
+    required String channelUrl,
+  }) async {
+    if (isEnabled()) {
+      return await _db.canAddChannel(query, channelUrl);
+    }
+    return true;
+  }
+
   Future<GroupChannel?> getGroupChannel(String channelUrl) async {
     if (isEnabled()) {
       return await _db.getGroupChannel(channelUrl);
