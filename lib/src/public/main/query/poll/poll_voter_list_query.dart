@@ -31,21 +31,28 @@ class PollVoterListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<PollVoterListQueryResponse>(
-      PollOptionGetListVotersRequest(
-        chat,
-        limit: limit,
-        channelType: params.channelType,
-        channelUrl: params.channelUrl,
-        pollId: params.pollId,
-        pollOptionId: params.pollOptionId,
-        token: token,
-      ),
-    );
+    PollVoterListQueryResponse res;
+    try {
+      res = await chat.apiClient.send<PollVoterListQueryResponse>(
+        PollOptionGetListVotersRequest(
+          chat,
+          limit: limit,
+          channelType: params.channelType,
+          channelUrl: params.channelUrl,
+          pollId: params.pollId,
+          pollOptionId: params.pollOptionId,
+          token: token,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.voters;
   }
 }

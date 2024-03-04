@@ -3,10 +3,10 @@
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/list/blocked_user_list_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
-import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/base_query.dart';
 
 /// A class representing query to retrieve lists related to blocked [User].
@@ -36,10 +36,18 @@ class BlockedUserListQuery extends BaseQuery {
       userIds: userIdsFilter,
     );
 
-    final res = await chat.apiClient.send<UserListQueryResponse<User>>(req);
+    UserListQueryResponse<User> res;
+    try {
+      res = await chat.apiClient.send<UserListQueryResponse<User>>(req);
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
+
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.users;
   }
 }

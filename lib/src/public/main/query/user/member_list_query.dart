@@ -48,23 +48,30 @@ class MemberListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<UserListQueryResponse>(
-      GroupChannelMemberListRequest(
-        chat,
-        limit: limit,
-        channelUrl: channelUrl,
-        token: token,
-        nicknameStartsWith: nicknameStartsWith,
-        operatorFilter: operatorFilter,
-        mutedMemberFilter: mutedMemberFilter,
-        memberStateFilter: memberStateFilter,
-        order: order,
-      ),
-    );
+    UserListQueryResponse res;
+    try {
+      res = await chat.apiClient.send<UserListQueryResponse>(
+        GroupChannelMemberListRequest(
+          chat,
+          limit: limit,
+          channelUrl: channelUrl,
+          token: token,
+          nicknameStartsWith: nicknameStartsWith,
+          operatorFilter: operatorFilter,
+          mutedMemberFilter: mutedMemberFilter,
+          memberStateFilter: memberStateFilter,
+          order: order,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.users;
   }
 }

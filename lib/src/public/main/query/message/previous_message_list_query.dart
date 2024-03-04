@@ -89,26 +89,33 @@ class PreviousMessageListQuery extends BaseQuery {
       ..includeParentMessageInfo = includeParentMessageInfo
       ..replyType = replyType;
 
-    final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
-      ChannelMessagesGetRequest(
-        chat,
-        channelType: channelType,
-        channelUrl: channelUrl,
-        params: params.toJson(),
-        timestamp: messageTimestamp ?? 0,
-      ),
-    );
-    final messages = List<BaseMessage>.from(res.messages);
+    List<BaseMessage> messages;
+    try {
+      final res = await chat.apiClient.send<ChannelMessagesGetResponse>(
+        ChannelMessagesGetRequest(
+          chat,
+          channelType: channelType,
+          channelUrl: channelUrl,
+          params: params.toJson(),
+          timestamp: messageTimestamp ?? 0,
+        ),
+      );
+      messages = List<BaseMessage>.from(res.messages);
 
-    if (messages.isNotEmpty) {
-      final oldestMessage = reverse ? messages.last : messages.first;
-      messageTimestamp = oldestMessage.createdAt;
-    } else {
-      messageTimestamp = null;
+      if (messages.isNotEmpty) {
+        final oldestMessage = reverse ? messages.last : messages.first;
+        messageTimestamp = oldestMessage.createdAt;
+      } else {
+        messageTimestamp = null;
+      }
+
+      hasNext = messages.length == limit;
+    } catch (_) {
+      isLoading = false;
+      rethrow;
     }
 
     isLoading = false;
-    hasNext = messages.length == limit;
     return messages;
   }
 }

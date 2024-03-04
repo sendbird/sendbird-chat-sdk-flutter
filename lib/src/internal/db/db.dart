@@ -247,6 +247,11 @@ class DB {
     return await CGroupChannel.getChannels(_chat, _isar, query, offset);
   }
 
+  Future<bool> canAddChannel(
+      GroupChannelListQuery query, String channelUrl) async {
+    return await CGroupChannel.canAddChannel(_chat, _isar, query, channelUrl);
+  }
+
   Future<void> deleteGroupChannel(String channelUrl) async {
     await CGroupChannel.delete(_chat, _isar, channelUrl);
   }

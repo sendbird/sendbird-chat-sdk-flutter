@@ -47,26 +47,31 @@ class OpenChannelListQuery extends BaseQuery {
       if (includeMetaData) ChannelListQueryIncludeOption.includeMetadata
     ];
 
-    final res =
-        await chat.apiClient.send<ChannelListQueryResponse<OpenChannel>>(
-      OpenChannelListRequest(
-        chat,
-        limit: limit,
-        nameKeyword: nameKeyword,
-        urlKeyword: urlKeyword,
-        customType: customTypeFilter,
-        token: token,
-        options: options,
-      ),
-    );
+    ChannelListQueryResponse<OpenChannel> res;
+    try {
+      res = await chat.apiClient.send<ChannelListQueryResponse<OpenChannel>>(
+        OpenChannelListRequest(
+          chat,
+          limit: limit,
+          nameKeyword: nameKeyword,
+          urlKeyword: urlKeyword,
+          customType: customTypeFilter,
+          token: token,
+          options: options,
+        ),
+      );
 
-    for (final element in res.channels) {
-      element.set(chat);
+      token = res.next;
+      hasNext = res.next != '';
+      for (final element in res.channels) {
+        element.set(chat);
+      }
+    } catch (_) {
+      isLoading = false;
+      rethrow;
     }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.channels;
   }
 }

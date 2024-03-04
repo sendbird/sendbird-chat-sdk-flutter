@@ -35,19 +35,26 @@ class PollListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<PollListQueryResponse>(
-      PollListGetRequest(
-        chat,
-        limit: limit,
-        channelType: params.channelType,
-        channelUrl: params.channelUrl,
-        token: token,
-      ),
-    );
+    PollListQueryResponse res;
+    try {
+      res = await chat.apiClient.send<PollListQueryResponse>(
+        PollListGetRequest(
+          chat,
+          limit: limit,
+          channelType: params.channelType,
+          channelUrl: params.channelUrl,
+          token: token,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.polls;
   }
 }

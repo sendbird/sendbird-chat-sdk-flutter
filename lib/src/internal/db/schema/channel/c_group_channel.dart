@@ -211,22 +211,61 @@ class CGroupChannel extends CBaseChannel {
     return await cGroupChannel?.toGroupChannel(chat, isar);
   }
 
+  static Future<bool> canAddChannel(
+    Chat chat,
+    Isar isar,
+    GroupChannelListQuery query,
+    String channelUrl,
+  ) async {
+    final groupChannels = await _getChannels(
+      chat: chat,
+      isar: isar,
+      query: query,
+      channelUrl: channelUrl,
+    );
+    return groupChannels.isNotEmpty;
+  }
+
   static Future<List<GroupChannel>> getChannels(
     Chat chat,
     Isar isar,
     GroupChannelListQuery query,
     int? offset,
   ) async {
+    return _getChannels(
+      chat: chat,
+      isar: isar,
+      query: query,
+      offset: offset,
+    );
+  }
+
+  static Future<List<GroupChannel>> _getChannels({
+    required Chat chat,
+    required Isar isar,
+    required GroupChannelListQuery query,
+    int? offset,
+    String? channelUrl,
+  }) async {
     // [includeMetaData]
     // When calling API, this value have to be `true` to make chunk.
     // But we must always call API for GroupChannel, because we must always get `hasNext` value from API.
     // So we do not need the chunk for GroupChannel.
 
-    final cGroupChannels = await isar.cGroupChannels
-        .where()
-        .channelTypeEqualToAnyChannelUrl(ChannelType.group) // Check
-        .filter()
+    QueryBuilder<CGroupChannel, CGroupChannel, QFilterCondition> queryBuilder;
+    if (channelUrl != null && channelUrl.isNotEmpty) {
+      queryBuilder = isar.cGroupChannels
+          .where()
+          .channelTypeChannelUrlEqualTo(ChannelType.group, channelUrl)
+          .filter();
+    } else {
+      queryBuilder = isar.cGroupChannels
+          .where()
+          .channelTypeEqualToAnyChannelUrl(ChannelType.group) // Check
+          .filter();
+    }
 
+    final cGroupChannels = await queryBuilder
         // channelUrlsFilter
         .optional(query.channelUrlsFilter.isNotEmpty, (q) {
           return q.group((groupQ) {

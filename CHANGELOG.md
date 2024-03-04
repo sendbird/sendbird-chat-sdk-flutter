@@ -1,3 +1,8 @@
+## v4.2.3 (Mar 4, 2024)
+
+### Improvements
+- Fixed the bug where `query` in `GroupChannelCollection` does not work when reconnected
+
 ## v4.2.2 (Fed 15, 2024)
 
 ### Improvements

@@ -42,11 +42,19 @@ class BannedUserListQuery extends BaseQuery {
       token: token,
     );
 
-    final res =
-        await chat.apiClient.send<UserListQueryResponse<RestrictedUser>>(req);
+    UserListQueryResponse<RestrictedUser> res;
+    try {
+      res =
+          await chat.apiClient.send<UserListQueryResponse<RestrictedUser>>(req);
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
+
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.users;
   }
 }

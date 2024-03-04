@@ -34,19 +34,26 @@ class OperatorListQuery extends BaseQuery {
 
     isLoading = true;
 
-    final res = await chat.apiClient.send<OperatorListQueryResponse>(
-      OperatorListRequest(
-        chat,
-        limit: limit,
-        token: token,
-        channelType: channelType,
-        channelUrl: channelUrl,
-      ),
-    );
+    OperatorListQueryResponse res;
+    try {
+      res = await chat.apiClient.send<OperatorListQueryResponse>(
+        OperatorListRequest(
+          chat,
+          limit: limit,
+          token: token,
+          channelType: channelType,
+          channelUrl: channelUrl,
+        ),
+      );
+
+      token = res.next;
+      hasNext = res.next != '';
+    } catch (_) {
+      isLoading = false;
+      rethrow;
+    }
 
     isLoading = false;
-    token = res.next;
-    hasNext = res.next != '';
     return res.operators;
   }
 }
