@@ -131,12 +131,6 @@ class CBaseMessage extends CRootMessage {
           ? await cBaseMessage.sender?.toSender(chat, isar)
           : null;
 
-    for (final userId in cBaseMessage.mentionedUsers) {
-      final user = await CUser.get(chat, isar, userId);
-      if (user != null) {
-        baseMessage.mentionedUsers.add(user);
-      }
-    }
     return baseMessage;
   }
 
@@ -213,6 +207,7 @@ class CThreadInfo {
   Future<ThreadInfo> toThreadInfo(Chat chat, Isar isar) async {
     final threadInfo = ThreadInfo()
       ..replyCount = replyCount
+      ..mostRepliesUsers = []
       ..lastRepliedAt = lastRepliedAt
       ..updatedAt = updatedAt;
 

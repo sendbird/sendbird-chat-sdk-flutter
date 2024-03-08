@@ -57,6 +57,8 @@ class RootMessage {
         }
       }
     }
+
+    if (_mentionedUsers.isEmpty) return [];
     return _mentionedUsers;
   }
 

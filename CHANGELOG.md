@@ -1,3 +1,8 @@
+## v4.2.4 (Mar 8, 2024)
+
+### Improvements
+- Fixed the exception regarding unmodifiable list
+
 ## v4.2.3 (Mar 4, 2024)
 
 ### Improvements

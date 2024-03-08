@@ -100,7 +100,7 @@ class MessageSearchQuery extends BaseQuery {
           targetFields: targetFields,
         ),
       );
-      
+
       hasNext = res.hasNext;
       totalCount = res.totalCount;
       token = res.next;
