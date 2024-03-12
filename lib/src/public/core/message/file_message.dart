@@ -136,6 +136,15 @@ class FileMessage extends BaseMessage {
     FileMessage fileMessage = _$FileMessageFromJson(json)
       ..set(SendbirdChat().chat); // Set the singleton chat
 
+    if (fileMessage.thumbnails != null && fileMessage.thumbnails!.isNotEmpty) {
+      for (final thumbnail in fileMessage.thumbnails!) {
+        thumbnail.set(
+          chat: fileMessage.chat,
+          requireAuth: fileMessage.requireAuth,
+        );
+      }
+    }
+
     // Scheduled message
     if (json['scheduled_message_id'] != null) {
       fileMessage.scheduledInfo = ScheduledInfo.fromJson(json);
@@ -212,8 +221,14 @@ class FileMessage extends BaseMessage {
 /// An object represents thumbnail
 @JsonSerializable()
 class Thumbnail {
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  Chat? _chat;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool? _requireAuth;
+
   String url;
-  String? plainUrl;
+  String? plainUrl; // This property is always null. This will be removed.
   double? height;
   double? width;
   double? realHeight;
@@ -227,6 +242,23 @@ class Thumbnail {
     this.realHeight,
     this.realWidth,
   );
+
+  void set({required Chat chat, required bool requireAuth}) {
+    _chat = chat;
+    _requireAuth = requireAuth;
+  }
+
+  /// The secure thumbnail URL.
+  /// @since 4.2.5
+  String? get secureUrl {
+    if (_chat != null && _requireAuth != null) {
+      final eKey = _chat!.chatContext.eKey;
+      if (_requireAuth! && eKey != null) {
+        return '$url?auth=$eKey';
+      }
+    }
+    return url;
+  }
 
   factory Thumbnail.fromJson(Map<String, dynamic> json) =>
       _$ThumbnailFromJson(json);

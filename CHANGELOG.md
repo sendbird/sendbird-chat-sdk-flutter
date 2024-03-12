@@ -1,3 +1,8 @@
+## v4.2.5 (Mar 12, 2024)
+
+### Improvements
+- Added `secureUrl` in `Thumbnail`
+
 ## v4.2.4 (Mar 8, 2024)
 
 ### Improvements
