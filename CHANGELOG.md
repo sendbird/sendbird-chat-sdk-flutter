@@ -1,3 +1,8 @@
+## v4.2.6 (Mar 20, 2024)
+
+### Improvements
+- Fix the bug regarding reaction payload parsing
+
 ## v4.2.5 (Mar 12, 2024)
 
 ### Improvements

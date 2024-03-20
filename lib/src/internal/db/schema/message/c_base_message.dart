@@ -303,7 +303,7 @@ class CReaction {
   Reaction toReaction() {
     return Reaction(key: key, userIds: userIds, updatedAt: updatedAt)
       ..updatedAts = (jsonDecode(updatedAts) as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, int.parse(value)));
+          .map((key, value) => MapEntry(key, value));
   }
 }
 
