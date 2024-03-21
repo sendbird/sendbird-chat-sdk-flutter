@@ -185,7 +185,6 @@ class GroupChannel extends BaseChannel {
   @JsonKey(name: 'ts_message_offset')
   int? messageOffsetTimestamp;
 
-  /// The message survival seconds in this channel.
   int messageSurvivalSeconds;
 
   /// The pinned message ids of the channel.

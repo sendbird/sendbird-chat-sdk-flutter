@@ -79,7 +79,6 @@ class BaseMessage extends RootMessage {
   /// The thread info of the message.
   ThreadInfo? threadInfo;
 
-  /// The message's survival seconds.
   @JsonKey(defaultValue: -1)
   int? messageSurvivalSeconds;
 

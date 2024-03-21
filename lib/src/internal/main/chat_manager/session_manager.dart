@@ -169,11 +169,14 @@ class SessionManager {
         ..addAll(randomStringData);
     }
 
-    final base64UserId = base64.encode(userId24Data);
+    String base64UserId = base64.encode(userId24Data);
+    if (base64UserId.length > 16) {
+      base64UserId = base64UserId.substring(0, 16);
+    }
     prefs.setString(_userIdKeyPath, base64UserId);
 
     final key = Key.fromUtf8(base64UserId);
-    final iv = IV.fromLength(16);
+    final iv = IV.fromUtf8(base64UserId);
     final encrypter = Encrypter(AES(key));
     final encryptedData = encrypter.encrypt(sessionKey, iv: iv);
     prefs.setString(_sessionKeyPath, encryptedData.base64);
@@ -188,7 +191,7 @@ class SessionManager {
     }
 
     final key = Key.fromUtf8(encryptedUserId);
-    final iv = IV.fromLength(16);
+    final iv = IV.fromUtf8(encryptedUserId);
     final encrypter = Encrypter(AES(key));
     final encryptedSessionKey = prefs.getString(_sessionKeyPath);
 
