@@ -1,7 +1,13 @@
+## v4.2.7 (Mar 21, 2024)
+
+### Improvements
+- Updated dependency range for http, uuid and logger packages
+- Fixed the exception regarding encrypt package
+
 ## v4.2.6 (Mar 20, 2024)
 
 ### Improvements
-- Fix the bug regarding reaction payload parsing
+- Fixed the bug regarding reaction payload parsing
 
 ## v4.2.5 (Mar 12, 2024)
 
