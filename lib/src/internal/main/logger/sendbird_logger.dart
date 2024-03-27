@@ -10,9 +10,11 @@ class SendbirdLogger {
   Logger logger;
 
   static final _instance = SendbirdLogger._();
+
   SendbirdLogger._() : logger = Logger(level: Level.nothing) {
     _setLogLevel(Level.nothing);
   }
+
   factory SendbirdLogger() => _instance;
 
   void setLogLevel(LogLevel level) {
@@ -48,12 +50,16 @@ class SendbirdLogger {
         level: level,
         printer: PrefixPrinter(
           PrettyPrinter(
-            methodCount: 0, // number of method calls to be displayed
-            errorMethodCount:
-                8, // number of method calls if stacktrace is provided
-            lineLength: 100, // width of the output
-            colors: true, // Colorful log messages
-            printEmojis: false, // Print an emoji for each log message
+            methodCount: 0,
+            // number of method calls to be displayed
+            errorMethodCount: 8,
+            // number of method calls if stacktrace is provided
+            lineLength: 100,
+            // width of the output
+            colors: true,
+            // Colorful log messages
+            printEmojis: false,
+            // Print an emoji for each log message
             printTime: true, // Should each log print contain a timestamp
           ),
           error: '[E]',
