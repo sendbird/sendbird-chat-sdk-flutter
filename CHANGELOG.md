@@ -1,3 +1,8 @@
+## v4.2.8 (Mar 27, 2024)
+
+### Improvements
+- Fixed the compile error regarding logger v1.4.0
+
 ## v4.2.7 (Mar 21, 2024)
 
 ### Improvements
