@@ -34,7 +34,7 @@ NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
       extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
       createdAt: json['created_at'] as int? ?? 0,
       updatedAt: json['updated_at'] as int? ?? 0,
-    );
+    )..mentionedMessageTemplate = json['mentioned_message_template'] as String?;
 
 Map<String, dynamic> _$NotificationMessageToJson(
         NotificationMessage instance) =>
@@ -51,6 +51,7 @@ Map<String, dynamic> _$NotificationMessageToJson(
       'extended_message': instance.extendedMessage,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'mentioned_message_template': instance.mentionedMessageTemplate,
       'notification_message_id': instance.notificationId,
       'message_status':
           _$NotificationMessageStatusEnumMap[instance.messageStatus]!,
