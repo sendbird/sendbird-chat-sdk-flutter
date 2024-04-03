@@ -80,112 +80,117 @@ final CUserMessageSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _CUserMessagementionTypeEnumValueMap,
     ),
-    r'mentionedUsers': PropertySchema(
+    r'mentionedUserIds': PropertySchema(
       id: 12,
+      name: r'mentionedUserIds',
+      type: IsarType.stringList,
+    ),
+    r'mentionedUsers': PropertySchema(
+      id: 13,
       name: r'mentionedUsers',
       type: IsarType.stringList,
     ),
     r'message': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'message',
       type: IsarType.string,
     ),
     r'messageId': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'messageId',
       type: IsarType.long,
     ),
     r'messageSurvivalSeconds': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'messageSurvivalSeconds',
       type: IsarType.long,
     ),
     r'messageType': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'messageType',
       type: IsarType.byte,
       enumMap: _CUserMessagemessageTypeEnumValueMap,
     ),
     r'ogMetaData': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'ogMetaData',
       type: IsarType.object,
       target: r'COGMetaData',
     ),
     r'parentMessageId': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'parentMessageId',
       type: IsarType.long,
     ),
     r'parentMessageRootId': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'parentMessageRootId',
       type: IsarType.string,
     ),
     r'parentMessageType': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'parentMessageType',
       type: IsarType.byte,
       enumMap: _CUserMessageparentMessageTypeEnumValueMap,
     ),
     r'poll': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'poll',
       type: IsarType.object,
       target: r'CPoll',
     ),
     r'reactions': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'reactions',
       type: IsarType.objectList,
       target: r'CReaction',
     ),
     r'requestId': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'requestId',
       type: IsarType.string,
     ),
     r'rootId': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'rootId',
       type: IsarType.string,
     ),
     r'scheduledInfo': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'scheduledInfo',
       type: IsarType.object,
       target: r'CScheduledInfo',
     ),
     r'sender': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'sender',
       type: IsarType.object,
       target: r'CSender',
     ),
     r'sendingStatus': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'sendingStatus',
       type: IsarType.byte,
       enumMap: _CUserMessagesendingStatusEnumValueMap,
     ),
     r'threadInfo': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'threadInfo',
       type: IsarType.object,
       target: r'CThreadInfo',
     ),
     r'translationTargetLanguages': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'translationTargetLanguages',
       type: IsarType.stringList,
     ),
     r'translations': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'translations',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'updatedAt',
       type: IsarType.long,
     )
@@ -312,6 +317,13 @@ int _cUserMessageEstimateSize(
     }
   }
   bytesCount += 3 + object.extendedMessage.length * 3;
+  bytesCount += 3 + object.mentionedUserIds.length * 3;
+  {
+    for (var i = 0; i < object.mentionedUserIds.length; i++) {
+      final value = object.mentionedUserIds[i];
+      bytesCount += value.length * 3;
+    }
+  }
   bytesCount += 3 + object.mentionedUsers.length * 3;
   {
     for (var i = 0; i < object.mentionedUsers.length; i++) {
@@ -424,56 +436,57 @@ void _cUserMessageSerialize(
   writer.writeBool(offsets[9], object.isReplyToChannel);
   writer.writeBool(offsets[10], object.isSilent);
   writer.writeByte(offsets[11], object.mentionType.index);
-  writer.writeStringList(offsets[12], object.mentionedUsers);
-  writer.writeString(offsets[13], object.message);
-  writer.writeLong(offsets[14], object.messageId);
-  writer.writeLong(offsets[15], object.messageSurvivalSeconds);
-  writer.writeByte(offsets[16], object.messageType.index);
+  writer.writeStringList(offsets[12], object.mentionedUserIds);
+  writer.writeStringList(offsets[13], object.mentionedUsers);
+  writer.writeString(offsets[14], object.message);
+  writer.writeLong(offsets[15], object.messageId);
+  writer.writeLong(offsets[16], object.messageSurvivalSeconds);
+  writer.writeByte(offsets[17], object.messageType.index);
   writer.writeObject<COGMetaData>(
-    offsets[17],
+    offsets[18],
     allOffsets,
     COGMetaDataSchema.serialize,
     object.ogMetaData,
   );
-  writer.writeLong(offsets[18], object.parentMessageId);
-  writer.writeString(offsets[19], object.parentMessageRootId);
-  writer.writeByte(offsets[20], object.parentMessageType.index);
+  writer.writeLong(offsets[19], object.parentMessageId);
+  writer.writeString(offsets[20], object.parentMessageRootId);
+  writer.writeByte(offsets[21], object.parentMessageType.index);
   writer.writeObject<CPoll>(
-    offsets[21],
+    offsets[22],
     allOffsets,
     CPollSchema.serialize,
     object.poll,
   );
   writer.writeObjectList<CReaction>(
-    offsets[22],
+    offsets[23],
     allOffsets,
     CReactionSchema.serialize,
     object.reactions,
   );
-  writer.writeString(offsets[23], object.requestId);
-  writer.writeString(offsets[24], object.rootId);
+  writer.writeString(offsets[24], object.requestId);
+  writer.writeString(offsets[25], object.rootId);
   writer.writeObject<CScheduledInfo>(
-    offsets[25],
+    offsets[26],
     allOffsets,
     CScheduledInfoSchema.serialize,
     object.scheduledInfo,
   );
   writer.writeObject<CSender>(
-    offsets[26],
+    offsets[27],
     allOffsets,
     CSenderSchema.serialize,
     object.sender,
   );
-  writer.writeByte(offsets[27], object.sendingStatus.index);
+  writer.writeByte(offsets[28], object.sendingStatus.index);
   writer.writeObject<CThreadInfo>(
-    offsets[28],
+    offsets[29],
     allOffsets,
     CThreadInfoSchema.serialize,
     object.threadInfo,
   );
-  writer.writeStringList(offsets[29], object.translationTargetLanguages);
-  writer.writeString(offsets[30], object.translations);
-  writer.writeLong(offsets[31], object.updatedAt);
+  writer.writeStringList(offsets[30], object.translationTargetLanguages);
+  writer.writeString(offsets[31], object.translations);
+  writer.writeLong(offsets[32], object.updatedAt);
 }
 
 CUserMessage _cUserMessageDeserialize(
@@ -505,57 +518,58 @@ CUserMessage _cUserMessageDeserialize(
   object.mentionType = _CUserMessagementionTypeValueEnumMap[
           reader.readByteOrNull(offsets[11])] ??
       MentionType.users;
-  object.mentionedUsers = reader.readStringList(offsets[12]) ?? [];
-  object.message = reader.readString(offsets[13]);
-  object.messageId = reader.readLong(offsets[14]);
-  object.messageSurvivalSeconds = reader.readLongOrNull(offsets[15]);
+  object.mentionedUserIds = reader.readStringList(offsets[12]) ?? [];
+  object.mentionedUsers = reader.readStringList(offsets[13]) ?? [];
+  object.message = reader.readString(offsets[14]);
+  object.messageId = reader.readLong(offsets[15]);
+  object.messageSurvivalSeconds = reader.readLongOrNull(offsets[16]);
   object.messageType = _CUserMessagemessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[16])] ??
+          reader.readByteOrNull(offsets[17])] ??
       MessageType.user;
   object.ogMetaData = reader.readObjectOrNull<COGMetaData>(
-    offsets[17],
+    offsets[18],
     COGMetaDataSchema.deserialize,
     allOffsets,
   );
-  object.parentMessageId = reader.readLongOrNull(offsets[18]);
-  object.parentMessageRootId = reader.readStringOrNull(offsets[19]);
+  object.parentMessageId = reader.readLongOrNull(offsets[19]);
+  object.parentMessageRootId = reader.readStringOrNull(offsets[20]);
   object.parentMessageType = _CUserMessageparentMessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[20])] ??
+          reader.readByteOrNull(offsets[21])] ??
       MessageType.user;
   object.poll = reader.readObjectOrNull<CPoll>(
-    offsets[21],
+    offsets[22],
     CPollSchema.deserialize,
     allOffsets,
   );
   object.reactions = reader.readObjectList<CReaction>(
-    offsets[22],
+    offsets[23],
     CReactionSchema.deserialize,
     allOffsets,
     CReaction(),
   );
-  object.requestId = reader.readStringOrNull(offsets[23]);
-  object.rootId = reader.readString(offsets[24]);
+  object.requestId = reader.readStringOrNull(offsets[24]);
+  object.rootId = reader.readString(offsets[25]);
   object.scheduledInfo = reader.readObjectOrNull<CScheduledInfo>(
-    offsets[25],
+    offsets[26],
     CScheduledInfoSchema.deserialize,
     allOffsets,
   );
   object.sender = reader.readObjectOrNull<CSender>(
-    offsets[26],
+    offsets[27],
     CSenderSchema.deserialize,
     allOffsets,
   );
   object.sendingStatus = _CUserMessagesendingStatusValueEnumMap[
-          reader.readByteOrNull(offsets[27])] ??
+          reader.readByteOrNull(offsets[28])] ??
       SendingStatus.none;
   object.threadInfo = reader.readObjectOrNull<CThreadInfo>(
-    offsets[28],
+    offsets[29],
     CThreadInfoSchema.deserialize,
     allOffsets,
   );
-  object.translationTargetLanguages = reader.readStringList(offsets[29]);
-  object.translations = reader.readString(offsets[30]);
-  object.updatedAt = reader.readLong(offsets[31]);
+  object.translationTargetLanguages = reader.readStringList(offsets[30]);
+  object.translations = reader.readString(offsets[31]);
+  object.updatedAt = reader.readLong(offsets[32]);
   return object;
 }
 
@@ -602,73 +616,75 @@ P _cUserMessageDeserializeProp<P>(
     case 12:
       return (reader.readStringList(offset) ?? []) as P;
     case 13:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 14:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 15:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 16:
+      return (reader.readLongOrNull(offset)) as P;
+    case 17:
       return (_CUserMessagemessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 17:
+    case 18:
       return (reader.readObjectOrNull<COGMetaData>(
         offset,
         COGMetaDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 18:
-      return (reader.readLongOrNull(offset)) as P;
     case 19:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 20:
+      return (reader.readStringOrNull(offset)) as P;
+    case 21:
       return (_CUserMessageparentMessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 21:
+    case 22:
       return (reader.readObjectOrNull<CPoll>(
         offset,
         CPollSchema.deserialize,
         allOffsets,
       )) as P;
-    case 22:
+    case 23:
       return (reader.readObjectList<CReaction>(
         offset,
         CReactionSchema.deserialize,
         allOffsets,
         CReaction(),
       )) as P;
-    case 23:
-      return (reader.readStringOrNull(offset)) as P;
     case 24:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 25:
+      return (reader.readString(offset)) as P;
+    case 26:
       return (reader.readObjectOrNull<CScheduledInfo>(
         offset,
         CScheduledInfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 26:
+    case 27:
       return (reader.readObjectOrNull<CSender>(
         offset,
         CSenderSchema.deserialize,
         allOffsets,
       )) as P;
-    case 27:
+    case 28:
       return (_CUserMessagesendingStatusValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SendingStatus.none) as P;
-    case 28:
+    case 29:
       return (reader.readObjectOrNull<CThreadInfo>(
         offset,
         CThreadInfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 29:
-      return (reader.readStringList(offset)) as P;
     case 30:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 31:
+      return (reader.readString(offset)) as P;
+    case 32:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2255,6 +2271,233 @@ extension CUserMessageQueryFilter
         upper: upper,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mentionedUserIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mentionedUserIds',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+      mentionedUserIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -4812,6 +5055,13 @@ extension CUserMessageQueryWhereDistinct
   }
 
   QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+      distinctByMentionedUserIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mentionedUserIds');
+    });
+  }
+
+  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
       distinctByMentionedUsers() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mentionedUsers');
@@ -4991,6 +5241,13 @@ extension CUserMessageQueryProperty
       mentionTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mentionType');
+    });
+  }
+
+  QueryBuilder<CUserMessage, List<String>, QQueryOperations>
+      mentionedUserIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mentionedUserIds');
     });
   }
 

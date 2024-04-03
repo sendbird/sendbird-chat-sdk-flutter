@@ -13,29 +13,6 @@ extension GetCChannelMessageCollection on Isar {
   IsarCollection<CChannelMessage> get cChannelMessages => this.collection();
 }
 
-int _cChannelMessageEstimateSize(
-  CChannelMessage object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.channelUrl.length * 3;
-  {
-    final value = object.customType;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  bytesCount += 3 + object.rootId.length * 3;
-  {
-    final value = object.senderId;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  return bytesCount;
-}
-
 final CChannelMessageSchema = CollectionSchema(
   name: r'CChannelMessage',
   id: BigInt.parse('-5850314032481753759').toInt(),
@@ -186,6 +163,29 @@ final CChannelMessageSchema = CollectionSchema(
   attach: _cChannelMessageAttach,
   version: '3.1.0+1',
 );
+
+int _cChannelMessageEstimateSize(
+  CChannelMessage object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 + object.channelUrl.length * 3;
+  {
+    final value = object.customType;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  bytesCount += 3 + object.rootId.length * 3;
+  {
+    final value = object.senderId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
 
 void _cChannelMessageSerialize(
   CChannelMessage object,

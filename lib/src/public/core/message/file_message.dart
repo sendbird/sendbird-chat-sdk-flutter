@@ -79,7 +79,6 @@ class FileMessage extends BaseMessage {
     Sender? sender,
     List<User> mentionedUsers = const [],
     MentionType mentionType = MentionType.users,
-    List<String>? requestedMentionUserIds,
     int createdAt = 0,
     int updatedAt = 0,
     int? parentMessageId,
@@ -188,6 +187,12 @@ class FileMessage extends BaseMessage {
       createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
     );
+
+    // mentionedUserIds
+    if (params.mentionedUserIds != null &&
+        params.mentionedUserIds!.isNotEmpty) {
+      message.mentionedUserIds.addAll(params.mentionedUserIds!);
+    }
     return message;
   }
 

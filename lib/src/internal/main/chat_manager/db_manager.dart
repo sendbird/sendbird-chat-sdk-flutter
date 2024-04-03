@@ -33,11 +33,14 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/sendbird_statistics.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 
 class DBManager {
-  final _dbName = 'sendbird_chat';
-  final _maxDBFileSize = 256; // MB
+  final int _dbVersion = 1;
+  final String _dbName = 'sendbird_chat';
+  final int _maxDBFileSize = 256; // MB
+  final String _dbVersionKey = 'com.sendbird.chat.db_version';
 
   late final Isar _isar;
   bool _isInitialized = false;
@@ -95,7 +98,18 @@ class DBManager {
 
     _db = DB(chat: _chat, isar: _isar);
     _isInitialized = true;
+
+    await _checkVersion();
     return true;
+  }
+
+  Future<void> _checkVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    final preDbVersion = prefs.getInt(_dbVersionKey);
+    if (preDbVersion == null || _dbVersion > preDbVersion) {
+      await clear();
+      await prefs.setInt(_dbVersionKey, _dbVersion);
+    }
   }
 
   bool isEnabled() {

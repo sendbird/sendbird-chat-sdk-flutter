@@ -61,41 +61,46 @@ final CNotificationMessageSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _CNotificationMessagementionTypeEnumValueMap,
     ),
-    r'mentionedUsers': PropertySchema(
+    r'mentionedUserIds': PropertySchema(
       id: 8,
+      name: r'mentionedUserIds',
+      type: IsarType.stringList,
+    ),
+    r'mentionedUsers': PropertySchema(
+      id: 9,
       name: r'mentionedUsers',
       type: IsarType.stringList,
     ),
     r'messageStatus': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'messageStatus',
       type: IsarType.byte,
       enumMap: _CNotificationMessagemessageStatusEnumValueMap,
     ),
     r'messageType': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'messageType',
       type: IsarType.byte,
       enumMap: _CNotificationMessagemessageTypeEnumValueMap,
     ),
     r'notificationData': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'notificationData',
       type: IsarType.object,
       target: r'CNotificationData',
     ),
     r'notificationId': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'notificationId',
       type: IsarType.string,
     ),
     r'rootId': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'rootId',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'updatedAt',
       type: IsarType.long,
     )
@@ -214,6 +219,13 @@ int _cNotificationMessageEstimateSize(
     }
   }
   bytesCount += 3 + object.extendedMessage.length * 3;
+  bytesCount += 3 + object.mentionedUserIds.length * 3;
+  {
+    for (var i = 0; i < object.mentionedUserIds.length; i++) {
+      final value = object.mentionedUserIds[i];
+      bytesCount += value.length * 3;
+    }
+  }
   bytesCount += 3 + object.mentionedUsers.length * 3;
   {
     for (var i = 0; i < object.mentionedUsers.length; i++) {
@@ -253,18 +265,19 @@ void _cNotificationMessageSerialize(
   writer.writeString(offsets[5], object.data);
   writer.writeString(offsets[6], object.extendedMessage);
   writer.writeByte(offsets[7], object.mentionType.index);
-  writer.writeStringList(offsets[8], object.mentionedUsers);
-  writer.writeByte(offsets[9], object.messageStatus.index);
-  writer.writeByte(offsets[10], object.messageType.index);
+  writer.writeStringList(offsets[8], object.mentionedUserIds);
+  writer.writeStringList(offsets[9], object.mentionedUsers);
+  writer.writeByte(offsets[10], object.messageStatus.index);
+  writer.writeByte(offsets[11], object.messageType.index);
   writer.writeObject<CNotificationData>(
-    offsets[11],
+    offsets[12],
     allOffsets,
     CNotificationDataSchema.serialize,
     object.notificationData,
   );
-  writer.writeString(offsets[12], object.notificationId);
-  writer.writeString(offsets[13], object.rootId);
-  writer.writeLong(offsets[14], object.updatedAt);
+  writer.writeString(offsets[13], object.notificationId);
+  writer.writeString(offsets[14], object.rootId);
+  writer.writeLong(offsets[15], object.updatedAt);
 }
 
 CNotificationMessage _cNotificationMessageDeserialize(
@@ -292,21 +305,22 @@ CNotificationMessage _cNotificationMessageDeserialize(
   object.mentionType = _CNotificationMessagementionTypeValueEnumMap[
           reader.readByteOrNull(offsets[7])] ??
       MentionType.users;
-  object.mentionedUsers = reader.readStringList(offsets[8]) ?? [];
+  object.mentionedUserIds = reader.readStringList(offsets[8]) ?? [];
+  object.mentionedUsers = reader.readStringList(offsets[9]) ?? [];
   object.messageStatus = _CNotificationMessagemessageStatusValueEnumMap[
-          reader.readByteOrNull(offsets[9])] ??
+          reader.readByteOrNull(offsets[10])] ??
       NotificationMessageStatus.sent;
   object.messageType = _CNotificationMessagemessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[10])] ??
+          reader.readByteOrNull(offsets[11])] ??
       MessageType.user;
   object.notificationData = reader.readObjectOrNull<CNotificationData>(
-    offsets[11],
+    offsets[12],
     CNotificationDataSchema.deserialize,
     allOffsets,
   );
-  object.notificationId = reader.readString(offsets[12]);
-  object.rootId = reader.readString(offsets[13]);
-  object.updatedAt = reader.readLong(offsets[14]);
+  object.notificationId = reader.readString(offsets[13]);
+  object.rootId = reader.readString(offsets[14]);
+  object.updatedAt = reader.readLong(offsets[15]);
   return object;
 }
 
@@ -345,24 +359,26 @@ P _cNotificationMessageDeserializeProp<P>(
     case 8:
       return (reader.readStringList(offset) ?? []) as P;
     case 9:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 10:
       return (_CNotificationMessagemessageStatusValueEnumMap[
               reader.readByteOrNull(offset)] ??
           NotificationMessageStatus.sent) as P;
-    case 10:
+    case 11:
       return (_CNotificationMessagemessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 11:
+    case 12:
       return (reader.readObjectOrNull<CNotificationData>(
         offset,
         CNotificationDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 12:
-      return (reader.readString(offset)) as P;
     case 13:
       return (reader.readString(offset)) as P;
     case 14:
+      return (reader.readString(offset)) as P;
+    case 15:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1849,6 +1865,235 @@ extension CNotificationMessageQueryFilter on QueryBuilder<CNotificationMessage,
   }
 
   QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mentionedUserIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+          QAfterFilterCondition>
+      mentionedUserIdsElementContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+          QAfterFilterCondition>
+      mentionedUserIdsElementMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mentionedUserIds',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage,
       QAfterFilterCondition> mentionedUsersElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2971,6 +3216,13 @@ extension CNotificationMessageQueryWhereDistinct
   }
 
   QueryBuilder<CNotificationMessage, CNotificationMessage, QDistinct>
+      distinctByMentionedUserIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mentionedUserIds');
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, CNotificationMessage, QDistinct>
       distinctByMentionedUsers() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mentionedUsers');
@@ -3074,6 +3326,13 @@ extension CNotificationMessageQueryProperty on QueryBuilder<
       mentionTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mentionType');
+    });
+  }
+
+  QueryBuilder<CNotificationMessage, List<String>, QQueryOperations>
+      mentionedUserIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mentionedUserIds');
     });
   }
 

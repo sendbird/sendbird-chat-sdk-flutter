@@ -28,7 +28,6 @@ class AdminMessage extends BaseMessage {
     String? requestId,
     List<User> mentionedUsers = const [],
     MentionType mentionType = MentionType.users,
-    List<String>? requestedMentionUserIds,
     int createdAt = 0,
     int updatedAt = 0,
     int? parentMessageId,
