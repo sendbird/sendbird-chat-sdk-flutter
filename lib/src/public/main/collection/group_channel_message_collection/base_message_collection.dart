@@ -217,6 +217,7 @@ abstract class BaseMessageCollection {
 
     List<RootMessage> messages = [];
     ChannelMessagesGetResponse? res;
+    Object? exception;
 
     if (isCacheHit == false) {
       try {
@@ -233,10 +234,15 @@ abstract class BaseMessageCollection {
         ));
 
         messages.addAll(res.messages);
-      } catch (_) {}
+      } catch (e) {
+        exception = e;
+      }
     }
 
     if (_isDisposed) {
+      if (exception != null && !_chat.apiClient.throwExceptionForTest) {
+        throw exception;
+      }
       return;
     }
 
@@ -300,6 +306,10 @@ abstract class BaseMessageCollection {
       }
     }
     //- [DBManager]
+
+    if (exception != null && !_chat.apiClient.throwExceptionForTest) {
+      throw exception;
+    }
   }
 
   void _setValuesForInitialize({
@@ -474,6 +484,7 @@ abstract class BaseMessageCollection {
     List<RootMessage> messages = [];
     bool? hasNext;
     ChannelMessagesGetResponse? res;
+    Object? exception;
 
     if (isCacheHit == false) {
       try {
@@ -493,11 +504,22 @@ abstract class BaseMessageCollection {
 
         messages.addAll(res.messages);
         hasNext = res.hasNext;
-      } catch (_) {}
+      } catch (e) {
+        exception = e;
+
+        if (isPrevious) {
+          hasPrevious = true;
+        } else {
+          hasNext = true;
+        }
+      }
     }
 
     if (_isDisposed) {
       _isLoading = false;
+      if (exception != null && !_chat.apiClient.throwExceptionForTest) {
+        throw exception;
+      }
       return;
     }
 
@@ -562,6 +584,9 @@ abstract class BaseMessageCollection {
     }
 
     _isLoading = false;
+    if (exception != null && !_chat.apiClient.throwExceptionForTest) {
+      throw exception;
+    }
   }
 
   void _setValuesForLoadPrevious({

@@ -1,3 +1,9 @@
+## v4.2.9 (Apr 3, 2024)
+
+### Improvements
+- Fixed the bugs regarding error handling in `MessageCollection`
+- Fixed the bug that `mentionedUserIds` is missing in a pending message
+
 ## v4.2.8 (Mar 27, 2024)
 
 ### Improvements

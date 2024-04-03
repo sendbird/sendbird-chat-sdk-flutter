@@ -6,6 +6,7 @@ import 'package:isar/isar.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/user/c_user.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/message/message_meta_array.dart';
 
@@ -35,6 +36,7 @@ class CRootMessage {
   late MentionType mentionType;
 
   late List<String> mentionedUsers; // List<CUser>
+  late List<String> mentionedUserIds;
   List<CMessageMetaArray>? allMetaArrays;
   late String extendedMessage; // Map<String, dynamic>
   late int createdAt;
@@ -55,6 +57,7 @@ class CRootMessage {
     customType = message.customType;
     mentionType = message.mentionType;
     mentionedUsers = message.mentionedUsers.map((user) => user.userId).toList();
+    mentionedUserIds = message.mentionedUserIds;
     allMetaArrays = message.allMetaArrays
         ?.map((array) => CMessageMetaArray.fromMessageMetaArray(array))
         .toList();
@@ -81,6 +84,7 @@ class CRootMessage {
       ..data = cRootMessage.data
       ..customType = cRootMessage.customType
       ..mentionType = cRootMessage.mentionType
+      ..mentionedUserIds = cRootMessage.mentionedUserIds
       ..allMetaArrays = cRootMessage.allMetaArrays
           ?.map((cArray) => cArray.toMessageMetaArray())
           .toList()
@@ -89,12 +93,15 @@ class CRootMessage {
       ..createdAt = cRootMessage.createdAt
       ..updatedAt = cRootMessage.updatedAt;
 
+    final List<User> tempMentionedUsers = [];
     for (final userId in cRootMessage.mentionedUsers) {
       final user = await CUser.get(chat, isar, userId);
       if (user != null) {
-        rootMessage.mentionedUsers.add(user);
+        tempMentionedUsers.add(user);
       }
     }
+    rootMessage.mentionedUsers = tempMentionedUsers;
+
     return rootMessage;
   }
 
