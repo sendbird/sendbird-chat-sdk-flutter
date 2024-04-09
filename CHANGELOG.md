@@ -1,3 +1,11 @@
+## v4.2.10 (Apr 9, 2024)
+
+### Features
+- Added the privacy manifest file for iOS
+
+### Improvements
+- Fixed the bug that there are duplicated channels in `GroupChannelCollection`
+
 ## v4.2.9 (Apr 3, 2024)
 
 ### Improvements

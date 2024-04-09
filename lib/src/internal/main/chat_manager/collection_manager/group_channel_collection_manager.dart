@@ -220,9 +220,19 @@ extension GroupChannelCollectionManager on CollectionManager {
 
         if (eventSource == CollectionEventSource.channelChangeLogs &&
             !isUpdatedChannelInChannelList) {
-          if (await channelCollection.canAddChannel(
-              eventSource, updatedChannel)) {
-            addedChannelsForEvent.add(updatedChannel);
+          bool isChannelExists = false;
+          for (final channel in channelCollection.channelList) {
+            if (channel.channelUrl == updatedChannel.channelUrl) {
+              isChannelExists = true;
+              break;
+            }
+          }
+
+          if (!isChannelExists) {
+            if (await channelCollection.canAddChannel(
+                eventSource, updatedChannel)) {
+              addedChannelsForEvent.add(updatedChannel);
+            }
           }
         }
       }
