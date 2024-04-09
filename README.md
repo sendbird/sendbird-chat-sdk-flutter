@@ -33,6 +33,8 @@ The minimum requirements for the Chat SDK for Flutter are:
 
 > **Note**: Sendbird server supports Transport Layer Security (TLS) from version 1.0 up to 1.3. For example, in the server regions where TLS 1.3 isn’t available, lower versions, sequentially from 1.2 to 1.0, will be supported for secure data transmission.
 
+> **Note**: To support apple privacy manifest, add the contents of the `ios/Resources/PrivacyInfo.xcprivacy` file to the project’s `PrivacyInfo.xcprivacy`.
+
 ## Getting started
 
 The quickest way to get started is by using one of the sample apps from the [samples repo](https://github.com/sendbird/sendbird-chat-sample-flutter), create an application in the [Sendbird Dashboard](https://dashboard.sendbird.com) and copy the App ID to the sample app and you’re ready to go.
@@ -48,7 +50,7 @@ Before installing Sendbird Chat SDK, you need to create a Sendbird application o
 
 ```yaml
 dependencies:
-  sendbird_chat_sdk: ^4.2.9
+  sendbird_chat_sdk: ^4.2.10
 ```
 
 - Run `flutter pub get` command in your project directory.
