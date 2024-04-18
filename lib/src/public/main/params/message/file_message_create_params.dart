@@ -63,13 +63,13 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
           break;
       }
     } else {
-      fileMimeType = lookupMimeType(file.path)!;
+      fileMimeType = lookupMimeType(file.path);
     }
 
     fileInfo = FileInfo.fromFile(
       fileName: fileName ?? 'file',
       file: file,
-      mimeType: fileMimeType,
+      mimeType: fileMimeType ?? 'application/octet-stream',
     );
   }
 
@@ -99,7 +99,8 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
           pushNotificationDeliveryOption: pushNotificationDeliveryOption,
           isPinnedMessage: isPinnedMessage,
         ) {
-    String? fileMimeType = lookupMimeType('', headerBytes: fileBytes);
+    final fileMimeType = lookupMimeType('', headerBytes: fileBytes);
+
     if (fileMimeType != null) {
       mimeType = fileMimeType;
     } else if (mimeType == null) {
@@ -109,7 +110,7 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
     fileInfo = FileInfo.fromFileBytes(
       fileBytes: fileBytes,
       fileName: fileName ?? 'file',
-      mimeType: mimeType,
+      mimeType: mimeType ?? 'application/octet-stream',
     );
   }
 
@@ -130,8 +131,8 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
         PushNotificationDeliveryOption.normal,
     bool isPinnedMessage = false,
   })  : fileInfo = FileInfo.fromFileUrl(
-          fileName: fileName ?? 'image',
-          mimeType: mimeType ?? 'image/jpeg',
+          fileName: fileName ?? 'file',
+          mimeType: mimeType ?? 'application/octet-stream',
           fileUrl: fileUrl,
           fileSize: fileSize,
         ),
