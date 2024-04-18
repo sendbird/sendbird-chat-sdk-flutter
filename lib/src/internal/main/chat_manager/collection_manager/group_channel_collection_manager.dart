@@ -170,15 +170,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 
     if (addedChannels != null && addedChannels.isNotEmpty) {
       for (final addedChannel in addedChannels) {
-        bool isChannelExists = false;
-        for (final channel in channelCollection.channelList) {
-          if (channel.channelUrl == addedChannel.channelUrl) {
-            isChannelExists = true;
-            break;
-          }
-        }
-
-        if (!isChannelExists) {
+        if (!_isChannelExists(channelCollection, addedChannel.channelUrl)) {
           if (await channelCollection.canAddChannel(
               eventSource, addedChannel)) {
             addedChannelsForEvent.add(addedChannel);
@@ -187,7 +179,7 @@ extension GroupChannelCollectionManager on CollectionManager {
       }
 
       if (addedChannelsForEvent.isNotEmpty) {
-        channelCollection.channelList.addAll(addedChannelsForEvent);
+        _addChannel(channelCollection, addedChannelsForEvent);
       }
     }
 
@@ -220,15 +212,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 
         if (eventSource == CollectionEventSource.channelChangeLogs &&
             !isUpdatedChannelInChannelList) {
-          bool isChannelExists = false;
-          for (final channel in channelCollection.channelList) {
-            if (channel.channelUrl == updatedChannel.channelUrl) {
-              isChannelExists = true;
-              break;
-            }
-          }
-
-          if (!isChannelExists) {
+          if (!_isChannelExists(channelCollection, updatedChannel.channelUrl)) {
             if (await channelCollection.canAddChannel(
                 eventSource, updatedChannel)) {
               addedChannelsForEvent.add(updatedChannel);
@@ -238,7 +222,7 @@ extension GroupChannelCollectionManager on CollectionManager {
       }
 
       if (addedChannelsForEvent.isNotEmpty) {
-        channelCollection.channelList.addAll(addedChannelsForEvent);
+        _addChannel(channelCollection, addedChannelsForEvent);
       }
     }
 
@@ -279,6 +263,38 @@ extension GroupChannelCollectionManager on CollectionManager {
       if (!channelCollection.isDisposed) {
         channelCollection.handler.onChannelsUpdated(
             GroupChannelContext(eventSource), updatedChannelsForEvent);
+      }
+    }
+  }
+
+  bool _isChannelExists(GroupChannelCollection collection, String channelUrl) {
+    for (final channel in collection.channelList) {
+      if (channel.channelUrl == channelUrl) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void _addChannel(
+    GroupChannelCollection channelCollection,
+    List<GroupChannel> addedChannels,
+  ) {
+    final channelList = channelCollection.channelList;
+    for (final addedChannel in addedChannels) {
+      bool isUpdated = false;
+
+      for (int index = 0; index < channelList.length; index++) {
+        final channel = channelList[index];
+        if (addedChannel.channelUrl == channel.channelUrl) {
+          channelList[index] = addedChannel;
+          isUpdated = true;
+          break;
+        }
+      }
+
+      if (isUpdated == false) {
+        channelList.add(addedChannel);
       }
     }
   }

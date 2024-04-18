@@ -239,13 +239,13 @@ class GroupChannelCollection {
     GroupChannel addedChannel, {
     bool checkToUpdateChannel = false,
   }) async {
+    if (_isLoadedOnce == false) {
+      return false;
+    }
+
     if (eventSource == CollectionEventSource.channelCacheLoadMore ||
         eventSource == CollectionEventSource.channelLoadMore) {
       return true;
-    }
-
-    if (_isLoadedOnce == false) {
-      return false;
     }
 
     if (channelList.isNotEmpty && hasMore) {

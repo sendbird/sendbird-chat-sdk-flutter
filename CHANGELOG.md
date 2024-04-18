@@ -1,10 +1,16 @@
+## v4.2.11 (Apr 18, 2024)
+
+### Improvements
+- Fixed the bug that there are duplicate channels in `GroupChannelCollection`
+- Added default mimeType in `FileMessageCreateParams`
+
 ## v4.2.10 (Apr 9, 2024)
 
 ### Features
 - Added the privacy manifest file for iOS
 
 ### Improvements
-- Fixed the bug that there are duplicated channels in `GroupChannelCollection`
+- Fixed the bug that there are duplicate channels in `GroupChannelCollection`
 
 ## v4.2.9 (Apr 3, 2024)
 
