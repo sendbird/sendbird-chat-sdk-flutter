@@ -91,6 +91,8 @@ class CollectionManager {
   }
 
   Future<void> refreshGroupChannelCollections() async {
+    sbLog.d(StackTrace.current);
+
     isGroupChannelCollectionsRefreshing = true;
 
     List<Future<dynamic>> futures = [];
@@ -107,6 +109,8 @@ class CollectionManager {
   }
 
   Future<void> _refreshBaseMessageCollections() async {
+    sbLog.d(StackTrace.current);
+
     isBaseMessageCollectionsRefreshing = true;
 
     for (final collection in baseMessageCollections) {
@@ -121,16 +125,20 @@ class CollectionManager {
   }
 
   Future<void> refreshBaseMessageCollection(
-      BaseMessageCollection collection) async {
-    for (final collection in baseMessageCollections) {
-      if (collection.isInitialized) {
-        await _requestMessageChangeLogs(collection);
-        await _requestPollChangeLogs(collection);
-      }
+    BaseMessageCollection collection,
+  ) async {
+    sbLog.d(
+        StackTrace.current, 'channelUrl: ${collection.baseChannel.channelUrl}');
+
+    if (collection.isInitialized) {
+      await _requestMessageChangeLogs(collection);
+      await _requestPollChangeLogs(collection);
     }
   }
 
   Future<void> refreshNotificationCollections() async {
+    sbLog.d(StackTrace.current);
+
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
@@ -144,6 +152,8 @@ class CollectionManager {
   Future<void> refreshNotificationCollection({
     required String channelUrl,
   }) async {
+    sbLog.d(StackTrace.current, 'channelUrl: $channelUrl');
+
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
@@ -158,6 +168,8 @@ class CollectionManager {
   }
 
   void markAsReadForFeedChannel(String channelUrl, List<String>? messageIds) {
+    sbLog.d(StackTrace.current, 'channelUrl: $channelUrl');
+
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {
         if (collection.isInitialized) {
@@ -195,7 +207,7 @@ class CollectionManager {
   }
 
   void onMessagesUpdated(String channelUrl, List<RootMessage>? messages) async {
-    sbLog.d(StackTrace.current, 'onMessagesUpdated()');
+    sbLog.d(StackTrace.current, 'channelUrl: $channelUrl');
 
     for (final collection in baseMessageCollections) {
       if (collection is NotificationCollection) {

@@ -56,6 +56,8 @@ class DBManager {
   }
 
   Future<bool> init() async {
+    sbLog.i(StackTrace.current);
+
     try {
       if (_chat.isTest) {
         // https://github.com/isar/isar#unit-tests
@@ -147,6 +149,7 @@ class DBManager {
   Future<void> clear() async {
     if (isEnabled()) {
       try {
+        sbLog.d(StackTrace.current);
         await _db.clear();
       } catch (e) {
         sbLog.e(StackTrace.current, e.toString());
@@ -237,7 +240,7 @@ class DBManager {
   }
 
   // Channel
-  Future<void> deleteMessagesInChannel(channelUrl) async {
+  Future<void> deleteMessagesInChannel(String channelUrl) async {
     if (isEnabled()) {
       // Messages
       await deleteMessagesInDeletedChannel(channelUrl);
@@ -437,31 +440,31 @@ class DBManager {
     required String channelUrl,
     required List<BaseMessage> messages,
   }) async {
-    if (isEnabled()) {
-      final failedMessages = messages
-          .where((message) => message.sendingStatus == SendingStatus.failed)
-          .toList();
+    final failedMessages = messages
+        .where((message) => message.sendingStatus == SendingStatus.failed)
+        .toList();
 
+    if (isEnabled()) {
       await _db.removeFailedMessages(
         channelType: channelType,
         channelUrl: channelUrl,
         messages: failedMessages,
       );
+    }
 
-      // Event
-      for (final messageCollection
-          in _chat.collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channelUrl) {
-          _chat.collectionManager.sendEventsToMessageCollection(
-            messageCollection: messageCollection,
-            baseChannel: messageCollection.baseChannel,
-            eventSource: CollectionEventSource.eventMessageDeleted,
-            sendingStatus: SendingStatus.failed,
-            deletedMessageIds:
-                failedMessages.map((message) => message.rootId).toList(),
-          );
-          break;
-        }
+    // Event
+    for (final messageCollection
+        in _chat.collectionManager.baseMessageCollections) {
+      if (messageCollection.baseChannel.channelUrl == channelUrl) {
+        _chat.collectionManager.sendEventsToMessageCollection(
+          messageCollection: messageCollection,
+          baseChannel: messageCollection.baseChannel,
+          eventSource: CollectionEventSource.eventMessageDeleted,
+          sendingStatus: SendingStatus.failed,
+          deletedMessageIds:
+              failedMessages.map((message) => message.rootId).toList(),
+        );
+        break;
       }
     }
   }
@@ -475,27 +478,27 @@ class DBManager {
         channelType: channelType,
         channelUrl: channelUrl,
       );
+    }
 
-      // Event
-      for (final messageCollection
-          in _chat.collectionManager.baseMessageCollections) {
-        if (messageCollection.baseChannel.channelUrl == channelUrl) {
-          final failedMessages = messageCollection.messageList
-              .where((message) =>
-                  message is! BaseMessage ||
-                  message.sendingStatus == SendingStatus.failed)
-              .toList();
+    // Event
+    for (final messageCollection
+        in _chat.collectionManager.baseMessageCollections) {
+      if (messageCollection.baseChannel.channelUrl == channelUrl) {
+        final failedMessages = messageCollection.messageList
+            .where((message) =>
+                message is! BaseMessage ||
+                message.sendingStatus == SendingStatus.failed)
+            .toList();
 
-          _chat.collectionManager.sendEventsToMessageCollection(
-            messageCollection: messageCollection,
-            baseChannel: messageCollection.baseChannel,
-            eventSource: CollectionEventSource.eventMessageDeleted,
-            sendingStatus: SendingStatus.failed,
-            deletedMessageIds:
-                failedMessages.map((message) => message.rootId).toList(),
-          );
-          break;
-        }
+        _chat.collectionManager.sendEventsToMessageCollection(
+          messageCollection: messageCollection,
+          baseChannel: messageCollection.baseChannel,
+          eventSource: CollectionEventSource.eventMessageDeleted,
+          sendingStatus: SendingStatus.failed,
+          deletedMessageIds:
+              failedMessages.map((message) => message.rootId).toList(),
+        );
+        break;
       }
     }
   }

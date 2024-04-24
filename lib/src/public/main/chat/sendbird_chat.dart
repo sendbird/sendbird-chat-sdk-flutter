@@ -198,6 +198,7 @@ class SendbirdChat {
 
   /// Sends mark as delivered to this channel when you received push message from us.
   /// [data] is the payload data from the push.
+  /// Delivery receipt is a premium feature.
   static Future<void> markAsDelivered(
       {required Map<String, dynamic> data}) async {
     sbLog.i(StackTrace.current, 'data: $data');

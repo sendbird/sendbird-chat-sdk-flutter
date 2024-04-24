@@ -17,4 +17,9 @@ class GroupChannelMarkAsDeliveredRequest extends ApiRequest {
     url = 'group_channels/$channelUrl/messages/mark_as_delivered';
     body = {'user_id': userId, 'ts': timestamp};
   }
+
+  @override
+  Future<int> response(Map<String, dynamic> res) async {
+    return res['ts'];
+  }
 }
