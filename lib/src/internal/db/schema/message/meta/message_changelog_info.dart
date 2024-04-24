@@ -2,8 +2,8 @@
 
 class MessageChangeLogInfo {
   final String channelUrl;
-  final String? lastMessageToken;
-  final String? lastPollToken;
+  String? lastMessageToken;
+  String? lastPollToken;
 
   MessageChangeLogInfo({
     required this.channelUrl,

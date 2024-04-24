@@ -46,6 +46,8 @@ class ReadStatus implements Cacheable {
 
   @override
   void copyWith(dynamic other) {
-    timestamp = other.timestamp;
+    if (other is ReadStatus) {
+      timestamp = other.timestamp;
+    }
   }
 }

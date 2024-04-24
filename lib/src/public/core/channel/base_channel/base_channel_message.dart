@@ -138,29 +138,17 @@ extension BaseChannelMessage on BaseChannel {
           return;
         }
 
-        if (this is GroupChannel) {
-          for (final messageCollection
-              in chat.collectionManager.baseMessageCollections) {
-            if (messageCollection.baseChannel.channelUrl == channelUrl) {
-              await chat.collectionManager.sendEventsToMessageCollection(
-                messageCollection: messageCollection,
-                baseChannel: this,
-                eventSource: CollectionEventSource.localMessagePendingCreated,
-                sendingStatus: SendingStatus.succeeded,
-                deletedMessageIds: [pendingUserMessage.rootId],
-              );
-              break;
-            }
-          }
-        }
-
         final message = RootMessage.getMessageFromJsonWithChat<UserMessage>(
           chat,
           result.payload,
           commandType: result.cmd,
         ) as UserMessage;
 
-        chat.collectionManager.onMessageSentByMe(message);
+        chat.collectionManager.onMessageSentByMe(
+          pendingMessage: pendingUserMessage,
+          sentMessage: message,
+        );
+
         if (handler != null) {
           handler(message, null);
         }
@@ -408,23 +396,6 @@ extension BaseChannelMessage on BaseChannel {
             chat.commandManager.sendCommand(cmd).then((result) async {
               if (result == null) return;
 
-              if (this is GroupChannel) {
-                for (final messageCollection
-                    in chat.collectionManager.baseMessageCollections) {
-                  if (messageCollection.baseChannel.channelUrl == channelUrl) {
-                    await chat.collectionManager.sendEventsToMessageCollection(
-                      messageCollection: messageCollection,
-                      baseChannel: this,
-                      eventSource:
-                          CollectionEventSource.localMessagePendingCreated,
-                      sendingStatus: SendingStatus.succeeded,
-                      deletedMessageIds: [messageBeforeSent.rootId],
-                    );
-                    break;
-                  }
-                }
-              }
-
               final message =
                   RootMessage.getMessageFromJsonWithChat<FileMessage>(
                 chat,
@@ -433,7 +404,11 @@ extension BaseChannelMessage on BaseChannel {
                 commandType: result.cmd,
               ) as FileMessage;
 
-              chat.collectionManager.onMessageSentByMe(message);
+              chat.collectionManager.onMessageSentByMe(
+                pendingMessage: messageBeforeSent,
+                sentMessage: message,
+              );
+
               if (handler != null) {
                 handler(message, null);
               }
@@ -449,24 +424,11 @@ extension BaseChannelMessage on BaseChannel {
             );
             final message = await chat.apiClient.send<FileMessage>(request);
 
-            if (this is GroupChannel) {
-              for (final messageCollection
-                  in chat.collectionManager.baseMessageCollections) {
-                if (messageCollection.baseChannel.channelUrl == channelUrl) {
-                  await chat.collectionManager.sendEventsToMessageCollection(
-                    messageCollection: messageCollection,
-                    baseChannel: this,
-                    eventSource:
-                        CollectionEventSource.localMessagePendingCreated,
-                    sendingStatus: SendingStatus.succeeded,
-                    deletedMessageIds: [messageBeforeSent.rootId],
-                  );
-                  break;
-                }
-              }
-            }
+            chat.collectionManager.onMessageSentByMe(
+              pendingMessage: messageBeforeSent,
+              sentMessage: message,
+            );
 
-            chat.collectionManager.onMessageSentByMe(message);
             if (handler != null) {
               handler(message, null);
             }

@@ -74,5 +74,10 @@ extension GroupChannelOperation on GroupChannel {
     if (offset != null) {
       messageOffsetTimestamp = offset;
     }
+
+    await chat.collectionManager.resetMyHistory(
+      channelUrl: channelUrl,
+      messageOffsetTimestamp: messageOffsetTimestamp,
+    );
   }
 }

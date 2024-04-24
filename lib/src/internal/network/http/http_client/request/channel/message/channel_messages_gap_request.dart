@@ -67,8 +67,8 @@ class ChannelMessagesGapRequest extends ApiRequest {
     bool? isPrevContinuous;
     bool? isNextContinuous;
     if (checkingContinuousMessages) {
-      isPrevContinuous = res['is_continuous_prev_messages'] as bool;
-      isNextContinuous = res['is_continuous_next_messages'] as bool;
+      isPrevContinuous = res['is_continuous_prev_messages'] as bool?;
+      isNextContinuous = res['is_continuous_next_messages'] as bool?;
     }
 
     return ChannelMessagesGapResponse(

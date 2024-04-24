@@ -45,6 +45,8 @@ class ChannelCacheUnit implements CacheUnit {
       } else {
         typingStatusMap[data.key] = data;
       }
+
+      data.setTypingTimer();
     } else if (data is MetaDataCache<String>) {
       if (_metaDataCache != null) {
         _metaDataCache?.merge(data);
@@ -56,13 +58,14 @@ class ChannelCacheUnit implements CacheUnit {
 
   @override
   void delete<T extends Cacheable>({String? key, Cacheable? data}) {
-    if (T == DeliveryStatus || data is DeliveryStatus) {
-      deliveryStatus = null;
-    } else if (T == TypingStatus || data is TypingStatus) {
-      typingStatusMap.remove(key);
-    } else if (T == ReadStatus || data is ReadStatus) {
+    if (data is ReadStatus) {
       readStatusMap.remove(key);
-    } else if (T == MetaDataCache || data is MetaDataCache) {
+    } else if (data is DeliveryStatus) {
+      deliveryStatus = null;
+    } else if (data is TypingStatus) {
+      typingStatusMap.remove(key);
+      data.cancelTypingTimer();
+    } else if (data is MetaDataCache) {
       _metaDataCache = null;
     }
     // channel should be delete itself
@@ -77,10 +80,10 @@ class ChannelCacheUnit implements CacheUnit {
       return channel as T?;
     } else if (T == ReadStatus) {
       return readStatusMap[key] as T?;
-    } else if (T == TypingStatus) {
-      return typingStatusMap[key] as T?;
     } else if (T == DeliveryStatus) {
       return deliveryStatus as T?;
+    } else if (T == TypingStatus) {
+      return typingStatusMap[key] as T?;
     } else if (T == MetaDataCache) {
       return _metaDataCache as T?;
     }

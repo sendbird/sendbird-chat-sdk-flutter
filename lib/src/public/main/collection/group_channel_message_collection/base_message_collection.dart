@@ -712,8 +712,14 @@ abstract class BaseMessageCollection {
     // hasPrevious
     if (hasPrevious) {
       if (messageList.isNotEmpty) {
-        if (addedMessage.createdAt < messageList.first.createdAt) {
-          return false;
+        if (params.reverse) {
+          if (addedMessage.createdAt < messageList.last.createdAt) {
+            return false;
+          }
+        } else {
+          if (addedMessage.createdAt < messageList.first.createdAt) {
+            return false;
+          }
         }
       }
     }
@@ -721,8 +727,14 @@ abstract class BaseMessageCollection {
     // hasNext
     if (hasNext) {
       if (messageList.isNotEmpty) {
-        if (addedMessage.createdAt > messageList.first.createdAt) {
-          return false;
+        if (params.reverse) {
+          if (addedMessage.createdAt > messageList.first.createdAt) {
+            return false;
+          }
+        } else {
+          if (addedMessage.createdAt > messageList.last.createdAt) {
+            return false;
+          }
         }
       }
     }
@@ -825,6 +837,34 @@ abstract class BaseMessageCollection {
     }
 
     return canUpdate;
+  }
+
+  Future<void> resetMyHistory({
+    required String channelUrl,
+    int? messageOffsetTimestamp,
+  }) async {
+    if (_initializeParams.reverse) {
+      _hasNext = false;
+    } else {
+      _hasPrevious = false;
+    }
+
+    final deletedMessageIds = messageList
+        .where((message) {
+          return (messageOffsetTimestamp == null ||
+              message.createdAt <= messageOffsetTimestamp);
+        })
+        .map((message) => message.rootId)
+        .toList();
+
+    _chat.collectionManager.sendEventsToMessageCollection(
+      messageCollection: this,
+      baseChannel: baseChannel,
+      eventSource: CollectionEventSource.eventMessageDeleted,
+      sendingStatus: SendingStatus.succeeded,
+      deletedMessageIds: deletedMessageIds,
+      isResetMyHistory: true,
+    );
   }
 
   /// Sends mark as read to this channel.

@@ -7,11 +7,15 @@ extension GroupChannelCollectionManager on CollectionManager {
 // Add and remove groupChannel collection
 //------------------------------//
   void addGroupChannelCollection(GroupChannelCollection collection) {
+    sbLog.d(StackTrace.current);
+
     groupChannelCollections.add(collection);
     _setInitialGroupChannelChangeLogsTs();
   }
 
   void removeGroupChannelCollection(GroupChannelCollection collection) {
+    sbLog.d(StackTrace.current);
+
     groupChannelCollections.remove(collection);
     _setInitialMessageChangeLogsAndMessagesGapTs();
   }
@@ -19,22 +23,28 @@ extension GroupChannelCollectionManager on CollectionManager {
 //------------------------------//
 // GroupChannel changeLogs
 //------------------------------//
-  Future<void> _requestGroupChannelChangeLogs(
-      {CollectionEventSource? eventSource}) async {
+  Future<void> _requestGroupChannelChangeLogs({
+    CollectionEventSource? eventSource,
+  }) async {
+    sbLog.d(StackTrace.current, '${eventSource?.toString()}');
+
     final params = GroupChannelChangeLogsParams();
     final List<GroupChannel> updatedChannels = [];
     final List<String> deletedChannelUrls = [];
 
     GroupChannelChangeLogs changeLogs;
+    String? lastToken;
     String? token;
 
     //+ [DBManager]
     final info = await _chat.dbManager.getChannelInfo();
     if (info != null) {
-      token = info.lastChannelToken;
+      lastToken = info.lastChannelToken;
+      token = lastToken;
     }
     //- [DBManager]
 
+    bool hasMore = false;
     do {
       if (token == null) {
         changeLogs = await _chat.getMyGroupChannelChangeLogs(
@@ -51,11 +61,12 @@ extension GroupChannelCollectionManager on CollectionManager {
       updatedChannels.addAll(changeLogs.updatedChannels);
       deletedChannelUrls.addAll(changeLogs.deletedChannelUrls);
 
+      hasMore = changeLogs.token != null && changeLogs.token != token;
       token = changeLogs.token;
-    } while (changeLogs.hasMore);
+    } while (hasMore); // [x] changeLogs.hasMore
 
     //+ [DBManager]
-    if (token != null && token.isNotEmpty) {
+    if (token != null && token.isNotEmpty && token != lastToken) {
       ChannelInfo? channelInfo = await _chat.dbManager.getChannelInfo();
       if (channelInfo != null) {
         channelInfo.lastChannelToken = token;
@@ -82,6 +93,8 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
   }) async {
+    sbLog.d(StackTrace.current, eventSource.toString());
+
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
       if (deletedChannelUrls != null) {
@@ -130,6 +143,8 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
   }) async {
+    sbLog.d(StackTrace.current, eventSource.toString());
+
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
       if (eventSource == CollectionEventSource.channelLoadMore ||

@@ -29,7 +29,7 @@ class FileMessage extends BaseMessage {
   final String url;
 
   /// The secure file URL.
-  String? get secureUrl {
+  String get secureUrl {
     final eKey = chat.chatContext.eKey;
     if (requireAuth && eKey != null) {
       // https://github.com/flutter/flutter/issues/25107
@@ -255,7 +255,7 @@ class Thumbnail {
 
   /// The secure thumbnail URL.
   /// @since 4.2.5
-  String? get secureUrl {
+  String get secureUrl {
     if (_chat != null && _requireAuth != null) {
       final eKey = _chat!.chatContext.eKey;
       if (_requireAuth! && eKey != null) {

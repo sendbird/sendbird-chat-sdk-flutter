@@ -97,8 +97,9 @@ extension ChatChannel on Chat {
   Future<void> markAsDelivered({required Map<String, dynamic> data}) async {
     sbLog.i(StackTrace.current, 'data: $data');
 
-    Map<String, dynamic>? sendbird = data['sendbird'];
-    String? appId, userId, channelUrl, sessionKey;
+    Map<String, dynamic>? sendbird =
+        data['sendbird'] != null ? jsonDecode(data['sendbird']) : null;
+    String? appId, userId, channelUrl, tempSessionKey;
     int? createdAt;
 
     if (sendbird != null) {
@@ -111,22 +112,42 @@ extension ChatChannel on Chat {
 
       if (recipient != null) userId = recipient['id'];
       if (channel != null) channelUrl = channel['channel_url'];
-      if (session != null) sessionKey = session['key'];
+      if (session != null) tempSessionKey = session['key'];
     }
 
     if (appId != null &&
         userId != null &&
         channelUrl != null &&
-        sessionKey != null &&
         createdAt != null) {
-      sessionManager.setSessionKey(sessionKey);
+      if (tempSessionKey == null) {
+        // Check `Delivery receipt` premium feature on dashboard.
+        return;
+      }
 
-      await apiClient.send(GroupChannelMarkAsDeliveredRequest(
-        this,
-        channelUrl: channelUrl,
-        userId: userId,
-        timestamp: createdAt,
-      ));
+      final sessionKey = await sessionManager.getSessionKey();
+      sessionManager.setSessionKey(tempSessionKey);
+
+      try {
+        final ts = await apiClient.send<int>(GroupChannelMarkAsDeliveredRequest(
+          this,
+          channelUrl: channelUrl,
+          userId: userId,
+          timestamp: createdAt,
+        ));
+
+        final currentUserId = SendbirdChat.currentUser?.userId;
+        if (currentUserId != null) {
+          final delivery = DeliveryStatus(
+            channelUrl: channelUrl,
+            updatedDeliveryStatus: {currentUserId: ts},
+          );
+          delivery.saveToCache(this);
+        }
+      } catch (e) {
+        sbLog.e(StackTrace.current, e.toString());
+      } finally {
+        sessionManager.setSessionKey(sessionKey);
+      }
     } else {
       throw InvalidParameterException();
     }

@@ -2,13 +2,11 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_unit.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 
 class ChannelCache implements CacheStorage {
-  Map<String, ChannelCacheUnit> _channelCacheMap = {};
+  final Map<String, ChannelCacheUnit> _channelCacheMap = {};
 
   @override
   void insert({
@@ -41,7 +39,7 @@ class ChannelCache implements CacheStorage {
 
   @override
   void deleteAll() {
-    _channelCacheMap = {};
+    _channelCacheMap.clear();
   }
 
   @override
@@ -52,14 +50,9 @@ class ChannelCache implements CacheStorage {
           .where((e) => e.channel is T)
           .map((e) => e.channel as T)
           .toList();
-    } else if (T == ReadStatus && channelKey != null) {
-      return _channelCacheMap[channelKey]?.readStatusMap.values.toList()
-          as List<T>;
-    } else if (T == TypingStatus) {
+    } else if (T == TypingStatus && channelKey != null) {
       return _channelCacheMap[channelKey]?.typingStatusMap.values.toList()
-          as List<T>;
-    } else if (T == DeliveryStatus) {
-      return [_channelCacheMap[channelKey]?.deliveryStatus] as List<T>;
+          as List<T>?;
     }
     return null;
   }

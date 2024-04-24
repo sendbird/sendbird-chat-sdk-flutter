@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,6 +18,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_dispatche
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_queue.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
@@ -60,7 +62,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.2.11';
+const sdkVersion = '4.2.12';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -88,7 +90,7 @@ class Chat with WidgetsBindingObserver {
   ];
 
   bool? _isObserverRegistered;
-  ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  List<ConnectivityResult> _connectivityResults = [ConnectivityResult.none];
   int lastMarkAsReadTimestamp;
 
   // This allows a value of type T or T? to be treated as a value of type T?.
@@ -207,35 +209,40 @@ class Chat with WidgetsBindingObserver {
 
       Connectivity()
           .onConnectivityChanged
-          .listen((ConnectivityResult result) async {
-        sbLog.d(StackTrace.current, result.toString());
+          .listen((dynamic connectivityResults) async {
+        final List<ConnectivityResult> results = [];
 
-        switch (result) {
-          case ConnectivityResult.none:
-            channelCache.markAsDirtyAll(); // Check
-            await connectionManager.disconnect(logout: false);
-            break;
-          case ConnectivityResult.mobile:
-          case ConnectivityResult.wifi:
-          case ConnectivityResult.ethernet:
-          case ConnectivityResult.vpn:
-          case ConnectivityResult.other:
-            if (_connectivityResult == ConnectivityResult.none) {
-              if (chatContext.isChatConnected) {
-                await connectionManager.reconnect(reset: true);
-              }
-              if (chatContext.isFeedAuthenticated) {
-                collectionManager.refreshNotificationCollections();
-              }
-            }
-            break;
-          case ConnectivityResult.bluetooth:
-            break;
-          default:
-            break;
+        if (connectivityResults is ConnectivityResult) {
+          // connectivity_plus <6.0.0
+          results.add(connectivityResults);
+        } else if (connectivityResults is List<ConnectivityResult>) {
+          // connectivity_plus ^6.0.0
+          results.addAll(connectivityResults);
         }
 
-        _connectivityResult = result;
+        sbLog.d(StackTrace.current, results.toString());
+
+        if (results.contains(ConnectivityResult.mobile) ||
+            results.contains(ConnectivityResult.wifi) ||
+            results.contains(ConnectivityResult.ethernet) ||
+            results.contains(ConnectivityResult.vpn) ||
+            results.contains(ConnectivityResult.other)) {
+          if (_connectivityResults.contains(ConnectivityResult.none)) {
+            if (chatContext.isChatConnected) {
+              await connectionManager.reconnect(reset: true);
+            }
+            if (chatContext.isFeedAuthenticated) {
+              collectionManager.refreshNotificationCollections();
+            }
+          }
+        } else if (results.contains(ConnectivityResult.bluetooth)) {
+          // Nothing
+        } else if (results.contains(ConnectivityResult.none)) {
+          channelCache.markAsDirtyAll(); // Check
+          await connectionManager.disconnect(logout: false);
+        }
+
+        _connectivityResults = results;
       });
     }
   }

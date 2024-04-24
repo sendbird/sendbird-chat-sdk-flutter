@@ -87,7 +87,8 @@ extension GroupChannelRead on GroupChannel {
   /// Returns the list of members that haven't received the given message.
   /// This excludes the current logged-in [User] and the [Sender] of the message.
   /// It will always be zero if the passed on message is an [AdminMessage], or if this channel is a super group channel.
-  List<Member> getUndeliveredMembers(BaseMessage message) {
+  /// If there is no delivery status, returns null. (Delivery receipt is a premium feature.)
+  List<Member>? getUndeliveredMembers(BaseMessage message) {
     sbLog.i(StackTrace.current, 'messageId: ${message.messageId}');
     if (message is AdminMessage) return [];
     if (isSuper) return [];
@@ -95,7 +96,7 @@ extension GroupChannelRead on GroupChannel {
     final deliveryStatus =
         chat.channelCache.find<DeliveryStatus>(channelKey: channelUrl);
 
-    if (deliveryStatus == null) return [];
+    if (deliveryStatus == null) return null;
 
     return members.where((m) {
       if (m.isCurrentUser) return false;
