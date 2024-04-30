@@ -377,8 +377,8 @@ class CommandManager {
     } else if (cmd.payload['expires_in'] != null
         ? cmd.payload['expires_in'] < 0
         : false) {
-      // If session token is expired, then log out
       await _chat.connectionManager.disconnect(logout: true);
+      _chat.eventManager.notifySessionClosed();
     } else {
       await _chat.sessionManager.updateSessionKey();
     }
@@ -707,7 +707,6 @@ class CommandManager {
         'cmd: ${cmd.cmd}, errorMessage: ${cmd.errorMessage ?? ''}');
 
     if (cmd.errorCode == SendbirdError.sessionKeyExpired) {
-      await _chat.connectionManager.disconnect(logout: true);
       await _chat.sessionManager.updateSessionKey();
     } else if (cmd.errorCode == SendbirdError.accessTokenRevoked) {
       if (_chat.chatContext.loginCompleter != null &&

@@ -84,11 +84,11 @@ class SessionManager {
 
     setSessionKey(null);
 
-    // If websocket exists, ws request to update session key
-    if (_chat.connectionManager.isConnected()) {
-      await _chat.commandManager.updateSessionKey();
-      return;
-    }
+    // If websocket exists, ws request to update session key => Check server error
+    // if (_chat.connectionManager.isConnected()) {
+    //   await _chat.commandManager.updateSessionKey();
+    //   return;
+    // }
 
     final completer = Completer();
     _updateSessionKeyCompleterList.add(completer);
