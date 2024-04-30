@@ -1,7 +1,9 @@
-## v4.2.12 (Apr 24, 2024)
+## v4.2.13 (Apr 30, 2024)
 
-### Breaking changes
-- The return type for `getUndeliveredMembers()` was updated from `List<Member>` to `List<Member>?`
+### Improvements
+- Fixed the bugs regarding session update
+
+## v4.2.12 (Apr 24, 2024)
 
 ### Features
 - Updated dependency range for `connectivity_plus` package from `^5.0.1` to `>=5.0.1 <7.0.0`
@@ -10,6 +12,9 @@
 - Fixed `MessageCollection` regarding `resetMyHistory()` in `GroupChannel`
 - Fixed `removeFailedMessage()` and `removeAllFailedMessages()` in `MessageCollection`
 - Fixed the bugs regarding message change log, pending message removal, typing status and delivered status
+- Added improvements on `getUndeliveredMembers()` method to prevent a potential problem
+  The return type for `getUndeliveredMembers()` was updated from `List<Member>` to `List<Member>?`
+  Please update this part of your code if you use `getUndeliveredMembers()`
 - Improved stability
 
 ## v4.2.11 (Apr 18, 2024)
