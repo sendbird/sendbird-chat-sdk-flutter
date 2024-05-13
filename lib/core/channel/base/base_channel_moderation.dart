@@ -91,6 +91,7 @@ extension Moderations on BaseChannel {
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
+      description: description,
     ));
   }
 
@@ -111,6 +112,7 @@ extension Moderations on BaseChannel {
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
+      description: description,
     ));
   }
 
@@ -125,6 +127,7 @@ extension Moderations on BaseChannel {
       channelType: channelType,
       channelUrl: channelUrl,
       category: category,
+      description: description,
     ));
   }
 }
