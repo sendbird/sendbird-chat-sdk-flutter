@@ -134,7 +134,7 @@ class GroupChannelCollection {
         }
 
         if (localChannels.isNotEmpty) {
-          _chat.collectionManager.sendEventsToGroupChannelCollection(
+          await _chat.collectionManager.sendEventsToGroupChannelCollection(
             channelCollection: this,
             eventSource: CollectionEventSource.channelCacheLoadMore,
             addedChannels: localChannels,
@@ -168,7 +168,7 @@ class GroupChannelCollection {
             _fetchedCount += channels.length;
             _offset = _fetchedCount;
 
-            _chat.collectionManager.sendEventsToGroupChannelCollection(
+            await _chat.collectionManager.sendEventsToGroupChannelCollection(
               channelCollection: this,
               eventSource: CollectionEventSource.channelLoadMore,
               addedChannels: addedChannels,
@@ -177,7 +177,7 @@ class GroupChannelCollection {
           }
           //- [DBManager]
           else {
-            _chat.collectionManager.sendEventsToGroupChannelCollection(
+            await _chat.collectionManager.sendEventsToGroupChannelCollection(
               channelCollection: this,
               eventSource: CollectionEventSource.channelLoadMore,
               addedChannels: channels,
@@ -191,6 +191,9 @@ class GroupChannelCollection {
         _offset += localChannels.length; // Check
       }
       //- [DBManager]
+      else {
+        rethrow;
+      }
     }
 
     _isLoading = false;

@@ -2,6 +2,7 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
@@ -16,6 +17,7 @@ class ChannelUserUnbanRequest extends ApiRequest {
     required String channelUrl,
     required String targetId,
   }) : super(chat: chat) {
-    url = '${channelType.urlString}/$channelUrl/ban/$targetId';
+    url =
+        '${channelType.urlString}/$channelUrl/ban/${getUrlEncodedUserId(chat, targetId)}';
   }
 }

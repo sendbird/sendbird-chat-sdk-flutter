@@ -39,6 +39,8 @@ abstract class BaseMessageCollection {
 
   BaseChannel get baseChannel => _channel;
 
+  set baseChannel(channel) => _channel = channel;
+
   BaseMessageCollectionHandler get baseHandler => _handler;
 
   set hasPrevious(value) => _hasPrevious = value;
@@ -61,7 +63,7 @@ abstract class BaseMessageCollection {
 
   String get collectionId => _collectionId;
 
-  final BaseChannel _channel;
+  BaseChannel _channel;
   final BaseMessageCollectionHandler _handler;
 
   final MessageListParams _initializeParams;
@@ -208,6 +210,25 @@ abstract class BaseMessageCollection {
         );
       }
 
+      //+ Failed messages
+      final failedMessages = await _chat.dbManager.getFailedMessages(
+        channelType: _channel.channelType,
+        channelUrl: _channel.channelUrl,
+        reverse: _initializeParams.reverse,
+      );
+
+      if (failedMessages.isNotEmpty) {
+        await _chat.collectionManager.sendEventsToMessageCollection(
+          messageCollection: this,
+          baseChannel: _channel,
+          eventSource: CollectionEventSource.messageCacheInitialize,
+          sendingStatus: SendingStatus.failed,
+          addedMessages: failedMessages,
+          isReversedAddedMessages: _initializeParams.reverse,
+        );
+      }
+      //- Failed messages
+
       _initializeParams.includeMetaArray = true;
       _initializeParams.includeReactions = true;
       _initializeParams.includeThreadInfo = true;
@@ -241,7 +262,9 @@ abstract class BaseMessageCollection {
 
     if (_isDisposed) {
       if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-        throw exception;
+        if (_chat.dbManager.isEnabled() == false) {
+          throw exception;
+        }
       }
       return;
     }
@@ -256,8 +279,16 @@ abstract class BaseMessageCollection {
       //+ [DBManager]
       if (_chat.dbManager.isEnabled()) {
         final List<RootMessage> addedMessages = [...messages];
-        final Set<String> deletedMessageIds =
-            messageList.map((message) => message.rootId).toSet();
+        final Set<String> deletedMessageIds = messageList
+            .where((message) {
+              if (message is BaseMessage &&
+                  message.sendingStatus == SendingStatus.succeeded) {
+                return true;
+              }
+              return false;
+            })
+            .map((message) => message.rootId)
+            .toSet();
 
         await _chat.collectionManager.sendEventsToMessageCollection(
           messageCollection: this,
@@ -285,30 +316,10 @@ abstract class BaseMessageCollection {
       }
     }
 
-    //+ [DBManager]
-    if (_chat.dbManager.isEnabled()) {
-      // Failed messages
-      final failedMessages = await _chat.dbManager.getFailedMessages(
-        channelType: _channel.channelType,
-        channelUrl: _channel.channelUrl,
-        reverse: _initializeParams.reverse,
-      );
-
-      if (failedMessages.isNotEmpty) {
-        await _chat.collectionManager.sendEventsToMessageCollection(
-          messageCollection: this,
-          baseChannel: _channel,
-          eventSource: CollectionEventSource.messageCacheInitialize,
-          sendingStatus: SendingStatus.failed,
-          addedMessages: failedMessages,
-          isReversedAddedMessages: _initializeParams.reverse,
-        );
-      }
-    }
-    //- [DBManager]
-
     if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-      throw exception;
+      if (_chat.dbManager.isEnabled() == false) {
+        throw exception;
+      }
     }
   }
 
@@ -518,7 +529,9 @@ abstract class BaseMessageCollection {
     if (_isDisposed) {
       _isLoading = false;
       if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-        throw exception;
+        if (_chat.dbManager.isEnabled() == false) {
+          throw exception;
+        }
       }
       return;
     }
@@ -585,7 +598,9 @@ abstract class BaseMessageCollection {
 
     _isLoading = false;
     if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-      throw exception;
+      if (_chat.dbManager.isEnabled() == false) {
+        throw exception;
+      }
     }
   }
 

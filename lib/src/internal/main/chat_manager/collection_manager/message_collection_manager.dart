@@ -498,6 +498,8 @@ extension MessageCollectionManager on CollectionManager {
           if (updatedChannel.channelUrl ==
               messageCollection.baseChannel.channelUrl) {
             if (!messageCollection.isDisposed) {
+              messageCollection.baseChannel = updatedChannel;
+
               if (messageCollection.baseHandler is MessageCollectionHandler &&
                   updatedChannel is GroupChannel) {
                 (messageCollection.baseHandler as MessageCollectionHandler)

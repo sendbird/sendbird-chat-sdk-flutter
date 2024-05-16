@@ -113,7 +113,7 @@ extension GroupChannelCollectionManager on CollectionManager {
         (updatedChannels != null && updatedChannels.isNotEmpty) ||
         (deletedChannelUrls != null && deletedChannelUrls.isNotEmpty)) {
       for (final channelCollection in groupChannelCollections) {
-        sendEventsToGroupChannelCollection(
+        await sendEventsToGroupChannelCollection(
           channelCollection: channelCollection,
           eventSource: eventSource,
           addedChannels: addedChannels,
@@ -136,7 +136,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 //------------------------------//
 // Send events to groupChannel collection
 //------------------------------//
-  void sendEventsToGroupChannelCollection({
+  Future<void> sendEventsToGroupChannelCollection({
     required GroupChannelCollection channelCollection,
     required CollectionEventSource eventSource,
     List<GroupChannel>? addedChannels,

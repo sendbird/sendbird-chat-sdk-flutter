@@ -377,10 +377,10 @@ class GroupChannel extends BaseChannel {
     if (!isPublic) removeFromCache(chat);
   }
 
-  static GroupChannel? getChannelFromCache(
+  static Future<GroupChannel?> getChannelFromCache(
     String channelUrl, {
     Chat? chat,
-  }) {
+  }) async {
     chat ??= SendbirdChat().chat;
 
     final channel =
@@ -389,6 +389,19 @@ class GroupChannel extends BaseChannel {
       channel.fromCache = true;
       return channel;
     }
+
+    //+ [DBManager]
+    if (chat.dbManager.isEnabled()) {
+      if (chat.currentUser != null) {
+        final channel = await chat.dbManager.getGroupChannel(channelUrl);
+        if (channel != null) {
+          channel.fromCache = true;
+          return channel;
+        }
+      }
+    }
+    //- [DBManager]
+
     return null;
   }
 

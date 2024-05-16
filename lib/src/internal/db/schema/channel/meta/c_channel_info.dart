@@ -15,13 +15,13 @@ class CChannelInfo {
 
   CChannelInfo();
 
-  factory CChannelInfo.fromChangeLogInfo(ChannelInfo info) {
+  factory CChannelInfo.fromChannelInfo(ChannelInfo info) {
     return CChannelInfo()
       ..lastChannelToken = info.lastChannelToken
       ..isChannelBackSyncCompleted = info.isChannelBackSyncCompleted;
   }
 
-  Future<ChannelInfo> toChangeLogInfo(Chat chat, Isar isar) async {
+  Future<ChannelInfo> toChannelInfo(Chat chat, Isar isar) async {
     return ChannelInfo(
       lastChannelToken: lastChannelToken,
       isChannelBackSyncCompleted: isChannelBackSyncCompleted,
@@ -30,20 +30,20 @@ class CChannelInfo {
 
   static Future<CChannelInfo> upsert(
       Chat chat, Isar isar, ChannelInfo info) async {
-    final cChangeLog = CChannelInfo.fromChangeLogInfo(info);
+    final cChannelInfo = CChannelInfo.fromChannelInfo(info);
 
     // ChangeLogInfo
     await chat.dbManager.write(() async {
       await isar.cChannelInfos.clear();
-      await isar.cChannelInfos.put(cChangeLog);
+      await isar.cChannelInfos.put(cChannelInfo);
     }, force: true);
 
-    return cChangeLog;
+    return cChannelInfo;
   }
 
   static Future<ChannelInfo?> get(Chat chat, Isar isar) async {
-    final cChangeLog = await isar.cChannelInfos.where().findFirst();
-    return await cChangeLog?.toChangeLogInfo(chat, isar);
+    final cChannelInfo = await isar.cChannelInfos.where().findFirst();
+    return await cChannelInfo?.toChannelInfo(chat, isar);
   }
 
   static Future<void> delete(Chat chat, Isar isar) async {
