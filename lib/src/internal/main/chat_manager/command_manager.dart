@@ -950,7 +950,7 @@ class CommandManager {
           }
         } else {
           final groupChannel =
-              GroupChannel.getChannelFromCache(event.channelUrl);
+              await GroupChannel.getChannelFromCache(event.channelUrl);
 
           if (groupChannel != null) {
             if (groupChannel.isSuper) {

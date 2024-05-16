@@ -1,3 +1,12 @@
+## v4.2.14 (May 16, 2024)
+
+### Improvements
+- Fixed the exceptions regarding url encoding for api
+- Fixed the bug that profile image is not updated on web
+- Fixed the bugs regarding event, exception and cache
+- Modified the event order regarding failed messages in message collection
+- Improved stability
+
 ## v4.2.13 (Apr 30, 2024)
 
 ### Improvements
@@ -12,9 +21,9 @@
 - Fixed `MessageCollection` regarding `resetMyHistory()` in `GroupChannel`
 - Fixed `removeFailedMessage()` and `removeAllFailedMessages()` in `MessageCollection`
 - Fixed the bugs regarding message change log, pending message removal, typing status and delivered status
-- Added improvements on `getUndeliveredMembers()` method to prevent a potential problem
-  The return type for `getUndeliveredMembers()` was updated from `List<Member>` to `List<Member>?`
-  Please update this part of your code if you use `getUndeliveredMembers()`
+- Added improvements on `getUndeliveredMembers()` method to prevent a potential problem.
+  The return type for `getUndeliveredMembers()` was updated from `List<Member>` to `List<Member>?`.
+  Please update this part of your code if you use `getUndeliveredMembers()`.
 - Improved stability
 
 ## v4.2.11 (Apr 18, 2024)

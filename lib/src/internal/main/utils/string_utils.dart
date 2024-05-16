@@ -19,3 +19,7 @@ String getFileExtension(String fileName) {
 String getUrlEncodedUserId(Chat chat, String? userId) {
   return Uri.encodeComponent(userId ?? chat.chatContext.currentUserId ?? '');
 }
+
+List<String> getUrlEncodedUserIds(Chat chat, List<String> userIds) {
+  return userIds.map((userId) => Uri.encodeComponent(userId)).toList();
+}

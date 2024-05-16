@@ -22,16 +22,21 @@ class UserInfoUpdateRequest extends ApiRequest {
     ProgressHandler? progressHandler,
   }) : super(chat: chat, userId: userId) {
     url = 'users/${getUrlEncodedUserId(chat, userId)}';
+
     body = {
       'nickname': nickname,
-      if (profileFileInfo != null) 'profile_file': profileFileInfo,
-      if (profileFileInfo?.fileUrl != null)
-        'profile_url': profileFileInfo?.fileUrl,
       'discovery_keys': discoveryKeys,
       'preferred_languages': preferredLanguages,
     };
+
+    if (profileFileInfo != null && profileFileInfo.hasBinary) {
+      body['profile_file'] = profileFileInfo;
+    } else {
+      body['profile_url'] = profileFileInfo?.fileUrl;
+    }
     body.removeWhere((key, value) => value == null);
-    isMultipart = profileFileInfo?.file != null;
+
+    isMultipart = profileFileInfo != null && profileFileInfo.hasBinary;
     this.progressHandler = progressHandler;
   }
 

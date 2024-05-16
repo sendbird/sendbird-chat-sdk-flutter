@@ -14,7 +14,8 @@ class UserUnblockRequest extends ApiRequest {
     String? userId,
     required String targetId,
   }) : super(chat: chat, userId: userId) {
-    url = 'users/${getUrlEncodedUserId(chat, userId)}/block/$targetId';
+    url =
+        'users/${getUrlEncodedUserId(chat, userId)}/block/${getUrlEncodedUserId(chat, targetId)}';
     body = {'target_id': targetId};
   }
 }
