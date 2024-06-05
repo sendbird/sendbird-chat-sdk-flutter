@@ -23,4 +23,5 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
           : NotificationInfo.fromJson(
               json['notifications'] as Map<String, dynamic>),
       allowSdkStatsUpload: json['allow_sdk_log_ingestion'] as bool? ?? true,
+      disableSuperGroupMack: json['disable_supergroup_mack'] as bool? ?? false,
     );

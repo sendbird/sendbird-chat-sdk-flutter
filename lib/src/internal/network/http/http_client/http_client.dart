@@ -174,14 +174,13 @@ class HttpClient {
     return _response(res);
   }
 
-  Future<dynamic> requestMultipart({
+  MultipartRequest _createMultipartRequest({
     required HttpMethod method,
     required Uri uri,
-    Map<String, dynamic>? queryParams,
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     ProgressHandler? progressHandler,
-  }) async {
+  }) {
     final request = MultipartRequest(
       method.asString().toUpperCase(),
       uri,
@@ -190,9 +189,10 @@ class HttpClient {
 
     body?.forEach((key, value) {
       if (value is FileInfo) {
-        final http.MultipartFile part;
+        final http.MultipartFile file;
+
         if (value.fileBytes != null) {
-          part = http.MultipartFile.fromBytes(
+          file = http.MultipartFile.fromBytes(
             key,
             value.fileBytes!,
             filename: value.fileName,
@@ -201,7 +201,7 @@ class HttpClient {
                 : MediaType.parse(value.mimeType!),
           );
         } else {
-          part = http.MultipartFile(
+          file = http.MultipartFile(
             key,
             value.file!.openRead(),
             value.file!.lengthSync(),
@@ -209,7 +209,8 @@ class HttpClient {
             contentType: MediaType.parse(value.mimeType!),
           );
         }
-        request.files.add(part);
+
+        request.files.add(file);
       } else if (value is List<String>) {
         request.fields[key] = value.join(',');
       } else if (value is List) {
@@ -225,19 +226,68 @@ class HttpClient {
     request.headers.addAll(_commonHeaders());
     if (headers != null && headers.isNotEmpty) request.headers.addAll(headers);
 
-    String? reqId = body?['request_id'];
-    if (reqId != null) uploadingMultipartRequests[reqId] = request;
+    return request;
+  }
+
+  Future<dynamic> requestMultipart({
+    required HttpMethod method,
+    required Uri uri,
+    Map<String, dynamic>? queryParams,
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+    ProgressHandler? progressHandler,
+  }) async {
+    final request = _createMultipartRequest(
+      method: method,
+      uri: uri,
+      body: body,
+      headers: headers,
+      progressHandler: progressHandler,
+    );
 
     sbLog.d(StackTrace.current,
         '\n-[url] $uri\n-[method] $method\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
-    http.Response res = await http.Response.fromStream(await request.send());
-    if (await _checkSessionKeyExpired(res)) {
-      final secondRequest = _copyRequest(request);
-      if (secondRequest != null) {
-        res = await http.Response.fromStream(await secondRequest.send());
+    String? reqId = body?['request_id'];
+    http.Response res;
+    try {
+      if (reqId != null) uploadingMultipartRequests[reqId] = request;
+      res = await http.Response.fromStream(await request.send());
+    } catch (e) {
+      if (e is http.ClientException) {
+        await Future.delayed(const Duration(milliseconds: 1000)); // Check
+
+        final retryRequest = _createMultipartRequest(
+          method: method,
+          uri: uri,
+          body: body,
+          headers: headers,
+          progressHandler: progressHandler,
+        );
+
+        sbLog.d(StackTrace.current, 'Retry');
+        if (reqId != null) uploadingMultipartRequests[reqId] = request;
+        res = await http.Response.fromStream(await retryRequest.send());
+
+        uploadingMultipartRequests.remove(reqId);
+        return _response(res);
       }
+      rethrow;
     }
+
+    if (await _checkSessionKeyExpired(res)) {
+      final secondRequest = _createMultipartRequest(
+        method: method,
+        uri: uri,
+        body: body,
+        headers: headers,
+        progressHandler: progressHandler,
+      );
+
+      if (reqId != null) uploadingMultipartRequests[reqId] = request;
+      res = await http.Response.fromStream(await secondRequest.send());
+    }
+
     uploadingMultipartRequests.remove(reqId);
     return _response(res);
   }
@@ -350,10 +400,6 @@ class HttpClient {
       requestCopy = http.Request(request.method, request.url)
         ..encoding = request.encoding
         ..bodyBytes = request.bodyBytes;
-    } else if (request is http.MultipartRequest) {
-      requestCopy = http.MultipartRequest(request.method, request.url)
-        ..fields.addAll(request.fields)
-        ..files.addAll(request.files);
     } else {
       throw NotSupportedException();
     }

@@ -2,7 +2,6 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
@@ -24,8 +23,13 @@ class OpenChannelRefreshRequest extends ApiRequest {
 
   @override
   Future<OpenChannel> response(Map<String, dynamic> res) async {
-    final channel = OpenChannel.fromJsonWithChat(chat, res)..saveToCache(chat);
-    res.cacheMetaData(channel: channel, ts: res['ts']);
+    final channel = OpenChannel.fromJsonWithChat(chat, res);
+    channel.saveToCache(
+      chat,
+      channel: channel,
+      res: res,
+      ts: res['ts'],
+    );
     return channel;
   }
 }

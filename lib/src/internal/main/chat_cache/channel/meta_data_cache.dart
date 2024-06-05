@@ -1,31 +1,22 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/policy.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 class _CachedData<T> {
   T value;
-  bool isRemoved;
   int timestamp;
 
   _CachedData({
     required this.value,
-    this.isRemoved = false,
     this.timestamp = 0,
   });
 }
 
-class MetaDataCache<T> implements Cacheable, Evictable {
-  static const evictionDurationSec = 180;
-
+class MetaDataCache<T> implements Cacheable {
   ChannelType _channelType;
-  final String _channelUrl;
-
-  @override
-  late EvictionPolicy policy;
-
-  final Map<String, _CachedData<T>> _cachedDataMap = {};
+  String _channelUrl;
+  Map<String, _CachedData<T>> _cachedDataMap = {};
 
   MetaDataCache({
     required ChannelType channelType,
@@ -34,8 +25,6 @@ class MetaDataCache<T> implements Cacheable, Evictable {
     int? timestamp,
   })  : _channelType = channelType,
         _channelUrl = channelUrl {
-    policy = PeriodEviction(periodInSeconds: evictionDurationSec, evict: evict);
-
     data.forEach((key, value) {
       final data = _CachedData<T>(
         value: value,
@@ -46,24 +35,13 @@ class MetaDataCache<T> implements Cacheable, Evictable {
   }
 
   @override
-  void evict() {
-    final keys = _cachedDataMap.keys.toList();
-    for (final key in keys) {
-      final data = _cachedDataMap[key]!;
-      final diffMilliSec =
-          DateTime.now().millisecondsSinceEpoch - data.timestamp;
-      if (data.isRemoved && (diffMilliSec > evictionDurationSec * 1000)) {
-        _cachedDataMap.remove(key);
-      }
-    }
-  }
-
-  @override
   bool dirty = false;
 
   @override
   void copyWith(dynamic other) {
     _channelType = other._channelType;
+    _channelUrl = other._channelUrl;
+    _cachedDataMap = other._cachedDataMap;
   }
 
   @override
@@ -74,36 +52,36 @@ class MetaDataCache<T> implements Cacheable, Evictable {
 
   T? getWithKey(String key) {
     final data = _cachedDataMap[key];
-    if (data == null || data.isRemoved) return null;
+    if (data == null) return null;
     return data.value;
   }
 
   Map<String, T?> getWithKeys(List<String> keys) {
     if (keys.isEmpty) return {};
-    return {for (var key in keys) key: getWithKey(key)};
+    return {for (final key in keys) key: getWithKey(key)};
   }
 
   Map<String, T> getAll() {
     final cached = <String, T>{};
-    for (var key in _cachedDataMap.keys) {
-      final validValue = getWithKey(key);
-      if (validValue != null) cached[key] = validValue;
+    for (final key in _cachedDataMap.keys) {
+      final value = getWithKey(key);
+      if (value != null) {
+        cached[key] = value;
+      }
     }
     return cached;
   }
 
-  void addWithKey(String key, T value, int timestamp) {
+  void addWithKey(String key, T value, int ts) {
     if (value == null) return;
     final existData = _cachedDataMap[key];
     if (existData == null) {
-      final newData = _CachedData<T>(value: value, timestamp: timestamp);
+      final newData = _CachedData<T>(value: value, timestamp: ts);
       _cachedDataMap[key] = newData;
-    } else if (existData.timestamp < timestamp) {
+    } else if (existData.timestamp < ts) {
       existData.value = value;
-      existData.timestamp = timestamp;
+      existData.timestamp = ts;
     }
-
-    if (_cachedDataMap.length == 1) (policy as PeriodEviction).start();
   }
 
   void addMap(Map<String, T> dataMap, int? ts) {
@@ -116,12 +94,8 @@ class MetaDataCache<T> implements Cacheable, Evictable {
     final existData = _cachedDataMap[key];
     final time = ts ?? DateTime.now().millisecondsSinceEpoch;
     if (existData != null && existData.timestamp < time) {
-      existData
-        ..isRemoved = true
-        ..timestamp = time;
+      _cachedDataMap.remove(key);
     }
-
-    if (_cachedDataMap.isEmpty) (policy as PeriodEviction).stop();
   }
 
   void removeWithKeys(List<String> keys, int? ts) {
@@ -131,13 +105,12 @@ class MetaDataCache<T> implements Cacheable, Evictable {
     }
   }
 
-  void removeAll(int timestamp) {
-    _cachedDataMap.forEach((k, v) {
-      v.isRemoved = true;
-      v.timestamp = timestamp;
-    });
+  void removeAll(int ts) {
+    removeWithKeys(_cachedDataMap.keys.toList(), ts);
+  }
 
-    (policy as PeriodEviction).stop();
+  void clear() {
+    _cachedDataMap.clear();
   }
 
   void merge(MetaDataCache<T> others) {

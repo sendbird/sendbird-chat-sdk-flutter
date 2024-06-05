@@ -11,6 +11,7 @@ extension MessageCollectionManager on CollectionManager {
         StackTrace.current, 'channelUrl: ${collection.baseChannel.channelUrl}');
 
     baseMessageCollections.add(collection);
+    _setInitialMessageChangeLogsAndMessagesGapTs();
   }
 
   void removeMessageCollection(BaseMessageCollection collection) {
@@ -21,9 +22,39 @@ extension MessageCollectionManager on CollectionManager {
   }
 
 //------------------------------//
+// Clean up
+//------------------------------//
+  void cleanUpMessageCollections() {
+    for (final messageCollection in baseMessageCollections) {
+      messageCollection.cleanUp();
+    }
+  }
+
+  void disposeMessageCollection(String channelUrl) {
+    for (final messageCollection in baseMessageCollections) {
+      if (messageCollection.baseChannel.channelUrl == channelUrl) {
+        messageCollection.cleanUp();
+      }
+    }
+  }
+
+//------------------------------//
+// My mute info
+//------------------------------//
+  void setUnmuteTimer(GroupChannel channel, int remainingDuration) {
+    for (final messageCollection in baseMessageCollections) {
+      if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
+        messageCollection.setUnmuteTimer(remainingDuration);
+        break;
+      }
+    }
+  }
+
+//------------------------------//
 // onMessageSentByMe
 //------------------------------//
   void onMessageSentByMe({
+    required BaseChannel channel,
     required BaseMessage pendingMessage,
     required RootMessage sentMessage,
   }) async {
@@ -39,6 +70,15 @@ extension MessageCollectionManager on CollectionManager {
         isReversedAddedMessages: messageCollection.params.reverse,
         deletedMessageIds: [pendingMessage.messageId],
         doNotSendDeleteEvent: true,
+      );
+    }
+
+    // (includeEmpty == false)
+    if (channel is GroupChannel) {
+      sendEventsToGroupChannelCollectionList(
+        eventSource: CollectionEventSource.eventMessageSent,
+        addedChannels: [channel],
+        doNotUpsertAddedChannels: true,
       );
     }
   }
@@ -85,15 +125,18 @@ extension MessageCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    final info =
-        await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
-    if (info != null) {
-      lastToken = info.lastMessageToken;
-      token = lastToken;
+    if (_chat.dbManager.isInitialized()) {
+      final info =
+          await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
+      if (info != null) {
+        lastToken = info.lastMessageToken;
+        token = lastToken;
+      }
+    } else {
+      token = lastRequestTokenForMessageChangeLogs; // For web without db
     }
     //- [DBManager]
 
-    bool hasMore = false;
     do {
       if (token == null) {
         changeLogs = await channel.getMessageChangeLogs(
@@ -110,23 +153,26 @@ extension MessageCollectionManager on CollectionManager {
       updatedMessages.addAll(changeLogs.updatedMessages);
       deletedMessageIds.addAll(changeLogs.deletedMessageIds);
 
-      hasMore = changeLogs.token != null && changeLogs.token != token;
       token = changeLogs.token;
-    } while (hasMore); // [x] changeLogs.hasMore
+    } while (changeLogs.hasMore);
 
     //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      MessageChangeLogInfo? info =
-          await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
-      if (info != null) {
-        info.lastMessageToken = token;
+      if (_chat.dbManager.isInitialized()) {
+        MessageChangeLogInfo? info =
+            await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
+        if (info != null) {
+          info.lastMessageToken = token;
+        } else {
+          info = MessageChangeLogInfo(
+            channelUrl: channel.channelUrl,
+            lastMessageToken: token,
+          );
+        }
+        await _chat.dbManager.upsertMessageChangeLogInfo(info);
       } else {
-        info = MessageChangeLogInfo(
-          channelUrl: channel.channelUrl,
-          lastMessageToken: token,
-        );
+        lastRequestTokenForMessageChangeLogs = token;
       }
-      await _chat.dbManager.upsertMessageChangeLogInfo(info);
     }
     //- [DBManager]
 
@@ -167,15 +213,18 @@ extension MessageCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    final info =
-        await _chat.dbManager.getMessageChangeLogInfo(groupChannel.channelUrl);
-    if (info != null) {
-      lastToken = info.lastPollToken;
-      token = lastToken;
+    if (_chat.dbManager.isInitialized()) {
+      final info = await _chat.dbManager
+          .getMessageChangeLogInfo(groupChannel.channelUrl);
+      if (info != null) {
+        lastToken = info.lastPollToken;
+        token = lastToken;
+      }
+    } else {
+      token = lastRequestTokenForPollChangeLogs; // For web without db
     }
     //- [DBManager]
 
-    bool hasMore = false;
     do {
       if (token == null) {
         changeLogs = await groupChannel.getPollChangeLogsSinceTimestamp(
@@ -201,23 +250,28 @@ extension MessageCollectionManager on CollectionManager {
 
       // changeLogs.deletedPollIds => changeLogs.deletedMessageIds
 
-      hasMore = changeLogs.token != null && changeLogs.token != token;
       token = changeLogs.token;
-    } while (hasMore); // [x] changeLogs.hasMore
+    } while (changeLogs.hasMore);
 
+    //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      MessageChangeLogInfo? info = await _chat.dbManager
-          .getMessageChangeLogInfo(groupChannel.channelUrl);
-      if (info != null) {
-        info.lastPollToken = token;
+      if (_chat.dbManager.isInitialized()) {
+        MessageChangeLogInfo? info = await _chat.dbManager
+            .getMessageChangeLogInfo(groupChannel.channelUrl);
+        if (info != null) {
+          info.lastPollToken = token;
+        } else {
+          info = MessageChangeLogInfo(
+            channelUrl: groupChannel.channelUrl,
+            lastPollToken: token,
+          );
+        }
+        await _chat.dbManager.upsertMessageChangeLogInfo(info);
       } else {
-        info = MessageChangeLogInfo(
-          channelUrl: groupChannel.channelUrl,
-          lastPollToken: token,
-        );
+        lastRequestTokenForPollChangeLogs = token;
       }
-      await _chat.dbManager.upsertMessageChangeLogInfo(info);
     }
+    //- [DBManager]
 
     sendEventsToMessageCollection(
       messageCollection: messageCollection,

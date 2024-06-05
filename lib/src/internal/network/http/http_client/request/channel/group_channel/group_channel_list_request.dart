@@ -2,15 +2,14 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/group_channel_filter.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/model/group_channel_filter.dart';
 
 class GroupChannelListRequest extends ApiRequest {
   @override
@@ -79,12 +78,12 @@ class GroupChannelListRequest extends ApiRequest {
         ChannelListQueryResponse<GroupChannel>.fromJsonWithChat(chat, res);
     for (var index = 0; index < response.channels.length; index++) {
       final channel = response.channels[index];
-      channel.saveToCache(chat);
-      (res['channels'][index] as Map<String, dynamic>)
-          .cacheMetaData(channel: channel, ts: res['ts']);
-      (res['channels'][index] as Map<String, dynamic>).cacheReadStatus(channel);
-      (res['channels'][index] as Map<String, dynamic>)
-          .cacheDeliveryStatus(channel);
+      channel.saveToCache(
+        chat,
+        channel: channel,
+        res: res['channels'][index] as Map<String, dynamic>,
+        ts: res['ts'],
+      );
     }
     return response;
   }

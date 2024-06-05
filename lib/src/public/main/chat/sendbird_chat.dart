@@ -66,8 +66,12 @@ class SendbirdChat {
     SendbirdChatOptions? options,
   }) async {
     bool result = false;
-    _instance._chat.chatContext.appId = appId;
-    _instance._chat.chatContext.options = options ?? SendbirdChatOptions();
+
+    _instance._chat.chatContext.init(
+      chat: _instance._chat,
+      appId: appId,
+      options: options ?? SendbirdChatOptions(),
+    );
 
     //+ [DBManager]
     await _instance._chat.dbManager.init();

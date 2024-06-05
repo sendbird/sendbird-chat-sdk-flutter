@@ -48,7 +48,7 @@ class TypingStatus implements Cacheable {
     // _processTyping() in CommandManager
     typingTimer = Timer(Duration(seconds: _typingTimeSec), () async {
       try {
-        final status = TypingStatus(
+        final typingStatus = TypingStatus(
           channelType: ChannelType.group,
           channelUrl: channelUrl,
           user: user,
@@ -56,7 +56,7 @@ class TypingStatus implements Cacheable {
         );
 
         final channel = await GroupChannel.getChannel(channelUrl);
-        status.removeFromCache(channel.chat);
+        typingStatus.removeFromCache(channel.chat);
 
         channel.chat.eventManager.notifyChannelTypingStatusUpdated(channel);
       } catch (e) {

@@ -266,12 +266,6 @@ class GroupChannelListQuery extends BaseQuery {
       for (final channel in res.channels) {
         channel.set(chat);
       }
-
-      //+ [DBManager]
-      if (chat.dbManager.isEnabled()) {
-        await chat.dbManager.upsertGroupChannels(res.channels);
-      }
-      //- [DBManager]
     } catch (_) {
       isLoading = false;
       rethrow;

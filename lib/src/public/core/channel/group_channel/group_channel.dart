@@ -292,6 +292,36 @@ class GroupChannel extends BaseChannel {
     }
   }
 
+  /// Gets a `GroupChannel` with given channel URL from cache.
+  static Future<GroupChannel?> getChannelFromCache(
+    String channelUrl, {
+    Chat? chat,
+  }) async {
+    chat ??= SendbirdChat().chat;
+
+    final channel =
+        chat.channelCache.find<GroupChannel>(channelKey: channelUrl);
+    if (channel != null) {
+      channel.fromCache = true;
+      return channel;
+    }
+
+    //+ [DBManager]
+    if (chat.dbManager.isEnabled()) {
+      if (chat.currentUser != null) {
+        final channel = await chat.dbManager.getGroupChannel(channelUrl);
+        if (channel != null) {
+          channel.fromCache = true;
+          channel.saveToCache(chat);
+          return channel;
+        }
+      }
+    }
+    //- [DBManager]
+
+    return null;
+  }
+
   /// Refreshes all the data of this channel.
   static Future<GroupChannel> refresh(
     String channelUrl, {
@@ -313,12 +343,6 @@ class GroupChannel extends BaseChannel {
         passive: false,
       ),
     );
-
-    //+ [DBManager]
-    if (chat.dbManager.isEnabled()) {
-      await chat.dbManager.upsertGroupChannels([channel]);
-    }
-    //- [DBManager]
 
     return channel;
   }
@@ -377,36 +401,24 @@ class GroupChannel extends BaseChannel {
     if (!isPublic) removeFromCache(chat);
   }
 
-  static Future<GroupChannel?> getChannelFromCache(
-    String channelUrl, {
-    Chat? chat,
-  }) async {
-    chat ??= SendbirdChat().chat;
-
-    final channel =
-        chat.channelCache.find<GroupChannel>(channelKey: channelUrl);
-    if (channel != null) {
-      channel.fromCache = true;
-      return channel;
-    }
-
-    //+ [DBManager]
-    if (chat.dbManager.isEnabled()) {
-      if (chat.currentUser != null) {
-        final channel = await chat.dbManager.getGroupChannel(channelUrl);
-        if (channel != null) {
-          channel.fromCache = true;
-          return channel;
-        }
-      }
-    }
-    //- [DBManager]
-
-    return null;
-  }
-
   Member? getMember(String userId) {
     return members.firstWhereOrNull((element) => element.userId == userId);
+  }
+
+  Map<String, int> getCachedReadStatus(String channelUrl) {
+    return chat.channelCache.getCachedReadStatus(channelUrl);
+  }
+
+  void setCachedReadStatus(Map<String, int> readStatus) {
+    chat.channelCache.setCachedReadStatus(channelUrl, readStatus);
+  }
+
+  Map<String, int> getCachedDeliveryStatus(String channelUrl) {
+    return chat.channelCache.getCachedDeliveryStatus(channelUrl);
+  }
+
+  void setCachedDeliveryStatus(Map<String, int> deliveryStatus) {
+    chat.channelCache.setCachedDeliveryStatus(channelUrl, deliveryStatus);
   }
 
   factory GroupChannel.fromJson(Map<String, dynamic> json) {

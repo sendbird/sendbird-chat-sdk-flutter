@@ -143,17 +143,17 @@ class SessionManager {
   }
 
   Future<void> _encryptSessionKey(String? sessionKey) async {
+    final userId = _chat.chatContext.currentUserId;
+    if (userId == null) {
+      return; // Check tempSessionKey in markAsDelivered()
+    }
+
     final prefs = await SharedPreferences.getInstance();
 
     if (sessionKey == null) {
       prefs.remove(_userIdKeyPath);
       prefs.remove(_sessionKeyPath);
       return;
-    }
-
-    final userId = _chat.chatContext.currentUserId;
-    if (userId == null) {
-      throw ConnectionRequiredException();
     }
 
     List<int> userId24Data = [];

@@ -1,3 +1,13 @@
+## v4.2.15 (Jun 5, 2024)
+
+### Improvements
+- Fixed the bugs regarding my mute info
+- Fixed the bugs regarding changelogs on web
+- Fixed the bugs regarding connection management
+- Fixed the bugs regarding `markAsDelivered()` in `SendbirdChat`
+- Added `metaData`, `readStatus`, `deliveryStatus` in channel db
+- Fixed a bug when `includeEmpty` is `false` in `GroupChannelCollection`
+
 ## v4.2.14 (May 16, 2024)
 
 ### Improvements

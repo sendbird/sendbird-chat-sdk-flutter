@@ -2,7 +2,6 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/string_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
@@ -39,12 +38,12 @@ class FeedChannelListRequest extends ApiRequest {
     final response = FeedChannelListQueryResponse.fromJsonWithChat(chat, res);
     for (var index = 0; index < response.channels.length; index++) {
       final channel = response.channels[index];
-      channel.saveToCache(chat);
-      (res['channels'][index] as Map<String, dynamic>)
-          .cacheMetaData(channel: channel, ts: res['ts']);
-      (res['channels'][index] as Map<String, dynamic>).cacheReadStatus(channel);
-      (res['channels'][index] as Map<String, dynamic>)
-          .cacheDeliveryStatus(channel);
+      channel.saveToCache(
+        chat,
+        channel: channel,
+        res: res['channels'][index] as Map<String, dynamic>,
+        ts: res['ts'],
+      );
     }
     return response;
   }

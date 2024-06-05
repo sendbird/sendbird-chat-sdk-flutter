@@ -262,13 +262,13 @@ class FeedChannel extends BaseChannel {
       final ts = res['ts'] ?? 0;
 
       if (chat.currentUser != null) {
-        final status = ReadStatus(
+        final readStatus = ReadStatus(
           userId: chat.currentUser!.userId,
           timestamp: ts,
           channelUrl: channelUrl,
           channelType: channelType,
         );
-        status.saveToCache(chat);
+        readStatus.saveToCache(chat);
       }
       groupChannel.myLastRead = ts;
 

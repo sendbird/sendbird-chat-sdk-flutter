@@ -58,11 +58,11 @@ extension GroupChannelExtensions on GroupChannel {
   }
 
   int myReadReceipt() {
-    final status = chat.channelCache.find<ReadStatus>(
+    final readStatus = chat.channelCache.find<ReadStatus>(
       channelKey: channelUrl,
       key: chat.chatContext.currentUserId,
     );
-    return status?.timestamp ?? 0;
+    return readStatus?.timestamp ?? 0;
   }
 
   bool get canChangeUnreadMessageCount =>
@@ -92,19 +92,19 @@ extension GroupChannelExtensions on GroupChannel {
     members.sort((a, b) => a.nickname.compareTo(b.nickname));
 
     final ts = DateTime.now().millisecondsSinceEpoch;
-    final delivery = DeliveryStatus(
+    final deliveryStatus = DeliveryStatus(
       channelUrl: channelUrl,
       updatedDeliveryStatus: {newMember.userId: ts},
     );
-    final read = ReadStatus(
+    final readStatus = ReadStatus(
       channelType: channelType,
       channelUrl: channelUrl,
       timestamp: ts,
       userId: newMember.userId,
     );
 
-    delivery.saveToCache(chat);
-    read.saveToCache(chat);
+    deliveryStatus.saveToCache(chat);
+    readStatus.saveToCache(chat);
 
     _refreshMemberCounts();
   }

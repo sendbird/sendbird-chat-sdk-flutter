@@ -53,203 +53,218 @@ final CGroupChannelSchema = CollectionSchema(
       name: r'data',
       type: IsarType.string,
     ),
-    r'dirty': PropertySchema(
+    r'deliveryStatus': PropertySchema(
       id: 7,
+      name: r'deliveryStatus',
+      type: IsarType.string,
+    ),
+    r'dirty': PropertySchema(
+      id: 8,
       name: r'dirty',
       type: IsarType.bool,
     ),
     r'fromCache': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'fromCache',
       type: IsarType.bool,
     ),
     r'hiddenState': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'hiddenState',
       type: IsarType.byte,
       enumMap: _CGroupChannelhiddenStateEnumValueMap,
     ),
     r'invitedAt': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'invitedAt',
       type: IsarType.long,
     ),
     r'inviter': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'inviter',
       type: IsarType.object,
       target: r'CMember',
     ),
     r'isAccessCodeRequired': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'isAccessCodeRequired',
       type: IsarType.bool,
     ),
     r'isBroadcast': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'isBroadcast',
       type: IsarType.bool,
     ),
     r'isChatNotification': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'isChatNotification',
       type: IsarType.bool,
     ),
     r'isDiscoverable': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'isDiscoverable',
       type: IsarType.bool,
     ),
     r'isDistinct': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'isDistinct',
       type: IsarType.bool,
     ),
     r'isEphemeral': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'isEphemeral',
       type: IsarType.bool,
     ),
     r'isExclusive': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'isExclusive',
       type: IsarType.bool,
     ),
     r'isFrozen': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'isFrozen',
       type: IsarType.bool,
     ),
     r'isHidden': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'isHidden',
       type: IsarType.bool,
     ),
     r'isPublic': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'isPublic',
       type: IsarType.bool,
     ),
     r'isSuper': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'isSuper',
       type: IsarType.bool,
     ),
     r'joinedAt': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'joinedAt',
       type: IsarType.long,
     ),
     r'joinedMemberCount': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'joinedMemberCount',
       type: IsarType.long,
     ),
     r'lastMessageCreatedAt': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'lastMessageCreatedAt',
       type: IsarType.long,
     ),
     r'lastMessageRootId': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'lastMessageRootId',
       type: IsarType.string,
     ),
     r'lastMessageType': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'lastMessageType',
       type: IsarType.byte,
       enumMap: _CGroupChannellastMessageTypeEnumValueMap,
     ),
     r'lastPinnedMessageRootId': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'lastPinnedMessageRootId',
       type: IsarType.string,
     ),
     r'lastPinnedMessageType': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'lastPinnedMessageType',
       type: IsarType.byte,
       enumMap: _CGroupChannellastPinnedMessageTypeEnumValueMap,
     ),
     r'memberCount': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'memberCount',
       type: IsarType.long,
     ),
     r'members': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'members',
       type: IsarType.objectList,
       target: r'CMember',
     ),
     r'messageOffsetTimestamp': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'messageOffsetTimestamp',
       type: IsarType.long,
     ),
     r'messageSurvivalSeconds': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'messageSurvivalSeconds',
       type: IsarType.long,
     ),
+    r'metaData': PropertySchema(
+      id: 35,
+      name: r'metaData',
+      type: IsarType.string,
+    ),
     r'myCountPreference': PropertySchema(
-      id: 34,
+      id: 36,
       name: r'myCountPreference',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyCountPreferenceEnumValueMap,
     ),
     r'myLastRead': PropertySchema(
-      id: 35,
+      id: 37,
       name: r'myLastRead',
       type: IsarType.long,
     ),
     r'myMemberState': PropertySchema(
-      id: 36,
+      id: 38,
       name: r'myMemberState',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyMemberStateEnumValueMap,
     ),
     r'myMutedState': PropertySchema(
-      id: 37,
+      id: 39,
       name: r'myMutedState',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyMutedStateEnumValueMap,
     ),
     r'myPushTriggerOption': PropertySchema(
-      id: 38,
+      id: 40,
       name: r'myPushTriggerOption',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyPushTriggerOptionEnumValueMap,
     ),
     r'myRole': PropertySchema(
-      id: 39,
+      id: 41,
       name: r'myRole',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyRoleEnumValueMap,
     ),
     r'name': PropertySchema(
-      id: 40,
+      id: 42,
       name: r'name',
       type: IsarType.string,
     ),
     r'pinnedMessageIds': PropertySchema(
-      id: 41,
+      id: 43,
       name: r'pinnedMessageIds',
       type: IsarType.longList,
     ),
     r'pinnedMessageUpdatedAt': PropertySchema(
-      id: 42,
+      id: 44,
       name: r'pinnedMessageUpdatedAt',
       type: IsarType.long,
     ),
+    r'readStatus': PropertySchema(
+      id: 45,
+      name: r'readStatus',
+      type: IsarType.string,
+    ),
     r'unreadMentionCount': PropertySchema(
-      id: 43,
+      id: 46,
       name: r'unreadMentionCount',
       type: IsarType.long,
     ),
     r'unreadMessageCount': PropertySchema(
-      id: 44,
+      id: 47,
       name: r'unreadMessageCount',
       type: IsarType.long,
     )
@@ -334,6 +349,7 @@ int _cGroupChannelEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.deliveryStatus.length * 3;
   {
     final value = object.inviter;
     if (value != null) {
@@ -361,8 +377,10 @@ int _cGroupChannelEstimateSize(
       bytesCount += CMemberSchema.estimateSize(value, offsets, allOffsets);
     }
   }
+  bytesCount += 3 + object.metaData.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.pinnedMessageIds.length * 8;
+  bytesCount += 3 + object.readStatus.length * 3;
   return bytesCount;
 }
 
@@ -379,54 +397,57 @@ void _cGroupChannelSerialize(
   writer.writeString(offsets[4], object.creator);
   writer.writeString(offsets[5], object.customType);
   writer.writeString(offsets[6], object.data);
-  writer.writeBool(offsets[7], object.dirty);
-  writer.writeBool(offsets[8], object.fromCache);
-  writer.writeByte(offsets[9], object.hiddenState.index);
-  writer.writeLong(offsets[10], object.invitedAt);
+  writer.writeString(offsets[7], object.deliveryStatus);
+  writer.writeBool(offsets[8], object.dirty);
+  writer.writeBool(offsets[9], object.fromCache);
+  writer.writeByte(offsets[10], object.hiddenState.index);
+  writer.writeLong(offsets[11], object.invitedAt);
   writer.writeObject<CMember>(
-    offsets[11],
+    offsets[12],
     allOffsets,
     CMemberSchema.serialize,
     object.inviter,
   );
-  writer.writeBool(offsets[12], object.isAccessCodeRequired);
-  writer.writeBool(offsets[13], object.isBroadcast);
-  writer.writeBool(offsets[14], object.isChatNotification);
-  writer.writeBool(offsets[15], object.isDiscoverable);
-  writer.writeBool(offsets[16], object.isDistinct);
-  writer.writeBool(offsets[17], object.isEphemeral);
-  writer.writeBool(offsets[18], object.isExclusive);
-  writer.writeBool(offsets[19], object.isFrozen);
-  writer.writeBool(offsets[20], object.isHidden);
-  writer.writeBool(offsets[21], object.isPublic);
-  writer.writeBool(offsets[22], object.isSuper);
-  writer.writeLong(offsets[23], object.joinedAt);
-  writer.writeLong(offsets[24], object.joinedMemberCount);
-  writer.writeLong(offsets[25], object.lastMessageCreatedAt);
-  writer.writeString(offsets[26], object.lastMessageRootId);
-  writer.writeByte(offsets[27], object.lastMessageType.index);
-  writer.writeString(offsets[28], object.lastPinnedMessageRootId);
-  writer.writeByte(offsets[29], object.lastPinnedMessageType.index);
-  writer.writeLong(offsets[30], object.memberCount);
+  writer.writeBool(offsets[13], object.isAccessCodeRequired);
+  writer.writeBool(offsets[14], object.isBroadcast);
+  writer.writeBool(offsets[15], object.isChatNotification);
+  writer.writeBool(offsets[16], object.isDiscoverable);
+  writer.writeBool(offsets[17], object.isDistinct);
+  writer.writeBool(offsets[18], object.isEphemeral);
+  writer.writeBool(offsets[19], object.isExclusive);
+  writer.writeBool(offsets[20], object.isFrozen);
+  writer.writeBool(offsets[21], object.isHidden);
+  writer.writeBool(offsets[22], object.isPublic);
+  writer.writeBool(offsets[23], object.isSuper);
+  writer.writeLong(offsets[24], object.joinedAt);
+  writer.writeLong(offsets[25], object.joinedMemberCount);
+  writer.writeLong(offsets[26], object.lastMessageCreatedAt);
+  writer.writeString(offsets[27], object.lastMessageRootId);
+  writer.writeByte(offsets[28], object.lastMessageType.index);
+  writer.writeString(offsets[29], object.lastPinnedMessageRootId);
+  writer.writeByte(offsets[30], object.lastPinnedMessageType.index);
+  writer.writeLong(offsets[31], object.memberCount);
   writer.writeObjectList<CMember>(
-    offsets[31],
+    offsets[32],
     allOffsets,
     CMemberSchema.serialize,
     object.members,
   );
-  writer.writeLong(offsets[32], object.messageOffsetTimestamp);
-  writer.writeLong(offsets[33], object.messageSurvivalSeconds);
-  writer.writeByte(offsets[34], object.myCountPreference.index);
-  writer.writeLong(offsets[35], object.myLastRead);
-  writer.writeByte(offsets[36], object.myMemberState.index);
-  writer.writeByte(offsets[37], object.myMutedState.index);
-  writer.writeByte(offsets[38], object.myPushTriggerOption.index);
-  writer.writeByte(offsets[39], object.myRole.index);
-  writer.writeString(offsets[40], object.name);
-  writer.writeLongList(offsets[41], object.pinnedMessageIds);
-  writer.writeLong(offsets[42], object.pinnedMessageUpdatedAt);
-  writer.writeLong(offsets[43], object.unreadMentionCount);
-  writer.writeLong(offsets[44], object.unreadMessageCount);
+  writer.writeLong(offsets[33], object.messageOffsetTimestamp);
+  writer.writeLong(offsets[34], object.messageSurvivalSeconds);
+  writer.writeString(offsets[35], object.metaData);
+  writer.writeByte(offsets[36], object.myCountPreference.index);
+  writer.writeLong(offsets[37], object.myLastRead);
+  writer.writeByte(offsets[38], object.myMemberState.index);
+  writer.writeByte(offsets[39], object.myMutedState.index);
+  writer.writeByte(offsets[40], object.myPushTriggerOption.index);
+  writer.writeByte(offsets[41], object.myRole.index);
+  writer.writeString(offsets[42], object.name);
+  writer.writeLongList(offsets[43], object.pinnedMessageIds);
+  writer.writeLong(offsets[44], object.pinnedMessageUpdatedAt);
+  writer.writeString(offsets[45], object.readStatus);
+  writer.writeLong(offsets[46], object.unreadMentionCount);
+  writer.writeLong(offsets[47], object.unreadMessageCount);
 }
 
 CGroupChannel _cGroupChannelDeserialize(
@@ -445,72 +466,75 @@ CGroupChannel _cGroupChannelDeserialize(
   object.creator = reader.readStringOrNull(offsets[4]);
   object.customType = reader.readStringOrNull(offsets[5]);
   object.data = reader.readStringOrNull(offsets[6]);
-  object.dirty = reader.readBool(offsets[7]);
-  object.fromCache = reader.readBool(offsets[8]);
+  object.deliveryStatus = reader.readString(offsets[7]);
+  object.dirty = reader.readBool(offsets[8]);
+  object.fromCache = reader.readBool(offsets[9]);
   object.hiddenState = _CGroupChannelhiddenStateValueEnumMap[
-          reader.readByteOrNull(offsets[9])] ??
+          reader.readByteOrNull(offsets[10])] ??
       GroupChannelHiddenState.unhidden;
   object.id = id;
-  object.invitedAt = reader.readLong(offsets[10]);
+  object.invitedAt = reader.readLong(offsets[11]);
   object.inviter = reader.readObjectOrNull<CMember>(
-    offsets[11],
+    offsets[12],
     CMemberSchema.deserialize,
     allOffsets,
   );
-  object.isAccessCodeRequired = reader.readBool(offsets[12]);
-  object.isBroadcast = reader.readBool(offsets[13]);
-  object.isChatNotification = reader.readBool(offsets[14]);
-  object.isDiscoverable = reader.readBool(offsets[15]);
-  object.isDistinct = reader.readBool(offsets[16]);
-  object.isEphemeral = reader.readBoolOrNull(offsets[17]);
-  object.isExclusive = reader.readBool(offsets[18]);
-  object.isFrozen = reader.readBoolOrNull(offsets[19]);
-  object.isHidden = reader.readBool(offsets[20]);
-  object.isPublic = reader.readBool(offsets[21]);
-  object.isSuper = reader.readBool(offsets[22]);
-  object.joinedAt = reader.readLong(offsets[23]);
-  object.joinedMemberCount = reader.readLong(offsets[24]);
-  object.lastMessageCreatedAt = reader.readLongOrNull(offsets[25]);
-  object.lastMessageRootId = reader.readStringOrNull(offsets[26]);
+  object.isAccessCodeRequired = reader.readBool(offsets[13]);
+  object.isBroadcast = reader.readBool(offsets[14]);
+  object.isChatNotification = reader.readBool(offsets[15]);
+  object.isDiscoverable = reader.readBool(offsets[16]);
+  object.isDistinct = reader.readBool(offsets[17]);
+  object.isEphemeral = reader.readBoolOrNull(offsets[18]);
+  object.isExclusive = reader.readBool(offsets[19]);
+  object.isFrozen = reader.readBoolOrNull(offsets[20]);
+  object.isHidden = reader.readBool(offsets[21]);
+  object.isPublic = reader.readBool(offsets[22]);
+  object.isSuper = reader.readBool(offsets[23]);
+  object.joinedAt = reader.readLong(offsets[24]);
+  object.joinedMemberCount = reader.readLong(offsets[25]);
+  object.lastMessageCreatedAt = reader.readLongOrNull(offsets[26]);
+  object.lastMessageRootId = reader.readStringOrNull(offsets[27]);
   object.lastMessageType = _CGroupChannellastMessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[27])] ??
+          reader.readByteOrNull(offsets[28])] ??
       MessageType.user;
-  object.lastPinnedMessageRootId = reader.readStringOrNull(offsets[28]);
+  object.lastPinnedMessageRootId = reader.readStringOrNull(offsets[29]);
   object.lastPinnedMessageType =
       _CGroupChannellastPinnedMessageTypeValueEnumMap[
-              reader.readByteOrNull(offsets[29])] ??
+              reader.readByteOrNull(offsets[30])] ??
           MessageType.user;
-  object.memberCount = reader.readLong(offsets[30]);
+  object.memberCount = reader.readLong(offsets[31]);
   object.members = reader.readObjectList<CMember>(
-        offsets[31],
+        offsets[32],
         CMemberSchema.deserialize,
         allOffsets,
         CMember(),
       ) ??
       [];
-  object.messageOffsetTimestamp = reader.readLongOrNull(offsets[32]);
-  object.messageSurvivalSeconds = reader.readLong(offsets[33]);
+  object.messageOffsetTimestamp = reader.readLongOrNull(offsets[33]);
+  object.messageSurvivalSeconds = reader.readLong(offsets[34]);
+  object.metaData = reader.readString(offsets[35]);
   object.myCountPreference = _CGroupChannelmyCountPreferenceValueEnumMap[
-          reader.readByteOrNull(offsets[34])] ??
-      CountPreference.all;
-  object.myLastRead = reader.readLong(offsets[35]);
-  object.myMemberState = _CGroupChannelmyMemberStateValueEnumMap[
           reader.readByteOrNull(offsets[36])] ??
+      CountPreference.all;
+  object.myLastRead = reader.readLong(offsets[37]);
+  object.myMemberState = _CGroupChannelmyMemberStateValueEnumMap[
+          reader.readByteOrNull(offsets[38])] ??
       MemberState.none;
   object.myMutedState = _CGroupChannelmyMutedStateValueEnumMap[
-          reader.readByteOrNull(offsets[37])] ??
+          reader.readByteOrNull(offsets[39])] ??
       MuteState.unmuted;
   object.myPushTriggerOption = _CGroupChannelmyPushTriggerOptionValueEnumMap[
-          reader.readByteOrNull(offsets[38])] ??
+          reader.readByteOrNull(offsets[40])] ??
       GroupChannelPushTriggerOption.defaultValue;
   object.myRole =
-      _CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offsets[39])] ??
+      _CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offsets[41])] ??
           Role.none;
-  object.name = reader.readString(offsets[40]);
-  object.pinnedMessageIds = reader.readLongList(offsets[41]) ?? [];
-  object.pinnedMessageUpdatedAt = reader.readLong(offsets[42]);
-  object.unreadMentionCount = reader.readLong(offsets[43]);
-  object.unreadMessageCount = reader.readLong(offsets[44]);
+  object.name = reader.readString(offsets[42]);
+  object.pinnedMessageIds = reader.readLongList(offsets[43]) ?? [];
+  object.pinnedMessageUpdatedAt = reader.readLong(offsets[44]);
+  object.readStatus = reader.readString(offsets[45]);
+  object.unreadMentionCount = reader.readLong(offsets[46]);
+  object.unreadMessageCount = reader.readLong(offsets[47]);
   return object;
 }
 
@@ -538,23 +562,23 @@ P _cGroupChannelDeserializeProp<P>(
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 8:
       return (reader.readBool(offset)) as P;
     case 9:
+      return (reader.readBool(offset)) as P;
+    case 10:
       return (_CGroupChannelhiddenStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           GroupChannelHiddenState.unhidden) as P;
-    case 10:
-      return (reader.readLong(offset)) as P;
     case 11:
+      return (reader.readLong(offset)) as P;
+    case 12:
       return (reader.readObjectOrNull<CMember>(
         offset,
         CMemberSchema.deserialize,
         allOffsets,
       )) as P;
-    case 12:
-      return (reader.readBool(offset)) as P;
     case 13:
       return (reader.readBool(offset)) as P;
     case 14:
@@ -564,38 +588,40 @@ P _cGroupChannelDeserializeProp<P>(
     case 16:
       return (reader.readBool(offset)) as P;
     case 17:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 18:
-      return (reader.readBool(offset)) as P;
-    case 19:
       return (reader.readBoolOrNull(offset)) as P;
-    case 20:
+    case 19:
       return (reader.readBool(offset)) as P;
+    case 20:
+      return (reader.readBoolOrNull(offset)) as P;
     case 21:
       return (reader.readBool(offset)) as P;
     case 22:
       return (reader.readBool(offset)) as P;
     case 23:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 24:
       return (reader.readLong(offset)) as P;
     case 25:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 26:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 27:
+      return (reader.readStringOrNull(offset)) as P;
+    case 28:
       return (_CGroupChannellastMessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 28:
-      return (reader.readStringOrNull(offset)) as P;
     case 29:
+      return (reader.readStringOrNull(offset)) as P;
+    case 30:
       return (_CGroupChannellastPinnedMessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 30:
-      return (reader.readLong(offset)) as P;
     case 31:
+      return (reader.readLong(offset)) as P;
+    case 32:
       return (reader.readObjectList<CMember>(
             offset,
             CMemberSchema.deserialize,
@@ -603,40 +629,44 @@ P _cGroupChannelDeserializeProp<P>(
             CMember(),
           ) ??
           []) as P;
-    case 32:
-      return (reader.readLongOrNull(offset)) as P;
     case 33:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 34:
+      return (reader.readLong(offset)) as P;
+    case 35:
+      return (reader.readString(offset)) as P;
+    case 36:
       return (_CGroupChannelmyCountPreferenceValueEnumMap[
               reader.readByteOrNull(offset)] ??
           CountPreference.all) as P;
-    case 35:
+    case 37:
       return (reader.readLong(offset)) as P;
-    case 36:
+    case 38:
       return (_CGroupChannelmyMemberStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MemberState.none) as P;
-    case 37:
+    case 39:
       return (_CGroupChannelmyMutedStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MuteState.unmuted) as P;
-    case 38:
+    case 40:
       return (_CGroupChannelmyPushTriggerOptionValueEnumMap[
               reader.readByteOrNull(offset)] ??
           GroupChannelPushTriggerOption.defaultValue) as P;
-    case 39:
+    case 41:
       return (_CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offset)] ??
           Role.none) as P;
-    case 40:
-      return (reader.readString(offset)) as P;
-    case 41:
-      return (reader.readLongList(offset) ?? []) as P;
     case 42:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 43:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     case 44:
+      return (reader.readLong(offset)) as P;
+    case 45:
+      return (reader.readString(offset)) as P;
+    case 46:
+      return (reader.readLong(offset)) as P;
+    case 47:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1956,6 +1986,142 @@ extension CGroupChannelQueryFilter
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'deliveryStatus',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'deliveryStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'deliveryStatus',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'deliveryStatus',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      deliveryStatusIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'deliveryStatus',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       dirtyEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -3189,6 +3355,142 @@ extension CGroupChannelQueryFilter
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'metaData',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'metaData',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metaData',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'metaData',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       myCountPreferenceEqualTo(CountPreference value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -3861,6 +4163,142 @@ extension CGroupChannelQueryFilter
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'readStatus',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'readStatus',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'readStatus',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'readStatus',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      readStatusIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'readStatus',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       unreadMentionCountEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -4081,6 +4519,20 @@ extension CGroupChannelQuerySortBy
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> sortByDataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByDeliveryStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deliveryStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByDeliveryStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deliveryStatus', Sort.desc);
     });
   }
 
@@ -4418,6 +4870,19 @@ extension CGroupChannelQuerySortBy
     });
   }
 
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> sortByMetaData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByMetaDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.desc);
+    });
+  }
+
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
       sortByMyCountPreference() {
     return QueryBuilder.apply(this, (query) {
@@ -4522,6 +4987,19 @@ extension CGroupChannelQuerySortBy
       sortByPinnedMessageUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pinnedMessageUpdatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> sortByReadStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByReadStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readStatus', Sort.desc);
     });
   }
 
@@ -4642,6 +5120,20 @@ extension CGroupChannelQuerySortThenBy
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> thenByDataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByDeliveryStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deliveryStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByDeliveryStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deliveryStatus', Sort.desc);
     });
   }
 
@@ -4991,6 +5483,19 @@ extension CGroupChannelQuerySortThenBy
     });
   }
 
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> thenByMetaData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByMetaDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.desc);
+    });
+  }
+
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
       thenByMyCountPreference() {
     return QueryBuilder.apply(this, (query) {
@@ -5098,6 +5603,19 @@ extension CGroupChannelQuerySortThenBy
     });
   }
 
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy> thenByReadStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readStatus', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByReadStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readStatus', Sort.desc);
+    });
+  }
+
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
       thenByUnreadMentionCount() {
     return QueryBuilder.apply(this, (query) {
@@ -5174,6 +5692,14 @@ extension CGroupChannelQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'data', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QDistinct>
+      distinctByDeliveryStatus({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'deliveryStatus',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -5345,6 +5871,13 @@ extension CGroupChannelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<CGroupChannel, CGroupChannel, QDistinct> distinctByMetaData(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'metaData', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<CGroupChannel, CGroupChannel, QDistinct>
       distinctByMyCountPreference() {
     return QueryBuilder.apply(this, (query) {
@@ -5403,6 +5936,13 @@ extension CGroupChannelQueryWhereDistinct
       distinctByPinnedMessageUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'pinnedMessageUpdatedAt');
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QDistinct> distinctByReadStatus(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'readStatus', caseSensitive: caseSensitive);
     });
   }
 
@@ -5469,6 +6009,13 @@ extension CGroupChannelQueryProperty
   QueryBuilder<CGroupChannel, String?, QQueryOperations> dataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'data');
+    });
+  }
+
+  QueryBuilder<CGroupChannel, String, QQueryOperations>
+      deliveryStatusProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deliveryStatus');
     });
   }
 
@@ -5646,6 +6193,12 @@ extension CGroupChannelQueryProperty
     });
   }
 
+  QueryBuilder<CGroupChannel, String, QQueryOperations> metaDataProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'metaData');
+    });
+  }
+
   QueryBuilder<CGroupChannel, CountPreference, QQueryOperations>
       myCountPreferenceProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -5703,6 +6256,12 @@ extension CGroupChannelQueryProperty
       pinnedMessageUpdatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'pinnedMessageUpdatedAt');
+    });
+  }
+
+  QueryBuilder<CGroupChannel, String, QQueryOperations> readStatusProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'readStatus');
     });
   }
 

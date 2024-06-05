@@ -95,9 +95,15 @@ class GroupChannelCollection {
     }
   }
 
+  void cleanUp() {
+    // Check
+  }
+
   /// Disposes current [GroupChannelCollection] and stops all events from being received.
   void dispose() {
     sbLog.i(StackTrace.current, 'dispose()');
+    cleanUp();
+
     channelList.clear();
     _chat.collectionManager.removeGroupChannelCollection(this);
     _isDisposed = true;
@@ -244,6 +250,18 @@ class GroupChannelCollection {
   }) async {
     if (_isLoadedOnce == false) {
       return false;
+    }
+
+    // (includeEmpty == false)
+    if (_query.includeEmpty == false) {
+      if (addedChannel.lastMessage == null) {
+        return false;
+      } else {
+        if (eventSource == CollectionEventSource.eventMessageSent ||
+            eventSource == CollectionEventSource.eventMessageReceived) {
+          return true;
+        }
+      }
     }
 
     if (eventSource == CollectionEventSource.channelCacheLoadMore ||

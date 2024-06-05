@@ -2,8 +2,10 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/db_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
@@ -88,6 +90,8 @@ abstract class BaseMessageCollection {
 
   //- [DBManager]
 
+  Timer? unmuteTimer;
+
   BaseMessageCollection({
     required BaseChannel channel,
     required MessageListParams params,
@@ -119,9 +123,74 @@ abstract class BaseMessageCollection {
     //- [DBManager]
   }
 
+  //+ [MyMuteInfo]
+  void setUnmuteTimer(int remainingDuration) {
+    _cancelUnmuteTimer();
+
+    if (remainingDuration > 0) {
+      sbLog.d(StackTrace.current, 'remainingDuration: $remainingDuration');
+
+      final ms = remainingDuration + 1000; // Referred by JS SDK
+      unmuteTimer = Timer(Duration(milliseconds: ms), () {
+        runZonedGuarded(() async {
+          if (SendbirdChat.currentUser != null) {
+            final myMuteInfo = await _channel.getMyMuteInfo();
+            if (!myMuteInfo.isMuted) {
+              // My mute info has been already unmuted in server.
+              _setMyMuteInfo(isMuted: false);
+            }
+          }
+        }, (error, stack) {});
+      });
+    }
+  }
+
+  void _cancelUnmuteTimer() {
+    if (unmuteTimer != null) {
+      sbLog.d(StackTrace.current);
+
+      unmuteTimer?.cancel();
+      unmuteTimer = null;
+    }
+  }
+
+  void _setMyMuteInfo({required bool isMuted}) {
+    sbLog.d(StackTrace.current);
+
+    if (_channel is GroupChannel) {
+      final channel = _channel as GroupChannel;
+      final myMember = channel.members.firstWhereOrNull(
+          (member) => member.userId == SendbirdChat.currentUser?.userId);
+
+      if (myMember != null && myMember.isMuted != isMuted) {
+        channel.myMutedState = isMuted ? MuteState.muted : MuteState.unmuted;
+        myMember.isMuted = isMuted;
+
+        _channel.saveToCache(chat); // Check
+
+        if (isMuted) {
+          chat.eventManager.notifyUserMuted(
+            _channel,
+            RestrictedUser.fromJson(myMember.toJson()),
+          );
+        } else {
+          chat.eventManager.notifyUserUnmuted(_channel, myMember);
+        }
+      }
+    }
+  }
+
+  //- [MyMuteInfo]
+
+  void cleanUp() {
+    _cancelUnmuteTimer();
+  }
+
   /// Disposes current [MessageCollection] and stops all events from being received.
   void dispose() {
     sbLog.i(StackTrace.current, 'dispose()');
+    cleanUp();
+
     messageList.clear();
     _chat.collectionManager.removeMessageCollection(this);
     _isDisposed = true;

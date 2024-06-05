@@ -177,7 +177,7 @@ class DB {
     return await _isar.cMessageChunks.count();
   }
 
-  // ChannelChangeLogInfo
+  // ChannelInfo
   Future<void> upsertChannelInfo(ChannelInfo info) async {
     await CChannelInfo.upsert(_chat, _isar, info);
   }

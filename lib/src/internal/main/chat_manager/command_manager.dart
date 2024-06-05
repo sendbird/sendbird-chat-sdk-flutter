@@ -8,6 +8,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/meta_data_cache.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
@@ -398,19 +399,6 @@ class CommandManager {
         commandType: cmd.cmd,
       );
 
-      if (event.requestId != null) {
-        // If sent by api then added id to cache -> done
-        if (message.channelType == ChannelType.group) {
-          dynamic messageId = message.getMessageId();
-          if (messageId is int) {
-            sendCommand(Command.buildMessageMACK(
-              message.channelUrl,
-              messageId,
-            ));
-          }
-        }
-      }
-
       bool shouldCallChannelChanged = false;
 
       if (message.channelType == ChannelType.group) {
@@ -451,6 +439,22 @@ class CommandManager {
 
         if (groupChannel.fromCache && groupChannel.updateUnreadCount(message)) {
           shouldCallChannelChanged = true;
+        }
+
+        // MACK
+        final isNonBroadcastSuperGroup =
+            channel is GroupChannel && channel.isSuper && !channel.isBroadcast;
+        final shouldDisableMACK = isNonBroadcastSuperGroup &&
+            _chat.chatContext.appInfo?.disableSuperGroupMack == true;
+        if (!shouldDisableMACK &&
+            _chat.currentUser?.userId != event.sender?.userId) {
+          final messageId = message.getMessageId();
+          if (messageId is int) {
+            sendCommand(Command.buildMessageMACK(
+              message.channelUrl,
+              messageId,
+            ));
+          }
         }
       }
 
@@ -605,22 +609,23 @@ class CommandManager {
 
   Future<void> _processRead(Command cmd) async {
     try {
-      final status = ReadStatus.fromJson(cmd.payload);
-      status.saveToCache(_chat);
+      final readStatus = ReadStatus.fromJson(cmd.payload);
+      readStatus.saveToCache(_chat);
 
       final channel = await BaseChannel.getBaseChannel(
-        status.channelType,
-        status.channelUrl,
+        readStatus.channelType,
+        readStatus.channelUrl,
         chat: _chat,
       );
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {
-        final isCurrentUser = status.userId == _chat.chatContext.currentUserId;
+        final isCurrentUser =
+            readStatus.userId == _chat.chatContext.currentUserId;
         final hasUnreadCount = (groupChannel.unreadMessageCount > 0 ||
             groupChannel.unreadMentionCount > 0);
         if (isCurrentUser) {
-          groupChannel.myLastRead = status.timestamp;
+          groupChannel.myLastRead = readStatus.timestamp;
           if (groupChannel.fromCache) groupChannel.clearUnreadCount();
           if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
         } else {
@@ -634,20 +639,20 @@ class CommandManager {
 
   Future<void> _processDelivery(Command cmd) async {
     try {
-      final status = DeliveryStatus.fromJson(cmd.payload);
+      final deliveryStatus = DeliveryStatus.fromJson(cmd.payload);
 
-      final GroupChannel groupChannel =
-          await GroupChannel.getChannel(status.channelUrl);
       final currentUserId = _chat.chatContext.currentUserId;
       var shouldCallDelivery = true;
-      if (status.updatedDeliveryStatus.length == 1 &&
-          status.updatedDeliveryStatus[currentUserId] != null) {
+      if (deliveryStatus.updatedDeliveryStatus.length == 1 &&
+          deliveryStatus.updatedDeliveryStatus[currentUserId] != null) {
         shouldCallDelivery = false;
       }
 
-      status.saveToCache(_chat);
+      deliveryStatus.saveToCache(_chat);
 
       if (shouldCallDelivery) {
+        final GroupChannel groupChannel =
+            await GroupChannel.getChannel(deliveryStatus.channelUrl);
         _chat.eventManager.notifyDeliveryStatusUpdated(groupChannel);
       }
     } catch (e) {
@@ -820,7 +825,7 @@ class CommandManager {
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {
-        final status = TypingStatus(
+        final typingStatus = TypingStatus(
           channelType: ChannelType.group,
           channelUrl: event.channelUrl,
           user: user,
@@ -828,9 +833,9 @@ class CommandManager {
         );
 
         if (start) {
-          status.saveToCache(_chat);
+          typingStatus.saveToCache(_chat);
         } else {
-          status.removeFromCache(_chat);
+          typingStatus.removeFromCache(_chat);
         }
 
         _chat.eventManager.notifyChannelTypingStatusUpdated(groupChannel);
@@ -901,6 +906,12 @@ class CommandManager {
         if (user.isCurrentUser) {
           groupChannel.myMutedState =
               muted ? MuteState.muted : MuteState.unmuted;
+
+          final remainingDuration = event.data['remaining_duration'] as int?;
+          if (remainingDuration != null) {
+            _chat.collectionManager
+                .setUnmuteTimer(groupChannel, remainingDuration);
+          }
         }
 
         final member = groupChannel.members
@@ -1229,7 +1240,7 @@ class CommandManager {
         event.channelType,
         event.channelUrl,
         chat: _chat,
-      );
+      ); // Check
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {

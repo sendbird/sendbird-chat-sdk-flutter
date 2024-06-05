@@ -1,5 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/channel/c_base_channel.dart';
@@ -67,6 +69,9 @@ class CGroupChannel extends CBaseChannel {
 
   late int pinnedMessageUpdatedAt;
 
+  late String readStatus; // Map<String, int>
+  late String deliveryStatus; // Map<String, int>
+
   CGroupChannel();
 
   factory CGroupChannel.fromGroupChannel(GroupChannel channel) {
@@ -111,7 +116,10 @@ class CGroupChannel extends CBaseChannel {
       ..lastPinnedMessageType =
           channel.lastPinnedMessage?.messageType ?? MessageType.user
       ..lastPinnedMessageRootId = channel.lastPinnedMessage?.rootId
-      ..pinnedMessageUpdatedAt = channel.pinnedMessageUpdatedAt;
+      ..pinnedMessageUpdatedAt = channel.pinnedMessageUpdatedAt
+      ..readStatus = jsonEncode(channel.getCachedReadStatus(channel.channelUrl))
+      ..deliveryStatus =
+          jsonEncode(channel.getCachedDeliveryStatus(channel.channelUrl));
   }
 
   Future<GroupChannel> toGroupChannel(Chat chat, Isar isar) async {
@@ -162,6 +170,16 @@ class CGroupChannel extends CBaseChannel {
         groupChannel.members.add(member);
       }
     }
+
+    final cachedReadStatus = (jsonDecode(readStatus) as Map<String, dynamic>)
+        .map((key, value) => MapEntry(key, value as int));
+    groupChannel.setCachedReadStatus(cachedReadStatus);
+
+    final cachedDeliveryStatus =
+        (jsonDecode(deliveryStatus) as Map<String, dynamic>)
+            .map((key, value) => MapEntry(key, value as int));
+    groupChannel.setCachedDeliveryStatus(cachedDeliveryStatus);
+
     return groupChannel;
   }
 

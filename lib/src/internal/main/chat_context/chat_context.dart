@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_configuration.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/unread_message_count_info.dart';
@@ -61,6 +62,17 @@ class ChatContext {
   // WebSocketClient
   int pingInterval = 15;
   int watchdogInterval = 5;
+
+  void init({
+    required Chat chat,
+    required String appId,
+    required SendbirdChatOptions options,
+  }) {
+    this.appId = appId;
+    this.options = options;
+    apiHost = chat.connectionManager.getDefaultApiHost();
+    apiHeaders = chat.connectionManager.getDefaultApiHeader();
+  }
 
   void setPingInterval(int seconds) {
     if (seconds >= 0) {

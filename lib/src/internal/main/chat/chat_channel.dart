@@ -26,16 +26,6 @@ extension ChatChannel on Chat {
         GroupChannelChangeLogsGetRequest(this, params,
             token: token, timestamp: timestamp));
 
-    for (final element in res.updatedChannels) {
-      element.saveToCache(this);
-    }
-
-    //+ [DBManager]
-    if (dbManager.isEnabled()) {
-      await dbManager.upsertGroupChannels(res.updatedChannels);
-    }
-    //- [DBManager]
-
     return res;
   }
 
@@ -49,10 +39,6 @@ extension ChatChannel on Chat {
     final res = await apiClient.send<FeedChannelChangeLogs>(
         FeedChannelChangeLogsGetRequest(this, params,
             token: token, timestamp: timestamp));
-
-    for (final element in res.updatedChannels) {
-      element.saveToCache(this);
-    }
 
     //+ [DBManager]
     if (dbManager.isEnabled()) {
@@ -135,13 +121,12 @@ extension ChatChannel on Chat {
           timestamp: createdAt,
         ));
 
-        final currentUserId = SendbirdChat.currentUser?.userId;
-        if (currentUserId != null) {
-          final delivery = DeliveryStatus(
+        if (userId.isNotEmpty) {
+          final deliveryStatus = DeliveryStatus(
             channelUrl: channelUrl,
-            updatedDeliveryStatus: {currentUserId: ts},
+            updatedDeliveryStatus: {userId: ts},
           );
-          delivery.saveToCache(this);
+          deliveryStatus.saveToCache(this);
         }
       } catch (e) {
         sbLog.e(StackTrace.current, e.toString());
