@@ -24,11 +24,14 @@ class CollectionManager {
   // GroupChannelCollection
   final List<GroupChannelCollection> groupChannelCollections = [];
   int lastRequestTsForGroupChannelChangeLogs = 0;
+  String? lastRequestTokenForGroupChannelChangeLogs;
 
   // MessageCollection
   final List<BaseMessageCollection> baseMessageCollections = [];
   int lastRequestTsForMessageChangeLogs = 0;
+  String? lastRequestTokenForMessageChangeLogs;
   int lastRequestTsForPollChangeLogs = 0;
+  String? lastRequestTokenForPollChangeLogs;
   int lastRequestTsForMessagesGap = 0;
 
   bool isGroupChannelCollectionsRefreshing = false;
@@ -46,12 +49,12 @@ class CollectionManager {
   }
 
   void _setInitialGroupChannelChangeLogsTs() {
-    final now = DateTime.now().millisecondsSinceEpoch;
+    final now = DateTime.now().millisecondsSinceEpoch; // Check
     lastRequestTsForGroupChannelChangeLogs = now;
   }
 
   void _setInitialMessageChangeLogsAndMessagesGapTs() {
-    final now = DateTime.now().millisecondsSinceEpoch;
+    final now = DateTime.now().millisecondsSinceEpoch; // Check
     lastRequestTsForMessageChangeLogs = now;
     lastRequestTsForPollChangeLogs = now;
     lastRequestTsForMessagesGap = now;
@@ -66,7 +69,6 @@ class CollectionManager {
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
       await _chat.dbManager.checkDBFileSize();
-      await _refresh();
     }
     //- [DBManager]
   }
@@ -84,6 +86,7 @@ class CollectionManager {
 
     futures.add(refreshGroupChannelCollections());
     futures.add(_refreshBaseMessageCollections());
+    futures.add(_refreshMessageCollections());
 
     if (futures.isNotEmpty) {
       await Future.wait(futures);
@@ -133,6 +136,18 @@ class CollectionManager {
     if (collection.isInitialized) {
       await _requestMessageChangeLogs(collection);
       await _requestPollChangeLogs(collection);
+    }
+  }
+
+  Future<void> _refreshMessageCollections() async {
+    sbLog.d(StackTrace.current);
+
+    for (final collection in baseMessageCollections) {
+      if (collection is MessageCollection) {
+        if (collection.isInitialized) {
+          await collection.refresh(); // Check
+        }
+      }
     }
   }
 
@@ -438,6 +453,15 @@ class InternalGroupChannelHandlerForCollectionManager
           break;
         }
       }
+
+      // (includeEmpty == false)
+      if (channel is GroupChannel) {
+        _collectionManager.sendEventsToGroupChannelCollectionList(
+          eventSource: CollectionEventSource.eventMessageReceived,
+          addedChannels: [channel],
+          doNotUpsertAddedChannels: true,
+        );
+      }
     }
   }
 
@@ -602,6 +626,8 @@ class InternalGroupChannelHandlerForCollectionManager
   @override
   void onUserLeft(GroupChannel channel, User user) {
     if (user.isCurrentUser) {
+      _collectionManager.disposeMessageCollection(channel.channelUrl);
+
       _collectionManager.sendEventsToGroupChannelCollectionList(
         eventSource: CollectionEventSource.eventUserLeft,
         deletedChannelUrls: [channel.channelUrl],

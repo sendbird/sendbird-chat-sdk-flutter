@@ -18,18 +18,19 @@ extension GroupChannelRead on GroupChannel {
   /// Returns the list of members who have read the message.
   List<Member> getReadMembers(BaseMessage message,
       {bool includeAllMembers = false}) {
-    sbLog.i(StackTrace.current,
-        'messageId: ${message.messageId}, includeAllMembers: $includeAllMembers');
+    // sbLog.i(StackTrace.current,
+    //     'messageId: ${message.messageId}, includeAllMembers: $includeAllMembers');
 
     if (message is AdminMessage) return [];
     if (isSuper) return [];
 
-    return members.where((m) {
-      if (!includeAllMembers && m.isCurrentUser) return false;
-      if (message.sender?.userId == m.userId) return false;
+    return members.where((member) {
+      if (!includeAllMembers && member.isCurrentUser) return false;
+      if (message.sender?.userId == member.userId) return false;
+
       final readStatus = chat.channelCache.find<ReadStatus>(
         channelKey: channelUrl,
-        key: m.userId,
+        key: member.userId,
       );
       if (readStatus == null || readStatus.timestamp == 0) return false;
       return readStatus.timestamp >= message.createdAt;
@@ -42,18 +43,19 @@ extension GroupChannelRead on GroupChannel {
   /// Returns the list of members who haven't read the message.
   List<Member> getUnreadMembers(BaseMessage message,
       {bool includeAllMembers = false}) {
-    sbLog.i(StackTrace.current,
-        'messageId: ${message.messageId}, includeAllMembers: $includeAllMembers');
+    // sbLog.i(StackTrace.current,
+    //     'messageId: ${message.messageId}, includeAllMembers: $includeAllMembers');
 
     if (message is AdminMessage) return [];
     if (isSuper) return [];
 
-    return members.where((m) {
-      if (!includeAllMembers && m.isCurrentUser) return false;
-      if (message.sender?.userId == m.userId) return false;
+    return members.where((member) {
+      if (!includeAllMembers && member.isCurrentUser) return false;
+      if (message.sender?.userId == member.userId) return false;
+
       final readStatus = chat.channelCache.find<ReadStatus>(
         channelKey: channelUrl,
-        key: m.userId,
+        key: member.userId,
       );
       if (readStatus == null) return true;
       return readStatus.timestamp < message.createdAt;
@@ -65,7 +67,8 @@ extension GroupChannelRead on GroupChannel {
   /// If [includeAllMembers] is set false, this excludes the current [User].
   /// Returns `Map` with `User` ID keys.
   Map<String, Map<String, dynamic>> getReadStatus(bool includeAllMembers) {
-    sbLog.i(StackTrace.current, 'includeAllMembers: $includeAllMembers');
+    // sbLog.i(StackTrace.current, 'includeAllMembers: $includeAllMembers');
+
     if (isSuper) return {};
 
     return Map.fromIterable(
@@ -89,7 +92,8 @@ extension GroupChannelRead on GroupChannel {
   /// It will always be zero if the passed on message is an [AdminMessage], or if this channel is a super group channel.
   /// If there is no delivery status, returns null. (Delivery receipt is a premium feature.)
   List<Member>? getUndeliveredMembers(BaseMessage message) {
-    sbLog.i(StackTrace.current, 'messageId: ${message.messageId}');
+    // sbLog.i(StackTrace.current, 'messageId: ${message.messageId}');
+
     if (message is AdminMessage) return [];
     if (isSuper) return [];
 
@@ -98,11 +102,13 @@ extension GroupChannelRead on GroupChannel {
 
     if (deliveryStatus == null) return null;
 
-    return members.where((m) {
-      if (m.isCurrentUser) return false;
-      if (message.sender?.userId == m.userId) return false;
-      if (m.memberState != MemberState.joined) return false;
-      final deliveredAt = deliveryStatus.updatedDeliveryStatus[m.userId] ?? 0;
+    return members.where((member) {
+      if (member.isCurrentUser) return false;
+      if (message.sender?.userId == member.userId) return false;
+      if (member.memberState != MemberState.joined) return false;
+
+      final deliveredAt =
+          deliveryStatus.updatedDeliveryStatus[member.userId] ?? 0;
       return deliveredAt < message.createdAt;
     }).toList();
   }

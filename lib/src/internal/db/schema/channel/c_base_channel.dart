@@ -1,5 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
@@ -24,6 +26,7 @@ class CBaseChannel {
   String? customType;
   bool? isFrozen;
   bool? isEphemeral;
+  late String metaData; // Map<String, String>
 
   // Internal
   late bool fromCache;
@@ -46,6 +49,7 @@ class CBaseChannel {
       customType = channel.customType;
       isFrozen = channel.isFrozen;
       isEphemeral = channel.isEphemeral;
+      metaData = jsonEncode(channel.getCachedMetaData());
     }
     fromCache = channel.fromCache;
     dirty = channel.dirty;
@@ -77,6 +81,11 @@ class CBaseChannel {
         ..customType = cBaseChannel.customType
         ..isFrozen = cBaseChannel.isFrozen
         ..isEphemeral = cBaseChannel.isEphemeral;
+
+      final cachedMetaData =
+          (jsonDecode(cBaseChannel.metaData) as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value.toString()));
+      channel.setCachedMetaData(cachedMetaData);
     }
     return channel;
   }

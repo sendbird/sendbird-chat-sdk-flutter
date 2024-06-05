@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 
 abstract class CacheStorage {
   void insert({
@@ -41,15 +43,31 @@ abstract class CacheUnit {
 
 abstract class Cacheable {
   String get primaryKey;
+
   String get key;
+
   bool dirty = false;
 
   void copyWith(dynamic other);
 }
 
 extension Operation on Cacheable {
-  void saveToCache(Chat chat) {
+  void saveToCache(
+    Chat chat, {
+    BaseChannel? channel,
+    Map<String, dynamic>? res,
+    int? ts,
+  }) {
     chat.channelCache.insert(channelKey: primaryKey, data: this);
+
+    if (channel != null && res != null) {
+      res.cacheMetaData(channel: channel, ts: ts);
+
+      if (channel is GroupChannel) {
+        res.cacheReadStatus(channel);
+        res.cacheDeliveryStatus(channel);
+      }
+    }
   }
 
   void removeFromCache(Chat chat) {

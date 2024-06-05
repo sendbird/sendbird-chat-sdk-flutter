@@ -48,7 +48,7 @@ extension GroupChannelTyping on GroupChannel {
         chat.channelCache.findAll<TypingStatus>(channelKey: channelUrl);
     final result = typingStatuses?.map((e) => e.user).toList() ?? [];
 
-    sbLog.i(StackTrace.current, 'return: $result');
+    // sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }
 }

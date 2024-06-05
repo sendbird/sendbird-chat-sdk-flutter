@@ -62,7 +62,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.2.14';
+const sdkVersion = '4.2.15';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -90,7 +90,6 @@ class Chat with WidgetsBindingObserver {
   ];
 
   bool? _isObserverRegistered;
-  List<ConnectivityResult> _connectivityResults = [ConnectivityResult.none];
   int lastMarkAsReadTimestamp;
 
   // This allows a value of type T or T? to be treated as a value of type T?.
@@ -184,6 +183,7 @@ class Chat with WidgetsBindingObserver {
   Future<void> _handleEnterBackground() async {
     sbLog.i(StackTrace.current);
     channelCache.markAsDirtyAll();
+
     if (chatContext.isChatConnected) {
       await connectionManager.enterBackground();
     }
@@ -215,23 +215,28 @@ class Chat with WidgetsBindingObserver {
         if (connectivityResults is ConnectivityResult) {
           // connectivity_plus <6.0.0
           results.add(connectivityResults);
+          sbLog.d(StackTrace.current,
+              '[connectivity_plus <6.0.0] ${results.toString()}');
         } else if (connectivityResults is List<ConnectivityResult>) {
           // connectivity_plus ^6.0.0
           results.addAll(connectivityResults);
+          sbLog.d(StackTrace.current,
+              '[connectivity_plus ^6.0.0] ${results.toString()}');
         }
-
-        sbLog.d(StackTrace.current, results.toString());
 
         if (results.contains(ConnectivityResult.mobile) ||
             results.contains(ConnectivityResult.wifi) ||
             results.contains(ConnectivityResult.ethernet) ||
             results.contains(ConnectivityResult.vpn) ||
             results.contains(ConnectivityResult.other)) {
-          if (_connectivityResults.contains(ConnectivityResult.none)) {
+          if (SendbirdChat.currentUser != null) {
             if (chatContext.isChatConnected) {
+              sbLog.d(StackTrace.current, 'reconnect()');
               await connectionManager.reconnect(reset: true);
             }
+
             if (chatContext.isFeedAuthenticated) {
+              sbLog.d(StackTrace.current, 'refreshNotificationCollections()');
               collectionManager.refreshNotificationCollections();
             }
           }
@@ -239,10 +244,10 @@ class Chat with WidgetsBindingObserver {
           // Nothing
         } else if (results.contains(ConnectivityResult.none)) {
           channelCache.markAsDirtyAll(); // Check
+
+          sbLog.d(StackTrace.current, 'disconnect()');
           await connectionManager.disconnect(logout: false);
         }
-
-        _connectivityResults = results;
       });
     }
   }

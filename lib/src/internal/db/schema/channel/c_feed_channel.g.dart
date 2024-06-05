@@ -83,13 +83,18 @@ final CFeedChannelSchema = CollectionSchema(
       name: r'lastMessageRootId',
       type: IsarType.string,
     ),
-    r'name': PropertySchema(
+    r'metaData': PropertySchema(
       id: 13,
+      name: r'metaData',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 14,
       name: r'name',
       type: IsarType.string,
     ),
     r'notificationCategories': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'notificationCategories',
       type: IsarType.objectList,
       target: r'CNotificationCategory',
@@ -172,6 +177,7 @@ int _cFeedChannelEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.metaData.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.notificationCategories.length * 3;
   {
@@ -204,9 +210,10 @@ void _cFeedChannelSerialize(
   writer.writeBool(offsets[10], object.isFrozen);
   writer.writeBool(offsets[11], object.isTemplateLabelEnabled);
   writer.writeString(offsets[12], object.lastMessageRootId);
-  writer.writeString(offsets[13], object.name);
+  writer.writeString(offsets[13], object.metaData);
+  writer.writeString(offsets[14], object.name);
   writer.writeObjectList<CNotificationCategory>(
-    offsets[14],
+    offsets[15],
     allOffsets,
     CNotificationCategorySchema.serialize,
     object.notificationCategories,
@@ -236,9 +243,10 @@ CFeedChannel _cFeedChannelDeserialize(
   object.isFrozen = reader.readBoolOrNull(offsets[10]);
   object.isTemplateLabelEnabled = reader.readBoolOrNull(offsets[11]);
   object.lastMessageRootId = reader.readStringOrNull(offsets[12]);
-  object.name = reader.readString(offsets[13]);
+  object.metaData = reader.readString(offsets[13]);
+  object.name = reader.readString(offsets[14]);
   object.notificationCategories = reader.readObjectList<CNotificationCategory>(
-        offsets[14],
+        offsets[15],
         CNotificationCategorySchema.deserialize,
         allOffsets,
         CNotificationCategory(),
@@ -285,6 +293,8 @@ P _cFeedChannelDeserializeProp<P>(
     case 13:
       return (reader.readString(offset)) as P;
     case 14:
+      return (reader.readString(offset)) as P;
+    case 15:
       return (reader.readObjectList<CNotificationCategory>(
             offset,
             CNotificationCategorySchema.deserialize,
@@ -1706,6 +1716,142 @@ extension CFeedChannelQueryFilter
     });
   }
 
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'metaData',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'metaData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'metaData',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metaData',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'metaData',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2111,6 +2257,18 @@ extension CFeedChannelQuerySortBy
     });
   }
 
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> sortByMetaData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> sortByMetaDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.desc);
+    });
+  }
+
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -2304,6 +2462,18 @@ extension CFeedChannelQuerySortThenBy
     });
   }
 
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> thenByMetaData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> thenByMetaDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'metaData', Sort.desc);
+    });
+  }
+
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -2405,6 +2575,13 @@ extension CFeedChannelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<CFeedChannel, CFeedChannel, QDistinct> distinctByMetaData(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'metaData', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<CFeedChannel, CFeedChannel, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2500,6 +2677,12 @@ extension CFeedChannelQueryProperty
       lastMessageRootIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastMessageRootId');
+    });
+  }
+
+  QueryBuilder<CFeedChannel, String, QQueryOperations> metaDataProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'metaData');
     });
   }
 

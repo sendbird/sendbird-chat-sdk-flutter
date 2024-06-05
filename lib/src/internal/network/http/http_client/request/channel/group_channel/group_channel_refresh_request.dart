@@ -2,7 +2,6 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
-import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache_extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
@@ -24,10 +23,12 @@ class GroupChannelRefreshRequest extends ApiRequest {
 
   @override
   Future<GroupChannel> response(Map<String, dynamic> res) async {
-    final channel = GroupChannel.fromJsonWithChat(chat, res)..saveToCache(chat);
-    res.cacheMetaData(channel: channel);
-    res.cacheReadStatus(channel);
-    res.cacheDeliveryStatus(channel);
+    final channel = GroupChannel.fromJsonWithChat(chat, res);
+    channel.saveToCache(
+      chat,
+      channel: channel,
+      res: res,
+    );
     return channel;
   }
 }

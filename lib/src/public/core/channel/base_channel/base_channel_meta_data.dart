@@ -24,15 +24,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: result.ts,
             );
-    cached.addMap(result.metadata, result.ts);
-    cached.saveToCache(chat);
+    cachedMetaData.addMap(result.metadata, result.ts);
+    cachedMetaData.saveToCache(chat);
 
     return result.metadata;
   }
@@ -55,15 +55,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: result.ts,
             );
-    cached.addMap(result.metadata, result.ts);
-    cached.saveToCache(chat);
+    cachedMetaData.addMap(result.metadata, result.ts);
+    cachedMetaData.saveToCache(chat);
 
     return result.metadata;
   }
@@ -81,15 +81,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: result.ts,
             );
-    cached.addMap(result.metadata, result.ts);
-    cached.saveToCache(chat);
+    cachedMetaData.addMap(result.metadata, result.ts);
+    cachedMetaData.saveToCache(chat);
 
     return result.metadata;
   }
@@ -113,15 +113,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: result.ts,
             );
-    cached.addMap(result.metadata, result.ts);
-    cached.saveToCache(chat);
+    cachedMetaData.addMap(result.metadata, result.ts);
+    cachedMetaData.saveToCache(chat);
 
     return result.metadata;
   }
@@ -144,15 +144,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: ts,
             );
-    cached.removeWithKey(key, ts);
-    cached.saveToCache(chat);
+    cachedMetaData.removeWithKey(key, ts);
+    cachedMetaData.saveToCache(chat);
   }
 
   /// Deletes all meta data.
@@ -168,15 +168,15 @@ extension BaseChannelMetaData on BaseChannel {
       ),
     );
 
-    final cached =
+    final cachedMetaData =
         chat.channelCache.find<MetaDataCache>(channelKey: channelUrl) ??
             MetaDataCache<String>(
               channelType: channelType,
               channelUrl: channelUrl,
               timestamp: ts,
             );
-    cached.removeAll(ts);
-    cached.saveToCache(chat);
+    cachedMetaData.removeAll(ts);
+    cachedMetaData.saveToCache(chat);
   }
 
   /// All locally cached metadata as a map.
@@ -194,13 +194,13 @@ extension BaseChannelMetaData on BaseChannel {
   /// If [getAllMetaData] is never called on this instance, the map returned
   /// by this method may not contain all metadata mappings.
   Map<String, String> getCachedMetaData() {
-    sbLog.i(StackTrace.current);
+    // sbLog.i(StackTrace.current);
     checkUnsupportedAction();
+    return chat.channelCache.getCachedMetaData(channelUrl);
+  }
 
-    final metaData = chat.channelCache
-            .find<MetaDataCache>(channelKey: channelUrl)
-            ?.getAll() ??
-        {};
-    return Map<String, String>.from(metaData);
+  void setCachedMetaData(Map<String, String> metaData) {
+    checkUnsupportedAction();
+    chat.channelCache.setCachedMetaData(channelUrl, metaData);
   }
 }

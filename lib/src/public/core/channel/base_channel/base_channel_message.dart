@@ -145,6 +145,7 @@ extension BaseChannelMessage on BaseChannel {
         ) as UserMessage;
 
         chat.collectionManager.onMessageSentByMe(
+          channel: this,
           pendingMessage: pendingUserMessage,
           sentMessage: message,
         );
@@ -256,6 +257,14 @@ extension BaseChannelMessage on BaseChannel {
 
     if (params.fileInfo.hasSource == false) {
       throw InvalidParameterException();
+    }
+
+    final fileSize = params.fileInfo.file?.lengthSync() ??
+        params.fileInfo.fileBytes?.lengthInBytes ??
+        0;
+
+    if (fileSize > chat.chatContext.uploadSizeLimit) {
+      throw FileSizeLimitExceededException();
     }
 
     final pendingFileMessage =
@@ -405,6 +414,7 @@ extension BaseChannelMessage on BaseChannel {
               ) as FileMessage;
 
               chat.collectionManager.onMessageSentByMe(
+                channel: this,
                 pendingMessage: messageBeforeSent,
                 sentMessage: message,
               );
@@ -425,6 +435,7 @@ extension BaseChannelMessage on BaseChannel {
             final message = await chat.apiClient.send<FileMessage>(request);
 
             chat.collectionManager.onMessageSentByMe(
+              channel: this,
               pendingMessage: messageBeforeSent,
               sentMessage: message,
             );
@@ -536,7 +547,11 @@ extension BaseChannelMessage on BaseChannel {
       throw InvalidParameterException();
     }
     if (!message.isResendable()) {
-      throw InvalidParameterException();
+      if (message.errorCode == SendbirdError.fileSizeLimitExceeded) {
+        throw FileSizeLimitExceededException();
+      } else {
+        throw InvalidParameterException();
+      }
     }
 
     if (message.messageCreateParams != null) {

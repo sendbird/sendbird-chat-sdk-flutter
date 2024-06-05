@@ -39,6 +39,9 @@ class AppInfo {
   @JsonKey(name: 'allow_sdk_log_ingestion')
   final bool allowSdkStatsUpload;
 
+  @JsonKey(name: 'disable_supergroup_mack')
+  final bool disableSuperGroupMack;
+
   AppInfo({
     required this.premiumFeatureList,
     required this.uploadSizeLimit,
@@ -47,6 +50,7 @@ class AppInfo {
     required this.useReaction,
     this.notificationInfo,
     this.allowSdkStatsUpload = true,
+    this.disableSuperGroupMack = false,
   });
 
   /// Checks whether the emoji list needs to be updated.

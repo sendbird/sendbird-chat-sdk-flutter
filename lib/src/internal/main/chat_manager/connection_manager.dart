@@ -5,8 +5,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connecting_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/disconnected_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/reconnecting_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
@@ -44,19 +47,19 @@ class ConnectionManager {
   }
 
   bool isConnected() {
-    return _currentState.runtimeType.toString() == 'ConnectedState';
+    return _currentState is ConnectedState;
   }
 
   bool isConnecting() {
-    return _currentState.runtimeType.toString() == 'ConnectingState';
+    return _currentState is ConnectingState;
   }
 
   bool isDisconnected() {
-    return _currentState.runtimeType.toString() == 'DisconnectedState';
+    return _currentState is DisconnectedState;
   }
 
   bool isReconnecting() {
-    return _currentState.runtimeType.toString() == 'ReconnectingState';
+    return _currentState is ReconnectingState;
   }
 
   BaseConnectionState getCurrentState() {
@@ -108,12 +111,8 @@ class ConnectionManager {
     chat.chatContext
       ..currentUserId = userId
       ..accessToken = accessToken
-      ..apiHost = apiHost ?? _getDefaultApiHost()
-      ..apiHeaders = {
-        'SB-User-Agent': _sbUserAgentHeader,
-        'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
-        'SendBird': _sendbirdHeader,
-      };
+      ..apiHost = apiHost ?? getDefaultApiHost()
+      ..apiHeaders = getDefaultApiHeader();
 
     if (fromWebSocket) {
       chat.chatContext
@@ -282,6 +281,9 @@ class ConnectionManager {
 
       if (logout) {
         chat.chatContext.cleanUp();
+        chat.collectionManager.cleanUpGroupChannelCollections();
+        chat.collectionManager.cleanUpMessageCollections();
+
         //+ [DBManager]
         if (chat.dbManager.isEnabled()) {
           await chat.dbManager.clear();
@@ -431,7 +433,7 @@ class ConnectionManager {
 //------------------------------//
 // Values
 //------------------------------//
-  String _getDefaultApiHost() {
+  String getDefaultApiHost() {
     final appId = chat.chatContext.appId;
     return 'api-$appId.sendbird.com';
   }
@@ -439,6 +441,14 @@ class ConnectionManager {
   String _getDefaultWsHost() {
     final appId = chat.chatContext.appId;
     return 'wss://ws-$appId.sendbird.com';
+  }
+
+  Map<String, String> getDefaultApiHeader() {
+    return <String, String>{
+      'SB-User-Agent': _sbUserAgentHeader,
+      'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
+      'SendBird': _sendbirdHeader,
+    };
   }
 
   String get _sbUserAgentHeader {

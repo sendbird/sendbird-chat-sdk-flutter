@@ -1,5 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -37,7 +38,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 
 class DBManager {
-  final int _dbVersion = 1;
+  final int _dbVersion = 2;
   final String _dbName = 'sendbird_chat';
   final int _maxDBFileSize = 256; // MB
   final String _dbVersionKey = 'com.sendbird.chat.db_version';
@@ -51,12 +52,20 @@ class DBManager {
 
   DBManager({required Chat chat}) : _chat = chat;
 
+  bool isInitialized() {
+    return _isInitialized;
+  }
+
   DB getDB() {
     return _db;
   }
 
   Future<bool> init() async {
     sbLog.i(StackTrace.current);
+
+    if (kIsWeb) {
+      return false;
+    }
 
     try {
       if (_chat.isTest) {
@@ -298,7 +307,7 @@ class DBManager {
         // ChannelAccess
         await _db.deleteChannelAccess(channelUrl);
 
-        // ChannelChangeLogInfo
+        // ChannelInfo
         await _db.deleteChannelInfo();
 
         // Messages
@@ -344,7 +353,7 @@ class DBManager {
         // ChannelAccess
         await _db.deleteChannelAccess(channelUrl);
 
-        // ChannelChangeLogInfo
+        // ChannelInfo
         await _db.deleteChannelInfo();
 
         // Messages

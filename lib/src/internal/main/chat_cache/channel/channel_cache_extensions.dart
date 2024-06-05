@@ -24,24 +24,24 @@ extension JsonCacheUtils on Map<String, dynamic> {
     if (this['read_receipt'] != null) {
       final data = Map<String, int>.from(this['read_receipt']);
       data.forEach((key, value) {
-        final status = ReadStatus(
+        final readStatus = ReadStatus(
           channelType: channel.channelType,
           channelUrl: channel.channelUrl,
           userId: key,
           timestamp: value,
         );
-        status.saveToCache(channel.chat);
+        readStatus.saveToCache(channel.chat);
       });
     }
   }
 
   void cacheDeliveryStatus(BaseChannel channel) {
     if (this['delivery_receipt'] != null) {
-      final status = DeliveryStatus(
+      final deliveryStatus = DeliveryStatus(
         channelUrl: channel.channelUrl,
         updatedDeliveryStatus: Map<String, int>.from(this['delivery_receipt']),
       );
-      status.saveToCache(channel.chat);
+      deliveryStatus.saveToCache(channel.chat);
     }
   }
 }

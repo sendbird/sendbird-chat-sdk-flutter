@@ -19,8 +19,9 @@ class MultipartRequest extends http.MultipartRequest {
   @override
   Future<http.StreamedResponse> send() async {
     try {
-      var response = await client.send(this);
-      var stream = onDone(response.stream, client.close);
+      final response = await client.send(this);
+      final stream = onDone(response.stream, client.close);
+
       return http.StreamedResponse(
         http.ByteStream(stream),
         response.statusCode,

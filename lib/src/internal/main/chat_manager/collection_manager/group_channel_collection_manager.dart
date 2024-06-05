@@ -17,7 +17,15 @@ extension GroupChannelCollectionManager on CollectionManager {
     sbLog.d(StackTrace.current);
 
     groupChannelCollections.remove(collection);
-    _setInitialMessageChangeLogsAndMessagesGapTs();
+  }
+
+//------------------------------//
+// Clean up
+//------------------------------//
+  void cleanUpGroupChannelCollections() {
+    for (final channelCollection in groupChannelCollections) {
+      channelCollection.cleanUp();
+    }
   }
 
 //------------------------------//
@@ -37,43 +45,60 @@ extension GroupChannelCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    final info = await _chat.dbManager.getChannelInfo();
-    if (info != null) {
-      lastToken = info.lastChannelToken;
-      token = lastToken;
+    if (_chat.dbManager.isInitialized()) {
+      final info = await _chat.dbManager.getChannelInfo();
+      if (info != null) {
+        lastToken = info.lastChannelToken;
+        token = lastToken;
+      }
+    } else {
+      token = lastRequestTokenForGroupChannelChangeLogs; // For web without db
     }
     //- [DBManager]
 
-    bool hasMore = false;
     do {
       if (token == null) {
+        sbLog.d(StackTrace.current,
+            '[request by ts] ${DateTime.fromMillisecondsSinceEpoch(lastRequestTsForGroupChannelChangeLogs).toString()}');
+
         changeLogs = await _chat.getMyGroupChannelChangeLogs(
           params,
           timestamp: lastRequestTsForGroupChannelChangeLogs,
         );
       } else {
+        sbLog.d(StackTrace.current, '[request by token] $token');
+
         changeLogs = await _chat.getMyGroupChannelChangeLogs(
           params,
           token: token,
         );
       }
 
+      sbLog.d(
+          StackTrace.current,
+          '[updated] ${changeLogs.updatedChannels.length}, '
+          '[deleted] ${changeLogs.deletedChannelUrls.length}, '
+          '[next token]: ${changeLogs.token}');
+
       updatedChannels.addAll(changeLogs.updatedChannels);
       deletedChannelUrls.addAll(changeLogs.deletedChannelUrls);
 
-      hasMore = changeLogs.token != null && changeLogs.token != token;
       token = changeLogs.token;
-    } while (hasMore); // [x] changeLogs.hasMore
+    } while (changeLogs.hasMore);
 
     //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      ChannelInfo? channelInfo = await _chat.dbManager.getChannelInfo();
-      if (channelInfo != null) {
-        channelInfo.lastChannelToken = token;
+      if (_chat.dbManager.isInitialized()) {
+        ChannelInfo? channelInfo = await _chat.dbManager.getChannelInfo();
+        if (channelInfo != null) {
+          channelInfo.lastChannelToken = token;
+        } else {
+          channelInfo = ChannelInfo(lastChannelToken: token);
+        }
+        await _chat.dbManager.upsertChannelInfo(channelInfo);
       } else {
-        channelInfo = ChannelInfo(lastChannelToken: token);
+        lastRequestTokenForGroupChannelChangeLogs = token;
       }
-      await _chat.dbManager.upsertChannelInfo(channelInfo);
     }
     //- [DBManager]
 
@@ -92,6 +117,7 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
+    bool doNotUpsertAddedChannels = false, // (includeEmpty == false)
   }) async {
     sbLog.d(StackTrace.current, eventSource.toString());
 
@@ -100,7 +126,7 @@ extension GroupChannelCollectionManager on CollectionManager {
       if (deletedChannelUrls != null) {
         await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
       }
-      if (addedChannels != null) {
+      if (addedChannels != null && !doNotUpsertAddedChannels) {
         await _chat.dbManager.upsertGroupChannels(addedChannels);
       }
       if (updatedChannels != null) {

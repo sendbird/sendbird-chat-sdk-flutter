@@ -7,6 +7,7 @@ enum CollectionEventSource {
   channelCacheLoadMore(false), // loadMore()
   channelLoadMore(false), // loadMore()
   channelChangeLogs(false), // onReconnectSucceeded()
+  channelRefreshed(false), // onReconnectSucceeded()
 
   // Channel (isFromEvent = true)
   eventMentionReceived(true), // onChannelUpdated()

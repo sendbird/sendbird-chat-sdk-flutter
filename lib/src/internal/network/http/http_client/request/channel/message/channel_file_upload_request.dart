@@ -20,6 +20,7 @@ class ChannelFileUploadRequest extends ApiRequest {
     ProgressHandler? progressHandler,
   }) : super(chat: chat) {
     url = 'storage/file';
+
     final fileSize = params.fileInfo.file?.lengthSync() ??
         params.fileInfo.fileBytes?.lengthInBytes ??
         0;
@@ -29,7 +30,7 @@ class ChannelFileUploadRequest extends ApiRequest {
     }
 
     // upload size limit
-    if (chat.chatContext.uploadSizeLimit < fileSize) {
+    if (fileSize > chat.chatContext.uploadSizeLimit) {
       throw FileSizeLimitExceededException();
     }
 
