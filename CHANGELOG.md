@@ -1,3 +1,8 @@
+## v4.2.16 (Jun 13, 2024)
+
+### Improvements
+- Fixed a bug regarding `await` in `resetMyHistory()` in `GroupChannel`
+
 ## v4.2.15 (Jun 5, 2024)
 
 ### Improvements
