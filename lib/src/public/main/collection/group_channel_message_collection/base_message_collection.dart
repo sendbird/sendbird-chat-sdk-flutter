@@ -941,7 +941,7 @@ abstract class BaseMessageCollection {
         .map((message) => message.rootId)
         .toList();
 
-    _chat.collectionManager.sendEventsToMessageCollection(
+    await _chat.collectionManager.sendEventsToMessageCollection(
       messageCollection: this,
       baseChannel: baseChannel,
       eventSource: CollectionEventSource.eventMessageDeleted,
