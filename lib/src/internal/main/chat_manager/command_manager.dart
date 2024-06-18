@@ -417,6 +417,13 @@ class CommandManager {
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {
+        if (groupChannel.messageOffsetTimestamp != null &&
+            message.createdAt <= groupChannel.messageOffsetTimestamp!) {
+          sbLog.d(StackTrace.current,
+              'A received message before messageOffsetTimestamp is ignored.');
+          return; // Check
+        }
+
         if (groupChannel.hiddenState ==
             GroupChannelHiddenState.allowAutoUnhide) {
           groupChannel.isHidden = false;
