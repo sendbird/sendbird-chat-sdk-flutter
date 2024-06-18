@@ -1,3 +1,8 @@
+## v4.2.17 (Jun 18, 2024)
+
+### Improvements
+- Fixed a bug regarding receiving messages during `resetMyHistory()` processing
+
 ## v4.2.16 (Jun 13, 2024)
 
 ### Improvements
