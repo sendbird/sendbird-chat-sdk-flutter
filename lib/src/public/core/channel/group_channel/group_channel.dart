@@ -421,6 +421,18 @@ class GroupChannel extends BaseChannel {
     chat.channelCache.setCachedDeliveryStatus(channelUrl, deliveryStatus);
   }
 
+  Future<bool> canUpdate(GroupChannel channel) async {
+    if (messageOffsetTimestamp != null && messageOffsetTimestamp != 0) {
+      if (channel.messageOffsetTimestamp == null ||
+          channel.messageOffsetTimestamp! < messageOffsetTimestamp!) {
+        sbLog.d(StackTrace.current,
+            'Can not update regarding messageOffsetTimestamp in channel.');
+        return false;
+      }
+    }
+    return true;
+  }
+
   factory GroupChannel.fromJson(Map<String, dynamic> json) {
     return _$GroupChannelFromJson(json)
       ..set(SendbirdChat().chat); // Set the singleton chat

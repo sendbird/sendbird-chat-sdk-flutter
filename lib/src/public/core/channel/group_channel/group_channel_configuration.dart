@@ -16,20 +16,66 @@ extension GroupChannelConfiguration on GroupChannel {
     sbLog.i(StackTrace.current,
         'hidePreviousMessage: $hidePreviousMessage, allowAutoUnhide: $allowAutoUnhide');
 
-    final res = await chat.apiClient.send(GroupChannelHideRequest(
-      chat,
-      channelUrl,
-      hidePreviousMessages: hidePreviousMessage,
-      allowAutoUnhide: allowAutoUnhide,
-    ));
+    if (chat.commandManager.messageOffsetTsCompleterMap[channelUrl] != null) {
+      return;
+    }
+    chat.commandManager.messageOffsetTsCompleterMap[channelUrl] =
+        Completer<int?>();
 
-    messageOffsetTimestamp = res?['ts_message_offset'] as int?;
-    if (hidePreviousMessage) clearUnreadCount();
+    try {
+      bool isOffsetChanged = false;
 
-    isHidden = true;
-    hiddenState = allowAutoUnhide
-        ? GroupChannelHiddenState.allowAutoUnhide
-        : GroupChannelHiddenState.preventAutoUnhide;
+      final res = await chat.apiClient.send(GroupChannelHideRequest(
+        chat,
+        channelUrl,
+        hidePreviousMessages: hidePreviousMessage,
+        allowAutoUnhide: allowAutoUnhide,
+      ));
+
+      final offset = res?['ts_message_offset'] as int?;
+      if (offset != null && offset != messageOffsetTimestamp) {
+        messageOffsetTimestamp = offset;
+        isOffsetChanged = true;
+
+        if (lastMessage?.message != null) {
+          if (lastMessage!.createdAt < messageOffsetTimestamp!) {
+            lastMessage = null;
+          }
+        }
+
+        if (hidePreviousMessage) {
+          clearUnreadCount();
+        }
+
+        isHidden = true;
+        hiddenState = allowAutoUnhide
+            ? GroupChannelHiddenState.allowAutoUnhide
+            : GroupChannelHiddenState.preventAutoUnhide;
+
+        saveToCache(chat);
+
+        //+ [DBManager]
+        if (chat.dbManager.isEnabled()) {
+          await chat.dbManager.upsertGroupChannels([this], forceUpsert: true);
+        }
+        //- [DBManager]
+      }
+
+      if (isOffsetChanged) {
+        await chat.collectionManager.updateMessageOffsetTimestamp(
+          channelUrl: channelUrl,
+          messageOffsetTimestamp: messageOffsetTimestamp!,
+        );
+      }
+    } catch (_) {
+      rethrow;
+    } finally {
+      if (chat.commandManager.messageOffsetTsCompleterMap[channelUrl] != null) {
+        chat.commandManager.messageOffsetTsCompleterMap[channelUrl]!
+            .complete(messageOffsetTimestamp);
+        chat.commandManager.messageOffsetTsCompleterMap.remove(channelUrl);
+      }
+    }
   }
 
   /// Unhides this channel from the current `User`'s `GroupChannel` list.

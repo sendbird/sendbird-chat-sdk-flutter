@@ -84,19 +84,19 @@ extension MessageCollectionManager on CollectionManager {
   }
 
 //------------------------------//
-// resetMyHistory
+// updateMessageOffsetTimestamp
 //------------------------------//
-  Future<void> resetMyHistory({
+  Future<void> updateMessageOffsetTimestamp({
     required String channelUrl,
-    int? messageOffsetTimestamp,
+    required int messageOffsetTimestamp,
   }) async {
-    sbLog.d(StackTrace.current, 'resetMyHistory()');
+    sbLog.d(StackTrace.current, 'updateMessageOffsetTimestamp()');
 
     for (final collection in baseMessageCollections) {
       if (collection is MessageCollection) {
         if (collection.isInitialized) {
           if (collection.baseChannel.channelUrl == channelUrl) {
-            await collection.resetMyHistory(
+            await collection.updateMessageOffsetTimestamp(
               channelUrl: channelUrl,
               messageOffsetTimestamp: messageOffsetTimestamp,
             );
@@ -610,7 +610,7 @@ extension MessageCollectionManager on CollectionManager {
     List<RootMessage>? updatedMessages,
     List<dynamic>? deletedMessageIds,
     bool doNotSendDeleteEvent = false,
-    bool isResetMyHistory = false,
+    bool isMessageOffsetTimestampUpdated = false,
   }) async {
     sbLog.d(StackTrace.current,
         'channelUrl: ${messageCollection.baseChannel.channelUrl}, ${eventSource.toString()}');
@@ -623,7 +623,8 @@ extension MessageCollectionManager on CollectionManager {
     if (_chat.dbManager.isEnabled()) {
       // [First] delete
       if (deletedMessageIds != null && deletedMessageIds.isNotEmpty) {
-        if (eventSource != CollectionEventSource.messageInitialize &&
+        if (!(eventSource == CollectionEventSource.messageInitialize &&
+                deletedMessageIds.length == addedMessages?.length) && // Check
             eventSource != CollectionEventSource.messageLoadPrevious &&
             eventSource != CollectionEventSource.messageLoadNext) {
           List<String> deletedStringIds = deletedMessageIds
@@ -772,7 +773,8 @@ extension MessageCollectionManager on CollectionManager {
     }
 
     //+ [DBManager]
-    if (eventSource == CollectionEventSource.messageFill || isResetMyHistory) {
+    if (eventSource == CollectionEventSource.messageFill ||
+        isMessageOffsetTimestampUpdated) {
       messageCollection.setValuesFromMessageList(); // Check
     }
     //- [DBManager]

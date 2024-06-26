@@ -823,6 +823,15 @@ abstract class BaseMessageCollection {
       }
     }
 
+    // messageOffsetTimestamp
+    if (_channel is GroupChannel &&
+        (_channel as GroupChannel).messageOffsetTimestamp != null) {
+      if (addedMessage.createdAt <
+          (_channel as GroupChannel).messageOffsetTimestamp!) {
+        return false;
+      }
+    }
+
     // [Filter] messageType
     switch (params.messageType) {
       case MessageTypeFilter.all:
@@ -923,9 +932,9 @@ abstract class BaseMessageCollection {
     return canUpdate;
   }
 
-  Future<void> resetMyHistory({
+  Future<void> updateMessageOffsetTimestamp({
     required String channelUrl,
-    int? messageOffsetTimestamp,
+    required int messageOffsetTimestamp,
   }) async {
     if (_initializeParams.reverse) {
       _hasNext = false;
@@ -933,22 +942,22 @@ abstract class BaseMessageCollection {
       _hasPrevious = false;
     }
 
-    final deletedMessageIds = messageList
-        .where((message) {
-          return (messageOffsetTimestamp == null ||
-              message.createdAt <= messageOffsetTimestamp);
-        })
-        .map((message) => message.rootId)
-        .toList();
+    final deletedMessageIds = messageList.where((message) {
+      return message.createdAt < messageOffsetTimestamp;
+    }).map((message) {
+      return message.rootId;
+    }).toList();
 
-    await _chat.collectionManager.sendEventsToMessageCollection(
-      messageCollection: this,
-      baseChannel: baseChannel,
-      eventSource: CollectionEventSource.eventMessageDeleted,
-      sendingStatus: SendingStatus.succeeded,
-      deletedMessageIds: deletedMessageIds,
-      isResetMyHistory: true,
-    );
+    if (deletedMessageIds.isNotEmpty) {
+      await _chat.collectionManager.sendEventsToMessageCollection(
+        messageCollection: this,
+        baseChannel: baseChannel,
+        eventSource: CollectionEventSource.eventMessageDeleted,
+        sendingStatus: SendingStatus.succeeded,
+        deletedMessageIds: deletedMessageIds,
+        isMessageOffsetTimestampUpdated: true,
+      );
+    }
   }
 
   /// Sends mark as read to this channel.

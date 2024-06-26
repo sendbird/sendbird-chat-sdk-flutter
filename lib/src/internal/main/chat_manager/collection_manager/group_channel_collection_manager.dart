@@ -236,17 +236,21 @@ extension GroupChannelCollectionManager on CollectionManager {
             // Need to compare channel properties with updatedChannel
             // when eventSource is CollectionEventSource.channelChangeLogs (?)
 
-            if (await channelCollection.canAddChannel(
-                eventSource, updatedChannel,
-                checkToUpdateChannel: true)) {
-              channelCollection.channelList[index] = updatedChannel;
-              updatedChannelsForEvent.add(updatedChannel);
-            } else {
-              channelCollection.channelList.removeAt(index);
-              deletedChannelUrlsForEvent.add(updatedChannel.channelUrl);
-            }
+            if (await channel.canUpdate(updatedChannel)) {
+              if (await channelCollection.canAddChannel(
+                eventSource,
+                updatedChannel,
+                checkToUpdateChannel: true,
+              )) {
+                channelCollection.channelList[index] = updatedChannel;
+                updatedChannelsForEvent.add(updatedChannel);
+              } else {
+                channelCollection.channelList.removeAt(index);
+                deletedChannelUrlsForEvent.add(updatedChannel.channelUrl);
+              }
 
-            isUpdatedChannelInChannelList = true;
+              isUpdatedChannelInChannelList = true;
+            }
             break;
           }
         }

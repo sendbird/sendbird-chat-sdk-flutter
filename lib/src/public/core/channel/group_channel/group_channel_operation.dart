@@ -69,15 +69,51 @@ extension GroupChannelOperation on GroupChannel {
   Future<void> resetMyHistory() async {
     sbLog.i(StackTrace.current);
 
-    final offset = await chat.apiClient
-        .send(GroupChannelHistoryResetRequest(chat, channelUrl: channelUrl));
-    if (offset != null) {
-      messageOffsetTimestamp = offset;
+    if (chat.commandManager.messageOffsetTsCompleterMap[channelUrl] != null) {
+      return;
     }
+    chat.commandManager.messageOffsetTsCompleterMap[channelUrl] =
+        Completer<int?>();
 
-    await chat.collectionManager.resetMyHistory(
-      channelUrl: channelUrl,
-      messageOffsetTimestamp: messageOffsetTimestamp,
-    );
+    try {
+      bool isOffsetChanged = false;
+
+      final offset = await chat.apiClient
+          .send(GroupChannelHistoryResetRequest(chat, channelUrl: channelUrl));
+
+      if (offset != null && offset != messageOffsetTimestamp) {
+        messageOffsetTimestamp = offset;
+        isOffsetChanged = true;
+
+        if (lastMessage?.message != null) {
+          if (lastMessage!.createdAt < messageOffsetTimestamp!) {
+            lastMessage = null;
+          }
+        }
+
+        saveToCache(chat);
+
+        //+ [DBManager]
+        if (chat.dbManager.isEnabled()) {
+          await chat.dbManager.upsertGroupChannels([this], forceUpsert: true);
+        }
+        //- [DBManager]
+      }
+
+      if (isOffsetChanged) {
+        await chat.collectionManager.updateMessageOffsetTimestamp(
+          channelUrl: channelUrl,
+          messageOffsetTimestamp: messageOffsetTimestamp!,
+        );
+      }
+    } catch (_) {
+      rethrow;
+    } finally {
+      if (chat.commandManager.messageOffsetTsCompleterMap[channelUrl] != null) {
+        chat.commandManager.messageOffsetTsCompleterMap[channelUrl]!
+            .complete(messageOffsetTimestamp);
+        chat.commandManager.messageOffsetTsCompleterMap.remove(channelUrl);
+      }
+    }
   }
 }

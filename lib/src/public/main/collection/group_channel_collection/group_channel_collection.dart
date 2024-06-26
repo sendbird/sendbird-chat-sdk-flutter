@@ -49,16 +49,13 @@ class GroupChannelCollection {
     sbLog.i(StackTrace.current, 'GroupChannelCollection()');
     _chat.collectionManager.addGroupChannelCollection(this);
 
+    //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
       runZonedGuarded(() {
         _doBackSync(); // Do not await for performance
       }, (error, stack) {});
-
-      runZonedGuarded(() {
-        _chat.collectionManager
-            .refreshGroupChannelCollections(); // Do not await for performance
-      }, (error, stack) {});
     }
+    //- [DBManager]
 
     //+ [DBManager]
     _chat.dbManager.appendLocalCacheStat(
@@ -146,6 +143,12 @@ class GroupChannelCollection {
             addedChannels: localChannels,
           );
         }
+
+        // Check
+        runZonedGuarded(() {
+          _chat.collectionManager
+              .refreshGroupChannelCollections(); // Do not await for performance
+        }, (error, stack) {});
       }
     }
     //- [DBManager]
@@ -318,13 +321,13 @@ class GroupChannelCollection {
       }
     }
 
-    if (eventSource == CollectionEventSource.channelChangeLogs) {
-      if (await _chat.dbManager.canAddChannel(
-              query: _query, channelUrl: addedChannel.channelUrl) ==
-          false) {
-        return false;
-      }
+    // if (eventSource == CollectionEventSource.channelChangeLogs) { // Check
+    if (await _chat.dbManager.canAddChannel(
+            query: _query, channelUrl: addedChannel.channelUrl) ==
+        false) {
+      return false;
     }
+    // }
 
     return true;
   }

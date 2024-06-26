@@ -65,7 +65,7 @@ class SendbirdChat {
     required String appId,
     SendbirdChatOptions? options,
   }) async {
-    bool result = false;
+    bool result = true;
 
     _instance._chat.chatContext.init(
       chat: _instance._chat,
