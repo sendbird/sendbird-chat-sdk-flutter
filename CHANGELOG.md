@@ -1,3 +1,11 @@
+## v4.2.18 (Jun 26, 2024)
+
+### Improvements
+- Fixed the bugs regarding edge cases during `resetMyHistory()` processing
+- Fixed a bug that the filtering is not worked on multi `GroupChannelCollection`s
+- Fixed a bug that channel changelogs are not upserted in db
+- Fixed a bug regarding the result of `init()` in `SendbirdChat`
+
 ## v4.2.17 (Jun 18, 2024)
 
 ### Improvements

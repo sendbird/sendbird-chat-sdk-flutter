@@ -47,6 +47,7 @@ class CommandManager {
   final Map<String, Completer<Command?>> _completerMap = {};
   final Map<String, Timer> _ackTimerMap = {};
   final Map<String, int> _readMap = {};
+  final Map<String, Completer<int?>> messageOffsetTsCompleterMap = {};
 
   final Chat _chat;
 
@@ -84,6 +85,7 @@ class CommandManager {
     }
     _ackTimerMap.clear();
     _readMap.clear();
+    messageOffsetTsCompleterMap.clear();
   }
 
   void clearCompleterMap({SendbirdException? e}) {
@@ -417,11 +419,17 @@ class CommandManager {
 
       final GroupChannel? groupChannel = _eitherGroupOrFeed(channel);
       if (groupChannel != null) {
-        if (groupChannel.messageOffsetTimestamp != null &&
-            message.createdAt <= groupChannel.messageOffsetTimestamp!) {
-          sbLog.d(StackTrace.current,
-              'A received message before messageOffsetTimestamp is ignored.');
-          return; // Check
+        int? messageOffsetTs =
+            (await messageOffsetTsCompleterMap[groupChannel.channelUrl]
+                    ?.future) ??
+                groupChannel.messageOffsetTimestamp;
+
+        if (messageOffsetTs != null) {
+          if (message.createdAt < messageOffsetTs) {
+            sbLog.d(StackTrace.current,
+                'A received message before messageOffsetTimestamp is ignored.');
+            return; // Check
+          }
         }
 
         if (groupChannel.hiddenState ==
