@@ -73,12 +73,10 @@ extension MessageCollectionManager on CollectionManager {
       );
     }
 
-    // (includeEmpty == false)
     if (channel is GroupChannel) {
       sendEventsToGroupChannelCollectionList(
         eventSource: CollectionEventSource.eventMessageSent,
         addedChannels: [channel],
-        doNotUpsertAddedChannels: true,
       );
     }
   }

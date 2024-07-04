@@ -1,3 +1,10 @@
+## v4.2.19 (Jul 4, 2024)
+
+### Improvements
+- Fixed a bug that channels are not added when `includeEmpty` is `false` in `GroupChannelCollection`
+- Fixed a bug regarding a channel event when leaving a `GroupChannel`
+- Fixed a bug regarding the filtering on multi `GroupChannelCollection`s
+
 ## v4.2.18 (Jun 26, 2024)
 
 ### Improvements

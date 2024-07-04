@@ -454,12 +454,10 @@ class InternalGroupChannelHandlerForCollectionManager
         }
       }
 
-      // (includeEmpty == false)
       if (channel is GroupChannel) {
         _collectionManager.sendEventsToGroupChannelCollectionList(
           eventSource: CollectionEventSource.eventMessageReceived,
           addedChannels: [channel],
-          doNotUpsertAddedChannels: true,
         );
       }
     }
