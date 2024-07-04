@@ -255,14 +255,17 @@ class GroupChannelCollection {
       return false;
     }
 
-    // (includeEmpty == false)
     if (_query.includeEmpty == false) {
-      if (addedChannel.lastMessage == null) {
-        return false;
-      } else {
-        if (eventSource == CollectionEventSource.eventMessageSent ||
-            eventSource == CollectionEventSource.eventMessageReceived) {
-          return true;
+      if (checkToUpdateChannel == false) {
+        if (eventSource == CollectionEventSource.channelCacheLoadMore ||
+            eventSource == CollectionEventSource.channelLoadMore) {
+          if (addedChannel.lastMessage == null) {
+            return false;
+          }
+        } else if (eventSource == CollectionEventSource.eventMessageSent) {
+          if (addedChannel.lastMessage == null) {
+            return true; // Check
+          }
         }
       }
     }
@@ -321,13 +324,17 @@ class GroupChannelCollection {
       }
     }
 
-    // if (eventSource == CollectionEventSource.channelChangeLogs) { // Check
-    if (await _chat.dbManager.canAddChannel(
-            query: _query, channelUrl: addedChannel.channelUrl) ==
-        false) {
-      return false;
+    if (checkToUpdateChannel == false) {
+      //+ DBManager
+      if (_chat.dbManager.isEnabled()) {
+        if (await _chat.dbManager.canAddChannel(
+                query: _query, channelUrl: addedChannel.channelUrl) ==
+            false) {
+          return false;
+        }
+      }
+      //- DBManager
     }
-    // }
 
     return true;
   }

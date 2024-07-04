@@ -117,7 +117,6 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
-    bool doNotUpsertAddedChannels = false, // (includeEmpty == false)
   }) async {
     sbLog.d(StackTrace.current, eventSource.toString());
 
@@ -126,8 +125,14 @@ extension GroupChannelCollectionManager on CollectionManager {
       if (deletedChannelUrls != null) {
         await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
       }
-      if (addedChannels != null && !doNotUpsertAddedChannels) {
-        await _chat.dbManager.upsertGroupChannels(addedChannels);
+      if (addedChannels != null) {
+        if (eventSource == CollectionEventSource.channelLoadMore ||
+            eventSource == CollectionEventSource.channelCacheLoadMore ||
+            eventSource == CollectionEventSource.channelChangeLogs) {
+          // Do upsertGroupChannels() in sendEventsToGroupChannelCollection().
+        } else {
+          await _chat.dbManager.upsertGroupChannels(addedChannels);
+        }
       }
       if (updatedChannels != null) {
         await _chat.dbManager.upsertGroupChannels(updatedChannels);
@@ -173,18 +178,28 @@ extension GroupChannelCollectionManager on CollectionManager {
 
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
-      if (eventSource == CollectionEventSource.channelLoadMore ||
-          eventSource == CollectionEventSource.channelCacheLoadMore) {
-        if (deletedChannelUrls != null) {
-          await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
-        }
-        if (addedChannels != null) {
+      if (deletedChannelUrls != null) {
+        await _chat.dbManager.deleteGroupChannels(deletedChannelUrls);
+      }
+      if (addedChannels != null) {
+        if (eventSource == CollectionEventSource.channelLoadMore ||
+            eventSource == CollectionEventSource.channelCacheLoadMore ||
+            eventSource == CollectionEventSource.channelChangeLogs) {
+          List<GroupChannel> unavailableChannels = [];
+          for (final channel in addedChannels) {
+            if (!await channelCollection.canAddChannel(eventSource, channel)) {
+              unavailableChannels.add(channel);
+            }
+          }
+          for (final channel in unavailableChannels) {
+            addedChannels.remove(channel);
+          }
           await _chat.dbManager.upsertGroupChannels(addedChannels);
         }
-        if (updatedChannels != null) {
-          // Not used
-          await _chat.dbManager.upsertGroupChannels(updatedChannels);
-        }
+      }
+      if (updatedChannels != null) {
+        // Not used
+        await _chat.dbManager.upsertGroupChannels(updatedChannels);
       }
     }
     //- [DBManager]

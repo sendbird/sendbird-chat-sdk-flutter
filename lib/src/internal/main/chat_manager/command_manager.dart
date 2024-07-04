@@ -1000,7 +1000,7 @@ class CommandManager {
               }
             }
             _chat.eventManager.notifyUserLeft(groupChannel, member);
-            _chat.eventManager.notifyChannelMemberCountChanged([groupChannel]);
+            // _chat.eventManager.notifyChannelMemberCountChanged([groupChannel]); // Check
           }
         }
       }
