@@ -234,20 +234,8 @@ class DB {
   }
 
   // GroupChannel
-  Future<void> upsertGroupChannel(
-    GroupChannel channel, {
-    bool forceUpsert = false,
-  }) async {
-    bool upsert = forceUpsert;
-
-    if (!upsert) {
-      final channelInDb = await getGroupChannel(channel.channelUrl);
-      upsert = await channelInDb?.canUpdate(channel) ?? true;
-
-      if (upsert) {
-        await CGroupChannel.upsert(_chat, _isar, channel);
-      }
-    }
+  Future<void> upsertGroupChannel(GroupChannel channel) async {
+    await CGroupChannel.upsert(_chat, _isar, channel);
   }
 
   Future<GroupChannel?> getGroupChannel(String channelUrl) async {

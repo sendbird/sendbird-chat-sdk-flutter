@@ -95,7 +95,7 @@ extension GroupChannelOperation on GroupChannel {
 
         //+ [DBManager]
         if (chat.dbManager.isEnabled()) {
-          await chat.dbManager.upsertGroupChannels([this], forceUpsert: true);
+          await chat.dbManager.upsertGroupChannels([this]);
         }
         //- [DBManager]
       }

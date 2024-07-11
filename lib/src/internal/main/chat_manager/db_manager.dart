@@ -264,13 +264,10 @@ class DBManager {
     return (await _db.getGroupChannelCount() > 0);
   }
 
-  Future<void> upsertGroupChannels(
-    List<GroupChannel> channels, {
-    bool forceUpsert = false,
-  }) async {
+  Future<void> upsertGroupChannels(List<GroupChannel> channels) async {
     if (isEnabled()) {
       for (final channel in channels) {
-        await _db.upsertGroupChannel(channel, forceUpsert: forceUpsert);
+        await _db.upsertGroupChannel(channel);
       }
     }
   }

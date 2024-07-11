@@ -53,19 +53,26 @@ class CommandManager {
 
   CommandManager({required Chat chat}) : _chat = chat;
 
-  static Command? parseCommandString(String commandString) {
-    Command? command;
+  static List<Command> parseCommandsString(String commandsString) {
+    List<Command> commandList = [];
     try {
-      final payloadData = commandString.substring(4);
-      final payload = jsonDecode(payloadData);
-      payload['cmd'] = commandString.substring(0, 4);
-      command = Command.fromJson(payload);
-      command.payload = payload;
+      final commandStringList = commandsString.split('\n'); // for 'READ'
+      commandStringList.removeWhere((commandString) => commandString.isEmpty);
+
+      for (final commandString in commandStringList) {
+        final payloadData = commandString.substring(4);
+
+        final payload = jsonDecode(payloadData);
+        payload['cmd'] = commandString.substring(0, 4);
+
+        final command = Command.fromJson(payload);
+        command.payload = payload;
+        commandList.add(command);
+      }
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');
-      command = null;
     }
-    return command;
+    return commandList;
   }
 
   Future<void> updateSessionKey() async {

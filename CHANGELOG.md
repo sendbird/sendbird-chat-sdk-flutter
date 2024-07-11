@@ -1,3 +1,9 @@
+## v4.2.20 (Jul 11, 2024)
+
+### Improvements
+- Fixed the parsing bug regarding `markAsRead()` event
+- Fixed the db upsert bug regarding read status
+
 ## v4.2.19 (Jul 4, 2024)
 
 ### Improvements
