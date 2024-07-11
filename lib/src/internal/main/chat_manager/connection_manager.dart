@@ -13,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connecting_
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/disconnected_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/reconnecting_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/websocket_client.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
@@ -399,12 +400,14 @@ class ConnectionManager {
     }
 
     if (commandString.isEmpty) return;
-    final cmd = CommandManager.parseCommandString(commandString);
-    if (cmd == null) return;
+    List<Command> commands = CommandManager.parseCommandsString(commandString);
+    if (commands.isEmpty) return;
 
     runZonedGuarded(() async {
       try {
-        await chat.commandManager.processCommand(cmd);
+        for (final command in commands) {
+          await chat.commandManager.processCommand(command);
+        }
       } catch (e) {
         sbLog.e(StackTrace.current, 'e: $e');
         rethrow;
