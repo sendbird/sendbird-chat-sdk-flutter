@@ -71,8 +71,7 @@ extension BaseChannelMessage on BaseChannel {
     ) as UserMessage;
 
     if (this is GroupChannel) {
-      pendingUserMessage.messageId =
-          resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
+      pendingUserMessage.messageId = resendMessageId ?? 0;
 
       for (final messageCollection
           in chat.collectionManager.baseMessageCollections) {
@@ -103,7 +102,8 @@ extension BaseChannelMessage on BaseChannel {
       final error = ConnectionRequiredException();
       pendingUserMessage
         ..errorCode = error.code
-        ..sendingStatus = SendingStatus.failed;
+        ..sendingStatus = SendingStatus.failed
+        ..messageId = resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
 
       if (this is GroupChannel) {
         for (final messageCollection
@@ -160,7 +160,9 @@ extension BaseChannelMessage on BaseChannel {
       if (e is SendbirdException) {
         pendingUserMessage
           ..errorCode = e.code ?? SendbirdError.unknownError
-          ..sendingStatus = SendingStatus.failed;
+          ..sendingStatus = SendingStatus.failed
+          ..messageId =
+              resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
 
         if (this is GroupChannel) {
           for (final messageCollection
@@ -276,8 +278,7 @@ extension BaseChannelMessage on BaseChannel {
     pendingFileMessage.messageCreateParams = params;
 
     if (this is GroupChannel) {
-      pendingFileMessage.messageId =
-          resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
+      pendingFileMessage.messageId = resendMessageId ?? 0;
 
       for (final messageCollection
           in chat.collectionManager.baseMessageCollections) {
@@ -321,7 +322,10 @@ extension BaseChannelMessage on BaseChannel {
                 .timeout(
               Duration(seconds: chat.chatContext.options.fileTransferTimeout),
               onTimeout: () {
-                pendingFileMessage.sendingStatus = SendingStatus.failed;
+                pendingFileMessage
+                  ..sendingStatus = SendingStatus.failed
+                  ..messageId =
+                      resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
 
                 if (this is GroupChannel) {
                   for (final messageCollection
@@ -377,7 +381,9 @@ extension BaseChannelMessage on BaseChannel {
             final error = ConnectionRequiredException();
             messageBeforeSent
               ..errorCode = error.code
-              ..sendingStatus = SendingStatus.failed;
+              ..sendingStatus = SendingStatus.failed
+              ..messageId =
+                  resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
 
             if (this is GroupChannel) {
               for (final messageCollection
@@ -411,7 +417,8 @@ extension BaseChannelMessage on BaseChannel {
                 result.payload,
                 channelType: channelType,
                 commandType: result.cmd,
-              ) as FileMessage;
+              ) as FileMessage
+                    ..file = params.fileInfo.file; // Check
 
               chat.collectionManager.onMessageSentByMe(
                 channel: this,
@@ -482,7 +489,9 @@ extension BaseChannelMessage on BaseChannel {
       if (e is SendbirdException) {
         pendingFileMessage
           ..errorCode = e.code ?? SendbirdError.unknownError
-          ..sendingStatus = SendingStatus.failed;
+          ..sendingStatus = SendingStatus.failed
+          ..messageId =
+              resendMessageId ?? DateTime.now().millisecondsSinceEpoch;
 
         if (this is GroupChannel) {
           for (final messageCollection

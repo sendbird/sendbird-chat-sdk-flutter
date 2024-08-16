@@ -129,7 +129,7 @@ class SendbirdChat {
 
   /// Returns current application information with [AppInfo].
   static AppInfo? getAppInfo() {
-    sbLog.i(StackTrace.current);
+    // sbLog.i(StackTrace.current);
     return _instance._chat.getAppInfo();
   }
 

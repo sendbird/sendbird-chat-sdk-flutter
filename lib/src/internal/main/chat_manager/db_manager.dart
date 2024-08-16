@@ -148,6 +148,9 @@ class DBManager {
         await _db.write(writeFunc);
       } catch (e) {
         sbLog.e(StackTrace.current, e.toString());
+        if (_chat.isTest) {
+          rethrow;
+        }
 
         _chat.chatContext.options.useCollectionCaching = false;
         await clear();

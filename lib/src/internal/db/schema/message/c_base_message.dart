@@ -156,31 +156,35 @@ class CBaseMessage extends CRootMessage {
   static Future<void> upsert(Chat chat, Isar isar, BaseMessage message) async {
     // BaseMessage
     await chat.dbManager.write(() async {
-      if (message is UserMessage) {
-        await isar.cUserMessages.put(CUserMessage.fromUserMessage(message));
-      } else if (message is FileMessage) {
-        await isar.cFileMessages.put(CFileMessage.fromFileMessage(message));
-      } else if (message is AdminMessage) {
-        await isar.cAdminMessages.put(CAdminMessage.fromAdminMessage(message));
-      }
-
-      // parentMessage
-      if (message.parentMessage != null) {
-        await CBaseMessage.upsert(chat, isar, message.parentMessage!);
-      }
-
-      // threadInfo
-      if (message.threadInfo != null) {
-        for (final user in message.threadInfo!.mostRepliesUsers) {
-          await isar.cUsers.put(CUser.fromUser(user));
-        }
-      }
-
-      // sender
-      if (message.sender != null) {
-        await isar.cUsers.put(CUser.fromUser(message.sender!));
-      }
+      await _upsert(chat, isar, message);
     });
+  }
+
+  static Future<void> _upsert(Chat chat, Isar isar, BaseMessage message) async {
+    if (message is UserMessage) {
+      await isar.cUserMessages.put(CUserMessage.fromUserMessage(message));
+    } else if (message is FileMessage) {
+      await isar.cFileMessages.put(CFileMessage.fromFileMessage(message));
+    } else if (message is AdminMessage) {
+      await isar.cAdminMessages.put(CAdminMessage.fromAdminMessage(message));
+    }
+
+    // parentMessage
+    if (message.parentMessage != null) {
+      await _upsert(chat, isar, message.parentMessage!);
+    }
+
+    // threadInfo
+    if (message.threadInfo != null) {
+      for (final user in message.threadInfo!.mostRepliesUsers) {
+        await isar.cUsers.put(CUser.fromUser(user));
+      }
+    }
+
+    // sender
+    if (message.sender != null) {
+      await isar.cUsers.put(CUser.fromUser(message.sender!));
+    }
   }
 }
 

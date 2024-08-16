@@ -249,34 +249,39 @@ class BaseMessage extends RootMessage {
   bool applyReactionEvent(ReactionEvent event) {
     sbLog.i(StackTrace.current, 'event.key: ${event.key}');
 
-    if (event.messageId != messageId) {
-      return false;
-    }
+    try {
+      if (event.messageId != messageId) {
+        return false;
+      }
 
-    final keys = reactions?.map((e) => e.key).toList();
-    final existIndex = keys?.indexWhere((e) => e == event.key) ?? -1;
-    if (existIndex != -1) {
-      final reaction = reactions?[existIndex];
-      if (reaction != null && reaction.merge(event)) {
-        if (event.operation == ReactionEventAction.delete &&
-            reaction.userIds.isEmpty) {
-          reactions?.removeWhere((e) => e.key == event.key);
+      final keys = reactions?.map((e) => e.key).toList();
+      final existIndex = keys?.indexWhere((e) => e == event.key) ?? -1;
+      if (existIndex != -1) {
+        final reaction = reactions?[existIndex];
+        if (reaction != null && reaction.merge(event)) {
+          if (event.operation == ReactionEventAction.delete &&
+              reaction.userIds.isEmpty) {
+            reactions?.removeWhere((e) => e.key == event.key);
+          }
+          return true;
+        } else {
+          return false;
         }
+      } else if (event.operation == ReactionEventAction.add) {
+        final reaction = Reaction(
+          key: event.key,
+          userIds: [event.userId],
+          updatedAt: event.updatedAt,
+        );
+        reactions?.add(reaction);
         return true;
       } else {
         return false;
       }
-    } else if (event.operation == ReactionEventAction.add) {
-      final reaction = Reaction(
-        key: event.key,
-        userIds: [event.userId],
-        updatedAt: event.updatedAt,
-      );
-      reactions?.add(reaction);
-      return true;
-    } else {
-      return false;
+    } catch (e) {
+      sbLog.e(StackTrace.current, 'e: $e');
     }
+    return false;
   }
 
   /// Retrieves a [BaseMessage] object with a specified message ID.

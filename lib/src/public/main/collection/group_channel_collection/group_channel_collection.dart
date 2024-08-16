@@ -334,6 +334,332 @@ class GroupChannelCollection {
         }
       }
       //- DBManager
+      else {
+        if (_canAddChannel(query: _query, channel: addedChannel) == false) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  bool _canAddChannel({
+    required GroupChannelListQuery query,
+    required GroupChannel channel,
+  }) {
+    // [channelUrlsFilter]
+    if (query.channelUrlsFilter.isNotEmpty) {
+      bool found = false;
+      for (final channelUrl in query.channelUrlsFilter) {
+        if (channel.channelUrl == channelUrl) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+
+    // [myMemberStateFilter]
+    switch (query.myMemberStateFilter) {
+      case MyMemberStateFilter.all:
+        break;
+      case MyMemberStateFilter.invited:
+        if (channel.myMemberState != MemberState.invited) {
+          return false;
+        }
+        break;
+      case MyMemberStateFilter.joined:
+        if (channel.myMemberState != MemberState.joined) {
+          return false;
+        }
+        break;
+      case MyMemberStateFilter.invitedByFriend:
+        if (channel.myMemberState != MemberState.invited) {
+          return false;
+        }
+        // Check
+        break;
+      case MyMemberStateFilter.invitedByNonFriend:
+        if (channel.myMemberState != MemberState.invited) {
+          return false;
+        }
+        // Check
+        break;
+    }
+
+    // [superChannelFilter]
+    switch (query.superChannelFilter) {
+      case SuperChannelFilter.all:
+        break;
+      case SuperChannelFilter.exclusiveChannelOnly:
+        if (channel.isExclusive == false) {
+          return false;
+        }
+        break;
+      case SuperChannelFilter.superChannelOnly:
+        if (channel.isSuper == false) {
+          return false;
+        }
+        break;
+      case SuperChannelFilter.nonsuperChannelOnly:
+        if (channel.isSuper) {
+          return false;
+        }
+        break;
+      case SuperChannelFilter.broadcastChannelOnly:
+        if (channel.isBroadcast == false) {
+          return false;
+        }
+        break;
+    }
+
+    // [publicChannelFilter]
+    switch (query.publicChannelFilter) {
+      case PublicChannelFilter.all:
+        break;
+      case PublicChannelFilter.public:
+        if (channel.isPublic == false) {
+          return false;
+        }
+        break;
+      case PublicChannelFilter.private:
+        if (channel.isPublic) {
+          return false;
+        }
+        break;
+    }
+
+    // [unreadChannelFilter]
+    switch (query.unreadChannelFilter) {
+      case UnreadChannelFilter.all:
+        break;
+      case UnreadChannelFilter.unreadMessage:
+        if (channel.unreadMessageCount <= 0) {
+          return false;
+        }
+        break;
+    }
+
+    // [hiddenChannelFilter]
+    switch (query.hiddenChannelFilter) {
+      case HiddenChannelFilter.all:
+        break;
+      case HiddenChannelFilter.unhidden:
+        if (channel.isHidden) {
+          return false;
+        }
+        break;
+      case HiddenChannelFilter.hidden:
+        if (channel.isHidden == false) {
+          return false;
+        }
+        break;
+      case HiddenChannelFilter.hiddenAllowAutoUnhide:
+        if (channel.isHidden == false) {
+          return false;
+        }
+        if (channel.hiddenState != GroupChannelHiddenState.allowAutoUnhide) {
+          return false;
+        }
+        break;
+      case HiddenChannelFilter.hiddenPreventAutoUnhide:
+        if (channel.isHidden == false) {
+          return false;
+        }
+        if (channel.hiddenState != GroupChannelHiddenState.preventAutoUnhide) {
+          return false;
+        }
+        break;
+    }
+
+    // [customTypeStartsWithFilter]
+    if (query.customTypeStartsWithFilter != null &&
+        query.customTypeStartsWithFilter!.isNotEmpty) {
+      if (channel.customType.startsWith(query.customTypeStartsWithFilter!) ==
+          false) {
+        return false;
+      }
+    }
+
+    // [customTypesFilter]
+    if (query.customTypesFilter.isNotEmpty) {
+      bool found = false;
+      for (final customType in query.customTypesFilter) {
+        if (channel.customType == customType) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+
+    // [nicknameContainsFilter]
+    if (query.nicknameContainsFilter != null &&
+        query.nicknameContainsFilter!.isNotEmpty) {
+      bool found = false;
+      for (final member in channel.members) {
+        if (member.nickname.isNotEmpty &&
+            member.nickname.contains(query.nicknameContainsFilter!)) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+
+    // [userIdsIncludeFilter & queryType]
+    if (query.userIdsIncludeFilter.isNotEmpty) {
+      bool found = false;
+      if (query.queryType == GroupChannelListQueryType.and) {
+        for (final userId in query.userIdsIncludeFilter) {
+          for (final member in channel.members) {
+            if (member.userId == userId) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            return false;
+          }
+        }
+      } else if (query.queryType == GroupChannelListQueryType.or) {
+        for (final userId in query.userIdsIncludeFilter) {
+          for (final member in channel.members) {
+            if (member.userId == userId) {
+              found = true;
+              break;
+            }
+          }
+          if (found) {
+            break;
+          }
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+
+    // [userIdsExactFilter]
+    if (query.userIdsExactFilter.isNotEmpty) {
+      if (channel.members.length != query.userIdsExactFilter.length) {
+        return false;
+      }
+
+      bool found = false;
+      for (final userId in query.userIdsExactFilter) {
+        for (final member in channel.members) {
+          if (member.userId == userId) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          return false;
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+
+    // [channelNameContainsFilter]
+    if (query.channelNameContainsFilter != null &&
+        query.channelNameContainsFilter!.isNotEmpty) {
+      if (channel.name.contains(query.channelNameContainsFilter!) == false) {
+        return false;
+      }
+    }
+
+    // [metaDataOrderKeyFilter]
+    // Must call API, because this can not be queried with local cache.
+
+    // [metaDataKey & metaDataValues]
+    // Must call API, because this can not be queried with local cache.
+
+    // [metaDataKey & metaDataValueStartsWith]
+    // Must call API, because this can not be queried with local cache.
+
+    // [searchQuery & searchFields]
+    if (query.searchQuery != null && query.searchQuery!.isNotEmpty) {
+      for (final searchField in query.searchFields) {
+        switch (searchField) {
+          case GroupChannelListQuerySearchField.memberNickname:
+            bool found = false;
+            for (final member in channel.members) {
+              if (member.nickname.contains(query.searchQuery!)) {
+                found = true;
+                break;
+              }
+            }
+
+            if (!found) {
+              return false;
+            }
+            break;
+          case GroupChannelListQuerySearchField.channelName:
+            if (channel.name.contains(query.searchQuery!) == false) {
+              return false;
+            }
+            break;
+        }
+      }
+    }
+
+    // [includeEmpty]
+    if (query.includeEmpty == false) {
+      if (channel.lastMessage == null) {
+        return false;
+      }
+    }
+
+    // [includeFrozen]
+    if (query.includeFrozen == false) {
+      if (channel.isFrozen) {
+        return false;
+      }
+    }
+
+    // [includeMetaData]
+    // When calling API, this value have to be `true` to make chunk.
+    // But we must always call API for GroupChannel, because we must always get `hasNext` value from API.
+    // So we do not need the chunk for GroupChannel.
+
+    // [includeChatNotification]
+    if (query.includeChatNotification == false) {
+      if (channel.isChatNotification) {
+        return false;
+      }
+    }
+
+    // [createdBefore]
+    if (query.createdBefore != null) {
+      if (channel.createdAt != null) {
+        if (channel.createdAt! >= query.createdBefore!) {
+          return false;
+        }
+      }
+    }
+
+    // [createdAfter]
+    if (query.createdAfter != null) {
+      if (channel.createdAt != null) {
+        if (channel.createdAt! <= query.createdAfter!) {
+          return false;
+        }
+      }
     }
 
     return true;

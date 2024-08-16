@@ -1,3 +1,11 @@
+## v4.2.21 (Aug 16, 2024)
+
+### Improvements
+- Fixed the bug when upserting a parent message regarding the error on isar
+- Fixed the bug regarding the channel filtering when local caching is not used
+- Fixed the bugs regarding the thumbnail caching for UIKit
+- Fixed a bug regarding reactions on offline mode
+
 ## v4.2.20 (Jul 11, 2024)
 
 ### Improvements
