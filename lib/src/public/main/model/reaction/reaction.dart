@@ -43,6 +43,9 @@ class Reaction {
 
     updatedAts[event.userId] = event.updatedAt;
 
+    // Check (Unsupported operation: Cannot add to a fixed-length list)
+    userIds = userIds.toList();
+
     if (event.operation == ReactionEventAction.add) {
       userIds.add(event.userId);
     } else {
