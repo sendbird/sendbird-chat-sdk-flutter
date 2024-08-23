@@ -12,7 +12,6 @@ extension ChatCaching on Chat {
   }
 
   Future<void> clearCachedMessages(String channelUrl) async {
-    await dbManager.deleteGroupChannels([channelUrl]);
-    await dbManager.deleteFeedChannels([channelUrl]);
+    await dbManager.clearMessagesInChannel(channelUrl);
   }
 }

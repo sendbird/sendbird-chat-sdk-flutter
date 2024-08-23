@@ -143,7 +143,7 @@ class DBManager {
   }
 
   Future<void> write(Function writeFunc, {bool force = false}) async {
-    if (isEnabled() || force) {
+    if (isEnabled() || (_isInitialized && force)) {
       try {
         await _db.write(writeFunc);
       } catch (e) {
@@ -310,9 +310,6 @@ class DBManager {
         // ChannelAccess
         await _db.deleteChannelAccess(channelUrl);
 
-        // ChannelInfo
-        await _db.deleteChannelInfo();
-
         // Messages
         await deleteMessagesInDeletedChannel(channelUrl);
 
@@ -320,6 +317,14 @@ class DBManager {
         await _db.deleteMessageChangeLogInfo(channelUrl);
       }
     }
+  }
+
+  Future<void> clearMessagesInChannel(String channelUrl) async {
+    // Messages
+    await deleteMessagesInDeletedChannel(channelUrl);
+
+    // MessageChangeLogInfo
+    await _db.deleteMessageChangeLogInfo(channelUrl);
   }
 
   // FeedChannel
@@ -355,9 +360,6 @@ class DBManager {
 
         // ChannelAccess
         await _db.deleteChannelAccess(channelUrl);
-
-        // ChannelInfo
-        await _db.deleteChannelInfo();
 
         // Messages
         await deleteMessagesInDeletedChannel(channelUrl);

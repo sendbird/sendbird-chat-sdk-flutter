@@ -36,6 +36,7 @@ class GroupChannelCollection {
   //+ [DBManager]
   int _fetchedCount = 0;
   int _offset = 0;
+  bool _areGroupChannelChangeLogsFetchedOnce = false;
 
   //- [DBManager]
 
@@ -51,9 +52,15 @@ class GroupChannelCollection {
 
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
-      runZonedGuarded(() {
-        _doBackSync(); // Do not await for performance
-      }, (error, stack) {});
+      if (_chat.collectionManager.isDoingGroupChannelBackSync == false) {
+        _chat.collectionManager.isDoingGroupChannelBackSync = true;
+        runZonedGuarded(() async {
+          await _doBackSync(); // Do not await for performance
+          _chat.collectionManager.isDoingGroupChannelBackSync = false;
+        }, (error, stack) {
+          _chat.collectionManager.isDoingGroupChannelBackSync = false;
+        });
+      }
     }
     //- [DBManager]
 
@@ -124,6 +131,7 @@ class GroupChannelCollection {
       if (info != null && info.isChannelBackSyncCompleted) {
         final channels = await _chat.dbManager
             .getGroupChannels(query: _query, offset: _offset);
+
         if (channels.isNotEmpty) {
           localChannels.addAll(channels);
         }
@@ -144,15 +152,17 @@ class GroupChannelCollection {
           );
         }
 
-        // Check
-        runZonedGuarded(() {
-          _chat.collectionManager
-              .refreshGroupChannelCollections(); // Do not await for performance
-        }, (error, stack) {});
+        if (_areGroupChannelChangeLogsFetchedOnce == false) {
+          _areGroupChannelChangeLogsFetchedOnce = true;
+          // Check
+          runZonedGuarded(() {
+            _chat.collectionManager
+                .refreshGroupChannelCollections(); // Do not await for performance
+          }, (error, stack) {});
+        }
       }
     }
     //- [DBManager]
-
     try {
       if (localChannels.isNotEmpty) {
         //+ [DBManager]

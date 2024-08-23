@@ -1,5 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/channel/meta/channel_info.dart';
@@ -25,6 +27,7 @@ class CollectionManager {
   final List<GroupChannelCollection> groupChannelCollections = [];
   int lastRequestTsForGroupChannelChangeLogs = 0;
   String? lastRequestTokenForGroupChannelChangeLogs;
+  bool isDoingGroupChannelBackSync = false;
 
   // MessageCollection
   final List<BaseMessageCollection> baseMessageCollections = [];
@@ -34,7 +37,8 @@ class CollectionManager {
   String? lastRequestTokenForPollChangeLogs;
   int lastRequestTsForMessagesGap = 0;
 
-  bool isGroupChannelCollectionsRefreshing = false;
+  Completer<GroupChannelChangeLogsResult>?
+      groupChannelCollectionsRefreshingCompleter;
   bool isBaseMessageCollectionsRefreshing = false;
 
   CollectionManager({required Chat chat}) : _chat = chat {
@@ -96,19 +100,28 @@ class CollectionManager {
   Future<void> refreshGroupChannelCollections() async {
     sbLog.d(StackTrace.current);
 
-    isGroupChannelCollectionsRefreshing = true;
-
-    List<Future<dynamic>> futures = [];
-
     if (groupChannelCollections.isNotEmpty) {
-      futures.add(_requestGroupChannelChangeLogs());
-    }
+      GroupChannelChangeLogsResult result;
 
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
-    }
+      if (groupChannelCollectionsRefreshingCompleter == null) {
+        groupChannelCollectionsRefreshingCompleter =
+            Completer<GroupChannelChangeLogsResult>();
+        result = await _requestGroupChannelChangeLogs();
+        groupChannelCollectionsRefreshingCompleter?.complete(result);
+        groupChannelCollectionsRefreshingCompleter = null;
+      } else {
+        result = await groupChannelCollectionsRefreshingCompleter!.future;
+      }
 
-    isGroupChannelCollectionsRefreshing = false;
+      if (result.updatedChannels.isNotEmpty ||
+          result.deletedChannelUrls.isNotEmpty) {
+        sendEventsToGroupChannelCollectionList(
+          eventSource: CollectionEventSource.channelChangeLogs,
+          updatedChannels: result.updatedChannels,
+          deletedChannelUrls: result.deletedChannelUrls,
+        );
+      }
+    }
   }
 
   Future<void> _refreshBaseMessageCollections() async {
@@ -843,4 +856,14 @@ class InternalFeedChannelHandlerForCollectionManager
 //       }
 //     }
 //   }
+}
+
+class GroupChannelChangeLogsResult {
+  final List<GroupChannel> updatedChannels;
+  final List<String> deletedChannelUrls;
+
+  GroupChannelChangeLogsResult({
+    required this.updatedChannels,
+    required this.deletedChannelUrls,
+  });
 }
