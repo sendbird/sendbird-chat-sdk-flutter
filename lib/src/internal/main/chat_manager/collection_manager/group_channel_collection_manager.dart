@@ -31,10 +31,8 @@ extension GroupChannelCollectionManager on CollectionManager {
 //------------------------------//
 // GroupChannel changeLogs
 //------------------------------//
-  Future<void> _requestGroupChannelChangeLogs({
-    CollectionEventSource? eventSource,
-  }) async {
-    sbLog.d(StackTrace.current, '${eventSource?.toString()}');
+  Future<GroupChannelChangeLogsResult> _requestGroupChannelChangeLogs() async {
+    sbLog.d(StackTrace.current);
 
     final params = GroupChannelChangeLogsParams();
     final List<GroupChannel> updatedChannels = [];
@@ -102,8 +100,7 @@ extension GroupChannelCollectionManager on CollectionManager {
     }
     //- [DBManager]
 
-    sendEventsToGroupChannelCollectionList(
-      eventSource: eventSource ?? CollectionEventSource.channelChangeLogs,
+    return GroupChannelChangeLogsResult(
       updatedChannels: updatedChannels,
       deletedChannelUrls: deletedChannelUrls,
     );

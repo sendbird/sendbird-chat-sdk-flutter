@@ -174,14 +174,16 @@ extension MessageCollectionManager on CollectionManager {
     }
     //- [DBManager]
 
-    sendEventsToMessageCollection(
-      messageCollection: messageCollection,
-      baseChannel: channel,
-      eventSource: CollectionEventSource.messageChangeLogs,
-      sendingStatus: SendingStatus.succeeded,
-      updatedMessages: updatedMessages,
-      deletedMessageIds: deletedMessageIds,
-    );
+    if (updatedMessages.isNotEmpty || deletedMessageIds.isNotEmpty) {
+      sendEventsToMessageCollection(
+        messageCollection: messageCollection,
+        baseChannel: channel,
+        eventSource: CollectionEventSource.messageChangeLogs,
+        sendingStatus: SendingStatus.succeeded,
+        updatedMessages: updatedMessages,
+        deletedMessageIds: deletedMessageIds,
+      );
+    }
   }
 
 //------------------------------//
@@ -271,14 +273,16 @@ extension MessageCollectionManager on CollectionManager {
     }
     //- [DBManager]
 
-    sendEventsToMessageCollection(
-      messageCollection: messageCollection,
-      baseChannel: groupChannel,
-      eventSource: CollectionEventSource.pollChangeLogs,
-      sendingStatus: SendingStatus.succeeded,
-      updatedMessages: updatedMessages,
-      deletedMessageIds: deletedMessageIds,
-    );
+    if (updatedMessages.isNotEmpty || deletedMessageIds.isNotEmpty) {
+      sendEventsToMessageCollection(
+        messageCollection: messageCollection,
+        baseChannel: groupChannel,
+        eventSource: CollectionEventSource.pollChangeLogs,
+        sendingStatus: SendingStatus.succeeded,
+        updatedMessages: updatedMessages,
+        deletedMessageIds: deletedMessageIds,
+      );
+    }
   }
 
 //------------------------------//
