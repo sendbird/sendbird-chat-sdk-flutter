@@ -32,7 +32,7 @@ class CChannelInfo {
       Chat chat, Isar isar, ChannelInfo info) async {
     final cChannelInfo = CChannelInfo.fromChannelInfo(info);
 
-    // ChangeLogInfo
+    // ChannelInfo
     await chat.dbManager.write(() async {
       await isar.cChannelInfos.clear();
       await isar.cChannelInfos.put(cChannelInfo);

@@ -1,3 +1,8 @@
+## v4.2.22 (Aug 23, 2024)
+
+### Improvements
+- Fixed the bugs regarding the channel change logs on multi `GroupChannelCollection`s
+
 ## v4.2.21 (Aug 16, 2024)
 
 ### Improvements
