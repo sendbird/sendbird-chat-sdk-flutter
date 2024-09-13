@@ -313,7 +313,7 @@ class FeedChannel extends BaseChannel {
         };
 
         if (!await SendbirdStatistics.appendStat(
-          type: 'noti:stats',
+          type: SendbirdStatistics.notiStatsType,
           data: data,
         )) {
           result = false;
@@ -341,7 +341,7 @@ class FeedChannel extends BaseChannel {
         };
 
         if (!await SendbirdStatistics.appendStat(
-          type: 'noti:stats',
+          type: SendbirdStatistics.notiStatsType,
           data: data,
         )) {
           result = false;
@@ -376,7 +376,7 @@ class FeedChannel extends BaseChannel {
         };
 
         if (!await SendbirdStatistics.appendStat(
-          type: 'noti:stats',
+          type: SendbirdStatistics.notiStatsType,
           data: data,
         )) {
           result = false;

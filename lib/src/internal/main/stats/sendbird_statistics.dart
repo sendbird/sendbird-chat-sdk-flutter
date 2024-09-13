@@ -6,6 +6,12 @@ import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 
 // For internal use only.
 class SendbirdStatistics {
+  static const String apiResultType = 'api:result';
+  static const String wsConnectType = 'ws:connect';
+  static const String featureLocalCacheType = 'feature:local_cache';
+  static const String featureLocalCacheEventType = 'feature:local_cache_event';
+  static const String notiStatsType = 'noti:stats';
+
   static Future<bool> appendStat({
     required String type,
     required Map<String, dynamic> data,

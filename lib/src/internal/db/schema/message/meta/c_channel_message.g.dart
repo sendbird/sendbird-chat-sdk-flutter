@@ -161,7 +161,7 @@ final CChannelMessageSchema = CollectionSchema(
   getId: _cChannelMessageGetId,
   getLinks: _cChannelMessageGetLinks,
   attach: _cChannelMessageAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _cChannelMessageEstimateSize(

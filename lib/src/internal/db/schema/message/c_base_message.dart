@@ -76,11 +76,9 @@ class CBaseMessage extends CRootMessage {
     ogMetaData = baseMessage.ogMetaData != null
         ? COGMetaData.fromOGMetaData(baseMessage.ogMetaData!)
         : null;
-    reactions = baseMessage.reactions != null
-        ? baseMessage.reactions!
-            .map((reaction) => CReaction.fromReaction(reaction))
-            .toList()
-        : null;
+    reactions = baseMessage.reactions
+        ?.map((reaction) => CReaction.fromReaction(reaction))
+        .toList();
     scheduledInfo = baseMessage.scheduledInfo != null
         ? CScheduledInfo.fromScheduledInfo(baseMessage.scheduledInfo!)
         : null;

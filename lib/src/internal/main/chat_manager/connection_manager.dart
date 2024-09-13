@@ -143,7 +143,6 @@ class ConnectionManager {
     final params = {
       'user_id': userId,
       if (nickname != null && nickname != '') 'nickname': nickname,
-      if (accessToken != null) 'access_token': accessToken,
       'SB-User-Agent': _sbUserAgentHeader,
       'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
       'expiring_session':
@@ -160,7 +159,7 @@ class ConnectionManager {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
 
       chat.statManager.startWsConnectStat(hostUrl: url);
-      webSocketClient.connect(url);
+      webSocketClient.connect(url: url, accessToken: accessToken);
     }, (e, s) async {
       sbLog.e(StackTrace.current, 'e: $e');
 
@@ -349,11 +348,7 @@ class ConnectionManager {
       // ===== Reconnect =====
       final sessionKey = await chat.sessionManager.getSessionKey();
       final params = {
-        if (sessionKey != null)
-          'key': sessionKey
-        else
-          'user_id': chat.chatContext.currentUserId,
-        'access_token': chat.chatContext.accessToken,
+        if (sessionKey == null) 'user_id': chat.chatContext.currentUserId,
         'SB-User-Agent': _sbUserAgentHeader,
         'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
         'expiring_session':
@@ -368,7 +363,11 @@ class ConnectionManager {
 
       runZonedGuarded(() {
         sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
-        webSocketClient.connect(url);
+        webSocketClient.connect(
+          url: url,
+          accessToken: chat.chatContext.accessToken,
+          sessionKey: sessionKey,
+        );
 
         reconnectTimer?.cancel();
         reconnectTimer = null;
