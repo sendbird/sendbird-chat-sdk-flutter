@@ -182,7 +182,7 @@ final CNotificationMessageSchema = CollectionSchema(
   getId: _cNotificationMessageGetId,
   getLinks: _cNotificationMessageGetLinks,
   attach: _cNotificationMessageAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _cNotificationMessageEstimateSize(

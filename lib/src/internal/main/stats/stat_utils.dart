@@ -2,20 +2,21 @@
 
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/sendbird_statistics.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 
 class StatUtils {
   static StatType? getStatType(String type) {
     switch (type) {
-      case 'api:result':
+      case SendbirdStatistics.apiResultType:
         return StatType.apiResult;
-      case 'ws:connect':
+      case SendbirdStatistics.wsConnectType:
         return StatType.wsConnect;
-      case 'feature:local_cache':
+      case SendbirdStatistics.featureLocalCacheType:
         return StatType.featureLocalCache;
-      case 'feature:local_cache_event':
+      case SendbirdStatistics.featureLocalCacheEventType:
         return StatType.featureLocalCacheEvent;
-      case 'noti:stats':
+      case SendbirdStatistics.notiStatsType:
         return StatType.notificationStats;
     }
     sbLog.w(StackTrace.current, 'return null');
@@ -25,15 +26,15 @@ class StatUtils {
   static String getStatTypeString(StatType type) {
     switch (type) {
       case StatType.apiResult:
-        return 'api:result';
+        return SendbirdStatistics.apiResultType;
       case StatType.wsConnect:
-        return 'ws:connect';
+        return SendbirdStatistics.wsConnectType;
       case StatType.featureLocalCache:
-        return 'feature:local_cache';
+        return SendbirdStatistics.featureLocalCacheType;
       case StatType.featureLocalCacheEvent:
-        return 'feature:local_cache_event';
+        return SendbirdStatistics.featureLocalCacheEventType;
       case StatType.notificationStats:
-        return 'noti:stats';
+        return SendbirdStatistics.notiStatsType;
     }
   }
 

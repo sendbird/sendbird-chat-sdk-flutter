@@ -1,12 +1,15 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:universal_io/io.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef OnWebSocketConnected = void Function();
@@ -43,13 +46,46 @@ class WebSocketClient {
         _onWebSocketData = onWebSocketData,
         _onWebSocketError = onWebSocketError;
 
-  void connect(String url) {
+  void connect({
+    required String url,
+    String? accessToken,
+    String? sessionKey,
+  }) {
     if (url == _url && _isConnected) return;
 
     sbLog.d(StackTrace.current, '[url] $url');
 
     runZonedGuarded(() {
-      _webSocketChannel = WebSocketChannel.connect(Uri.parse(url)); // Check
+      if (kIsWeb) {
+        List<String> protocols = [];
+        if (sessionKey != null) {
+          protocols.add(
+            Uri.encodeComponent(jsonEncode({'auth': sessionKey})),
+          );
+        } else if (accessToken != null) {
+          protocols.add(
+            Uri.encodeComponent(jsonEncode({'token': accessToken})),
+          );
+        }
+
+        _webSocketChannel = WebSocketChannel.connect(
+          Uri.parse(url),
+          protocols: protocols,
+        );
+      } else {
+        Map<String, String> headers = {};
+        if (sessionKey != null) {
+          headers['SENDBIRD-WS-AUTH'] = sessionKey;
+        } else if (accessToken != null) {
+          headers['SENDBIRD-WS-TOKEN'] = accessToken;
+        }
+
+        _webSocketChannel = IOWebSocketChannel.connect(
+          Uri.parse(url),
+          headers: headers,
+        ); // Check
+      }
+
       _streamSubscription = _webSocketChannel?.stream.listen(
         _onData,
         onError: _onError,

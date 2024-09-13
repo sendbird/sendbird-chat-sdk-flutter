@@ -797,7 +797,7 @@ class DBManager {
       'collection_id': collectionId,
     };
     SendbirdStatistics.appendStat(
-      type: 'feature:local_cache_event',
+      type: SendbirdStatistics.featureLocalCacheEventType,
       data: data,
     );
   }
@@ -825,7 +825,7 @@ class DBManager {
     }
 
     SendbirdStatistics.appendStat(
-      type: 'feature:local_cache',
+      type: SendbirdStatistics.featureLocalCacheType,
       data: data,
     );
   }
