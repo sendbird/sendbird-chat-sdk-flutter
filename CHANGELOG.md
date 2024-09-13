@@ -3,7 +3,6 @@
 ### Improvements
 - Fixed the bug regarding `hide()` in `GroupChannel`
 - Fixed the issue regarding websocket security
-- Updated `isar` package to v3.1.8
 
 ## v4.2.22 (Aug 23, 2024)
 
