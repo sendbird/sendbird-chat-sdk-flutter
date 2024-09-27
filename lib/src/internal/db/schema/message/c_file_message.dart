@@ -205,11 +205,9 @@ class CFileMessageCreateParams {
         customType: customType,
         mentionType: mentionType,
         mentionedUserIds: mentionedUserIds,
-        metaArrays: metaArrays != null
-            ? metaArrays!
-                .map((metaArray) => metaArray.toMessageMetaArray())
-                .toList()
-            : null,
+        metaArrays: metaArrays
+            ?.map((metaArray) => metaArray.toMessageMetaArray())
+            .toList(),
         parentMessageId: parentMessageId,
         replyToChannel: replyToChannel,
         pushNotificationDeliveryOption: pushNotificationDeliveryOption,
@@ -227,11 +225,9 @@ class CFileMessageCreateParams {
         customType: customType,
         mentionType: mentionType,
         mentionedUserIds: mentionedUserIds,
-        metaArrays: metaArrays != null
-            ? metaArrays!
-                .map((metaArray) => metaArray.toMessageMetaArray())
-                .toList()
-            : null,
+        metaArrays: metaArrays
+            ?.map((metaArray) => metaArray.toMessageMetaArray())
+            .toList(),
         parentMessageId: parentMessageId,
         replyToChannel: replyToChannel,
         pushNotificationDeliveryOption: pushNotificationDeliveryOption,

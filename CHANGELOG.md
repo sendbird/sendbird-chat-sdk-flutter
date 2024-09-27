@@ -1,3 +1,9 @@
+## v4.2.23 (Sep 13, 2024)
+
+### Improvements
+- Fixed the bug regarding `hide()` in `GroupChannel`
+- Fixed the issue regarding websocket security
+
 ## v4.2.22 (Aug 23, 2024)
 
 ### Improvements
