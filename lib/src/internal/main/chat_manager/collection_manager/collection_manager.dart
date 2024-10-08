@@ -655,7 +655,7 @@ class InternalGroupChannelHandlerForCollectionManager
   void onChannelHidden(GroupChannel channel) {
     _collectionManager.sendEventsToGroupChannelCollectionList(
       eventSource: CollectionEventSource.eventChannelHidden,
-      deletedChannelUrls: [channel.channelUrl],
+      updatedChannels: [channel],
     );
   }
 

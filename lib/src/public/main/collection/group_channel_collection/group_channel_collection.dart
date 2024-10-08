@@ -334,7 +334,11 @@ class GroupChannelCollection {
       }
     }
 
-    if (checkToUpdateChannel == false) {
+    if (checkToUpdateChannel) {
+      if (eventSource == CollectionEventSource.eventChannelHidden) {
+        return _canAddChannel(query: _query, channel: addedChannel);
+      }
+    } else {
       //+ DBManager
       if (_chat.dbManager.isEnabled()) {
         if (await _chat.dbManager.canAddChannel(

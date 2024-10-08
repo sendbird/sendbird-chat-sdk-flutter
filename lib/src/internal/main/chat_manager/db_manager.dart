@@ -407,9 +407,10 @@ class DBManager {
     required int timestamp,
     required MessageListParams params,
     required bool isPrevious,
+    int? messageOffsetTimestamp,
   }) async {
     if (isEnabled()) {
-      return await _db.getMessages(
+      List<RootMessage> messages = await _db.getMessages(
         channelType,
         channelUrl,
         sendingStatus,
@@ -417,8 +418,52 @@ class DBManager {
         params,
         isPrevious,
       );
+
+      if (channelType == ChannelType.group && messageOffsetTimestamp != null) {
+        return _applyMessageOffsetTimestamp(
+          channelType: channelType,
+          channelUrl: channelUrl,
+          messages: messages,
+          messageOffsetTimestamp: messageOffsetTimestamp,
+        );
+      } else {
+        return messages;
+      }
     }
     return [];
+  }
+
+  Future<List<RootMessage>> _applyMessageOffsetTimestamp({
+    required ChannelType channelType,
+    required String channelUrl,
+    required List<RootMessage> messages,
+    required int messageOffsetTimestamp,
+  }) async {
+    List<RootMessage> resultMessages = [];
+    List<String> deletedMessageIds = [];
+
+    for (final message in messages) {
+      if (message.createdAt < messageOffsetTimestamp) {
+        deletedMessageIds.add(message.rootId);
+      } else {
+        resultMessages.add(message);
+      }
+    }
+
+    if (deletedMessageIds.isNotEmpty) {
+      await _db.deleteMessagesInChunk(
+        channelUrl: channelUrl,
+        rootIds: deletedMessageIds,
+      );
+
+      for (final messageId in deletedMessageIds) {
+        await _db.deleteUserMessage(messageId);
+        await _db.deleteFileMessage(messageId);
+        await _db.deleteAdminMessage(messageId);
+      }
+    }
+
+    return resultMessages;
   }
 
   Future<List<BaseMessage>> getPendingMessages({
@@ -533,10 +578,25 @@ class DBManager {
     required ChannelType channelType,
     required String channelUrl,
     required int timestamp,
+    int? messageOffsetTimestamp,
   }) async {
     if (isEnabled()) {
-      return await _db.getStartingPointMessages(
-          channelType, channelUrl, timestamp);
+      List<RootMessage> messages = await _db.getStartingPointMessages(
+        channelType,
+        channelUrl,
+        timestamp,
+      );
+
+      if (channelType == ChannelType.group && messageOffsetTimestamp != null) {
+        return _applyMessageOffsetTimestamp(
+          channelType: channelType,
+          channelUrl: channelUrl,
+          messages: messages,
+          messageOffsetTimestamp: messageOffsetTimestamp,
+        );
+      } else {
+        return messages;
+      }
     }
     return [];
   }
