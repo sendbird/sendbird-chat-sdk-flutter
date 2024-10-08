@@ -219,6 +219,10 @@ abstract class BaseMessageCollection {
       final localInitializeParams = MessageListParams()
         ..copyWith(_initializeParams);
 
+      final int? messageOffsetTimestamp = (_channel is GroupChannel)
+          ? (_channel as GroupChannel).messageOffsetTimestamp
+          : null;
+
       final localPreviousMessages = await _chat.dbManager.getMessages(
         channelType: _channel.channelType,
         channelUrl: _channel.channelUrl,
@@ -226,6 +230,7 @@ abstract class BaseMessageCollection {
         timestamp: _startingPoint,
         params: localInitializeParams..inclusive = false,
         isPrevious: true,
+        messageOffsetTimestamp: messageOffsetTimestamp,
       );
 
       List<RootMessage> localStartingPointMessages = [];
@@ -234,6 +239,7 @@ abstract class BaseMessageCollection {
           channelType: _channel.channelType,
           channelUrl: _channel.channelUrl,
           timestamp: _startingPoint,
+          messageOffsetTimestamp: messageOffsetTimestamp,
         );
         localStartingPointMessages.addAll(messages);
       }
@@ -245,6 +251,7 @@ abstract class BaseMessageCollection {
         timestamp: _startingPoint,
         params: localInitializeParams..inclusive = false,
         isPrevious: false,
+        messageOffsetTimestamp: messageOffsetTimestamp,
       );
 
       if (_initializeParams.reverse) {

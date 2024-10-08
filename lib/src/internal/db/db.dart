@@ -381,7 +381,12 @@ class DB {
     int timestamp,
   ) async {
     return await CChannelMessage.getStartingPointMessages(
-        _chat, _isar, channelType, channelUrl, timestamp);
+      _chat,
+      _isar,
+      channelType,
+      channelUrl,
+      timestamp,
+    );
   }
 
   Future<void> deleteChannelMessage(String rootId) async {

@@ -1,3 +1,9 @@
+## v4.2.24 (Oct 8, 2024)
+
+### Improvements
+- Fixed bugs regarding the events for `hide()` in `GroupChannel`
+- Fixed the message deletion bug in db regarding `resetMyHistory()`
+
 ## v4.2.23 (Sep 13, 2024)
 
 ### Improvements
