@@ -1,3 +1,9 @@
+## v4.2.25 (Oct 21, 2024)
+
+### Improvements
+- Fixed the reconnection bug while entering foreground
+- Modified the endpoint of sbm metric
+
 ## v4.2.24 (Oct 8, 2024)
 
 ### Improvements
