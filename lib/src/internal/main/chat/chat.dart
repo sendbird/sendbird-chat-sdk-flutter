@@ -62,7 +62,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.2.24';
+const sdkVersion = '4.2.25';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -91,6 +91,7 @@ class Chat with WidgetsBindingObserver {
 
   bool? _isObserverRegistered;
   int lastMarkAsReadTimestamp;
+  bool isBackground = false;
 
   // This allows a value of type T or T? to be treated as a value of type T?.
   // We use this so that APIs that have become non-nullable can still be used
@@ -176,8 +177,13 @@ class Chat with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     sbLog.i(StackTrace.current, 'state: $state');
 
-    if (state == AppLifecycleState.paused) await _handleEnterBackground();
-    if (state == AppLifecycleState.resumed) await _handleEnterForeground();
+    if (state == AppLifecycleState.paused) {
+      isBackground = true;
+      await _handleEnterBackground();
+    } else if (state == AppLifecycleState.resumed) {
+      isBackground = false;
+      await _handleEnterForeground();
+    }
   }
 
   Future<void> _handleEnterBackground() async {

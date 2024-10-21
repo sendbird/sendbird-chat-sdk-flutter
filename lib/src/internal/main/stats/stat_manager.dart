@@ -17,6 +17,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/upload_notification_stat_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/upload_stat_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
@@ -241,19 +242,55 @@ class StatManager {
     await _clearDisallowedStats(); // Defensive code
 
     final deviceId = await defaultStatPrefs.deviceId;
+
     final dailyRecordStats = (await dailyRecordStatPrefs.uploadCandidateStats)
         .take(_maxStatCountPerRequest)
         .toList();
+
     final copiedStats = cachedDefaultStats
         .take(_maxStatCountPerRequest - dailyRecordStats.length)
         .toList();
 
+    final List<NotificationStat> notificationStats = [];
+    final List<DefaultStat> otherStats = [];
+    final List<DefaultStat> remainingDefaultStats = [...cachedDefaultStats];
+
+    for (DefaultStat stat in copiedStats) {
+      if (stat is NotificationStat) {
+        notificationStats.add(stat);
+      } else {
+        otherStats.add(stat);
+      }
+    }
+
     Object? exception;
+    bool wereNotificationStatsSent = false;
     try {
-      final stats = [...dailyRecordStats, ...copiedStats];
-      await _chat.apiClient.send(
-        UploadStatRequest(_chat, deviceId: deviceId, stats: stats),
-      );
+      if (notificationStats.isNotEmpty) {
+        // Send notificationStats
+        await _chat.apiClient.send(
+          UploadNotificationStatRequest(_chat,
+              deviceId: deviceId, stats: notificationStats),
+        );
+
+        for (NotificationStat stat in notificationStats) {
+          remainingDefaultStats.remove(stat);
+        }
+
+        wereNotificationStatsSent = true;
+      }
+
+      if (dailyRecordStats.isNotEmpty || otherStats.isNotEmpty) {
+        // Send otherStats
+        await _chat.apiClient.send(
+          UploadStatRequest(_chat,
+              deviceId: deviceId, stats: [...dailyRecordStats, ...otherStats]),
+        );
+
+        for (DefaultStat stat in otherStats) {
+          remainingDefaultStats.remove(stat);
+        }
+      }
     } catch (e) {
       if (copiedStats.length >= _minStatCount) {
         _minStatCount += _intervalCountToTryAgain;
@@ -271,25 +308,32 @@ class StatManager {
     if (exception == null) {
       _minStatCount = _initialMinStatCount;
 
-      final List<DefaultStat> remainingStats = [];
-      try {
-        remainingStats.addAll(cachedDefaultStats
-            .sublist(copiedStats.length, cachedDefaultStats.length)
-            .toList());
-      } catch (e) {
-        sbLog.d(StackTrace.current, 'e: ${e.toString()}');
-      }
-
       cachedDefaultStats.clear();
-      cachedDefaultStats.addAll(remainingStats);
+      cachedDefaultStats.addAll(remainingDefaultStats);
       await defaultStatPrefs
           .updateLastSentAt(DateTime.now().millisecondsSinceEpoch);
-      await defaultStatPrefs.putStats(remainingStats);
+      await defaultStatPrefs.putStats(remainingDefaultStats);
       await dailyRecordStatPrefs.remove(dailyRecordStats);
 
       sbLog.d(
           StackTrace.current,
           '[StatTest][Sent] deviceId: $deviceId,'
+          ' pendingDefaultStats: ${pendingDefaultStats.length},'
+          ' cachedDefaultStats: ${cachedDefaultStats.length},'
+          ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
+          ' dailyRecordStatPrefs: ${(await dailyRecordStatPrefs.stats).length}');
+    } else if (wereNotificationStatsSent) {
+      _minStatCount = _initialMinStatCount;
+
+      cachedDefaultStats.clear();
+      cachedDefaultStats.addAll(remainingDefaultStats);
+      await defaultStatPrefs
+          .updateLastSentAt(DateTime.now().millisecondsSinceEpoch);
+      await defaultStatPrefs.putStats(remainingDefaultStats);
+
+      sbLog.d(
+          StackTrace.current,
+          '[StatTest][NotificationStatsSent] deviceId: $deviceId,'
           ' pendingDefaultStats: ${pendingDefaultStats.length},'
           ' cachedDefaultStats: ${cachedDefaultStats.length},'
           ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
