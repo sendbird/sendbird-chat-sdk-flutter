@@ -83,11 +83,11 @@ class ConnectionManager {
     );
   }
 
-  Future<void> disconnect({required logout}) async {
+  Future<void> disconnect({required bool logout}) async {
     await _currentState.disconnect(logout: logout);
   }
 
-  Future<bool> reconnect({bool reset = false}) async {
+  Future<bool> reconnect({required bool reset}) async {
     return await _currentState.reconnect(reset: reset);
   }
 
@@ -242,6 +242,7 @@ class ConnectionManager {
   Future<void> doDisconnect({
     required bool clear,
     bool logout = false,
+    bool fromEnterBackground = false,
   }) async {
     sbLog.i(
       StackTrace.current,
@@ -262,7 +263,7 @@ class ConnectionManager {
       }
     }
 
-    await webSocketClient.close();
+    final isClosedSuccessfully = await webSocketClient.close();
 
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
@@ -294,10 +295,14 @@ class ConnectionManager {
       await chat.eventDispatcher.onDisconnected();
     }
 
-    changeState(DisconnectedState(chat: chat));
+    if (fromEnterBackground && !chat.isBackground && !isClosedSuccessfully) {
+      chat.connectionManager.reconnect(reset: true); // Check
+    } else {
+      changeState(DisconnectedState(chat: chat));
 
-    if (clear && disconnectedUserId.isNotEmpty) {
-      chat.eventManager.notifyDisconnected(disconnectedUserId);
+      if (clear && disconnectedUserId.isNotEmpty) {
+        chat.eventManager.notifyDisconnected(disconnectedUserId);
+      }
     }
   }
 
