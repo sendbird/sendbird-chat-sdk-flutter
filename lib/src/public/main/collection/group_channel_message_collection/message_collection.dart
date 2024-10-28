@@ -53,11 +53,12 @@ class MessageCollection extends BaseMessageCollection {
   /// Gets all failed messages of this MessageCollection
   /// @since 4.2.0
   Future<List<BaseMessage>> getFailedMessages() async {
-    sbLog.i(StackTrace.current, 'getFailedMessages()');
-    return await chat.dbManager.getFailedMessages(
+    final failedMessages = await chat.dbManager.getFailedMessages(
       channelType: ChannelType.group,
       channelUrl: channel.channelUrl,
     );
+    sbLog.i(StackTrace.current, '${failedMessages.length}');
+    return failedMessages;
   }
 
   /// Removes specific failed messages of this MessageCollection.
@@ -65,7 +66,7 @@ class MessageCollection extends BaseMessageCollection {
   Future<void> removeFailedMessages({
     required List<BaseMessage> messages,
   }) async {
-    sbLog.i(StackTrace.current, 'removeFailedMessages()');
+    sbLog.i(StackTrace.current, '${messages.length}');
     await chat.dbManager.removeFailedMessages(
       channelType: ChannelType.group,
       channelUrl: channel.channelUrl,
@@ -76,7 +77,7 @@ class MessageCollection extends BaseMessageCollection {
   /// Removes all failed messages of this MessageCollection.
   /// @since 4.2.0
   Future<void> removeAllFailedMessages() async {
-    sbLog.i(StackTrace.current, 'removeAllFailedMessages()');
+    sbLog.i(StackTrace.current);
     await chat.dbManager.removeAllFailedMessages(
       channelType: ChannelType.group,
       channelUrl: channel.channelUrl,
