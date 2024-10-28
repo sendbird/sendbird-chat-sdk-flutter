@@ -11,6 +11,7 @@ class SendbirdChatOptions {
   static const defaultFileTransferTimeout = 30;
   static const defaultTypingIndicatorThrottle = 1000;
   static const defaultUseMemberInfoInMessage = true;
+  static const defaultUseAutoResend = false;
 
   bool _useCollectionCaching = defaultUseCollectionCaching;
   int _connectionTimeout = defaultConnectionTimeout;
@@ -18,6 +19,7 @@ class SendbirdChatOptions {
   int _fileTransferTimeout = defaultFileTransferTimeout;
   int _typingIndicatorThrottle = defaultTypingIndicatorThrottle;
   bool _useMemberInfoInMessage = defaultUseMemberInfoInMessage;
+  bool _useAutoResend = defaultUseAutoResend;
 
   SendbirdChatOptions({
     bool? useCollectionCaching = defaultUseCollectionCaching,
@@ -26,6 +28,7 @@ class SendbirdChatOptions {
     int? fileTransferTimeout = defaultFileTransferTimeout,
     int? typingIndicatorThrottle = defaultTypingIndicatorThrottle,
     bool? useMemberInfoInMessage = defaultUseMemberInfoInMessage,
+    bool? useAutoResend = defaultUseAutoResend,
   }) {
     this.useCollectionCaching = useCollectionCaching;
     this.connectionTimeout = connectionTimeout;
@@ -33,6 +36,8 @@ class SendbirdChatOptions {
     this.fileTransferTimeout = fileTransferTimeout;
     this.typingIndicatorThrottle = typingIndicatorThrottle;
     this.useMemberInfoInMessage = useMemberInfoInMessage;
+    this.useAutoResend = useAutoResend;
+    this.useAutoResend = _useCollectionCaching ? useAutoResend : false;
   }
 
   bool get useCollectionCaching => _useCollectionCaching;
@@ -104,5 +109,25 @@ class SendbirdChatOptions {
   /// The default value is `true`.
   set useMemberInfoInMessage(value) {
     _useMemberInfoInMessage = value;
+  }
+
+  bool get useAutoResend => _useAutoResend;
+
+  /// If set `true` and `useCollectionCaching` is `true`,
+  /// the failed messages will be resent automatically
+  /// when the WebSocket is reconnected
+  ///
+  /// With local caching, you can temporarily keep an unsent message in the local cache
+  /// if the WebSocket connection is lost.
+  /// The Chat SDK with local caching marks the failed message as pending, stores it locally,
+  /// and automatically resends the pending message when the WebSocket is reconnected.
+  /// This is called auto resend.
+  /// The default value is `false`.
+  ///
+  /// @since 4.2.26
+  set useAutoResend(value) {
+    if (_useCollectionCaching) {
+      _useAutoResend = value;
+    }
   }
 }

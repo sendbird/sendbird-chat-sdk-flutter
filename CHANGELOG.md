@@ -1,3 +1,11 @@
+## v4.2.26 (Oct 28, 2024)
+
+### Features
+- Added `useAutoResend` in `SendbirdChatOptions`
+
+### Improvements
+- Fixed a bug regarding `onReconnectFailed()` event in `ConnectionHandler`
+
 ## v4.2.25 (Oct 21, 2024)
 
 ### Improvements

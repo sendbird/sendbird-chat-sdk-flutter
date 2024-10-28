@@ -232,6 +232,17 @@ class BaseMessage extends RootMessage {
     return result;
   }
 
+  bool isAutoResendable() {
+    if (errorCode == SendbirdError.connectionRequired ||
+        errorCode == SendbirdError.webSocketConnectionClosed ||
+        errorCode == SendbirdError.webSocketConnectionFailed ||
+        errorCode == SendbirdError.requestFailed || // Check
+        errorCode == SendbirdError.socketChannelFrozen) {
+      return true;
+    }
+    return false;
+  }
+
   /// Returns [MessageMetaArray] list which is filtered by given metaArrayKeys.
   List<MessageMetaArray> getMetaArrays(List<String> keys) {
     sbLog.i(StackTrace.current, 'keys: $keys');

@@ -268,8 +268,6 @@ class ConnectionManager {
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
     if (clear || logout) {
-      await chat.eventDispatcher.onLogout();
-
       chat.messageQueueMap.forEach((key, q) => q.cleanUp());
       chat.messageQueueMap.clear();
       // chat.uploads.forEach((key, value) => _api.cancelUploadingFile(key));
@@ -281,6 +279,8 @@ class ConnectionManager {
       chat.apiClient.cleanUp();
 
       if (logout) {
+        await chat.eventDispatcher.onLogout();
+
         chat.chatContext.cleanUp();
         chat.collectionManager.cleanUpGroupChannelCollections();
         chat.collectionManager.cleanUpMessageCollections();
@@ -311,8 +311,10 @@ class ConnectionManager {
 
     if (chat.chatContext.currentUser == null ||
         chat.chatContext.sessionKey == null) {
+      if (isReconnecting()) {
+        chat.eventManager.notifyReconnectFailed();
+      }
       changeState(DisconnectedState(chat: chat));
-      chat.eventManager.notifyReconnectFailed();
       return false;
     }
 
