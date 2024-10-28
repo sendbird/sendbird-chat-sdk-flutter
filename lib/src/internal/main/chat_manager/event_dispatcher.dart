@@ -22,6 +22,7 @@ class EventDispatcher {
 
   Future<void> onDisconnected() async {
     sbLog.d(StackTrace.current);
+    _chat.collectionManager.onDisconnected();
   }
 
   Future<void> onReconnecting() async {

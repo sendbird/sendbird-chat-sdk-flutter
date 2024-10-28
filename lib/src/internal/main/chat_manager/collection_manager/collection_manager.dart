@@ -7,6 +7,7 @@ import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/channel/meta/channel_info.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/meta/message_changelog_info.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/auto_resend_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_gap_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
@@ -75,12 +76,22 @@ class CollectionManager {
       await _chat.dbManager.checkDBFileSize();
     }
     //- [DBManager]
+
+    AutoResendManager().startAutoResend(_chat);
+  }
+
+  Future<void> onDisconnected() async {
+    sbLog.d(StackTrace.current);
+
+    AutoResendManager().stopAutoResend();
   }
 
   Future<void> onReconnected() async {
     sbLog.d(StackTrace.current);
 
     await _refresh();
+
+    AutoResendManager().startAutoResend(_chat);
   }
 
   Future<void> _refresh() async {
