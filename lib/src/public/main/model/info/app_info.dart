@@ -42,6 +42,16 @@ class AppInfo {
   @JsonKey(name: 'disable_supergroup_mack')
   final bool disableSuperGroupMack;
 
+  /// The unread message count policy for message threading.
+  /// 0(NONE), 1(INCLUDE_REPLY), 2(EXCLUDE_REPLY), 3(INCLUDE_REPLY_TO_CHANNEL)
+  /// @since 4.2.27
+  final int unreadCntThreadingPolicy;
+
+  /// The last message policy for message threading.
+  /// 0(NONE), 1(INCLUDE_REPLY), 2(EXCLUDE_REPLY), 3(INCLUDE_REPLY_TO_CHANNEL)
+  /// @since 4.2.27
+  final int lastMsgThreadingPolicy;
+
   AppInfo({
     required this.premiumFeatureList,
     required this.uploadSizeLimit,
@@ -51,6 +61,8 @@ class AppInfo {
     this.notificationInfo,
     this.allowSdkStatsUpload = true,
     this.disableSuperGroupMack = false,
+    this.unreadCntThreadingPolicy = 0,
+    this.lastMsgThreadingPolicy = 0,
   });
 
   /// Checks whether the emoji list needs to be updated.

@@ -258,9 +258,6 @@ class ConnectionManager {
     if (isReconnecting()) {
       reconnectTimer?.cancel();
       reconnectTimer = null;
-      if (clear) {
-        chat.eventManager.notifyReconnectFailed();
-      }
     }
 
     final isClosedSuccessfully = await webSocketClient.close();
@@ -298,6 +295,9 @@ class ConnectionManager {
     if (fromEnterBackground && !chat.isBackground && !isClosedSuccessfully) {
       chat.connectionManager.reconnect(reset: true); // Check
     } else {
+      if (isReconnecting()) {
+        chat.eventManager.notifyReconnectFailed();
+      }
       changeState(DisconnectedState(chat: chat));
 
       if (clear && disconnectedUserId.isNotEmpty) {
@@ -309,11 +309,13 @@ class ConnectionManager {
   Future<bool> doReconnect({bool reset = false}) async {
     sbLog.i(StackTrace.current, 'reset: $reset');
 
+    bool doNotCallReconnectStartedEvent = false;
+    if (isReconnecting() && reset) {
+      doNotCallReconnectStartedEvent = true;
+    }
+
     if (chat.chatContext.currentUser == null ||
         chat.chatContext.sessionKey == null) {
-      if (isReconnecting()) {
-        chat.eventManager.notifyReconnectFailed();
-      }
       changeState(DisconnectedState(chat: chat));
       return false;
     }
@@ -348,8 +350,10 @@ class ConnectionManager {
       );
 
       if (chat.chatContext.reconnectTask?.retryCount == 1) {
-        await chat.eventDispatcher.onReconnecting();
-        chat.eventManager.notifyReconnectStarted();
+        if (!doNotCallReconnectStartedEvent) {
+          await chat.eventDispatcher.onReconnecting();
+          chat.eventManager.notifyReconnectStarted();
+        }
       }
 
       // ===== Reconnect =====

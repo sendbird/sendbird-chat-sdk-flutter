@@ -14,7 +14,7 @@ RestrictedUser _$RestrictedUserFromJson(Map<String, dynamic> json) =>
       connectionStatus: json['is_online'] == null
           ? UserConnectionStatus.notAvailable
           : boolToConnectionStatus(json['is_online'] as bool?),
-      lastSeenAt: json['last_seen_at'] as int?,
+      lastSeenAt: (json['last_seen_at'] as num?)?.toInt(),
       preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -30,7 +30,7 @@ RestrictedUser _$RestrictedUserFromJson(Map<String, dynamic> json) =>
 RestrictionInfo _$RestrictionInfoFromJson(Map<String, dynamic> json) =>
     RestrictionInfo(
       description: json['description'] as String?,
-      endAt: json['end_at'] as int?,
+      endAt: (json['end_at'] as num?)?.toInt(),
       restrictionType: $enumDecodeNullable(
               _$RestrictionTypeEnumMap, json['restriction_type']) ??
           RestrictionType.muted,

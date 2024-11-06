@@ -17,7 +17,7 @@ Sender _$SenderFromJson(Map<String, dynamic> json) => Sender(
       connectionStatus: json['is_online'] == null
           ? UserConnectionStatus.notAvailable
           : boolToConnectionStatus(json['is_online'] as bool?),
-      lastSeenAt: json['last_seen_at'] as int?,
+      lastSeenAt: (json['last_seen_at'] as num?)?.toInt(),
       preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),

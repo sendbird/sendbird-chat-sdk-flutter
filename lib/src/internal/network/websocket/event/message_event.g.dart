@@ -7,7 +7,7 @@ part of 'message_event.dart';
 // **************************************************************************
 
 MessageEvent _$MessageEventFromJson(Map<String, dynamic> json) => MessageEvent(
-      messageId: json['msg_id'] as int,
+      messageId: (json['msg_id'] as num).toInt(),
       channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type'],
           unknownValue: ChannelType.group),
       channelUrl: json['channel_url'] as String,

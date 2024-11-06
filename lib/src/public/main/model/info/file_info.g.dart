@@ -10,7 +10,7 @@ FileInfo _$FileInfoFromJson(Map<String, dynamic> json) => FileInfo(
       fileUrl: json['url'] as String?,
       fileName: json['name'] as String?,
       mimeType: json['type'] as String?,
-      fileSize: json['size'] as int?,
+      fileSize: (json['size'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$FileInfoToJson(FileInfo instance) => <String, dynamic>{

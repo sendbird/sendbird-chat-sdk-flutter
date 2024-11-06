@@ -1,3 +1,12 @@
+## v4.2.27 (Nov 6, 2024)
+
+### Features
+- Applied the message threading policy for last message and unread message count in `GroupChannel`
+
+### Improvements
+- Fixed a bug where update events are not called for messages with OGTags
+- Fixed the reconnection events to be called in pairs
+
 ## v4.2.26 (Oct 28, 2024)
 
 ### Features

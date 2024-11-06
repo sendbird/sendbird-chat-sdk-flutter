@@ -13,7 +13,7 @@ Emoji _$EmojiFromJson(Map<String, dynamic> json) => Emoji(
 
 EmojiCategory _$EmojiCategoryFromJson(Map<String, dynamic> json) =>
     EmojiCategory(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       url: json['url'] as String,
       emojis: (json['emojis'] as List<dynamic>?)
