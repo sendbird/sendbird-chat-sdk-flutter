@@ -32,8 +32,8 @@ NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList(),
       extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
+      createdAt: (json['created_at'] as num?)?.toInt() ?? 0,
+      updatedAt: (json['updated_at'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$NotificationMessageToJson(

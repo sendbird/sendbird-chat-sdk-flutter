@@ -14,8 +14,8 @@ MessageListParams _$MessageListParamsFromJson(Map<String, dynamic> json) =>
       ..includeParentMessageInfo = json['include_parent_message_info'] as bool
       ..replyType =
           $enumDecodeNullable(_$ReplyTypeEnumMap, json['include_reply_type'])
-      ..previousResultSize = json['prev_limit'] as int
-      ..nextResultSize = json['next_limit'] as int
+      ..previousResultSize = (json['prev_limit'] as num).toInt()
+      ..nextResultSize = (json['next_limit'] as num).toInt()
       ..inclusive = json['include'] as bool
       ..reverse = json['reverse'] as bool
       ..messageType =

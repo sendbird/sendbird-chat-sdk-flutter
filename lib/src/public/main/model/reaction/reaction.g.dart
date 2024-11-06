@@ -12,7 +12,7 @@ Reaction _$ReactionFromJson(Map<String, dynamic> json) => Reaction(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      updatedAt: json['updated_at'] as int,
+      updatedAt: (json['updated_at'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ReactionToJson(Reaction instance) => <String, dynamic>{

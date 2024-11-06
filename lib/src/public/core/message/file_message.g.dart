@@ -12,10 +12,10 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
               _$ChannelTypeEnumMap, json['channel_type'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
-      messageId: json['message_id'] as int? ?? 0,
+      messageId: (json['message_id'] as num?)?.toInt() ?? 0,
       url: json['url'] as String,
       name: json['name'] as String?,
-      size: json['size'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
       type: json['type'] as String?,
       thumbnails: (json['thumbnails'] as List<dynamic>?)
           ?.map((e) => Thumbnail.fromJson(e as Map<String, dynamic>))
@@ -36,14 +36,15 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
               _$MentionTypeEnumMap, json['mention_type'],
               unknownValue: MentionType.users) ??
           MentionType.users,
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
-      parentMessageId: json['parent_message_id'] as int?,
+      createdAt: (json['created_at'] as num?)?.toInt() ?? 0,
+      updatedAt: (json['updated_at'] as num?)?.toInt() ?? 0,
+      parentMessageId: (json['parent_message_id'] as num?)?.toInt(),
       threadInfo: json['thread_info'] == null
           ? null
           : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
       customType: json['custom_type'] as String?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
+      messageSurvivalSeconds:
+          (json['message_survival_seconds'] as num?)?.toInt() ?? -1,
       forceUpdateLastMessage:
           json['force_update_last_message'] as bool? ?? false,
       isSilent: json['silent'] as bool? ?? false,
@@ -64,7 +65,7 @@ FileMessage _$FileMessageFromJson(Map<String, dynamic> json) => FileMessage(
       ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {}
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
-      ..errorCode = json['error_code'] as int?;
+      ..errorCode = (json['error_code'] as num?)?.toInt();
 
 Map<String, dynamic> _$FileMessageToJson(FileMessage instance) =>
     <String, dynamic>{

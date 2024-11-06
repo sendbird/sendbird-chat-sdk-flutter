@@ -16,14 +16,14 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
       isDiscoverable: json['is_discoverable'] as bool? ?? false,
       isExclusive: json['is_exclusive'] as bool? ?? false,
       isAccessCodeRequired: json['is_access_code_required'] as bool? ?? false,
-      unreadMessageCount: json['unread_message_count'] as int? ?? 0,
-      unreadMentionCount: json['unread_mention_count'] as int? ?? 0,
+      unreadMessageCount: (json['unread_message_count'] as num?)?.toInt() ?? 0,
+      unreadMentionCount: (json['unread_mention_count'] as num?)?.toInt() ?? 0,
       members: (json['members'] as List<dynamic>?)
               ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      memberCount: json['member_count'] as int? ?? 0,
-      joinedMemberCount: json['joined_member_count'] as int? ?? 0,
+      memberCount: (json['member_count'] as num?)?.toInt() ?? 0,
+      joinedMemberCount: (json['joined_member_count'] as num?)?.toInt() ?? 0,
       myPushTriggerOption: $enumDecodeNullable(
               _$GroupChannelPushTriggerOptionEnumMap,
               json['push_trigger_option']) ??
@@ -47,24 +47,25 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
       inviter: json['inviter'] == null
           ? null
           : Member.fromJson(json['inviter'] as Map<String, dynamic>),
-      invitedAt: json['invited_at'] as int? ?? 0,
-      joinedAt: json['joined_ts'] as int? ?? 0,
+      invitedAt: (json['invited_at'] as num?)?.toInt() ?? 0,
+      joinedAt: (json['joined_ts'] as num?)?.toInt() ?? 0,
       isHidden: json['is_hidden'] as bool? ?? false,
       hiddenState: $enumDecodeNullable(
               _$GroupChannelHiddenStateEnumMap, json['hidden_state'],
               unknownValue: GroupChannelHiddenState.unhidden) ??
           GroupChannelHiddenState.unhidden,
-      myLastRead: json['user_last_read'] as int? ?? 0,
-      messageOffsetTimestamp: json['ts_message_offset'] as int?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
+      myLastRead: (json['user_last_read'] as num?)?.toInt() ?? 0,
+      messageOffsetTimestamp: (json['ts_message_offset'] as num?)?.toInt(),
+      messageSurvivalSeconds:
+          (json['message_survival_seconds'] as num?)?.toInt() ?? -1,
       pinnedMessageIds: (json['pinned_message_ids'] as List<dynamic>?)
-              ?.map((e) => e as int)
+              ?.map((e) => (e as num).toInt())
               .toList() ??
           const [],
       lastPinnedMessage: toNullableBaseMessage(json['latest_pinned_message']),
       name: json['name'] as String? ?? '',
       coverUrl: json['cover_url'] as String? ?? '',
-      createdAt: json['created_at'] as int?,
+      createdAt: (json['created_at'] as num?)?.toInt(),
       data: json['data'] as String? ?? '',
       customType: json['custom_type'] as String? ?? '',
       isFrozen: json['freeze'] as bool? ?? false,

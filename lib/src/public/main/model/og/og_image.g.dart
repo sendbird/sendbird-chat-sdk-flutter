@@ -11,8 +11,8 @@ OGImage _$OGImageFromJson(Map<String, dynamic> json) => OGImage(
       secureUrl: json['secure_url'] as String?,
       type: json['type'] as String?,
       alt: json['alt'] as String?,
-      width: json['width'] as int? ?? 0,
-      height: json['height'] as int? ?? 0,
+      width: (json['width'] as num?)?.toInt() ?? 0,
+      height: (json['height'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$OGImageToJson(OGImage instance) => <String, dynamic>{

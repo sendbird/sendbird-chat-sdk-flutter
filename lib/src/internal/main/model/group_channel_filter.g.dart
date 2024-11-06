@@ -34,8 +34,8 @@ GroupChannelFilter _$GroupChannelFilterFromJson(Map<String, dynamic> json) =>
           .toList()
       ..metaDataValueStartsWithFilter =
           json['metadata_value_startswith'] as String?
-      ..createdBefore = json['created_before'] as int?
-      ..createdAfter = json['created_after'] as int?;
+      ..createdBefore = (json['created_before'] as num?)?.toInt()
+      ..createdAfter = (json['created_after'] as num?)?.toInt();
 
 Map<String, dynamic> _$GroupChannelFilterToJson(GroupChannelFilter instance) =>
     <String, dynamic>{

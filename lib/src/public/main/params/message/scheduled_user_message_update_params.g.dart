@@ -10,7 +10,7 @@ ScheduledUserMessageUpdateParams _$ScheduledUserMessageUpdateParamsFromJson(
         Map<String, dynamic> json) =>
     ScheduledUserMessageUpdateParams(
       message: json['message'] as String?,
-      scheduledAt: json['scheduled_at'] as int?,
+      scheduledAt: (json['scheduled_at'] as num?)?.toInt(),
       customType: json['custom_type'] as String?,
       data: json['data'] as String?,
       mentionType:

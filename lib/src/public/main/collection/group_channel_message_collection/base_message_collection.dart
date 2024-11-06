@@ -925,6 +925,9 @@ abstract class BaseMessageCollection {
           originalMessage.poll!.updatedAt <= updatedMessage.poll!.updatedAt) {
         canUpdate = true;
       }
+    } else if (eventSource == CollectionEventSource.eventMessageUpdated) {
+      // eg. Updated message for OGTag
+      canUpdate = true;
     } else if (eventSource == CollectionEventSource.eventReactionUpdated) {
       // Check updatedAt (?)
       canUpdate = true;

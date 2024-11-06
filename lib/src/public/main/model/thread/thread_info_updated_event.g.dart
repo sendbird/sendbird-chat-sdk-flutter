@@ -11,7 +11,7 @@ ThreadInfoUpdateEvent _$ThreadInfoUpdateEventFromJson(
     ThreadInfoUpdateEvent(
       threadInfo:
           ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
-      targetMessageId: json['parent_message_id'] as int,
+      targetMessageId: (json['parent_message_id'] as num).toInt(),
       channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
       channelUrl: json['channel_url'] as String,
     );

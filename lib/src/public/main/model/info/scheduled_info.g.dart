@@ -8,8 +8,8 @@ part of 'scheduled_info.dart';
 
 ScheduledInfo _$ScheduledInfoFromJson(Map<String, dynamic> json) =>
     ScheduledInfo(
-      scheduledMessageId: json['scheduled_message_id'] as int,
-      scheduledAt: json['scheduled_at'] as int,
+      scheduledMessageId: (json['scheduled_message_id'] as num).toInt(),
+      scheduledAt: (json['scheduled_at'] as num).toInt(),
       scheduledStatus:
           $enumDecode(_$ScheduledStatusEnumMap, json['scheduled_status']),
     );

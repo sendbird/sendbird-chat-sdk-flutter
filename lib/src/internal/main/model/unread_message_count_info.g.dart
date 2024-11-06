@@ -9,11 +9,11 @@ part of 'unread_message_count_info.dart';
 UnreadMessageCountInfo _$UnreadMessageCountInfoFromJson(
         Map<String, dynamic> json) =>
     UnreadMessageCountInfo(
-      all: json['all'] as int? ?? 0,
-      feed: json['feed'] as int? ?? 0,
+      all: (json['all'] as num?)?.toInt() ?? 0,
+      feed: (json['feed'] as num?)?.toInt() ?? 0,
       customTypes: (json['custom_types'] as Map<String, dynamic>?)?.map(
-            (k, e) => MapEntry(k, e as int),
+            (k, e) => MapEntry(k, (e as num).toInt()),
           ) ??
           const {},
-      ts: json['ts'] as int? ?? 0,
+      ts: (json['ts'] as num?)?.toInt() ?? 0,
     );

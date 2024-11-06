@@ -13,7 +13,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       connectionStatus: json['is_online'] == null
           ? UserConnectionStatus.notAvailable
           : boolToConnectionStatus(json['is_online'] as bool?),
-      lastSeenAt: json['last_seen_at'] as int?,
+      lastSeenAt: (json['last_seen_at'] as num?)?.toInt(),
       isActive: json['is_active'] as bool? ?? true,
       preferredLanguages: (json['preferred_languages'] as List<dynamic>?)
           ?.map((e) => e as String)
