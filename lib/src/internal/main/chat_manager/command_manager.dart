@@ -447,6 +447,7 @@ class CommandManager {
 
         groupChannel.updateMember(event.sender);
 
+        // Last message
         if (channel is GroupChannel && message is BaseMessage) {
           if (groupChannel.shouldUpdateLastMessage(message, message.sender)) {
             shouldCallChannelChanged = true;
@@ -459,6 +460,7 @@ class CommandManager {
           }
         }
 
+        // Unread message count
         if (groupChannel.fromCache && groupChannel.updateUnreadCount(message)) {
           shouldCallChannelChanged = true;
         }

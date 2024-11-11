@@ -11,9 +11,9 @@ ScheduledFileMessageUpdateParams _$ScheduledFileMessageUpdateParamsFromJson(
     ScheduledFileMessageUpdateParams(
       url: json['url'] as String?,
       fileName: json['file_name'] as String?,
-      fileSize: json['file_size'] as int?,
+      fileSize: (json['file_size'] as num?)?.toInt(),
       mimeType: json['mime_type'] as String?,
-      scheduledAt: json['scheduled_at'] as int?,
+      scheduledAt: (json['scheduled_at'] as num?)?.toInt(),
       customType: json['custom_type'] as String?,
       data: json['data'] as String?,
       mentionType: json['mention_type'] as String?,

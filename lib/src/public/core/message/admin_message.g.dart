@@ -12,7 +12,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
               _$ChannelTypeEnumMap, json['channel_type'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
-      messageId: json['message_id'] as int? ?? 0,
+      messageId: (json['message_id'] as num?)?.toInt() ?? 0,
       message: json['message'] as String,
       sendingStatus:
           $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
@@ -25,15 +25,16 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
               _$MentionTypeEnumMap, json['mention_type'],
               unknownValue: MentionType.users) ??
           MentionType.users,
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
-      parentMessageId: json['parent_message_id'] as int?,
+      createdAt: (json['created_at'] as num?)?.toInt() ?? 0,
+      updatedAt: (json['updated_at'] as num?)?.toInt() ?? 0,
+      parentMessageId: (json['parent_message_id'] as num?)?.toInt(),
       parentMessage: json['parent_message_info'] as Map<String, dynamic>?,
       threadInfo: json['thread_info'] == null
           ? null
           : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
       customType: json['custom_type'] as String?,
-      messageSurvivalSeconds: json['message_survival_seconds'] as int? ?? -1,
+      messageSurvivalSeconds:
+          (json['message_survival_seconds'] as num?)?.toInt() ?? -1,
       forceUpdateLastMessage:
           json['force_update_last_message'] as bool? ?? false,
       isSilent: json['silent'] as bool? ?? false,
@@ -52,7 +53,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
-      ..errorCode = json['error_code'] as int?
+      ..errorCode = (json['error_code'] as num?)?.toInt()
       ..sender = json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>);

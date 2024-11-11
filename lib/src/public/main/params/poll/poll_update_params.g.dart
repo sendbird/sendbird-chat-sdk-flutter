@@ -14,7 +14,7 @@ PollUpdateParams _$PollUpdateParamsFromJson(Map<String, dynamic> json) =>
           : PollData.fromJson(json['data'] as Map<String, dynamic>),
       allowUserSuggestion: json['allow_user_suggestion'] as bool?,
       allowMultipleVotes: json['allow_multiple_votes'] as bool?,
-      closeAt: json['close_at'] as int? ?? -1,
+      closeAt: (json['close_at'] as num?)?.toInt() ?? -1,
     );
 
 Map<String, dynamic> _$PollUpdateParamsToJson(PollUpdateParams instance) =>

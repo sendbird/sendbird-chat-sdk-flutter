@@ -11,7 +11,7 @@ MessageRetrievalParams _$MessageRetrievalParamsFromJson(
     MessageRetrievalParams(
       channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type']),
       channelUrl: json['channel_url'] as String,
-      messageId: json['message_id'] as int,
+      messageId: (json['message_id'] as num).toInt(),
     )
       ..includeMetaArray = json['with_sorted_meta_array'] as bool
       ..includeReactions = json['include_reactions'] as bool

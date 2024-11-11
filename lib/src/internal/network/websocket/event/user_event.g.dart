@@ -7,7 +7,7 @@ part of 'user_event.dart';
 // **************************************************************************
 
 UserEvent _$UserEventFromJson(Map<String, dynamic> json) => UserEvent(
-      category: userEventValueOf(json['cat'] as int),
+      category: userEventValueOf((json['cat'] as num).toInt()),
       data: json['data'] as Map<String, dynamic>,
-      ts: json['ts'] as int,
+      ts: (json['ts'] as num).toInt(),
     );

@@ -15,6 +15,6 @@ MCNTEvent _$MCNTEventFromJson(Map<String, dynamic> json) => MCNTEvent(
               ?.map((e) => OpenChannel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      systemTimestamp: json['sts'] as int?,
-      timestamp: json['ts'] as int?,
+      systemTimestamp: (json['sts'] as num?)?.toInt(),
+      timestamp: (json['ts'] as num?)?.toInt(),
     );

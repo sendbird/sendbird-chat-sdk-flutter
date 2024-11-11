@@ -7,17 +7,17 @@ part of 'poll.dart';
 // **************************************************************************
 
 Poll _$PollFromJson(Map<String, dynamic> json) => Poll(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       title: json['title'] as String? ?? '',
-      createdAt: json['created_at'] as int,
-      updatedAt: json['updated_at'] as int,
-      closeAt: json['close_at'] as int,
+      createdAt: (json['created_at'] as num).toInt(),
+      updatedAt: (json['updated_at'] as num).toInt(),
+      closeAt: (json['close_at'] as num).toInt(),
       status: $enumDecode(_$PollStatusEnumMap, json['status']),
-      messageId: json['message_id'] as int?,
+      messageId: (json['message_id'] as num?)?.toInt(),
       data: json['data'] == null
           ? null
           : PollData.fromJson(json['data'] as Map<String, dynamic>),
-      voterCount: json['voter_count'] as int? ?? -1,
+      voterCount: (json['voter_count'] as num?)?.toInt() ?? -1,
       options: (json['options'] as List<dynamic>?)
               ?.map((e) => PollOption.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -26,7 +26,7 @@ Poll _$PollFromJson(Map<String, dynamic> json) => Poll(
       allowUserSuggestion: json['allow_user_suggestion'] as bool? ?? false,
       allowMultipleVotes: json['allow_multiple_votes'] as bool? ?? false,
       votedPollOptionIds: (json['voted_option_ids'] as List<dynamic>?)
-              ?.map((e) => e as int)
+              ?.map((e) => (e as num).toInt())
               .toList() ??
           [],
     );

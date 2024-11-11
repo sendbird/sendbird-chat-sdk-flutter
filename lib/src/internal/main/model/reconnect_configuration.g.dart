@@ -11,8 +11,8 @@ ReconnectConfiguration _$ReconnectConfigurationFromJson(
     ReconnectConfiguration(
       interval: (json['interval'] as num).toDouble(),
       maxInterval: (json['max_interval'] as num).toDouble(),
-      multiplier: json['mul'] as int,
-      maximumRetryCount: json['retry_cnt'] as int,
+      multiplier: (json['mul'] as num).toInt(),
+      maximumRetryCount: (json['retry_cnt'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ReconnectConfigurationToJson(
