@@ -1,3 +1,8 @@
+## v4.2.28 (Nov 15, 2024)
+
+### Improvements
+- Fixed a bug regarding the initial parameters in message collection
+
 ## v4.2.27 (Nov 6, 2024)
 
 ### Features
