@@ -305,13 +305,13 @@ abstract class BaseMessageCollection {
         );
       }
       //- Failed messages
-
-      _initializeParams.includeMetaArray = true;
-      _initializeParams.includeReactions = true;
-      _initializeParams.includeThreadInfo = true;
-      _initializeParams.includeParentMessageInfo = true;
     }
     //- [DBManager]
+
+    _initializeParams.includeMetaArray = true;
+    _initializeParams.includeReactions = true;
+    _initializeParams.includeThreadInfo = true;
+    _initializeParams.includeParentMessageInfo = true;
 
     List<RootMessage> messages = [];
     ChannelMessagesGetResponse? res;
