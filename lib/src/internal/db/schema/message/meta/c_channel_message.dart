@@ -160,9 +160,6 @@ class CChannelMessage {
     // [includeParentMessageInfo]
     // When calling API, this value have to be `true` to make chunk.
 
-    // [replyType]
-    // Must call API, because this can not be queried with local cache.
-
     // [showSubChannelMessagesOnly]
     // Must call API, because this can not be queried with local cache.
 
@@ -258,6 +255,30 @@ class CChannelMessage {
         messages.add(message.message);
       }
     }
+
+    //+ replyType
+    messages.removeWhere((message) {
+      if (message is BaseMessage) {
+        switch (params.replyType) {
+          case ReplyType.none:
+            if (message.parentMessageId != null) {
+              return true; // Remove
+            }
+            break;
+          case ReplyType.all:
+            break;
+          case ReplyType.onlyReplyToChannel:
+            if (message.parentMessageId != null && !message.isReplyToChannel) {
+              return true; // Remove
+            }
+            break;
+          case null:
+            break;
+        }
+      }
+      return false; // Do not remove
+    });
+    //- replyType
 
     // reversed
     if (messages.length >= 2) {

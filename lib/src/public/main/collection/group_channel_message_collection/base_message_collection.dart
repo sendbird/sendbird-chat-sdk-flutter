@@ -885,9 +885,7 @@ abstract class BaseMessageCollection {
     }
 
     // [Filter] senderIds
-    if (addedMessage is BaseMessage &&
-        params.senderIds != null &&
-        params.customTypes!.isNotEmpty) {
+    if (addedMessage is BaseMessage && params.senderIds != null) {
       bool found = false;
       for (final senderId in params.senderIds!) {
         if (addedMessage.sender?.userId == senderId) {
@@ -898,6 +896,27 @@ abstract class BaseMessageCollection {
 
       if (!found) {
         return false;
+      }
+    }
+
+    // [Filter] replyType
+    if (addedMessage is BaseMessage) {
+      switch (params.replyType) {
+        case ReplyType.none:
+          if (addedMessage.parentMessageId != null) {
+            return false;
+          }
+          break;
+        case ReplyType.all:
+          break;
+        case ReplyType.onlyReplyToChannel:
+          if (addedMessage.parentMessageId != null &&
+              !addedMessage.isReplyToChannel) {
+            return false;
+          }
+          break;
+        case null:
+          break;
       }
     }
 
