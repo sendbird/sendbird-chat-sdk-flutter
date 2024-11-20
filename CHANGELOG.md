@@ -1,3 +1,11 @@
+## v4.2.29 (Nov 20, 2024)
+
+### Features
+- Updated the versions for `mime`, `web_socket_channel` and `flutter_lints` packages
+
+### Improvements
+- Added the filtering for `replyType` in `MessageCollection`
+
 ## v4.2.28 (Nov 15, 2024)
 
 ### Improvements
