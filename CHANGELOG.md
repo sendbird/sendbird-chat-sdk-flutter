@@ -1,3 +1,8 @@
+## v4.2.30 (Dec 5, 2024)
+
+### Improvements
+- Fixed the reconnection bug when moving to background and then moving to foreground quickly
+
 ## v4.2.29 (Nov 20, 2024)
 
 ### Features
