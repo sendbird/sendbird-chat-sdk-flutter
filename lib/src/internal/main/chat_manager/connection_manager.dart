@@ -260,7 +260,7 @@ class ConnectionManager {
       reconnectTimer = null;
     }
 
-    final isClosedSuccessfully = await webSocketClient.close();
+    await webSocketClient.close();
 
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
@@ -292,7 +292,8 @@ class ConnectionManager {
       await chat.eventDispatcher.onDisconnected();
     }
 
-    if (fromEnterBackground && !chat.isBackground && !isClosedSuccessfully) {
+    if (fromEnterBackground && !chat.isBackground && !isReconnecting()) {
+      sbLog.i(StackTrace.current, 'reconnect()');
       chat.connectionManager.reconnect(reset: true); // Check
     } else {
       if (isReconnecting()) {
