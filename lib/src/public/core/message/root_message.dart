@@ -83,6 +83,9 @@ class RootMessage {
   @JsonKey(includeFromJson: false, includeToJson: false)
   late Chat chat;
 
+  @JsonKey(name: 'mentioned_message_template')
+  String? mentionedMessageTemplate;
+
   RootMessage({
     required this.channelUrl,
     required this.channelType,
@@ -95,6 +98,7 @@ class RootMessage {
     Map<String, dynamic>? extendedMessage,
     this.createdAt = 0,
     this.updatedAt = 0,
+    this.mentionedMessageTemplate,
   })  : _mentionedUsers = mentionedUsers,
         mentionedUserIds = mentionedUserIds ?? [],
         extendedMessage = extendedMessage ?? {};

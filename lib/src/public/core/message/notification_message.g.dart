@@ -8,9 +8,9 @@ part of 'notification_message.dart';
 
 NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
     NotificationMessage(
-      channelUrl: json['channel_url'] as String,
+      channelUrl: json['channelUrl'] as String,
       channelType: $enumDecodeNullable(
-              _$ChannelTypeEnumMap, json['channel_type'],
+              _$ChannelTypeEnumMap, json['channelType'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
       notificationId: json['notification_message_id'] as String,
@@ -19,12 +19,12 @@ NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
           : NotificationMessage._messageStatusValueOf(
               json['message_status'] as String),
       data: TypeChecker.fromJsonToNullableString(json['data']),
-      customType: json['custom_type'] as String?,
+      customType: json['customType'] as String?,
       mentionType: $enumDecodeNullable(
-              _$MentionTypeEnumMap, json['mention_type'],
+              _$MentionTypeEnumMap, json['mentionType'],
               unknownValue: MentionType.users) ??
           MentionType.users,
-      mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
+      mentionedUsers: (json['mentionedUsers'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <User>[],
@@ -32,25 +32,24 @@ NotificationMessage _$NotificationMessageFromJson(Map<String, dynamic> json) =>
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList(),
       extendedMessage: json['extended_message'] as Map<String, dynamic>? ?? {},
-      createdAt: (json['created_at'] as num?)?.toInt() ?? 0,
-      updatedAt: (json['updated_at'] as num?)?.toInt() ?? 0,
-    );
+      createdAt: json['createdAt'] as int? ?? 0,
+      updatedAt: json['updatedAt'] as int? ?? 0,
+    )..mentionedMessageTemplate = json['mentioned_message_template'] as String?;
 
 Map<String, dynamic> _$NotificationMessageToJson(
         NotificationMessage instance) =>
     <String, dynamic>{
-      'channel_url': instance.channelUrl,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
+      'channelUrl': instance.channelUrl,
+      'channelType': _$ChannelTypeEnumMap[instance.channelType]!,
       'data': instance.data,
-      'custom_type': instance.customType,
-      'mention_type': _$MentionTypeEnumMap[instance.mentionType]!,
-      'mentioned_users':
-          instance.mentionedUsers.map((e) => e.toJson()).toList(),
-      'sorted_metaarray':
-          instance.allMetaArrays?.map((e) => e.toJson()).toList(),
+      'customType': instance.customType,
+      'mentionType': _$MentionTypeEnumMap[instance.mentionType]!,
+      'mentionedUsers': instance.mentionedUsers,
+      'sorted_metaarray': instance.allMetaArrays,
       'extended_message': instance.extendedMessage,
-      'created_at': instance.createdAt,
-      'updated_at': instance.updatedAt,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'mentioned_message_template': instance.mentionedMessageTemplate,
       'notification_message_id': instance.notificationId,
       'message_status':
           _$NotificationMessageStatusEnumMap[instance.messageStatus]!,

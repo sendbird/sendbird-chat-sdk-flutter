@@ -7,12 +7,12 @@ part of 'user_message.dart';
 // **************************************************************************
 
 UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
-      channelUrl: json['channel_url'] as String,
+      channelUrl: json['channelUrl'] as String,
       channelType: $enumDecodeNullable(
-              _$ChannelTypeEnumMap, json['channel_type'],
+              _$ChannelTypeEnumMap, json['channelType'],
               unknownValue: ChannelType.group) ??
           ChannelType.group,
-      messageId: (json['message_id'] as num?)?.toInt() ?? 0,
+      messageId: json['messageId'] as int? ?? 0,
       message: json['message'] as String,
       translations: (json['translations'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, e as String),
@@ -22,27 +22,26 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>),
       sendingStatus:
-          $enumDecodeNullable(_$SendingStatusEnumMap, json['sending_status']),
-      requestId: json['request_id'] as String?,
-      mentionedUsers: (json['mentioned_users'] as List<dynamic>?)
+          $enumDecodeNullable(_$SendingStatusEnumMap, json['sendingStatus']),
+      requestId: json['requestId'] as String?,
+      mentionedUsers: (json['mentionedUsers'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       mentionType: $enumDecodeNullable(
-              _$MentionTypeEnumMap, json['mention_type'],
+              _$MentionTypeEnumMap, json['mentionType'],
               unknownValue: MentionType.users) ??
           MentionType.users,
-      createdAt: (json['created_at'] as num?)?.toInt() ?? 0,
-      updatedAt: (json['updated_at'] as num?)?.toInt() ?? 0,
-      parentMessageId: (json['parent_message_id'] as num?)?.toInt(),
-      threadInfo: json['thread_info'] == null
+      createdAt: json['createdAt'] as int? ?? 0,
+      updatedAt: json['updatedAt'] as int? ?? 0,
+      mentionedMessageTemplate: json['mentioned_message_template'] as String?,
+      parentMessageId: json['parentMessageId'] as int?,
+      threadInfo: json['threadInfo'] == null
           ? null
-          : ThreadInfo.fromJson(json['thread_info'] as Map<String, dynamic>),
-      customType: json['custom_type'] as String?,
-      messageSurvivalSeconds:
-          (json['message_survival_seconds'] as num?)?.toInt() ?? -1,
-      forceUpdateLastMessage:
-          json['force_update_last_message'] as bool? ?? false,
+          : ThreadInfo.fromJson(json['threadInfo'] as Map<String, dynamic>),
+      customType: json['customType'] as String?,
+      messageSurvivalSeconds: json['messageSurvivalSeconds'] as int? ?? -1,
+      forceUpdateLastMessage: json['forceUpdateLastMessage'] as bool? ?? false,
       isSilent: json['silent'] as bool? ?? false,
       isOperatorMessage: json['is_op_msg'] as bool? ?? false,
       data: TypeChecker.fromJsonToNullableString(json['data']),
@@ -58,7 +57,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
           ? null
           : Poll.fromJson(json['poll'] as Map<String, dynamic>),
       translationTargetLanguages:
-          (json['translation_target_languages'] as List<dynamic>?)
+          (json['translationTargetLanguages'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(),
     )
@@ -68,41 +67,40 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
       ..extendedMessage =
           json['extended_message'] as Map<String, dynamic>? ?? {}
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
-      ..errorCode = (json['error_code'] as num?)?.toInt();
+      ..errorCode = json['errorCode'] as int?;
 
 Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
     <String, dynamic>{
-      'channel_url': instance.channelUrl,
-      'channel_type': _$ChannelTypeEnumMap[instance.channelType]!,
+      'channelUrl': instance.channelUrl,
+      'channelType': _$ChannelTypeEnumMap[instance.channelType]!,
       'data': instance.data,
-      'custom_type': instance.customType,
-      'mention_type': _$MentionTypeEnumMap[instance.mentionType]!,
-      'mentioned_users':
-          instance.mentionedUsers.map((e) => e.toJson()).toList(),
-      'sorted_metaarray':
-          instance.allMetaArrays?.map((e) => e.toJson()).toList(),
+      'customType': instance.customType,
+      'mentionType': _$MentionTypeEnumMap[instance.mentionType]!,
+      'mentionedUsers': instance.mentionedUsers,
+      'sorted_metaarray': instance.allMetaArrays,
       'extended_message': instance.extendedMessage,
-      'created_at': instance.createdAt,
-      'updated_at': instance.updatedAt,
-      'message_id': instance.messageId,
-      'request_id': instance.requestId,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'mentioned_message_template': instance.mentionedMessageTemplate,
+      'messageId': instance.messageId,
+      'requestId': instance.requestId,
       'message': instance.message,
-      'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],
+      'sendingStatus': _$SendingStatusEnumMap[instance.sendingStatus],
       'is_reply_to_channel': instance.isReplyToChannel,
-      'parent_message_id': instance.parentMessageId,
-      'parent_message_info': instance.parentMessage?.toJson(),
-      'thread_info': instance.threadInfo?.toJson(),
-      'message_survival_seconds': instance.messageSurvivalSeconds,
+      'parentMessageId': instance.parentMessageId,
+      'parent_message_info': instance.parentMessage,
+      'threadInfo': instance.threadInfo,
+      'messageSurvivalSeconds': instance.messageSurvivalSeconds,
       'silent': instance.isSilent,
-      'error_code': instance.errorCode,
+      'errorCode': instance.errorCode,
       'is_op_msg': instance.isOperatorMessage,
-      'og_tag': instance.ogMetaData?.toJson(),
-      'reactions': instance.reactions?.map((e) => e.toJson()).toList(),
-      'force_update_last_message': instance.forceUpdateLastMessage,
-      'user': instance.sender?.toJson(),
+      'og_tag': instance.ogMetaData,
+      'reactions': instance.reactions,
+      'forceUpdateLastMessage': instance.forceUpdateLastMessage,
+      'user': instance.sender,
       'translations': instance.translations,
-      'translation_target_languages': instance.translationTargetLanguages,
-      'poll': instance.poll?.toJson(),
+      'translationTargetLanguages': instance.translationTargetLanguages,
+      'poll': instance.poll,
     };
 
 const _$ChannelTypeEnumMap = {
