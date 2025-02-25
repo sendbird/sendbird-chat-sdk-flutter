@@ -372,7 +372,7 @@ class HttpClient {
       body = jsonDecode(response.body.toString());
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');
-      throw MalformedDataException();
+      return false; // throw MalformedDataException();
     }
 
     if (response.statusCode >= 400 && response.statusCode < 500) {

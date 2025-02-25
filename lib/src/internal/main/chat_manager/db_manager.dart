@@ -67,6 +67,10 @@ class DBManager {
       return false;
     }
 
+    if (_isInitialized) {
+      return true;
+    }
+
     try {
       if (_chat.isTest) {
         // https://github.com/isar/isar#unit-tests

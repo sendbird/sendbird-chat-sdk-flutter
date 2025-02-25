@@ -438,6 +438,7 @@ extension BaseChannelMessage on BaseChannel {
               params: params,
               thumbnails: uploadResponse?.thumbnails,
               requireAuth: uploadResponse?.requireAuth,
+              requestId: pendingFileMessage.requestId,
             );
             final message = await chat.apiClient.send<FileMessage>(request);
 

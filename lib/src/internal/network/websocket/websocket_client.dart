@@ -129,11 +129,14 @@ class WebSocketClient {
         _onDoneCompleter = null;
         _onDone();
         return false;
-      }).timeout(const Duration(milliseconds: 500), onTimeout: () {
-        _onDoneCompleter = null;
-        _onDone();
-        return false;
-      });
+      }).timeout(
+        const Duration(milliseconds: 500), // Check
+        onTimeout: () {
+          _onDoneCompleter = null;
+          _onDone();
+          return false;
+        },
+      );
       return result ?? false;
     } catch (e) {
       sbLog.e(StackTrace.current, 'e: $e');

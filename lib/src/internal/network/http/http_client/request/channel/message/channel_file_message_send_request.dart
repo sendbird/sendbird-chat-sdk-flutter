@@ -26,6 +26,7 @@ class ChannelFileMessageSendRequest extends ApiRequest {
     bool markAsRead = false,
     bool? requireAuth,
     List<String>? additionalMentionedUserIds,
+    String? requestId,
   }) : super(chat: chat) {
     url = '${channelType.urlString}/$channelUrl/messages';
 
@@ -40,6 +41,7 @@ class ChannelFileMessageSendRequest extends ApiRequest {
       'file_name': params.fileInfo.fileName,
       'file_type': params.fileInfo.mimeType,
       'url': params.fileInfo.fileUrl,
+      'req_id': requestId,
     };
 
     body.addAll(params.toJson());

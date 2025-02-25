@@ -1,3 +1,8 @@
+## v4.2.31 (Feb 25, 2025)
+
+### Improvements
+- Fixed a bug where `requestId` is null if websocket is disconnected while sending a `FileMessage`
+
 ## v4.2.30 (Dec 5, 2024)
 
 ### Improvements
