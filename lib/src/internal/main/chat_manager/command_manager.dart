@@ -99,11 +99,9 @@ class CommandManager {
     _completerMap.forEach((key, value) {
       if (e != null) {
         value.completeError(e);
-      } else {
-        value.complete();
       }
     });
-    _completerMap.removeWhere((key, value) => true);
+    _completerMap.clear();
   }
 
   Future<Command?> sendCommand(Command cmd) async {

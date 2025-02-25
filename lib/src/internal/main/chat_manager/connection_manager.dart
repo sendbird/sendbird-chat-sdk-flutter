@@ -260,7 +260,10 @@ class ConnectionManager {
       reconnectTimer = null;
     }
 
-    await webSocketClient.close();
+    // Check
+    if (!isDisconnected()) {
+      await webSocketClient.close();
+    }
 
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
@@ -466,10 +469,13 @@ class ConnectionManager {
   }
 
   String get _sbUserAgentHeader {
-    final uikitVersion = chat.extensions[Chat.extensionKeyUiKit];
     const core = '/c$sdkVersion';
+
+    final uikitVersion = chat.extensions[Chat.extensionKeyUiKit];
     final uikit = uikitVersion != null ? '/u$uikitVersion' : '';
+
     final os = '/o${kIsWeb ? 'web' : Platform.operatingSystem}';
+
     return '${Chat.platform}$core$uikit$os';
   }
 
@@ -480,11 +486,14 @@ class ConnectionManager {
     // '2.19.0 (stable) (Mon Jan 23 11:29:09 2023 -0800) on "android_arm64"'
     final platformVersion = kIsWeb ? '' : Platform.version.split(' ').first;
 
+    final uikitVersion = chat.extensions[Chat.extensionKeyUiKit];
+    final uikitInfo = 'uikit-chat/$deviceOsPlatform/${uikitVersion ?? ''}';
+
     return 'main_sdk_info=$mainSdkInfo'
         '&device_os_platform=$deviceOsPlatform'
         '&os_version=$osVersion'
-        '&platform_version=$platformVersion';
-    // '&extension_sdk_info='; // 'uikit/android/3.3.2,live/android/1.0.0-beta' // TODO: SendbirdChat.addSendbirdExtensions()
+        '&platform_version=$platformVersion'
+        '&extension_sdk_info=$uikitInfo';
   }
 
   String get _sendbirdHeader {
