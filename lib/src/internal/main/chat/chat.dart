@@ -11,9 +11,11 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dar
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/channel_cache.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/message_retention_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/connection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/db_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/device_token_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_dispatcher.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
@@ -62,7 +64,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.2.31';
+const sdkVersion = '4.3.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -105,6 +107,8 @@ class Chat with WidgetsBindingObserver {
         : Platform.environment['FLUTTER_TEST'] == 'true';
   }
 
+  bool isMessageRetentionTest = false;
+
   // Check dependencies
   late ChatContext chatContext;
   late ChannelCache channelCache;
@@ -117,6 +121,7 @@ class Chat with WidgetsBindingObserver {
   late CollectionManager collectionManager;
   late StatManager statManager;
   late DBManager dbManager;
+  late DeviceTokenManager deviceTokenManager;
 
   final int chatId;
 
@@ -140,6 +145,7 @@ class Chat with WidgetsBindingObserver {
     eventDispatcher = EventDispatcher(chat: this);
     collectionManager = CollectionManager(chat: this);
     dbManager = DBManager(chat: this);
+    deviceTokenManager = DeviceTokenManager();
 
     _listenConnectivityChangedEvent();
   }

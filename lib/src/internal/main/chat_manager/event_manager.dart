@@ -54,6 +54,18 @@ class EventManager {
     }
   }
 
+  List<RootChannelHandler> getChannelHandlers() {
+    final List<RootChannelHandler> channelHandlers = [];
+
+    for (final handler in _channelHandlers.entries) {
+      if (_internalChannelHandlerIdentifiers.contains(handler.key)) {
+        continue;
+      }
+      channelHandlers.add(handler.value);
+    }
+    return channelHandlers;
+  }
+
   BaseChannelHandler? getChannelHandler(String identifier) {
     if (_internalChannelHandlerIdentifiers.contains(identifier)) {
       return null;

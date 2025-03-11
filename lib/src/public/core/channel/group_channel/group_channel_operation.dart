@@ -86,7 +86,7 @@ extension GroupChannelOperation on GroupChannel {
         isOffsetChanged = true;
 
         if (lastMessage?.message != null) {
-          if (lastMessage!.createdAt < messageOffsetTimestamp!) {
+          if (lastMessage!.createdAt <= messageOffsetTimestamp!) {
             lastMessage = null;
           }
         }
@@ -101,9 +101,9 @@ extension GroupChannelOperation on GroupChannel {
       }
 
       if (isOffsetChanged) {
-        await chat.collectionManager.updateMessageOffsetTimestamp(
+        await chat.collectionManager.updateMessageOffset(
           channelUrl: channelUrl,
-          messageOffsetTimestamp: messageOffsetTimestamp!,
+          messageOffset: messageOffsetTimestamp!,
         );
       }
     } catch (_) {

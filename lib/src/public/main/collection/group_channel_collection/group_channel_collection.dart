@@ -266,7 +266,14 @@ class GroupChannelCollection {
     }
 
     if (_query.includeEmpty == false) {
-      if (checkToUpdateChannel == false) {
+      if (checkToUpdateChannel) {
+        // This is related to messageDeletionTimestamp.
+        if (eventSource == CollectionEventSource.eventChannelChanged) {
+          if (addedChannel.lastMessage == null) {
+            return false;
+          }
+        }
+      } else {
         if (eventSource == CollectionEventSource.channelCacheLoadMore ||
             eventSource == CollectionEventSource.channelLoadMore) {
           if (addedChannel.lastMessage == null) {

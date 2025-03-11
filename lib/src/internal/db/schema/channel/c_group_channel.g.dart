@@ -188,83 +188,88 @@ final CGroupChannelSchema = CollectionSchema(
       type: IsarType.objectList,
       target: r'CMember',
     ),
-    r'messageOffsetTimestamp': PropertySchema(
+    r'messageDeletionTimestamp': PropertySchema(
       id: 33,
+      name: r'messageDeletionTimestamp',
+      type: IsarType.long,
+    ),
+    r'messageOffsetTimestamp': PropertySchema(
+      id: 34,
       name: r'messageOffsetTimestamp',
       type: IsarType.long,
     ),
     r'messageSurvivalSeconds': PropertySchema(
-      id: 34,
+      id: 35,
       name: r'messageSurvivalSeconds',
       type: IsarType.long,
     ),
     r'metaData': PropertySchema(
-      id: 35,
+      id: 36,
       name: r'metaData',
       type: IsarType.string,
     ),
     r'myCountPreference': PropertySchema(
-      id: 36,
+      id: 37,
       name: r'myCountPreference',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyCountPreferenceEnumValueMap,
     ),
     r'myLastRead': PropertySchema(
-      id: 37,
+      id: 38,
       name: r'myLastRead',
       type: IsarType.long,
     ),
     r'myMemberState': PropertySchema(
-      id: 38,
+      id: 39,
       name: r'myMemberState',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyMemberStateEnumValueMap,
     ),
     r'myMutedState': PropertySchema(
-      id: 39,
+      id: 40,
       name: r'myMutedState',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyMutedStateEnumValueMap,
     ),
     r'myPushTriggerOption': PropertySchema(
-      id: 40,
+      id: 41,
       name: r'myPushTriggerOption',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyPushTriggerOptionEnumValueMap,
     ),
     r'myRole': PropertySchema(
-      id: 41,
+      id: 42,
       name: r'myRole',
       type: IsarType.byte,
       enumMap: _CGroupChannelmyRoleEnumValueMap,
     ),
     r'name': PropertySchema(
-      id: 42,
+      id: 43,
       name: r'name',
       type: IsarType.string,
     ),
     r'pinnedMessageIds': PropertySchema(
-      id: 43,
+      id: 44,
       name: r'pinnedMessageIds',
       type: IsarType.longList,
     ),
     r'pinnedMessageUpdatedAt': PropertySchema(
-      id: 44,
+      id: 45,
       name: r'pinnedMessageUpdatedAt',
       type: IsarType.long,
     ),
     r'readStatus': PropertySchema(
-      id: 45,
+      id: 46,
       name: r'readStatus',
       type: IsarType.string,
     ),
     r'unreadMentionCount': PropertySchema(
-      id: 46,
+      id: 47,
       name: r'unreadMentionCount',
       type: IsarType.long,
     ),
     r'unreadMessageCount': PropertySchema(
-      id: 47,
+      id: 48,
       name: r'unreadMessageCount',
       type: IsarType.long,
     )
@@ -433,21 +438,22 @@ void _cGroupChannelSerialize(
     CMemberSchema.serialize,
     object.members,
   );
-  writer.writeLong(offsets[33], object.messageOffsetTimestamp);
-  writer.writeLong(offsets[34], object.messageSurvivalSeconds);
-  writer.writeString(offsets[35], object.metaData);
-  writer.writeByte(offsets[36], object.myCountPreference.index);
-  writer.writeLong(offsets[37], object.myLastRead);
-  writer.writeByte(offsets[38], object.myMemberState.index);
-  writer.writeByte(offsets[39], object.myMutedState.index);
-  writer.writeByte(offsets[40], object.myPushTriggerOption.index);
-  writer.writeByte(offsets[41], object.myRole.index);
-  writer.writeString(offsets[42], object.name);
-  writer.writeLongList(offsets[43], object.pinnedMessageIds);
-  writer.writeLong(offsets[44], object.pinnedMessageUpdatedAt);
-  writer.writeString(offsets[45], object.readStatus);
-  writer.writeLong(offsets[46], object.unreadMentionCount);
-  writer.writeLong(offsets[47], object.unreadMessageCount);
+  writer.writeLong(offsets[33], object.messageDeletionTimestamp);
+  writer.writeLong(offsets[34], object.messageOffsetTimestamp);
+  writer.writeLong(offsets[35], object.messageSurvivalSeconds);
+  writer.writeString(offsets[36], object.metaData);
+  writer.writeByte(offsets[37], object.myCountPreference.index);
+  writer.writeLong(offsets[38], object.myLastRead);
+  writer.writeByte(offsets[39], object.myMemberState.index);
+  writer.writeByte(offsets[40], object.myMutedState.index);
+  writer.writeByte(offsets[41], object.myPushTriggerOption.index);
+  writer.writeByte(offsets[42], object.myRole.index);
+  writer.writeString(offsets[43], object.name);
+  writer.writeLongList(offsets[44], object.pinnedMessageIds);
+  writer.writeLong(offsets[45], object.pinnedMessageUpdatedAt);
+  writer.writeString(offsets[46], object.readStatus);
+  writer.writeLong(offsets[47], object.unreadMentionCount);
+  writer.writeLong(offsets[48], object.unreadMessageCount);
 }
 
 CGroupChannel _cGroupChannelDeserialize(
@@ -510,31 +516,32 @@ CGroupChannel _cGroupChannelDeserialize(
         CMember(),
       ) ??
       [];
-  object.messageOffsetTimestamp = reader.readLongOrNull(offsets[33]);
-  object.messageSurvivalSeconds = reader.readLong(offsets[34]);
-  object.metaData = reader.readString(offsets[35]);
+  object.messageDeletionTimestamp = reader.readLongOrNull(offsets[33]);
+  object.messageOffsetTimestamp = reader.readLongOrNull(offsets[34]);
+  object.messageSurvivalSeconds = reader.readLong(offsets[35]);
+  object.metaData = reader.readString(offsets[36]);
   object.myCountPreference = _CGroupChannelmyCountPreferenceValueEnumMap[
-          reader.readByteOrNull(offsets[36])] ??
+          reader.readByteOrNull(offsets[37])] ??
       CountPreference.all;
-  object.myLastRead = reader.readLong(offsets[37]);
+  object.myLastRead = reader.readLong(offsets[38]);
   object.myMemberState = _CGroupChannelmyMemberStateValueEnumMap[
-          reader.readByteOrNull(offsets[38])] ??
+          reader.readByteOrNull(offsets[39])] ??
       MemberState.none;
   object.myMutedState = _CGroupChannelmyMutedStateValueEnumMap[
-          reader.readByteOrNull(offsets[39])] ??
+          reader.readByteOrNull(offsets[40])] ??
       MuteState.unmuted;
   object.myPushTriggerOption = _CGroupChannelmyPushTriggerOptionValueEnumMap[
-          reader.readByteOrNull(offsets[40])] ??
+          reader.readByteOrNull(offsets[41])] ??
       GroupChannelPushTriggerOption.defaultValue;
   object.myRole =
-      _CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offsets[41])] ??
+      _CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offsets[42])] ??
           Role.none;
-  object.name = reader.readString(offsets[42]);
-  object.pinnedMessageIds = reader.readLongList(offsets[43]) ?? [];
-  object.pinnedMessageUpdatedAt = reader.readLong(offsets[44]);
-  object.readStatus = reader.readString(offsets[45]);
-  object.unreadMentionCount = reader.readLong(offsets[46]);
-  object.unreadMessageCount = reader.readLong(offsets[47]);
+  object.name = reader.readString(offsets[43]);
+  object.pinnedMessageIds = reader.readLongList(offsets[44]) ?? [];
+  object.pinnedMessageUpdatedAt = reader.readLong(offsets[45]);
+  object.readStatus = reader.readString(offsets[46]);
+  object.unreadMentionCount = reader.readLong(offsets[47]);
+  object.unreadMessageCount = reader.readLong(offsets[48]);
   return object;
 }
 
@@ -632,41 +639,43 @@ P _cGroupChannelDeserializeProp<P>(
     case 33:
       return (reader.readLongOrNull(offset)) as P;
     case 34:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 35:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 36:
+      return (reader.readString(offset)) as P;
+    case 37:
       return (_CGroupChannelmyCountPreferenceValueEnumMap[
               reader.readByteOrNull(offset)] ??
           CountPreference.all) as P;
-    case 37:
-      return (reader.readLong(offset)) as P;
     case 38:
+      return (reader.readLong(offset)) as P;
+    case 39:
       return (_CGroupChannelmyMemberStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MemberState.none) as P;
-    case 39:
+    case 40:
       return (_CGroupChannelmyMutedStateValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MuteState.unmuted) as P;
-    case 40:
+    case 41:
       return (_CGroupChannelmyPushTriggerOptionValueEnumMap[
               reader.readByteOrNull(offset)] ??
           GroupChannelPushTriggerOption.defaultValue) as P;
-    case 41:
+    case 42:
       return (_CGroupChannelmyRoleValueEnumMap[reader.readByteOrNull(offset)] ??
           Role.none) as P;
-    case 42:
-      return (reader.readString(offset)) as P;
     case 43:
-      return (reader.readLongList(offset) ?? []) as P;
-    case 44:
-      return (reader.readLong(offset)) as P;
-    case 45:
       return (reader.readString(offset)) as P;
-    case 46:
+    case 44:
+      return (reader.readLongList(offset) ?? []) as P;
+    case 45:
       return (reader.readLong(offset)) as P;
+    case 46:
+      return (reader.readString(offset)) as P;
     case 47:
+      return (reader.readLong(offset)) as P;
+    case 48:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3225,6 +3234,80 @@ extension CGroupChannelQueryFilter
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'messageDeletionTimestamp',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'messageDeletionTimestamp',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'messageDeletionTimestamp',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'messageDeletionTimestamp',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'messageDeletionTimestamp',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      messageDeletionTimestampBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'messageDeletionTimestamp',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       messageOffsetTimestampIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -4843,6 +4926,20 @@ extension CGroupChannelQuerySortBy
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByMessageDeletionTimestamp() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'messageDeletionTimestamp', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      sortByMessageDeletionTimestampDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'messageDeletionTimestamp', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
       sortByMessageOffsetTimestamp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageOffsetTimestamp', Sort.asc);
@@ -5456,6 +5553,20 @@ extension CGroupChannelQuerySortThenBy
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByMessageDeletionTimestamp() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'messageDeletionTimestamp', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
+      thenByMessageDeletionTimestampDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'messageDeletionTimestamp', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterSortBy>
       thenByMessageOffsetTimestamp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageOffsetTimestamp', Sort.asc);
@@ -5858,6 +5969,13 @@ extension CGroupChannelQueryWhereDistinct
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QDistinct>
+      distinctByMessageDeletionTimestamp() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'messageDeletionTimestamp');
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QDistinct>
       distinctByMessageOffsetTimestamp() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'messageOffsetTimestamp');
@@ -6176,6 +6294,13 @@ extension CGroupChannelQueryProperty
       membersProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'members');
+    });
+  }
+
+  QueryBuilder<CGroupChannel, int?, QQueryOperations>
+      messageDeletionTimestampProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'messageDeletionTimestamp');
     });
   }
 

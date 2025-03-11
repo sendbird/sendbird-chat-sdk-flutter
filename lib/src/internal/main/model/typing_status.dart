@@ -35,11 +35,9 @@ class TypingStatus implements Cacheable {
   @override
   void copyWith(dynamic other) {
     channelType = other.channelType;
-    channelUrl = other.urlKeyword;
+    channelUrl = other.channelUrl;
     user = other.user;
     timestamp = other.timestamp;
-    typingTimer = other.typingTimer;
-    dirty = other.dirty;
   }
 
   void setTypingTimer() {

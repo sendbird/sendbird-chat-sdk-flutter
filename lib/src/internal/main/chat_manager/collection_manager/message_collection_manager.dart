@@ -82,27 +82,28 @@ extension MessageCollectionManager on CollectionManager {
   }
 
 //------------------------------//
-// updateMessageOffsetTimestamp
+// updateMessageOffset
 //------------------------------//
-  Future<void> updateMessageOffsetTimestamp({
+  Future<bool> updateMessageOffset({
     required String channelUrl,
-    required int messageOffsetTimestamp,
+    required int messageOffset,
   }) async {
-    sbLog.d(StackTrace.current, 'updateMessageOffsetTimestamp()');
+    sbLog.d(StackTrace.current);
 
     for (final collection in baseMessageCollections) {
       if (collection is MessageCollection) {
         if (collection.isInitialized) {
           if (collection.baseChannel.channelUrl == channelUrl) {
-            await collection.updateMessageOffsetTimestamp(
+            await collection.updateMessageOffset(
               channelUrl: channelUrl,
-              messageOffsetTimestamp: messageOffsetTimestamp,
+              messageOffset: messageOffset,
             );
-            break;
+            return true;
           }
         }
       }
     }
+    return false;
   }
 
 //------------------------------//
@@ -612,7 +613,7 @@ extension MessageCollectionManager on CollectionManager {
     List<RootMessage>? updatedMessages,
     List<dynamic>? deletedMessageIds,
     bool doNotSendDeleteEvent = false,
-    bool isMessageOffsetTimestampUpdated = false,
+    bool isMessageOffsetUpdated = false,
   }) async {
     sbLog.d(StackTrace.current,
         'channelUrl: ${messageCollection.baseChannel.channelUrl}, ${eventSource.toString()}');
@@ -776,7 +777,7 @@ extension MessageCollectionManager on CollectionManager {
 
     //+ [DBManager]
     if (eventSource == CollectionEventSource.messageFill ||
-        isMessageOffsetTimestampUpdated) {
+        isMessageOffsetUpdated) {
       messageCollection.setValuesFromMessageList(); // Check
     }
     //- [DBManager]

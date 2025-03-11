@@ -297,6 +297,8 @@ class CommandManager {
       }
     }
 
+    await _chat.deviceTokenManager.checkLoginEvent(event);
+
     _chat.chatContext
       ..currentUser = event.user
       ..currentUserId = event.user.userId
