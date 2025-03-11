@@ -7,6 +7,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/message_retention_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
@@ -15,6 +16,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_create_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_delete_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_message_deletion_timestamp_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_refresh_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_update_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/operation/group_channel_accept_request.dart';
@@ -200,6 +202,11 @@ class GroupChannel extends BaseChannel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   int pinnedMessageUpdatedAt;
 
+  /// Message deletion cutoff timestamp.
+  /// @since 4.2.31
+  @JsonKey(name: 'message_purge_offset')
+  int? messageDeletionTimestamp;
+
   int _lastStartTypingTimestamp;
   int _lastEndTypingTimestamp;
 
@@ -236,6 +243,7 @@ class GroupChannel extends BaseChannel {
     this.pinnedMessageIds = const [],
     this.lastPinnedMessage,
     this.pinnedMessageUpdatedAt = 0,
+    this.messageDeletionTimestamp,
     String name = '',
     String coverUrl = '',
     int? createdAt,
@@ -401,6 +409,33 @@ class GroupChannel extends BaseChannel {
     if (!isPublic) removeFromCache(chat);
   }
 
+  Future<int?> getMessageDeletionTimestamp({
+    Chat? chat,
+  }) async {
+    sbLog.i(StackTrace.current);
+    chat ??= SendbirdChat().chat;
+
+    final ts = await chat.apiClient.send<int?>(
+      GroupChannelMessageDeletionTimestampGetRequest(
+        chat,
+        channelUrl,
+      ),
+    );
+
+    if (ts != null) {
+      messageDeletionTimestamp = ts;
+
+      saveToCache(chat);
+
+      //+ [DBManager]
+      if (chat.dbManager.isEnabled()) {
+        await chat.dbManager.upsertGroupChannels([this]);
+      }
+      //- [DBManager]
+    }
+    return ts;
+  }
+
   Member? getMember(String userId) {
     return members.firstWhereOrNull((element) => element.userId == userId);
   }
@@ -434,8 +469,25 @@ class GroupChannel extends BaseChannel {
   }
 
   factory GroupChannel.fromJson(Map<String, dynamic> json) {
-    return _$GroupChannelFromJson(json)
+    final channel = _$GroupChannelFromJson(json)
       ..set(SendbirdChat().chat); // Set the singleton chat
+
+    if (channel.messageDeletionTimestamp != null) {
+      MessageRetentionManager().syncGroupChannelMessages(
+        channel.chat,
+        channel: channel,
+        messageDeletionTimestamp: channel.messageDeletionTimestamp!,
+        canNotifyChannelChanged: false,
+      );
+    }
+
+    //+ [DBManager]
+    if (channel.chat.dbManager.isEnabled()) {
+      channel.chat.dbManager.upsertGroupChannels([channel]);
+    }
+    //- [DBManager]
+
+    return channel;
   }
 
   factory GroupChannel.fromJsonWithChat(Chat chat, Map<String, dynamic> json) {
@@ -483,7 +535,8 @@ class GroupChannel extends BaseChannel {
         other.hiddenState == hiddenState &&
         other.myLastRead == myLastRead &&
         other.messageOffsetTimestamp == messageOffsetTimestamp &&
-        other.messageSurvivalSeconds == messageSurvivalSeconds;
+        other.messageSurvivalSeconds == messageSurvivalSeconds &&
+        other.messageDeletionTimestamp == messageDeletionTimestamp;
   }
 
   @override
@@ -502,6 +555,7 @@ class GroupChannel extends BaseChannel {
         joinedAt,
         isHidden,
         myLastRead,
+        messageDeletionTimestamp,
       );
 
   @override
@@ -536,6 +590,7 @@ class GroupChannel extends BaseChannel {
       myLastRead = other.myLastRead;
       messageOffsetTimestamp = other.messageOffsetTimestamp;
       messageSurvivalSeconds = other.messageSurvivalSeconds;
+      messageDeletionTimestamp = other.messageDeletionTimestamp;
     }
   }
 }

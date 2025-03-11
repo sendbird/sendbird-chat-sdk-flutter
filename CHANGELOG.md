@@ -1,3 +1,12 @@
+## v4.3.0 (Mar 11, 2025)
+
+### Features
+- Added `messageDeletionTimestamp` in `BaseChannel`
+
+### Improvements
+- Fixed a bug where the timer is not reset related to typing indicator
+- Added device token cache for push notifications
+
 ## v4.2.31 (Feb 25, 2025)
 
 ### Improvements

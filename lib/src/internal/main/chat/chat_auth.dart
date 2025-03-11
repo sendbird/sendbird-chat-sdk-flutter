@@ -38,11 +38,14 @@ extension ChatAuth on Chat {
     await eventDispatcher.onConnecting(); // Check
 
     try {
+      int configTs = await MessageRetentionManager().getConfigTs() ?? 0;
+
       return await apiClient.send<User>(AuthenticateFeedRequest(
         this,
         userId,
         accessToken: accessToken,
         apiHost: apiHost,
+        configTs: configTs,
       ));
     } on SendbirdException catch (e) {
       //+ [DBManager]

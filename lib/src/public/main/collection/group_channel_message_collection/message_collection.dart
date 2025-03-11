@@ -93,7 +93,7 @@ class MessageCollection extends BaseMessageCollection {
         GroupChannel.refresh(channel.channelUrl).then((channel) async {
           baseChannel = channel; // Check
 
-          if (!chat.isTest) {
+          if (!chat.isTest || chat.isMessageRetentionTest) {
             chat.collectionManager.sendEventsToGroupChannelCollectionList(
               eventSource: CollectionEventSource.channelRefreshed,
               updatedChannels: [channel],

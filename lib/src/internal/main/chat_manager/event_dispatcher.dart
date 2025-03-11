@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/message_retention_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
 
@@ -16,8 +17,24 @@ class EventDispatcher {
 
   Future<void> onLogin(LoginEvent event) async {
     sbLog.d(StackTrace.current);
-    _chat.collectionManager.onLogin();
+    _chat.collectionManager.onLogin(event);
+
+    if (event.configSyncNeeded ?? false) {
+      MessageRetentionManager().checkApplicationSettings(_chat);
+    }
+
     await _chat.statManager.onLogin(event);
+  }
+
+  Future<void> onReconnected(LoginEvent event) async {
+    sbLog.d(StackTrace.current);
+    _chat.collectionManager.onReconnected(event);
+
+    if (event.configSyncNeeded ?? false) {
+      MessageRetentionManager().checkApplicationSettings(_chat);
+    }
+
+    await _chat.statManager.onReconnected(event);
   }
 
   Future<void> onDisconnected() async {
@@ -27,12 +44,6 @@ class EventDispatcher {
 
   Future<void> onReconnecting() async {
     sbLog.d(StackTrace.current);
-  }
-
-  Future<void> onReconnected(LoginEvent event) async {
-    sbLog.d(StackTrace.current);
-    _chat.collectionManager.onReconnected();
-    await _chat.statManager.onReconnected(event);
   }
 
   Future<void> onLogout() async {

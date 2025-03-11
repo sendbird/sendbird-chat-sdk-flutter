@@ -63,6 +63,7 @@ GroupChannel _$GroupChannelFromJson(Map<String, dynamic> json) => GroupChannel(
               .toList() ??
           const [],
       lastPinnedMessage: toNullableBaseMessage(json['latest_pinned_message']),
+      messageDeletionTimestamp: (json['message_purge_offset'] as num?)?.toInt(),
       name: json['name'] as String? ?? '',
       coverUrl: json['cover_url'] as String? ?? '',
       createdAt: (json['created_at'] as num?)?.toInt(),
@@ -113,6 +114,7 @@ Map<String, dynamic> _$GroupChannelToJson(GroupChannel instance) =>
       'message_survival_seconds': instance.messageSurvivalSeconds,
       'pinned_message_ids': instance.pinnedMessageIds,
       'latest_pinned_message': instance.lastPinnedMessage?.toJson(),
+      'message_purge_offset': instance.messageDeletionTimestamp,
     };
 
 const _$GroupChannelPushTriggerOptionEnumMap = {

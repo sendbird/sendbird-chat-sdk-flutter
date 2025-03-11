@@ -15,6 +15,7 @@ class AuthenticateFeedRequest extends ApiRequest {
     String userId, {
     String? accessToken,
     String? apiHost,
+    int? configTs,
   }) : super(chat: chat, userId: userId) {
     url = 'users/${getUrlEncodedUserId(chat, userId)}/login';
 
@@ -34,7 +35,9 @@ class AuthenticateFeedRequest extends ApiRequest {
       'app_id': chat.chatContext.appId,
       'include_logi': true,
       'include_extra_data': chat.extraData.join(','),
+      'config_ts': configTs, // To get config_sync_needed
     };
+
     body.removeWhere((key, value) => value == null);
 
     if (apiHost != null) chat.chatContext.apiHost = apiHost;

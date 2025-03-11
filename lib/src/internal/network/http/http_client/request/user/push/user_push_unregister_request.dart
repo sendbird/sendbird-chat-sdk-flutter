@@ -20,6 +20,14 @@ class UserPushTokenUnregisterRequest extends ApiRequest {
     final typeString = type == PushTokenType.fcm ? 'gcm' : type.asString();
     url = 'users/${getUrlEncodedUserId(chat, userId)}/push/$typeString/$token';
   }
+
+  @override
+  Future<int?> response(Map<String, dynamic> res) async {
+    if (res.containsKey('device_token_last_deleted_at')) {
+      return res['device_token_last_deleted_at'] as int?;
+    }
+    return null;
+  }
 }
 
 class UserPushTokenUnregisterAllRequest extends ApiRequest {
@@ -31,5 +39,13 @@ class UserPushTokenUnregisterAllRequest extends ApiRequest {
     String? userId,
   }) : super(chat: chat, userId: userId) {
     url = 'users/${getUrlEncodedUserId(chat, userId)}/push';
+  }
+
+  @override
+  Future<int?> response(Map<String, dynamic> res) async {
+    if (res.containsKey('device_token_last_deleted_at')) {
+      return res['device_token_last_deleted_at'] as int?;
+    }
+    return null;
   }
 }

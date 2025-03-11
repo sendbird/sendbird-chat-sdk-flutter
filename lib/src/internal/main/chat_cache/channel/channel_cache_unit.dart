@@ -42,11 +42,11 @@ class ChannelCacheUnit implements CacheUnit {
       final typingStatus = typingStatusMap[data.key];
       if (typingStatus != null) {
         typingStatus.copyWith(data);
+        typingStatus.setTypingTimer();
       } else {
         typingStatusMap[data.key] = data;
+        data.setTypingTimer();
       }
-
-      data.setTypingTimer();
     } else if (data is MetaDataCache<String>) {
       if (metaDataCache != null) {
         metaDataCache!.merge(data);
@@ -63,8 +63,9 @@ class ChannelCacheUnit implements CacheUnit {
     } else if (data is DeliveryStatus) {
       deliveryStatus = null;
     } else if (data is TypingStatus) {
+      final typingStatus = typingStatusMap[key];
+      typingStatus?.cancelTypingTimer();
       typingStatusMap.remove(key);
-      data.cancelTypingTimer();
     } else if (data is MetaDataCache) {
       metaDataCache = null;
     }

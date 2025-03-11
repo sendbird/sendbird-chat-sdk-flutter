@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/message_retention_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/command_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
@@ -150,7 +151,7 @@ class ConnectionManager {
       'include_extra_data': chat.extraData.join(','),
       'include_poll_details': '1',
     };
-    params.addAll(_webSocketParams);
+    params.addAll(await _getWebSocketParams(userId: userId));
 
     final url =
         '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
@@ -290,6 +291,9 @@ class ConnectionManager {
           await chat.dbManager.clear();
         }
         //- [DBManager]
+
+        await chat.deviceTokenManager.cleanUp();
+        await MessageRetentionManager().clearConfigTs();
       }
     } else {
       await chat.eventDispatcher.onDisconnected();
@@ -371,7 +375,8 @@ class ConnectionManager {
         'include_extra_data': chat.extraData.join(','),
         'include_poll_details': '1',
       };
-      params.addAll(_webSocketParams);
+      params.addAll(await _getWebSocketParams(
+          userId: chat.chatContext.currentUser?.userId ?? ''));
 
       final url =
           '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
@@ -509,9 +514,13 @@ class ConnectionManager {
     return headers.join(',');
   }
 
-  Map<String, String> get _webSocketParams {
+  Future<Map<String, String>> _getWebSocketParams({
+    required String userId,
+  }) async {
     final appId = chat.chatContext.appId;
     final appVersion = chat.chatContext.appVersion;
+
+    int configTs = await MessageRetentionManager().getConfigTs() ?? 0;
 
     return {
       'p': Chat.platform,
@@ -520,7 +529,8 @@ class ConnectionManager {
       if (!kIsWeb) 'ov': Platform.operatingSystemVersion,
       'sv': sdkVersion,
       'ai': appId,
-      if (appVersion != null && appVersion != '') 'av': appVersion
+      if (appVersion != null && appVersion != '') 'av': appVersion,
+      'config_ts': configTs.toString(), // To get config_sync_needed
     };
   }
 }

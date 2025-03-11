@@ -11,6 +11,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_mana
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_gap_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
 import 'package:uuid/uuid.dart';
 
 part 'group_channel_collection_manager.dart';
@@ -42,6 +43,9 @@ class CollectionManager {
       groupChannelCollectionsRefreshingCompleter;
   bool isBaseMessageCollectionsRefreshing = false;
 
+  // Test
+  LoginEvent? latestLoginEvent;
+
   CollectionManager({required Chat chat}) : _chat = chat {
     _chat.eventManager.addInternalChannelHandler(
       identifierForInternalGroupChannelHandlerForCollectionManager,
@@ -68,8 +72,10 @@ class CollectionManager {
 //------------------------------//
 // Reconnected
 //------------------------------//
-  Future<void> onLogin() async {
+  Future<void> onLogin(LoginEvent event) async {
     sbLog.d(StackTrace.current);
+
+    latestLoginEvent = event;
 
     //+ [DBManager]
     if (_chat.dbManager.isEnabled()) {
@@ -86,8 +92,10 @@ class CollectionManager {
     AutoResendManager().stopAutoResend();
   }
 
-  Future<void> onReconnected() async {
+  Future<void> onReconnected(LoginEvent event) async {
     sbLog.d(StackTrace.current);
+
+    latestLoginEvent = event;
 
     await _refresh();
 

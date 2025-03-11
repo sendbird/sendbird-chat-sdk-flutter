@@ -13,8 +13,6 @@ class LoginEvent extends SessionEvent {
   @JsonKey(name: 'login_ts')
   final int loginTimestamp;
 
-  final int? maxUnreadCountOnSuperGroup;
-
   @JsonKey(name: 'reconnect')
   final ReconnectConfiguration reconnectConfiguration;
 
@@ -23,6 +21,15 @@ class LoginEvent extends SessionEvent {
 
   @JsonKey(name: 'pong_timeout')
   final int watchdogInterval;
+
+  final int? maxUnreadCountOnSuperGroup;
+
+  final List<String> applicationAttributes;
+
+  final int deviceTokenLastDeletedAt;
+
+  @JsonKey(name: 'config_sync_needed')
+  final bool? configSyncNeeded;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   late AppInfo appInfo;
@@ -39,6 +46,9 @@ class LoginEvent extends SessionEvent {
     required this.pingInterval,
     required this.watchdogInterval,
     this.maxUnreadCountOnSuperGroup,
+    this.applicationAttributes = const [],
+    this.deviceTokenLastDeletedAt = 0,
+    this.configSyncNeeded,
   }) : super(eKey: eKey, newKey: newKey, key: key);
 
   factory LoginEvent.fromJson(Map<String, dynamic> json) {

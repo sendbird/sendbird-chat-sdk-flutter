@@ -17,4 +17,11 @@ LoginEvent _$LoginEventFromJson(Map<String, dynamic> json) => LoginEvent(
       watchdogInterval: (json['pong_timeout'] as num).toInt(),
       maxUnreadCountOnSuperGroup:
           (json['max_unread_count_on_super_group'] as num?)?.toInt(),
+      applicationAttributes: (json['application_attributes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      deviceTokenLastDeletedAt:
+          (json['device_token_last_deleted_at'] as num?)?.toInt() ?? 0,
+      configSyncNeeded: json['config_sync_needed'] as bool?,
     );

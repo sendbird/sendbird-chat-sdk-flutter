@@ -72,6 +72,8 @@ class CGroupChannel extends CBaseChannel {
   late String readStatus; // Map<String, int>
   late String deliveryStatus; // Map<String, int>
 
+  int? messageDeletionTimestamp;
+
   CGroupChannel();
 
   factory CGroupChannel.fromGroupChannel(GroupChannel channel) {
@@ -119,7 +121,8 @@ class CGroupChannel extends CBaseChannel {
       ..pinnedMessageUpdatedAt = channel.pinnedMessageUpdatedAt
       ..readStatus = jsonEncode(channel.getCachedReadStatus(channel.channelUrl))
       ..deliveryStatus =
-          jsonEncode(channel.getCachedDeliveryStatus(channel.channelUrl));
+          jsonEncode(channel.getCachedDeliveryStatus(channel.channelUrl))
+      ..messageDeletionTimestamp = channel.messageDeletionTimestamp;
   }
 
   Future<GroupChannel> toGroupChannel(Chat chat, Isar isar) async {
@@ -179,6 +182,8 @@ class CGroupChannel extends CBaseChannel {
         (jsonDecode(deliveryStatus) as Map<String, dynamic>)
             .map((key, value) => MapEntry(key, value as int));
     groupChannel.setCachedDeliveryStatus(cachedDeliveryStatus);
+
+    groupChannel.messageDeletionTimestamp = messageDeletionTimestamp;
 
     return groupChannel;
   }

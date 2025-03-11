@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
@@ -224,6 +225,17 @@ abstract class BaseMessageCollection {
           ? (_channel as GroupChannel).messageOffsetTimestamp
           : null;
 
+      final int? messageDeletionTimestamp = (_channel is GroupChannel)
+          ? (_channel as GroupChannel).messageDeletionTimestamp
+          : null;
+
+      final int? messageOffset;
+      if (messageOffsetTimestamp != null && messageDeletionTimestamp != null) {
+        messageOffset = max(messageOffsetTimestamp, messageDeletionTimestamp);
+      } else {
+        messageOffset = messageOffsetTimestamp ?? messageDeletionTimestamp;
+      }
+
       final localPreviousMessages = await _chat.dbManager.getMessages(
         channelType: _channel.channelType,
         channelUrl: _channel.channelUrl,
@@ -231,7 +243,7 @@ abstract class BaseMessageCollection {
         timestamp: _startingPoint,
         params: localInitializeParams..inclusive = false,
         isPrevious: true,
-        messageOffsetTimestamp: messageOffsetTimestamp,
+        messageOffset: messageOffset,
       );
 
       List<RootMessage> localStartingPointMessages = [];
@@ -240,7 +252,7 @@ abstract class BaseMessageCollection {
           channelType: _channel.channelType,
           channelUrl: _channel.channelUrl,
           timestamp: _startingPoint,
-          messageOffsetTimestamp: messageOffsetTimestamp,
+          messageOffset: messageOffset,
         );
         localStartingPointMessages.addAll(messages);
       }
@@ -252,7 +264,7 @@ abstract class BaseMessageCollection {
         timestamp: _startingPoint,
         params: localInitializeParams..inclusive = false,
         isPrevious: false,
-        messageOffsetTimestamp: messageOffsetTimestamp,
+        messageOffset: messageOffset,
       );
 
       if (_initializeParams.reverse) {
@@ -964,9 +976,9 @@ abstract class BaseMessageCollection {
     return canUpdate;
   }
 
-  Future<void> updateMessageOffsetTimestamp({
+  Future<void> updateMessageOffset({
     required String channelUrl,
-    required int messageOffsetTimestamp,
+    required int messageOffset,
   }) async {
     if (_initializeParams.reverse) {
       _hasNext = false;
@@ -975,7 +987,7 @@ abstract class BaseMessageCollection {
     }
 
     final deletedMessageIds = messageList.where((message) {
-      return message.createdAt < messageOffsetTimestamp;
+      return message.createdAt <= messageOffset;
     }).map((message) {
       return message.rootId;
     }).toList();
@@ -987,7 +999,7 @@ abstract class BaseMessageCollection {
         eventSource: CollectionEventSource.eventMessageDeleted,
         sendingStatus: SendingStatus.succeeded,
         deletedMessageIds: deletedMessageIds,
-        isMessageOffsetTimestampUpdated: true,
+        isMessageOffsetUpdated: true,
       );
     }
   }

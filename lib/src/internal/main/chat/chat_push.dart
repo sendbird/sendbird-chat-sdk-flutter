@@ -17,11 +17,20 @@ extension ChatPush on Chat {
 
     if (currentUser == null) {
       chatContext.pendingPushToken = token;
+      deviceTokenManager.isRegisterPushTokenApiCalled = false;
       return PushTokenRegistrationStatus.pending;
     }
 
-    final result = await apiClient
-        .send<PushTokenRegistrationStatus>(UserPushTokenRegisterRequest(
+    deviceTokenManager.lastUnique = unique;
+
+    if (unique == false && // Check
+        await deviceTokenManager.isCachedDeviceToken(token)) {
+      deviceTokenManager.isRegisterPushTokenApiCalled = false;
+      return PushTokenRegistrationStatus.success;
+    }
+
+    final int? deviceTokenLastDeletedAt =
+        await apiClient.send<int?>(UserPushTokenRegisterRequest(
       this,
       type: type,
       token: token,
@@ -29,8 +38,13 @@ extension ChatPush on Chat {
       unique: unique,
     ));
 
+    deviceTokenManager.isRegisterPushTokenApiCalled = true;
+
+    await deviceTokenManager.cacheDeviceToken(
+        token, unique, deviceTokenLastDeletedAt);
+
     chatContext.pendingPushToken = null;
-    return result;
+    return PushTokenRegistrationStatus.success;
   }
 
   Future<void> unregisterPushToken({
@@ -40,18 +54,22 @@ extension ChatPush on Chat {
     sbLog.i(StackTrace.current, 'PushTokenType: $type');
 
     chatContext.pendingPushToken = null;
-    return await apiClient.send(UserPushTokenUnregisterRequest(
-      this,
-      type: type,
-      token: token,
-    ));
+    final int? deviceTokenLastDeletedAt = await apiClient.send<int?>(
+        UserPushTokenUnregisterRequest(this, type: type, token: token));
+
+    await deviceTokenManager.removeCachedDeviceToken(
+        token, deviceTokenLastDeletedAt);
   }
 
   Future<void> unregisterPushTokenAll() async {
     sbLog.i(StackTrace.current);
 
     chatContext.pendingPushToken = null;
-    return await apiClient.send(UserPushTokenUnregisterAllRequest(this));
+    final int? deviceTokenLastDeletedAt =
+        await apiClient.send<int?>(UserPushTokenUnregisterAllRequest(this));
+
+    await deviceTokenManager
+        .removeAllCachedDeviceToken(deviceTokenLastDeletedAt);
   }
 
   Future<void> setPushTriggerOption(PushTriggerOption option) async {

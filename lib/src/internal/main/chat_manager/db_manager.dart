@@ -216,6 +216,16 @@ class DBManager {
     }
   }
 
+  Future<int?> getLastConnectedAt(String userId) async {
+    if (isEnabled()) {
+      final login = await _db.getLogin(userId);
+      if (login != null) {
+        return login.lastConnectedAt;
+      }
+    }
+    return null;
+  }
+
   Future<User?> getLoginInfoByException(
       String userId, SendbirdException e) async {
     User? user;
@@ -411,7 +421,7 @@ class DBManager {
     required int timestamp,
     required MessageListParams params,
     required bool isPrevious,
-    int? messageOffsetTimestamp,
+    int? messageOffset,
   }) async {
     if (isEnabled()) {
       List<RootMessage> messages = await _db.getMessages(
@@ -423,12 +433,12 @@ class DBManager {
         isPrevious,
       );
 
-      if (channelType == ChannelType.group && messageOffsetTimestamp != null) {
-        return _applyMessageOffsetTimestamp(
+      if (channelType == ChannelType.group && messageOffset != null) {
+        return _applyMessageOffset(
           channelType: channelType,
           channelUrl: channelUrl,
           messages: messages,
-          messageOffsetTimestamp: messageOffsetTimestamp,
+          messageOffset: messageOffset,
         );
       } else {
         return messages;
@@ -437,17 +447,17 @@ class DBManager {
     return [];
   }
 
-  Future<List<RootMessage>> _applyMessageOffsetTimestamp({
+  Future<List<RootMessage>> _applyMessageOffset({
     required ChannelType channelType,
     required String channelUrl,
     required List<RootMessage> messages,
-    required int messageOffsetTimestamp,
+    required int messageOffset,
   }) async {
     List<RootMessage> resultMessages = [];
     List<String> deletedMessageIds = [];
 
     for (final message in messages) {
-      if (message.createdAt < messageOffsetTimestamp) {
+      if (message.createdAt <= messageOffset) {
         deletedMessageIds.add(message.rootId);
       } else {
         resultMessages.add(message);
@@ -582,7 +592,7 @@ class DBManager {
     required ChannelType channelType,
     required String channelUrl,
     required int timestamp,
-    int? messageOffsetTimestamp,
+    int? messageOffset,
   }) async {
     if (isEnabled()) {
       List<RootMessage> messages = await _db.getStartingPointMessages(
@@ -591,12 +601,12 @@ class DBManager {
         timestamp,
       );
 
-      if (channelType == ChannelType.group && messageOffsetTimestamp != null) {
-        return _applyMessageOffsetTimestamp(
+      if (channelType == ChannelType.group && messageOffset != null) {
+        return _applyMessageOffset(
           channelType: channelType,
           channelUrl: channelUrl,
           messages: messages,
-          messageOffsetTimestamp: messageOffsetTimestamp,
+          messageOffset: messageOffset,
         );
       } else {
         return messages;

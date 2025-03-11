@@ -35,8 +35,11 @@ class UserPushTokenRegisterRequest extends ApiRequest {
   }
 
   @override
-  Future<PushTokenRegistrationStatus> response(Map<String, dynamic> res) async {
-    return PushTokenRegistrationStatus.success;
+  Future<int?> response(Map<String, dynamic> res) async {
+    if (res.containsKey('device_token_last_deleted_at')) {
+      return res['device_token_last_deleted_at'] as int?;
+    }
+    return null;
   }
 
   String? pushTokenToString(PushTokenType type) {
