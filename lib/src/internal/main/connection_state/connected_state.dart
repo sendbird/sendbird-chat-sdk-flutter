@@ -5,6 +5,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.da
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 
 class ConnectedState extends BaseConnectionState {
   ConnectedState({
@@ -51,6 +52,13 @@ class ConnectedState extends BaseConnectionState {
   @override
   Future<void> enterBackground() async {
     sbLog.i(StackTrace.current);
+
+    chat.statManager.appendWsDisconnectStat(
+      success: true,
+      errorCode: SendbirdError.webSocketConnectionClosed,
+      errorDescription: "cause=background",
+    );
+
     await chat.connectionManager
         .doDisconnect(clear: false, fromEnterBackground: true);
   }

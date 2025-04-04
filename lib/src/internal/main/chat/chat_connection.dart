@@ -35,6 +35,15 @@ extension ChatConnection on Chat {
 
   Future<bool> reconnect({bool reset = false}) async {
     sbLog.i(StackTrace.current, 'userId: ${chatContext.currentUserId}');
+
+    if (reset) {
+      statManager.appendWsDisconnectStat(
+        success: true,
+        errorCode: 0,
+        errorDescription: "cause=explicit_reconnect",
+      );
+    }
+
     return await connectionManager.reconnect(reset: reset);
   }
 

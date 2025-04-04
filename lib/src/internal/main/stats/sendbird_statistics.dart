@@ -8,6 +8,7 @@ import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
 class SendbirdStatistics {
   static const String apiResultType = 'api:result';
   static const String wsConnectType = 'ws:connect';
+  static const String wsDisconnectType = 'ws:disconnect';
   static const String featureLocalCacheType = 'feature:local_cache';
   static const String featureLocalCacheEventType = 'feature:local_cache_event';
   static const String notiStatsType = 'noti:stats';

@@ -64,7 +64,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.3.0';
+const sdkVersion = '4.3.1';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -256,6 +256,12 @@ class Chat with WidgetsBindingObserver {
           // Nothing
         } else if (results.contains(ConnectivityResult.none)) {
           channelCache.markAsDirtyAll(); // Check
+
+          statManager.appendWsDisconnectStat(
+            success: true,
+            errorCode: SendbirdError.networkError,
+            errorDescription: "cause=network_closed",
+          );
 
           sbLog.d(StackTrace.current, 'disconnect()');
           await connectionManager.disconnect(logout: false);

@@ -47,7 +47,9 @@ class Reaction {
     userIds = userIds.toList();
 
     if (event.operation == ReactionEventAction.add) {
-      userIds.add(event.userId);
+      if (!userIds.contains(event.userId)) {
+        userIds.add(event.userId);
+      }
     } else {
       userIds.remove(event.userId);
     }

@@ -13,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/default_
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/notification_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_connect_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_disconnect_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
@@ -21,15 +22,22 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/upload_stat_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/login_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:uuid/uuid.dart';
 
 class StatManager {
   static const Map<String, Set<StatType>> _sdkStatsAttributeTable = {
-    'allow_sdk_request_log_publish': {StatType.apiResult, StatType.wsConnect},
+    'allow_sdk_request_log_publish': {
+      StatType.apiResult,
+      StatType.wsConnect,
+      StatType.wsDisconnect,
+    },
     'allow_sdk_feature_local_cache_log_publish': {
       StatType.featureLocalCache,
       StatType.featureLocalCacheEvent,
     },
-    'allow_sdk_noti_stats_log_publish': {StatType.notificationStats},
+    'allow_sdk_noti_stats_log_publish': {
+      StatType.notificationStats,
+    },
   };
   static const int _errStatUploadNotAllowed = 403200;
   static const int _initialMinStatCount = 100;
@@ -70,6 +78,9 @@ class StatManager {
 
   final Map<String, int> _apiResultStartTsMap = {};
   final Map<String, int> _wsConnectStartTsMap = {};
+
+  int? lastWsLatency;
+  int? lastWsLogiLatency;
 
   StatManager({required Chat chat})
       : _chat = chat,
@@ -116,6 +127,11 @@ class StatManager {
         );
       case StatType.wsConnect:
         return WsConnectStat.fromJson(
+          ts: DateTime.now().millisecondsSinceEpoch,
+          data: data,
+        );
+      case StatType.wsDisconnect:
+        return WsDisconnectStat.fromJson(
           ts: DateTime.now().millisecondsSinceEpoch,
           data: data,
         );
@@ -471,6 +487,9 @@ class StatManager {
   void endWsConnectStat({
     required String hostUrl,
     required bool success,
+    required int accumTrial,
+    int? connectedTs,
+    int? logiTs,
     int? errorCode,
     String? errorDescription,
   }) async {
@@ -479,16 +498,24 @@ class StatManager {
     final startTs = _wsConnectStartTsMap[hostUrl];
     if (startTs == null) return;
 
-    final latency = DateTime.now().millisecondsSinceEpoch - startTs;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final connectedLatency = (connectedTs ?? now) - startTs;
+    final logiLatency = (logiTs ?? now) - startTs;
+
+    lastWsLatency = connectedLatency;
+    lastWsLogiLatency = logiLatency;
 
     await appendStat(
       type: StatUtils.getStatTypeString(StatType.wsConnect),
       data: <String, dynamic>{
         'host_url': hostUrl,
         'success': success,
-        'latency': latency,
+        'latency': connectedLatency,
+        'accum_trial': accumTrial,
+        'logi_latency': logiLatency,
         'error_code': errorCode,
         'error_description': errorDescription,
+        'connection_id': const Uuid().v1(),
       },
     );
 
@@ -496,6 +523,26 @@ class StatManager {
   }
 
   //- WsConnectStat
+
+  //+ WsDisconnectStat
+  void appendWsDisconnectStat({
+    required bool success,
+    required int errorCode,
+    required String errorDescription,
+  }) async {
+    sbLog.d(StackTrace.current);
+
+    await appendStat(
+      type: StatUtils.getStatTypeString(StatType.wsDisconnect),
+      data: <String, dynamic>{
+        'success': success,
+        'error_code': errorCode,
+        'error_description': errorDescription,
+      },
+    );
+  }
+
+  //- WsDisconnectStat
 
   //+ ApiResultStat
   void startApiResultStat({

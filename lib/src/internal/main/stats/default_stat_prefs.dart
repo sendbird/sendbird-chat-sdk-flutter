@@ -8,6 +8,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/api_resu
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/default_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/local_cache_event_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/notification_stat.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_disconnect_stat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_utils.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/stats/model/default/ws_connect_stat.dart';
@@ -85,6 +86,8 @@ class DefaultStatPrefs {
           return ApiResultStat.fromJson(ts: ts, data: data);
         case StatType.wsConnect:
           return WsConnectStat.fromJson(ts: ts, data: data);
+        case StatType.wsDisconnect:
+          return WsDisconnectStat.fromJson(ts: ts, data: data);
         case StatType.featureLocalCache:
           return null;
         case StatType.featureLocalCacheEvent:

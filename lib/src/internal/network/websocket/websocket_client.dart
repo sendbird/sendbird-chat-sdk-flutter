@@ -4,10 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 import 'package:universal_io/io.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -28,6 +30,9 @@ class WebSocketClient {
   Timer? _pingTimer;
   Timer? _watchdogTimer;
 
+  int? connectedTs;
+
+  final Chat _chat;
   final ChatContext _chatContext;
   final OnWebSocketConnected _onWebSocketConnected;
   final OnWebSocketClosed _onWebSocketClosed;
@@ -35,12 +40,14 @@ class WebSocketClient {
   final OnWebSocketError _onWebSocketError;
 
   WebSocketClient({
+    required Chat chat,
     required ChatContext chatContext,
     required OnWebSocketConnected onWebSocketConnected,
     required OnWebSocketClosed onWebSocketClosed,
     required OnWebSocketData onWebSocketData,
     required OnWebSocketError onWebSocketError,
-  })  : _chatContext = chatContext,
+  })  : _chat = chat,
+        _chatContext = chatContext,
         _onWebSocketConnected = onWebSocketConnected,
         _onWebSocketClosed = onWebSocketClosed,
         _onWebSocketData = onWebSocketData,
@@ -55,6 +62,7 @@ class WebSocketClient {
 
     sbLog.d(StackTrace.current, '[url] $url');
 
+    connectedTs = null;
     runZonedGuarded(() {
       if (kIsWeb) {
         List<String> protocols = [];
@@ -85,6 +93,10 @@ class WebSocketClient {
           headers: headers,
         ); // Check
       }
+
+      _webSocketChannel?.ready.then((value) {
+        connectedTs = DateTime.now().millisecondsSinceEpoch;
+      });
 
       _streamSubscription = _webSocketChannel?.stream.listen(
         _onData,
@@ -162,6 +174,10 @@ class WebSocketClient {
     return _isConnected;
   }
 
+  int? getCloseCode() {
+    return _webSocketChannel?.closeCode;
+  }
+
   Future<void> _onData(dynamic data) async {
     _lastActiveAt = DateTime.now().millisecondsSinceEpoch;
     _stopWatchdog();
@@ -221,6 +237,12 @@ class WebSocketClient {
     _watchdogTimer = Timer(
       Duration(seconds: _chatContext.watchdogInterval),
       () async {
+        _chat.statManager.appendWsDisconnectStat(
+          success: true,
+          errorCode: SendbirdError.networkError,
+          errorDescription: "cause=ping_pong_timedout",
+        );
+
         await _onError(SendbirdException(message: 'Watchdog timeout'));
       },
     );

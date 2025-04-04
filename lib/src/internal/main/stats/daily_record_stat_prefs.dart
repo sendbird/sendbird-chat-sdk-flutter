@@ -95,6 +95,8 @@ class DailyRecordStatPrefs {
           return null;
         case StatType.wsConnect:
           return null;
+        case StatType.wsDisconnect:
+          return null;
         case StatType.featureLocalCache:
           return LocalCacheStat.fromJson(ts: ts, data: data);
         case StatType.featureLocalCacheEvent:

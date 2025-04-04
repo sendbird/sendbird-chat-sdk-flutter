@@ -18,6 +18,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/websocket_client.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 import 'package:universal_io/io.dart';
 
 class ConnectionManager {
@@ -29,6 +30,7 @@ class ConnectionManager {
 
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
+      chat: chat,
       chatContext: chat.chatContext,
       onWebSocketConnected: _onWebSocketConnected,
       onWebSocketClosed: _onWebSocketClosed,
@@ -175,6 +177,7 @@ class ConnectionManager {
               success: false,
               errorCode: e.code,
               errorDescription: e.message,
+              accumTrial: 1,
             );
 
             //+ [DBManager]
@@ -205,6 +208,7 @@ class ConnectionManager {
               success: false,
               errorCode: exception.code,
               errorDescription: exception.message,
+              accumTrial: 1,
             );
 
             if (chat.chatContext.loginCompleter != null &&
@@ -226,6 +230,7 @@ class ConnectionManager {
         success: false,
         errorCode: e.code,
         errorDescription: e.name,
+        accumTrial: 1,
       );
 
       await doDisconnect(clear: true);
@@ -236,6 +241,9 @@ class ConnectionManager {
     chat.statManager.endWsConnectStat(
       hostUrl: url,
       success: true,
+      connectedTs: webSocketClient.connectedTs,
+      logiTs: chat.commandManager.logiTs,
+      accumTrial: 1,
     );
     return user;
   }
@@ -405,6 +413,15 @@ class ConnectionManager {
 
   void _onWebSocketClosed() {
     chat.commandManager.clearCompleterMap();
+
+    final closeCode = webSocketClient.getCloseCode();
+    if (closeCode != null) {
+      chat.statManager.appendWsDisconnectStat(
+        success: true,
+        errorCode: SendbirdError.webSocketConnectionClosed,
+        errorDescription: "cause=$closeCode",
+      );
+    }
   }
 
   Future<void> _onWebSocketData(dynamic data) async {
