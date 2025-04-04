@@ -1,3 +1,9 @@
+## v4.3.1 (Apr 4, 2025)
+
+### Improvements
+- Fixed duplicate userId bug related to reaction
+- Improved websocket statistics
+
 ## v4.3.0 (Mar 11, 2025)
 
 ### Features

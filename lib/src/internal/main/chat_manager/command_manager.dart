@@ -49,6 +49,8 @@ class CommandManager {
   final Map<String, int> _readMap = {};
   final Map<String, Completer<int?>> messageOffsetTsCompleterMap = {};
 
+  int? logiTs;
+
   final Chat _chat;
 
   CommandManager({required Chat chat}) : _chat = chat;
@@ -275,6 +277,8 @@ class CommandManager {
       return;
     }
 
+    logiTs = DateTime.now().millisecondsSinceEpoch;
+
     await processLoginPayload(fromWebSocket: true, loginPayload: cmd.payload);
   }
 
@@ -390,6 +394,12 @@ class CommandManager {
       await _chat.connectionManager.disconnect(logout: true);
       _chat.eventManager.notifySessionClosed();
     } else {
+      _chat.statManager.appendWsDisconnectStat(
+        success: true,
+        errorCode: SendbirdError.sessionKeyExpired,
+        errorDescription: "cause=session_expired",
+      );
+
       await _chat.sessionManager.updateSessionKey();
     }
   }

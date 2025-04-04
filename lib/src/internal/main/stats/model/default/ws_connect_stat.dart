@@ -7,7 +7,10 @@ import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_type.dart';
 class WsConnectStat extends DefaultStat {
   final String hostUrl; // ws host url
   final bool success; // success or not
-  final int latency; // roundtrip latency
+  final int latency; // until connected or failed
+  final int accumTrial;
+  final String connectionId;
+  final int? logiLatency; // until received LOGI
   final int? errorCode; // error code if exist
   final String? errorDescription; // detailed error message
 
@@ -16,6 +19,9 @@ class WsConnectStat extends DefaultStat {
     required this.hostUrl,
     required this.success,
     required this.latency,
+    required this.accumTrial,
+    required this.connectionId,
+    this.logiLatency,
     this.errorCode,
     this.errorDescription,
   }) : super(StatType.wsConnect, ts);
@@ -26,6 +32,9 @@ class WsConnectStat extends DefaultStat {
       'host_url': hostUrl,
       'success': success,
       'latency': latency,
+      'accum_trial': accumTrial,
+      'connection_id': connectionId,
+      'logi_latency': logiLatency,
       'error_code': errorCode,
       'error_description': errorDescription,
     };
@@ -41,6 +50,9 @@ class WsConnectStat extends DefaultStat {
   //     'host_url': String,
   //     'success': bool,
   //     'latency': int,
+  //     'accum_trial': int,
+  //     'connection_id': String,
+  //     'logi_latency': int?,
   //     'error_code': int?,
   //     'error_description': String?,
   //   },
@@ -53,10 +65,17 @@ class WsConnectStat extends DefaultStat {
       final String? hostUrl = data['host_url'] as String?;
       final bool? success = data['success'] as bool?;
       final int? latency = data['latency'] as int?;
+      final int? accumTrial = data['accum_trial'] as int?;
+      final String? connectionId = data['connection_id'] as String?;
+      final int? logiLatency = data['logi_latency'] as int?;
       final int? errorCode = data['error_code'] as int?;
       final String? errorDescription = data['error_description'] as String?;
 
-      if (hostUrl == null || success == null || latency == null) {
+      if (hostUrl == null ||
+          success == null ||
+          latency == null ||
+          accumTrial == null ||
+          connectionId == null) {
         return null;
       }
 
@@ -65,6 +84,9 @@ class WsConnectStat extends DefaultStat {
         hostUrl: hostUrl,
         success: success,
         latency: latency,
+        accumTrial: accumTrial,
+        connectionId: connectionId,
+        logiLatency: logiLatency,
         errorCode: errorCode,
         errorDescription: errorDescription,
       );

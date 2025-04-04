@@ -12,6 +12,8 @@ class StatUtils {
         return StatType.apiResult;
       case SendbirdStatistics.wsConnectType:
         return StatType.wsConnect;
+      case SendbirdStatistics.wsDisconnectType:
+        return StatType.wsDisconnect;
       case SendbirdStatistics.featureLocalCacheType:
         return StatType.featureLocalCache;
       case SendbirdStatistics.featureLocalCacheEventType:
@@ -29,6 +31,8 @@ class StatUtils {
         return SendbirdStatistics.apiResultType;
       case StatType.wsConnect:
         return SendbirdStatistics.wsConnectType;
+      case StatType.wsDisconnect:
+        return SendbirdStatistics.wsDisconnectType;
       case StatType.featureLocalCache:
         return SendbirdStatistics.featureLocalCacheType;
       case StatType.featureLocalCacheEvent:
