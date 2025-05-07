@@ -22,6 +22,15 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
     MessageTypeFilter.user: 'MESG',
   };
 
+  final scheduledStatusEnumMap = <ScheduledStatus, String>{
+    ScheduledStatus.pending: 'pending',
+    ScheduledStatus.inQueue: 'in_queue',
+    ScheduledStatus.sent: 'sent',
+    ScheduledStatus.failed: 'failed',
+    ScheduledStatus.canceled: 'canceled',
+    ScheduledStatus.removed: 'removed',
+  };
+
   GroupChannelScheduledMessageListGetRequest(
     Chat chat, {
     String? channelUrl,
@@ -44,7 +53,7 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
       'token': token,
       'limit': limit,
       'reverse': reverse,
-      'status': status,
+      'status': status?.map((e) => scheduledStatusEnumMap[e]).toList(),
       'message_type': messageTypeFilterEnumMap[messageType],
       'order': scheduledMessageListOrderEnumMap[order],
     };
