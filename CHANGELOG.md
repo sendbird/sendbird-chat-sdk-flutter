@@ -1,3 +1,8 @@
+## v4.3.2 (May 7, 2025)
+
+### Improvements
+- Fixed a bug where network error related exceptions were not raised in `loadPrevious()` and `loadNext()` in `MessageCollection`
+
 ## v4.3.1 (Apr 4, 2025)
 
 ### Improvements

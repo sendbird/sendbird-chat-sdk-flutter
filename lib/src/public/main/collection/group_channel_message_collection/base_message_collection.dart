@@ -620,9 +620,9 @@ abstract class BaseMessageCollection {
     if (_isDisposed) {
       _isLoading = false;
       if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-        if (_chat.dbManager.isEnabled() == false) {
-          throw exception;
-        }
+        // if (_chat.dbManager.isEnabled() == false) { // Check
+        throw exception;
+        // }
       }
       return;
     }
@@ -689,9 +689,9 @@ abstract class BaseMessageCollection {
 
     _isLoading = false;
     if (exception != null && !_chat.apiClient.throwExceptionForTest) {
-      if (_chat.dbManager.isEnabled() == false) {
-        throw exception;
-      }
+      // if (_chat.dbManager.isEnabled() == false) { // Check
+      throw exception;
+      // }
     }
   }
 
