@@ -1,3 +1,16 @@
+## v4.4.0 (Jun 20, 2025)
+
+### Features
+- Added `markAsUnread()` in `GroupChannel`
+- Added `eventUserMarkedRead` and `eventUserMarkedUnread` in `CollectionEventSource`
+- Added `eventDetail` in `BaseChannelContext`
+- Added `onUserMarkedRead()` and `onUserMarkedUnread()` events in `GroupChannelHandler`
+- Added `uikitConfigInfo` in `AppInfo`
+
+### Improvements
+- Fixed a bug where writing `metaData` to db in `FeedChannel` failed
+- Fixed a bug regarding `ScheduledStatus` in `ScheduledInfo`
+
 ## v4.3.2 (May 7, 2025)
 
 ### Improvements

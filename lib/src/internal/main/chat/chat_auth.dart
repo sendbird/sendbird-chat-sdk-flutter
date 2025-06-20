@@ -21,8 +21,7 @@ extension ChatAuth on Chat {
           throw RequestFailedException(
               message:
                   'Already logged in as a different user. Call disconnect() first.');
-        }
-        if (chatContext.isFeedAuthenticated) {
+        } else if (chatContext.isFeedAuthenticated) {
           await disconnect();
         }
       }

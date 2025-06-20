@@ -12,6 +12,23 @@ extension GroupChannelRead on GroupChannel {
     await chat.commandManager.sendCommand(cmd);
   }
 
+  /// Sends mark as unread from message to the latest message.
+  /// @since 4.4.0
+  Future<void> markAsUnread(BaseMessage message) async {
+    sbLog.i(StackTrace.current);
+
+    await chat.apiClient.send(GroupChannelMarkAsReadRequest(
+      chat,
+      channelUrl: channelUrl,
+      messageId: message.messageId,
+      isExcluded: true,
+      uniqueId: chat.commandManager.addToDedupIdMap(
+        dedupId: const Uuid().v1(),
+        dedupCount: 2,
+      ),
+    ));
+  }
+
   /// Gets the member list who have read the given message.
   ///
   /// If [includeAllMembers] is set false, this list excludes the current logged-in `User` and the sender of the message.

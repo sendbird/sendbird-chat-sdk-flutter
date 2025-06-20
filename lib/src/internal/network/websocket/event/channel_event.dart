@@ -27,6 +27,8 @@ class ChannelEvent extends BaseEvent {
   @JsonKey(name: 'ts_message_offset')
   final int? messageOffset;
 
+  final String? uniqueId;
+
   GroupChannelHiddenState get hiddenState {
     final auto = allowAutoUnhide;
     if (auto != null) {
@@ -45,6 +47,7 @@ class ChannelEvent extends BaseEvent {
     required this.data,
     this.ts,
     this.messageOffset,
+    this.uniqueId,
   });
 
   int get joinedAt => data['joined_ts'] ?? 0;

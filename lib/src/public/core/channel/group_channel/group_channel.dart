@@ -16,6 +16,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_create_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_delete_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_mark_as_read_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_message_deletion_timestamp_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_refresh_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_update_request.dart';
@@ -74,6 +75,7 @@ import 'package:sendbird_chat_sdk/src/public/main/params/message/scheduled_user_
 import 'package:sendbird_chat_sdk/src/public/main/params/message/scheduled_user_message_update_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/poll/poll_update_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/channel/public_group_channel_list_query.dart';
+import 'package:uuid/uuid.dart';
 
 part 'group_channel.g.dart';
 part 'group_channel_configuration.dart';

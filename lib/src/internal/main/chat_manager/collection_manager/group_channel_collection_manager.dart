@@ -43,7 +43,7 @@ extension GroupChannelCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    if (_chat.dbManager.isInitialized()) {
+    if (_chat.dbManager.isEnabled()) {
       final info = await _chat.dbManager.getChannelInfo();
       if (info != null) {
         lastToken = info.lastChannelToken;
@@ -86,7 +86,7 @@ extension GroupChannelCollectionManager on CollectionManager {
 
     //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      if (_chat.dbManager.isInitialized()) {
+      if (_chat.dbManager.isEnabled()) {
         ChannelInfo? channelInfo = await _chat.dbManager.getChannelInfo();
         if (channelInfo != null) {
           channelInfo.lastChannelToken = token;
@@ -114,6 +114,7 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
+    dynamic eventDetail,
   }) async {
     sbLog.d(StackTrace.current, eventSource.toString());
 
@@ -147,6 +148,7 @@ extension GroupChannelCollectionManager on CollectionManager {
           addedChannels: addedChannels,
           updatedChannels: updatedChannels,
           deletedChannelUrls: deletedChannelUrls,
+          eventDetail: eventDetail,
         );
       }
     }
@@ -157,6 +159,7 @@ extension GroupChannelCollectionManager on CollectionManager {
         eventSource: eventSource,
         updatedChannels: updatedChannels,
         deletedChannelUrls: deletedChannelUrls,
+        eventDetail: eventDetail,
       );
     }
   }
@@ -170,6 +173,7 @@ extension GroupChannelCollectionManager on CollectionManager {
     List<GroupChannel>? addedChannels,
     List<GroupChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
+    dynamic eventDetail,
   }) async {
     sbLog.d(StackTrace.current, eventSource.toString());
 
@@ -300,7 +304,9 @@ extension GroupChannelCollectionManager on CollectionManager {
         //- [DBManager]
         else {
           channelCollection.handler.onChannelsDeleted(
-              GroupChannelContext(source), deletedChannelUrlsForEvent);
+              GroupChannelContext(
+                  collectionEventSource: source, eventDetail: eventDetail),
+              deletedChannelUrlsForEvent);
         }
       }
     }
@@ -310,7 +316,9 @@ extension GroupChannelCollectionManager on CollectionManager {
 
       if (!channelCollection.isDisposed) {
         channelCollection.handler.onChannelsAdded(
-            GroupChannelContext(eventSource), addedChannelsForEvent);
+            GroupChannelContext(
+                collectionEventSource: eventSource, eventDetail: eventDetail),
+            addedChannelsForEvent);
       }
     }
 
@@ -319,7 +327,9 @@ extension GroupChannelCollectionManager on CollectionManager {
 
       if (!channelCollection.isDisposed) {
         channelCollection.handler.onChannelsUpdated(
-            GroupChannelContext(eventSource), updatedChannelsForEvent);
+            GroupChannelContext(
+                collectionEventSource: eventSource, eventDetail: eventDetail),
+            updatedChannelsForEvent);
       }
     }
   }

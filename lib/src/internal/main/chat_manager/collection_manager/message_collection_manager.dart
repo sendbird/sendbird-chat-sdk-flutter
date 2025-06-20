@@ -124,7 +124,7 @@ extension MessageCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    if (_chat.dbManager.isInitialized()) {
+    if (_chat.dbManager.isEnabled()) {
       final info =
           await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
       if (info != null) {
@@ -157,7 +157,7 @@ extension MessageCollectionManager on CollectionManager {
 
     //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      if (_chat.dbManager.isInitialized()) {
+      if (_chat.dbManager.isEnabled()) {
         MessageChangeLogInfo? info =
             await _chat.dbManager.getMessageChangeLogInfo(channel.channelUrl);
         if (info != null) {
@@ -214,7 +214,7 @@ extension MessageCollectionManager on CollectionManager {
     String? token;
 
     //+ [DBManager]
-    if (_chat.dbManager.isInitialized()) {
+    if (_chat.dbManager.isEnabled()) {
       final info = await _chat.dbManager
           .getMessageChangeLogInfo(groupChannel.channelUrl);
       if (info != null) {
@@ -256,7 +256,7 @@ extension MessageCollectionManager on CollectionManager {
 
     //+ [DBManager]
     if (token != null && token.isNotEmpty && token != lastToken) {
-      if (_chat.dbManager.isInitialized()) {
+      if (_chat.dbManager.isEnabled()) {
         MessageChangeLogInfo? info = await _chat.dbManager
             .getMessageChangeLogInfo(groupChannel.channelUrl);
         if (info != null) {
@@ -529,6 +529,7 @@ extension MessageCollectionManager on CollectionManager {
     required CollectionEventSource eventSource,
     List<BaseChannel>? updatedChannels,
     List<String>? deletedChannelUrls,
+    dynamic eventDetail,
   }) async {
     sbLog.d(StackTrace.current, eventSource.toString());
 
@@ -561,13 +562,19 @@ extension MessageCollectionManager on CollectionManager {
                   updatedChannel is GroupChannel) {
                 (messageCollection.baseHandler as MessageCollectionHandler)
                     .onChannelUpdated(
-                        GroupChannelContext(eventSource), updatedChannel);
+                        GroupChannelContext(
+                            collectionEventSource: eventSource,
+                            eventDetail: eventDetail),
+                        updatedChannel);
               } else if (messageCollection.baseHandler
                       is NotificationCollectionHandler &&
                   updatedChannel is FeedChannel) {
                 (messageCollection.baseHandler as NotificationCollectionHandler)
                     .onChannelUpdated(
-                        FeedChannelContext(eventSource), updatedChannel);
+                        FeedChannelContext(
+                            collectionEventSource: eventSource,
+                            eventDetail: eventDetail),
+                        updatedChannel);
               }
             }
             break;
@@ -584,12 +591,18 @@ extension MessageCollectionManager on CollectionManager {
               if (messageCollection.baseHandler is MessageCollectionHandler) {
                 (messageCollection.baseHandler as MessageCollectionHandler)
                     .onChannelDeleted(
-                        GroupChannelContext(eventSource), deletedChannelUrl);
+                        GroupChannelContext(
+                            collectionEventSource: eventSource,
+                            eventDetail: eventDetail),
+                        deletedChannelUrl);
               } else if (messageCollection.baseHandler
                   is NotificationCollectionHandler) {
                 (messageCollection.baseHandler as NotificationCollectionHandler)
                     .onChannelDeleted(
-                        FeedChannelContext(eventSource), deletedChannelUrl);
+                        FeedChannelContext(
+                            collectionEventSource: eventSource,
+                            eventDetail: eventDetail),
+                        deletedChannelUrl);
               }
             }
             break;

@@ -37,6 +37,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/global_notification_channel_setting_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/notifications/notification_template_list_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/uikit_configuration_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/auth/authenticate_feed_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_block_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/block/user_unblock_request.dart';
@@ -64,7 +65,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.3.2';
+const sdkVersion = '4.4.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -205,8 +206,7 @@ class Chat with WidgetsBindingObserver {
     sbLog.i(StackTrace.current);
     if (chatContext.isChatConnected) {
       await connectionManager.enterForeground();
-    }
-    if (chatContext.isFeedAuthenticated) {
+    } else if (chatContext.isFeedAuthenticated) {
       collectionManager.refreshNotificationCollections();
     }
   }
@@ -245,9 +245,7 @@ class Chat with WidgetsBindingObserver {
             if (chatContext.isChatConnected) {
               sbLog.d(StackTrace.current, 'reconnect()');
               await connectionManager.reconnect(reset: true);
-            }
-
-            if (chatContext.isFeedAuthenticated) {
+            } else if (chatContext.isFeedAuthenticated) {
               sbLog.d(StackTrace.current, 'refreshNotificationCollections()');
               collectionManager.refreshNotificationCollections();
             }
@@ -316,5 +314,10 @@ class Chat with WidgetsBindingObserver {
     sbLog.i(StackTrace.current, 'key: $key, version: $version');
     if (key != extensionKeyUiKit) return;
     extensions[key] = version;
+  }
+
+  Future<Map<String, dynamic>> getUIKitConfiguration() async {
+    return await apiClient
+        .send<Map<String, dynamic>>(UIKitConfigurationGetRequest(this));
   }
 }

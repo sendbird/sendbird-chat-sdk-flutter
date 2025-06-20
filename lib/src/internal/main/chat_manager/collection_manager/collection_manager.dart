@@ -598,6 +598,24 @@ class InternalGroupChannelHandlerForCollectionManager
   }
 
   @override
+  void onUserMarkedRead(GroupChannel channel, List<String> userIds) {
+    _collectionManager.sendEventsToGroupChannelCollectionList(
+      eventSource: CollectionEventSource.eventUserMarkedRead,
+      updatedChannels: [channel],
+      eventDetail: userIds,
+    );
+  }
+
+  @override
+  void onUserMarkedUnread(GroupChannel channel, List<String> userIds) {
+    _collectionManager.sendEventsToGroupChannelCollectionList(
+      eventSource: CollectionEventSource.eventUserMarkedUnread,
+      updatedChannels: [channel],
+      eventDetail: userIds,
+    );
+  }
+
+  @override
   void onDeliveryStatusUpdated(GroupChannel channel) {
     _collectionManager.sendEventsToGroupChannelCollectionList(
       eventSource: CollectionEventSource.eventDeliveryStatusUpdated,

@@ -74,7 +74,9 @@ class SendbirdChat {
     );
 
     //+ [DBManager]
-    await _instance._chat.dbManager.init();
+    if (_instance._chat.chatContext.options.useCollectionCaching) {
+      await _instance._chat.dbManager.init();
+    }
 
     _instance._chat.dbManager.appendLocalCacheStat(
       useLocalCache: _instance._chat.chatContext.options.useCollectionCaching,
@@ -138,6 +140,13 @@ class SendbirdChat {
   static void addExtension(String key, String version) {
     sbLog.i(StackTrace.current, 'key: $key, version: $version');
     _instance._chat.addExtension(key, version);
+  }
+
+  static Future<Map<String, dynamic>?> getUIKitConfiguration() async {
+    if (_instance._chat.extensions[Chat.extensionKeyUiKit] == null) {
+      return null;
+    }
+    return await _instance._chat.getUIKitConfiguration();
   }
 
 //------------------------------//
@@ -227,7 +236,7 @@ class SendbirdChat {
   static Future<int> getTotalUnreadMessageCount(
       [GroupChannelTotalUnreadMessageCountParams? params]) async {
     final result = await _instance._chat.getTotalUnreadMessageCount(params);
-    sbLog.i(StackTrace.current, 'return: $result');
+    sbLog.i(StackTrace.current, 'return: ${result.totalCountForGroupChannels}');
     return result.totalCountForGroupChannels;
   }
 

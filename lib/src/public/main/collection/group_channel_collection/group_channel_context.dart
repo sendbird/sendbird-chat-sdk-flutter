@@ -6,6 +6,11 @@ import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_colle
 
 /// The context of a group channel, used in [GroupChannelCollectionHandler].
 class GroupChannelContext extends BaseChannelContext {
-  GroupChannelContext(CollectionEventSource collectionEventSource)
-      : super(collectionEventSource);
+  GroupChannelContext({
+    required CollectionEventSource collectionEventSource,
+    dynamic eventDetail,
+  }) : super(
+          collectionEventSource: collectionEventSource,
+          eventDetail: eventDetail,
+        );
 }

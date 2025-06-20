@@ -26,7 +26,14 @@ enum CollectionEventSource {
   eventChannelMetaCountersUpdated(true), // onChannelUpdated()
   eventChannelMetaCountersDeleted(true), // onChannelUpdated()
   eventOperatorUpdated(true), // onChannelUpdated()
+  @Deprecated('Use [eventUserMarkedRead] and [eventUserMarkedUnread] instead.')
   eventReadStatusUpdated(true), // onChannelUpdated()
+  /// eventDetail: List<String> userIds
+  /// @since 4.4.0
+  eventUserMarkedRead(true), // onChannelUpdated()
+  /// eventDetail: List<String> userIds
+  /// @since 4.4.0
+  eventUserMarkedUnread(true), // onChannelUpdated()
   eventDeliveryStatusUpdated(true), // onChannelUpdated()
   eventTypingStatusUpdated(true), // onChannelUpdated()
   eventUserReceivedInvitation(true), // onChannelUpdated()

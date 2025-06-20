@@ -382,7 +382,12 @@ int _cGroupChannelEstimateSize(
       bytesCount += CMemberSchema.estimateSize(value, offsets, allOffsets);
     }
   }
-  bytesCount += 3 + object.metaData.length * 3;
+  {
+    final value = object.metaData;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.pinnedMessageIds.length * 8;
   bytesCount += 3 + object.readStatus.length * 3;
@@ -519,7 +524,7 @@ CGroupChannel _cGroupChannelDeserialize(
   object.messageDeletionTimestamp = reader.readLongOrNull(offsets[33]);
   object.messageOffsetTimestamp = reader.readLongOrNull(offsets[34]);
   object.messageSurvivalSeconds = reader.readLong(offsets[35]);
-  object.metaData = reader.readString(offsets[36]);
+  object.metaData = reader.readStringOrNull(offsets[36]);
   object.myCountPreference = _CGroupChannelmyCountPreferenceValueEnumMap[
           reader.readByteOrNull(offsets[37])] ??
       CountPreference.all;
@@ -643,7 +648,7 @@ P _cGroupChannelDeserializeProp<P>(
     case 35:
       return (reader.readLong(offset)) as P;
     case 36:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 37:
       return (_CGroupChannelmyCountPreferenceValueEnumMap[
               reader.readByteOrNull(offset)] ??
@@ -3438,8 +3443,26 @@ extension CGroupChannelQueryFilter
   }
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'metaData',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
+      metaDataIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'metaData',
+      ));
+    });
+  }
+
+  QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       metaDataEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -3453,7 +3476,7 @@ extension CGroupChannelQueryFilter
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       metaDataGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -3469,7 +3492,7 @@ extension CGroupChannelQueryFilter
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       metaDataLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -3485,8 +3508,8 @@ extension CGroupChannelQueryFilter
 
   QueryBuilder<CGroupChannel, CGroupChannel, QAfterFilterCondition>
       metaDataBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -6318,7 +6341,7 @@ extension CGroupChannelQueryProperty
     });
   }
 
-  QueryBuilder<CGroupChannel, String, QQueryOperations> metaDataProperty() {
+  QueryBuilder<CGroupChannel, String?, QQueryOperations> metaDataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'metaData');
     });

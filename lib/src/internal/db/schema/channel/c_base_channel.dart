@@ -26,7 +26,7 @@ class CBaseChannel {
   String? customType;
   bool? isFrozen;
   bool? isEphemeral;
-  late String metaData; // Map<String, String>
+  String? metaData; // Map<String, String>
 
   // Internal
   late bool fromCache;
@@ -82,10 +82,12 @@ class CBaseChannel {
         ..isFrozen = cBaseChannel.isFrozen
         ..isEphemeral = cBaseChannel.isEphemeral;
 
-      final cachedMetaData =
-          (jsonDecode(cBaseChannel.metaData) as Map<String, dynamic>)
-              .map((key, value) => MapEntry(key, value.toString()));
-      channel.setCachedMetaData(cachedMetaData);
+      if (cBaseChannel.metaData != null) {
+        final cachedMetaData =
+            (jsonDecode(cBaseChannel.metaData!) as Map<String, dynamic>)
+                .map((key, value) => MapEntry(key, value.toString()));
+        channel.setCachedMetaData(cachedMetaData);
+      }
     }
     return channel;
   }

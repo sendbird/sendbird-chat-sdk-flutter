@@ -538,6 +538,7 @@ class ConnectionManager {
     final appVersion = chat.chatContext.appVersion;
 
     int configTs = await MessageRetentionManager().getConfigTs() ?? 0;
+    String? uikitVersion = chat.extensions[Chat.extensionKeyUiKit];
 
     return {
       'p': Chat.platform,
@@ -548,6 +549,7 @@ class ConnectionManager {
       'ai': appId,
       if (appVersion != null && appVersion != '') 'av': appVersion,
       'config_ts': configTs.toString(), // To get config_sync_needed
+      if (uikitVersion != null) 'uikit_config': '1',
     };
   }
 }

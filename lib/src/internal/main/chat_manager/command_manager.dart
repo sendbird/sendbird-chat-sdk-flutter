@@ -9,6 +9,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/cache_service.dar
 import 'package:sendbird_chat_sdk/src/internal/main/chat_cache/channel/meta_data_cache.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
@@ -48,6 +49,7 @@ class CommandManager {
   final Map<String, Timer> _ackTimerMap = {};
   final Map<String, int> _readMap = {};
   final Map<String, Completer<int?>> messageOffsetTsCompleterMap = {};
+  final Map<String, int> _dedupIdMap = {};
 
   int? logiTs;
 
@@ -95,6 +97,7 @@ class CommandManager {
     _ackTimerMap.clear();
     _readMap.clear();
     messageOffsetTsCompleterMap.clear();
+    _dedupIdMap.clear();
   }
 
   void clearCompleterMap({SendbirdException? e}) {
@@ -104,6 +107,37 @@ class CommandManager {
       }
     });
     _completerMap.clear();
+  }
+
+  String? addToDedupIdMap({
+    required String dedupId,
+    required int dedupCount,
+  }) {
+    if (dedupCount <= 0) {
+      return null;
+    }
+    _dedupIdMap[dedupId] = dedupCount;
+    return dedupId;
+  }
+
+  bool checkDedupId(String dedupId) {
+    final count = _dedupIdMap[dedupId];
+    if (count == null) return false;
+
+    if (count > 1) {
+      _dedupIdMap[dedupId] = count - 1;
+      return true;
+    } else if (count == 1) {
+      _dedupIdMap.remove(dedupId);
+      return true;
+    } else {
+      _dedupIdMap.remove(dedupId);
+      return false;
+    }
+  }
+
+  int getDedupIdListCount() {
+    return _dedupIdMap.length;
   }
 
   Future<Command?> sendCommand(Command cmd) async {
@@ -643,6 +677,12 @@ class CommandManager {
 
   Future<void> _processRead(Command cmd) async {
     try {
+      if (cmd.payload['unique_id'] != null &&
+          checkDedupId(cmd.payload['unique_id'])) {
+        // Check GroupChannelMarkAsReadRequest
+        return;
+      }
+
       final readStatus = ReadStatus.fromJson(cmd.payload);
       readStatus.saveToCache(_chat);
 
@@ -658,12 +698,50 @@ class CommandManager {
             readStatus.userId == _chat.chatContext.currentUserId;
         final hasUnreadCount = (groupChannel.unreadMessageCount > 0 ||
             groupChannel.unreadMentionCount > 0);
+
+        final isExcluded = cmd.payload['is_excluded'];
+        final isMarkAsUnread =
+            isExcluded != null && isExcluded is bool && isExcluded;
+
         if (isCurrentUser) {
+          final isMyReadStatusUpdated =
+              (groupChannel.myLastRead != readStatus.timestamp);
           groupChannel.myLastRead = readStatus.timestamp;
-          if (groupChannel.fromCache) groupChannel.clearUnreadCount();
-          if (hasUnreadCount) _chat.eventManager.notifyChannelChanged(channel);
+
+          if (isMarkAsUnread) {
+            groupChannel.saveToCache(_chat);
+
+            if (isMyReadStatusUpdated) {
+              _chat.eventManager.notifyReadStatusUpdated(
+                channel: groupChannel,
+                readType: ReadType.unread,
+                userIds: [readStatus.userId],
+              );
+            }
+          } else {
+            if (groupChannel.fromCache) {
+              groupChannel.clearUnreadCount();
+            }
+            groupChannel.saveToCache(_chat);
+
+            if (isMyReadStatusUpdated) {
+              _chat.eventManager.notifyReadStatusUpdated(
+                channel: groupChannel,
+                readType: ReadType.read,
+                userIds: [readStatus.userId],
+              );
+            }
+
+            if (hasUnreadCount) {
+              _chat.eventManager.notifyChannelChanged(groupChannel);
+            }
+          }
         } else {
-          _chat.eventManager.notifyReadStatusUpdated(channel);
+          _chat.eventManager.notifyReadStatusUpdated(
+            channel: groupChannel,
+            readType: isMarkAsUnread ? ReadType.unread : ReadType.read,
+            userIds: [readStatus.userId],
+          );
         }
       }
     } catch (e) {
@@ -1270,6 +1348,10 @@ class CommandManager {
 
   Future<void> _processChannelPropChanged(ChannelEvent event) async {
     try {
+      if (event.uniqueId != null && checkDedupId(event.uniqueId!)) {
+        return;
+      }
+
       final channel = await BaseChannel.refreshChannel(
         event.channelType,
         event.channelUrl,

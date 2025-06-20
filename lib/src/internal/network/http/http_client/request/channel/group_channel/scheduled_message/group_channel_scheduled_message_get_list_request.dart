@@ -3,8 +3,8 @@
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
-import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response/responses.dart';
+import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 
 class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
   @override
@@ -20,6 +20,15 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
     MessageTypeFilter.admin: 'ADMN',
     MessageTypeFilter.file: 'FILE',
     MessageTypeFilter.user: 'MESG',
+  };
+
+  final scheduledStatusEnumMap = <ScheduledStatus, String>{
+    ScheduledStatus.pending: 'pending',
+    ScheduledStatus.inQueue: 'in_queue',
+    ScheduledStatus.sent: 'sent',
+    ScheduledStatus.failed: 'failed',
+    ScheduledStatus.canceled: 'canceled',
+    ScheduledStatus.removed: 'removed',
   };
 
   GroupChannelScheduledMessageListGetRequest(
@@ -44,7 +53,7 @@ class GroupChannelScheduledMessageListGetRequest extends ApiRequest {
       'token': token,
       'limit': limit,
       'reverse': reverse,
-      'status': status,
+      'status': status?.map((e) => scheduledStatusEnumMap[e]).toList(),
       'message_type': messageTypeFilterEnumMap[messageType],
       'order': scheduledMessageListOrderEnumMap[order],
     };

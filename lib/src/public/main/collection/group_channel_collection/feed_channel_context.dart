@@ -9,6 +9,11 @@ import 'package:sendbird_chat_sdk/src/public/main/collection/group_channel_messa
 class FeedChannelContext extends BaseChannelContext {
   /// Constructor
   /// @since 4.0.3
-  FeedChannelContext(CollectionEventSource collectionEventSource)
-      : super(collectionEventSource);
+  FeedChannelContext({
+    required CollectionEventSource collectionEventSource,
+    dynamic eventDetail,
+  }) : super(
+          collectionEventSource: collectionEventSource,
+          eventDetail: eventDetail,
+        );
 }
