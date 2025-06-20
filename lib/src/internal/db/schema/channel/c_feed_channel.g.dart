@@ -177,7 +177,12 @@ int _cFeedChannelEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  bytesCount += 3 + object.metaData.length * 3;
+  {
+    final value = object.metaData;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.notificationCategories.length * 3;
   {
@@ -243,7 +248,7 @@ CFeedChannel _cFeedChannelDeserialize(
   object.isFrozen = reader.readBoolOrNull(offsets[10]);
   object.isTemplateLabelEnabled = reader.readBoolOrNull(offsets[11]);
   object.lastMessageRootId = reader.readStringOrNull(offsets[12]);
-  object.metaData = reader.readString(offsets[13]);
+  object.metaData = reader.readStringOrNull(offsets[13]);
   object.name = reader.readString(offsets[14]);
   object.notificationCategories = reader.readObjectList<CNotificationCategory>(
         offsets[15],
@@ -291,7 +296,7 @@ P _cFeedChannelDeserializeProp<P>(
     case 12:
       return (reader.readStringOrNull(offset)) as P;
     case 13:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 14:
       return (reader.readString(offset)) as P;
     case 15:
@@ -1717,8 +1722,26 @@ extension CFeedChannelQueryFilter
   }
 
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'metaData',
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
+      metaDataIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'metaData',
+      ));
+    });
+  }
+
+  QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
       metaDataEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1732,7 +1755,7 @@ extension CFeedChannelQueryFilter
 
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
       metaDataGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1748,7 +1771,7 @@ extension CFeedChannelQueryFilter
 
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
       metaDataLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1764,8 +1787,8 @@ extension CFeedChannelQueryFilter
 
   QueryBuilder<CFeedChannel, CFeedChannel, QAfterFilterCondition>
       metaDataBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -2680,7 +2703,7 @@ extension CFeedChannelQueryProperty
     });
   }
 
-  QueryBuilder<CFeedChannel, String, QQueryOperations> metaDataProperty() {
+  QueryBuilder<CFeedChannel, String?, QQueryOperations> metaDataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'metaData');
     });

@@ -359,12 +359,22 @@ class EventManager {
   }
 
   // GroupChannelHandler
-  void notifyReadStatusUpdated(BaseChannel channel) {
+  void notifyReadStatusUpdated({
+    required BaseChannel channel,
+    required ReadType readType,
+    required List<String> userIds,
+  }) {
     sbLog.i(StackTrace.current, '\n-[channelUrl] ${channel.channelUrl}');
 
     for (final e in _channelHandlers.values) {
       if (e is GroupChannelHandler && channel is GroupChannel) {
         e.onReadStatusUpdated(channel);
+
+        if (readType == ReadType.read) {
+          e.onUserMarkedRead(channel, userIds);
+        } else if (readType == ReadType.unread) {
+          e.onUserMarkedUnread(channel, userIds);
+        }
       }
       // else if (e is FeedChannelHandler && channel is FeedChannel) {
       //   e.onReadStatusUpdated(channel);
@@ -616,4 +626,9 @@ class EventManager {
     sbLog.i(StackTrace.current, '\n-[error] $error');
     _sessionHandler?.onSessionError(error);
   }
+}
+
+enum ReadType {
+  read,
+  unread,
 }

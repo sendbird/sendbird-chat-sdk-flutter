@@ -13,6 +13,7 @@ ChannelEvent _$ChannelEventFromJson(Map<String, dynamic> json) => ChannelEvent(
       data: json['data'] as Map<String, dynamic>? ?? {},
       ts: (json['ts'] as num?)?.toInt(),
       messageOffset: (json['ts_message_offset'] as num?)?.toInt(),
+      uniqueId: json['unique_id'] as String?,
     );
 
 const _$ChannelTypeEnumMap = {

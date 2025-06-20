@@ -96,7 +96,16 @@ abstract class GroupChannelHandler extends BaseChannelHandler {
   /// A callback for when read receipts are updated on [GroupChannel].
   /// To use the updated read receipt, refer to [GroupChannelRead.getReadStatus],
   /// [GroupChannelRead.getReadMembers], [GroupChannelRead.getUnreadMembers].
+  @Deprecated('Use [eventUserMarkedRead] and [eventUserMarkedUnread] instead.')
   void onReadStatusUpdated(GroupChannel channel) {}
+
+  /// A callback for when a user has marked messages as read in [GroupChannel].
+  /// @since 4.4.0
+  void onUserMarkedRead(GroupChannel channel, List<String> userIds) {}
+
+  /// A callback for when a user has marked messages as unread in [GroupChannel].
+  /// @since 4.4.0
+  void onUserMarkedUnread(GroupChannel channel, List<String> userIds) {}
 
   /// A callback for when delivered receipts are updated on `GroupChannel`.
   /// To use the updated delivered receipt, refer to [GroupChannelRead.getUndeliveredMembers]

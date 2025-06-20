@@ -3,6 +3,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/notification_info.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/uikit_config_info.dart';
 
 part 'app_info.g.dart';
 
@@ -52,6 +53,10 @@ class AppInfo {
   /// @since 4.2.27
   final int lastMsgThreadingPolicy;
 
+  /// @since 4.4.0
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  late UIKitConfigInfo? uikitConfigInfo;
+
   AppInfo({
     required this.premiumFeatureList,
     required this.uploadSizeLimit,
@@ -72,6 +77,11 @@ class AppInfo {
     return result;
   }
 
-  factory AppInfo.fromJson(Map<String, dynamic> json) =>
-      _$AppInfoFromJson(json);
+  factory AppInfo.fromJson(Map<String, dynamic> json) {
+    final appInfo = _$AppInfoFromJson(json);
+    if (json['uikit_config'] != null) {
+      appInfo.uikitConfigInfo = UIKitConfigInfo.fromJson(json['uikit_config']);
+    }
+    return appInfo;
+  }
 }
