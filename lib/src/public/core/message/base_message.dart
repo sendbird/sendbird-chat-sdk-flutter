@@ -10,6 +10,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_message_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_messages_get_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
@@ -153,7 +154,13 @@ class BaseMessage extends RootMessage {
       parentMessage['channel_url'] = channelUrl;
       parentMessage['channel_type'] = channelType;
 
-      this.parentMessage = RootMessage.fromJson(parentMessage) as BaseMessage;
+      final type = parentMessage['type'];
+
+      if (type == null || type == CommandString.parentMessageDeleted) {
+        this.parentMessage = null;
+      } else {
+        this.parentMessage = RootMessage.fromJson(parentMessage) as BaseMessage;
+      }
     }
 
     if (sendingStatus == null) {

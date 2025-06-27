@@ -9,6 +9,7 @@ class CommandString {
   static const String adminMessageUpdate = 'AEDI';
   static const String broadcastMessage = 'BRDM';
   static const String messageDeleted = 'DELM';
+  static const String parentMessageDeleted = 'DELE';
   static const String delivery = 'DLVR';
   static const String read = 'READ';
   static const String memberCountChanged = 'MCNT';

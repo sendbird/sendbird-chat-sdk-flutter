@@ -1,3 +1,8 @@
+## v4.4.1 (Jun 27, 2025)
+
+### Improvements
+- Fixed parsing exception for message with a deleted parent message
+
 ## v4.4.0 (Jun 20, 2025)
 
 ### Features
