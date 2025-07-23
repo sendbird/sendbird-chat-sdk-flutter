@@ -57,13 +57,16 @@ class WebSocketClient {
     required String url,
     String? accessToken,
     String? sessionKey,
+    bool reconnect = false,
   }) {
     if (url == _url && _isConnected) return;
 
     sbLog.d(StackTrace.current, '[url] $url');
 
     connectedTs = null;
-    runZonedGuarded(() {
+    runZonedGuarded(() async {
+      Completer? reconnectTimeoutCompleter;
+
       if (kIsWeb) {
         List<String> protocols = [];
         if (sessionKey != null) {
@@ -80,6 +83,22 @@ class WebSocketClient {
           Uri.parse(url),
           protocols: protocols,
         );
+
+        if (reconnect) {
+          reconnectTimeoutCompleter = Completer();
+          reconnectTimeoutCompleter.future.timeout(
+              Duration(seconds: _chat.chatContext.options.connectionTimeout),
+              onTimeout: () async {
+            await close();
+
+            final exception = WebSocketFailedException(
+              message: 'Reconnection timeout on web',
+            );
+
+            _onError(exception);
+            throw exception;
+          });
+        }
       } else {
         Map<String, String> headers = {};
         if (sessionKey != null) {
@@ -91,11 +110,18 @@ class WebSocketClient {
         _webSocketChannel = IOWebSocketChannel.connect(
           Uri.parse(url),
           headers: headers,
-        ); // Check
+          connectTimeout: reconnect
+              ? Duration(seconds: _chat.chatContext.options.connectionTimeout)
+              : null,
+        );
       }
 
       _webSocketChannel?.ready.then((value) {
-        connectedTs = DateTime.now().millisecondsSinceEpoch;
+        if (_isConnected) {
+          connectedTs = DateTime.now().millisecondsSinceEpoch;
+          reconnectTimeoutCompleter?.complete();
+          _onWebSocketConnected();
+        }
       });
 
       _streamSubscription = _webSocketChannel?.stream.listen(
@@ -109,7 +135,6 @@ class WebSocketClient {
       _isConnected = true;
 
       _startPing();
-      _onWebSocketConnected();
     }, (e, s) {
       sbLog.e(StackTrace.current, 'e: $e');
       throw WebSocketFailedException(message: e.toString());

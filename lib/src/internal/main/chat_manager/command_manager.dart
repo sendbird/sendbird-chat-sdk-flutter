@@ -43,6 +43,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_update_event.d
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_vote_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/reaction/reaction_event.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/thread/thread_info_updated_event.dart';
+import 'package:uuid/uuid.dart';
 
 class CommandManager {
   final Map<String, Completer<Command?>> _completerMap = {};
@@ -357,12 +358,24 @@ class CommandManager {
     //- [DBManager]
 
     if (fromWebSocket) {
+      final wasReconnecting = _chat.connectionManager.isReconnecting();
+      if (wasReconnecting) {
+        _chat.statManager.endWsConnectStat(
+          hostUrl: _chat.chatContext.reconnectTask?.url ?? '',
+          success: true,
+          connectedTs: _chat.connectionManager.webSocketClient.connectedTs,
+          logiTs: _chat.commandManager.logiTs,
+          accumTrial: _chat.chatContext.reconnectTask?.retryCount ?? 1,
+          connectionId:
+              _chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+        );
+      }
+
       _chat.chatContext.reconnectTask =
           ReconnectTask(event.reconnectConfiguration);
       _chat.chatContext.setPingInterval(event.pingInterval);
       _chat.chatContext.setWatchdogInterval(event.watchdogInterval);
 
-      final wasReconnecting = _chat.connectionManager.isReconnecting();
       if (wasReconnecting) {
         await _chat.eventDispatcher.onReconnected(event);
       } else {

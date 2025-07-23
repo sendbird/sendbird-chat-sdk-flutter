@@ -20,6 +20,7 @@ import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
 import 'package:universal_io/io.dart';
+import 'package:uuid/uuid.dart';
 
 class ConnectionManager {
   Timer? reconnectTimer;
@@ -344,12 +345,7 @@ class ConnectionManager {
     }
 
     changeState(ReconnectingState(chat: chat));
-
-    if (reset) {
-      chat.chatContext.resetReconnectTask();
-    } else {
-      chat.chatContext.reconnectTask?.increaseRetryCount();
-    }
+    chat.chatContext.reconnectTask?.increaseRetryCount(reset: reset); // Check
 
     sbLog.i(
       StackTrace.current,
@@ -357,59 +353,93 @@ class ConnectionManager {
     );
 
     reconnectTimer?.cancel();
-    reconnectTimer =
-        Timer(Duration(seconds: chat.chatContext.reconnectTask!.backOffPeriod),
-            () async {
-      sbLog.i(
-        StackTrace.current,
-        '[Timer() => RUN] ${chat.chatContext.reconnectTask?.backOffPeriod}sec, ${chat.chatContext.reconnectTask?.retryCount}/${chat.chatContext.reconnectTask?.config.maximumRetryCount}',
-      );
+    reconnectTimer = Timer(
+      Duration(seconds: chat.chatContext.reconnectTask!.backOffPeriod),
+      () async => await _reconnect(doNotCallReconnectStartedEvent),
+    );
+    return true;
+  }
 
-      if (chat.chatContext.reconnectTask?.retryCount == 1) {
-        if (!doNotCallReconnectStartedEvent) {
-          await chat.eventDispatcher.onReconnecting();
-          chat.eventManager.notifyReconnectStarted();
-        }
+  Future<void> _reconnect(bool doNotCallReconnectStartedEvent) async {
+    sbLog.i(
+      StackTrace.current,
+      '[Timer() => RUN] ${chat.chatContext.reconnectTask?.backOffPeriod}sec, ${chat.chatContext.reconnectTask?.retryCount}/${chat.chatContext.reconnectTask?.config.maximumRetryCount}',
+    );
+
+    if (chat.chatContext.reconnectTask?.retryCount == 1) {
+      if (!doNotCallReconnectStartedEvent) {
+        await chat.eventDispatcher.onReconnecting();
+        chat.eventManager.notifyReconnectStarted();
+      }
+    }
+
+    // ===== Reconnect =====
+    final sessionKey = await chat.sessionManager.getSessionKey();
+    final params = {
+      if (sessionKey == null) 'user_id': chat.chatContext.currentUserId,
+      'SB-User-Agent': _sbUserAgentHeader,
+      'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
+      'expiring_session':
+          chat.eventManager.getSessionHandler() != null ? '1' : '0',
+      'include_extra_data': chat.extraData.join(','),
+      'include_poll_details': '1',
+    };
+    params.addAll(await _getWebSocketParams(
+        userId: chat.chatContext.currentUser?.userId ?? ''));
+
+    final url =
+        '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
+
+    runZonedGuarded(() {
+      sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
+
+      chat.statManager.startWsConnectStat(hostUrl: url);
+      if (chat.chatContext.reconnectTask != null) {
+        chat.chatContext.reconnectTask?.url = url;
       }
 
-      // ===== Reconnect =====
-      final sessionKey = await chat.sessionManager.getSessionKey();
-      final params = {
-        if (sessionKey == null) 'user_id': chat.chatContext.currentUserId,
-        'SB-User-Agent': _sbUserAgentHeader,
-        'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
-        'expiring_session':
-            chat.eventManager.getSessionHandler() != null ? '1' : '0',
-        'include_extra_data': chat.extraData.join(','),
-        'include_poll_details': '1',
-      };
-      params.addAll(await _getWebSocketParams(
-          userId: chat.chatContext.currentUser?.userId ?? ''));
+      webSocketClient.connect(
+        url: url,
+        accessToken: chat.chatContext.accessToken,
+        sessionKey: sessionKey,
+        reconnect: true,
+      );
 
-      final url =
-          '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
+      reconnectTimer?.cancel();
+      reconnectTimer = null;
+    }, (e, s) {
+      sbLog.e(StackTrace.current, 'e: $e');
 
-      runZonedGuarded(() {
-        sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
-        webSocketClient.connect(
-          url: url,
-          accessToken: chat.chatContext.accessToken,
-          sessionKey: sessionKey,
+      if (e is SendbirdException) {
+        chat.statManager.endWsConnectStat(
+          hostUrl: url,
+          success: false,
+          errorCode: e.code,
+          errorDescription: e.message,
+          accumTrial: chat.chatContext.reconnectTask?.retryCount ?? 1,
+          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
         );
+      } else {
+        final exception = WebSocketFailedException(message: e.toString());
 
-        reconnectTimer?.cancel();
-        reconnectTimer = null;
-      }, (e, s) {
-        sbLog.e(StackTrace.current, 'e: $e');
-      });
+        chat.statManager.endWsConnectStat(
+          hostUrl: url,
+          success: false,
+          errorCode: exception.code,
+          errorDescription: exception.message,
+          accumTrial: chat.chatContext.reconnectTask?.retryCount ?? 1,
+          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+        );
+      }
     });
-    return true;
   }
 
 //------------------------------//
 // WebSocket Event Listener
 //------------------------------//
-  void _onWebSocketConnected() {}
+  void _onWebSocketConnected() {
+    // Nothing to do here.
+  }
 
   void _onWebSocketClosed() {
     chat.commandManager.clearCompleterMap();
@@ -459,6 +489,8 @@ class ConnectionManager {
   Future<void> _onWebSocketError(Object e) async {
     if (chat.chatContext.currentUser != null) {
       if (isReconnecting()) {
+        await Future.delayed(const Duration(
+            milliseconds: 1)); // [Timing issue] Because of endWsConnectStat()
         await reconnect(reset: false);
       } else {
         await disconnect(logout: false);

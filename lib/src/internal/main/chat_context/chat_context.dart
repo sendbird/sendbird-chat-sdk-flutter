@@ -90,12 +90,12 @@ class ChatContext {
   UnreadMessageCountInfo unreadMessageCountInfo =
       UnreadMessageCountInfo(all: 0, customTypes: {}, ts: 0);
 
-  void resetReconnectTask() {
-    final config = reconnectConfig;
-    if (config != null) {
-      reconnectTask = ReconnectTask(config);
-    }
-  }
+  // void resetReconnectTask() {
+  //   final config = reconnectConfig;
+  //   if (config != null) {
+  //     reconnectTask = ReconnectTask(config);
+  //   }
+  // }
 
   bool get isChatConnected {
     return (services.isEmpty || services.contains(Service.chat)); // Check

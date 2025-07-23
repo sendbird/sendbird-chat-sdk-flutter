@@ -152,10 +152,16 @@ extension ChatChannel on Chat {
     return result;
   }
 
-  Future<UnreadMessageCount> getTotalUnreadMessageCount(
-      [GroupChannelTotalUnreadMessageCountParams? params]) async {
-    final result = await apiClient.send<UnreadMessageCount>(
-        UserTotalUnreadMessageCountGetRequest(this, params: params));
+  Future<UnreadMessageCount> getTotalUnreadMessageCount({
+    GroupChannelTotalUnreadMessageCountParams? groupChannelParams,
+    FeedChannelTotalUnreadMessageCountParams? feedChannelParams,
+  }) async {
+    final result = await apiClient
+        .send<UnreadMessageCount>(UserTotalUnreadMessageCountGetRequest(
+      this,
+      groupChannelParams: groupChannelParams,
+      feedChannelParams: feedChannelParams,
+    ));
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }

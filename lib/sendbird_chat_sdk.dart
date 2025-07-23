@@ -75,6 +75,7 @@ export 'src/public/main/model/thread/thread_info.dart';
 export 'src/public/main/model/thread/thread_info_updated_event.dart';
 export 'src/public/main/model/thread/threaded_messages.dart';
 export 'src/public/main/params/channel/feed_channel_change_logs_params.dart';
+export 'src/public/main/params/channel/feed_channel_total_unread_message_count_params.dart';
 export 'src/public/main/params/channel/group_channel_change_logs_params.dart';
 export 'src/public/main/params/channel/group_channel_create_params.dart';
 export 'src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
