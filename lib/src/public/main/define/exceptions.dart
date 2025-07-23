@@ -101,6 +101,15 @@ class NotSupportedException extends SendbirdException {
             code: SendbirdError.notSupported);
 }
 
+/// NetworkErrorException
+class NetworkErrorException extends SendbirdException {
+  NetworkErrorException({int? code, String? message})
+      : super(
+            name: (NetworkErrorException).toString(),
+            code: code ?? SendbirdError.networkError,
+            message: message);
+}
+
 /// QueryInProgressException
 class QueryInProgressException extends SendbirdException {
   QueryInProgressException()

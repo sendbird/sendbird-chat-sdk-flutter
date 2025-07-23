@@ -142,7 +142,9 @@ class ApiClient {
 
         rethrow;
       } else {
-        final exception = RequestFailedException(message: e.toString());
+        final exception = e is TimeoutException
+            ? NetworkErrorException(message: e.toString())
+            : RequestFailedException(message: e.toString());
 
         _statManager?.endApiResultStat(
           endpoint: uri.toString(),

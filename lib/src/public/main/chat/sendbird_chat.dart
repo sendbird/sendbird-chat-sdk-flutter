@@ -27,6 +27,7 @@ import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/info/file_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/message/unread_message_count.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/feed_channel_change_logs_params.dart';
+import 'package:sendbird_chat_sdk/src/public/main/params/channel/feed_channel_total_unread_message_count_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_change_logs_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_channel_count_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/channel/group_channel_total_unread_message_count_params.dart';
@@ -234,8 +235,10 @@ class SendbirdChat {
 
   /// Gets the total number of unread message of `GroupChannel`s with [GroupChannelTotalUnreadMessageCountParams] filter.
   static Future<int> getTotalUnreadMessageCount(
-      [GroupChannelTotalUnreadMessageCountParams? params]) async {
-    final result = await _instance._chat.getTotalUnreadMessageCount(params);
+      [GroupChannelTotalUnreadMessageCountParams? groupChannelParams]) async {
+    final result = await _instance._chat.getTotalUnreadMessageCount(
+      groupChannelParams: groupChannelParams,
+    );
     sbLog.i(StackTrace.current, 'return: ${result.totalCountForGroupChannels}');
     return result.totalCountForGroupChannels;
   }
@@ -243,9 +246,26 @@ class SendbirdChat {
   /// Gets the total number of unread message of `GroupChannel`s and `FeedChannel`s
   /// with [GroupChannelTotalUnreadMessageCountParams] filter.
   /// @since 4.0.3
+  @Deprecated('Use getTotalUnreadMessageCountWithParams() instead.')
   static Future<UnreadMessageCount> getTotalUnreadMessageCountWithFeedChannel(
       [GroupChannelTotalUnreadMessageCountParams? params]) async {
-    final result = await _instance._chat.getTotalUnreadMessageCount(params);
+    final result = await _instance._chat
+        .getTotalUnreadMessageCount(groupChannelParams: params);
+    sbLog.i(StackTrace.current, 'return: $result');
+    return result;
+  }
+
+  /// Gets the total number of unread message of `GroupChannel`s and `FeedChannel`s
+  /// with [GroupChannelTotalUnreadMessageCountParams] and [FeedChannelTotalUnreadMessageCountParams] filters.
+  /// @since 4.5.0
+  static Future<UnreadMessageCount> getTotalUnreadMessageCountWithParams({
+    GroupChannelTotalUnreadMessageCountParams? groupChannelParams,
+    FeedChannelTotalUnreadMessageCountParams? feedChannelParams,
+  }) async {
+    final result = await _instance._chat.getTotalUnreadMessageCount(
+      groupChannelParams: groupChannelParams,
+      feedChannelParams: feedChannelParams,
+    );
     sbLog.i(StackTrace.current, 'return: $result');
     return result;
   }

@@ -1,3 +1,14 @@
+## v4.5.0 (Jul 23, 2025)
+
+### Features
+- Added `getTotalUnreadMessageCountWithParams({GroupChannelTotalUnreadMessageCountParams? groupChannelParams, FeedChannelTotalUnreadMessageCountParams? feedChannelParams})` and deprecated `getTotalUnreadMessageCountWithFeedChannel([GroupChannelTotalUnreadMessageCountParams? params])`
+
+### Improvements
+- Added `logViewed(List<NotificationMessage> messages)` and deprecated `logImpression(List<NotificationMessage> messages)` in `FeedChannel`
+- Added API timeout for 10 seconds
+- Added reconnection timeout for `connectionTimeout` in `SendbirdChatOptions`
+- Updated regarding statistics
+
 ## v4.4.1 (Jun 27, 2025)
 
 ### Improvements

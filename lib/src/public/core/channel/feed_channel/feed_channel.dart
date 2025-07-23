@@ -326,12 +326,19 @@ class FeedChannel extends BaseChannel {
 
   /// logImpression
   /// @since 4.1.0
+  @Deprecated('Use logViewed(List<NotificationMessage> messages) instead.')
   Future<bool> logImpression(List<NotificationMessage> messages) async {
+    return logViewed(messages);
+  }
+
+  /// logViewed
+  /// @since 4.5.0
+  Future<bool> logViewed(List<NotificationMessage> messages) async {
     if (messages.isNotEmpty && messages.length <= _logImpressionMessagesLimit) {
       bool result = true;
       for (final message in messages) {
         final Map<String, dynamic> data = {
-          'action': 'impression',
+          'action': 'viewed',
           'template_key': message.notificationData?.templateKey ?? '',
           'channel_url': message.channelUrl,
           'tags': message.notificationData?.tags ?? [],
