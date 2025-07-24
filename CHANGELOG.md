@@ -1,4 +1,9 @@
-## v4.5.0 (Jul 23, 2025)
+## v4.5.1 (Jul 24, 2025)
+
+### Improvements
+- Fixed a bug related to API timeout
+
+## v4.5.0 (Jul 23, 2025) (Retracted)
 
 ### Features
 - Added `getTotalUnreadMessageCountWithParams({GroupChannelTotalUnreadMessageCountParams? groupChannelParams, FeedChannelTotalUnreadMessageCountParams? feedChannelParams})` and deprecated `getTotalUnreadMessageCountWithFeedChannel([GroupChannelTotalUnreadMessageCountParams? params])`
