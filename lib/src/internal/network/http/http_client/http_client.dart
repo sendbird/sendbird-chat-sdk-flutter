@@ -34,6 +34,8 @@ class HttpClient {
   final SessionManager _sessionManager;
   final StatManager? _statManager;
 
+  final _client = http.Client(); // Check if it should be closed
+
   HttpClient({
     required ChatContext chatContext,
     required SessionManager sessionManager,
@@ -65,17 +67,14 @@ class HttpClient {
   Future<http.StreamedResponse> _sendWithTimeout(
     http.BaseRequest request,
   ) async {
-    final client = http.Client();
     try {
       http.StreamedResponse response =
-          await client.send(request).timeout(Duration(seconds: apiTimeoutSec));
+          await _client.send(request).timeout(Duration(seconds: apiTimeoutSec));
       return response;
     } on TimeoutException {
       sbLog.e(StackTrace.current,
           '[TimeoutException] apiTimeoutSec: $apiTimeoutSec');
       rethrow;
-    } finally {
-      client.close();
     }
   }
 
