@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/user/c_user.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
