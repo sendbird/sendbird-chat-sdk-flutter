@@ -135,6 +135,8 @@ class ConnectionManager {
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
+    chat.connectionManager.changeState(ConnectingState(chat: chat));
+
     setLoginInfo(
       fromWebSocket: true,
       userId: userId,
@@ -259,10 +261,12 @@ class ConnectionManager {
       'clear: $clear, logout: $logout, userId: ${chat.chatContext.currentUserId}',
     );
 
-    if (chat.chatContext.loginCompleter != null &&
-        !chat.chatContext.loginCompleter!.isCompleted) {
-      chat.chatContext.loginCompleter
-          ?.completeError(ConnectionCanceledException());
+    if (chat.dbManager.isEnabled() == false) {
+      if (chat.chatContext.loginCompleter != null &&
+          !chat.chatContext.loginCompleter!.isCompleted) {
+        chat.chatContext.loginCompleter
+            ?.completeError(ConnectionCanceledException());
+      }
     }
 
     if (isReconnecting()) {
@@ -496,8 +500,6 @@ class ConnectionManager {
         await disconnect(logout: false);
         await reconnect(reset: true);
       }
-    } else {
-      throw WebSocketFailedException(message: e.toString());
     }
   }
 
@@ -519,6 +521,7 @@ class ConnectionManager {
       'SB-User-Agent': _sbUserAgentHeader,
       'SB-SDK-USER-AGENT': _sbSdkUserAgentHeader,
       'SendBird': _sendbirdHeader,
+      'Connection': 'keep-alive',
     };
   }
 

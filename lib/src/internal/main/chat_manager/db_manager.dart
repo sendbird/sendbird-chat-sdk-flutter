@@ -124,6 +124,8 @@ class DBManager {
     if (preDbVersion == null || _dbVersion > preDbVersion) {
       await clear();
       await prefs.setInt(_dbVersionKey, _dbVersion);
+    } else {
+      _chat.fileCacheManager.removeOldCachedFilesForIOS(); // Async
     }
   }
 
@@ -167,6 +169,7 @@ class DBManager {
       try {
         sbLog.d(StackTrace.current);
         await _db.clear();
+        await _chat.fileCacheManager.clearCacheForIOS();
       } catch (e) {
         sbLog.e(StackTrace.current, e.toString());
       }
@@ -508,6 +511,57 @@ class DBManager {
     return [];
   }
 
+  Future<FileMessage?> getFailedFileMessage({
+    required ChannelType channelType,
+    required String channelUrl,
+    required String requestId,
+  }) async {
+    if (isEnabled()) {
+      return await _db.getFailedFileMessage(
+        channelType: channelType,
+        channelUrl: channelUrl,
+        requestId: requestId,
+      );
+    }
+    return null;
+  }
+
+  Future<void> removeOldFailedMessages(
+    List<String> filePathList,
+  ) async {
+    if (isEnabled()) {
+      final channels = await getGroupChannels(query: GroupChannelListQuery());
+      for (final channel in channels) {
+        final failedMessages = await getFailedMessages(
+          channelType: ChannelType.group,
+          channelUrl: channel.channelUrl,
+        );
+
+        List<BaseMessage> messagesToRemove = [];
+
+        for (final message in failedMessages) {
+          if (message is FileMessage) {
+            for (final filePath in filePathList) {
+              if (message.messageCreateParams?.fileInfo.file?.path ==
+                  filePath) {
+                messagesToRemove.add(message);
+                break;
+              }
+            }
+          }
+        }
+
+        if (messagesToRemove.isNotEmpty) {
+          await removeFailedMessages(
+            channelType: ChannelType.group,
+            channelUrl: channel.channelUrl,
+            messages: messagesToRemove,
+          );
+        }
+      }
+    }
+  }
+
   Future<void> removeFailedMessages({
     required ChannelType channelType,
     required String channelUrl,
@@ -523,6 +577,15 @@ class DBManager {
         channelUrl: channelUrl,
         messages: failedMessages,
       );
+
+      for (final message in failedMessages) {
+        if (message is FileMessage) {
+          await _chat.fileCacheManager.removeCachedFileForIOS(
+            requestId: message.requestId,
+            file: message.messageCreateParams?.fileInfo.file,
+          );
+        }
+      }
     }
 
     // Event
@@ -551,6 +614,7 @@ class DBManager {
         channelType: channelType,
         channelUrl: channelUrl,
       );
+      await _chat.fileCacheManager.clearCacheForIOS();
     }
 
     // Event

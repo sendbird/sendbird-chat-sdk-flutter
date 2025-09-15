@@ -2,8 +2,11 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
@@ -34,7 +37,7 @@ class HttpClient {
   final SessionManager _sessionManager;
   final StatManager? _statManager;
 
-  final _client = http.Client(); // Check if it should be closed
+  late http.Client _client;
 
   HttpClient({
     required ChatContext chatContext,
@@ -42,7 +45,13 @@ class HttpClient {
     StatManager? statManager,
   })  : _chatContext = chatContext,
         _sessionManager = sessionManager,
-        _statManager = statManager;
+        _statManager = statManager {
+    if (kIsWeb) {
+      _client = http.Client();
+    } else {
+      _client = IOClient(io.HttpClient());
+    }
+  }
 
   ChatContext get chatContext => _chatContext;
 
@@ -64,13 +73,54 @@ class HttpClient {
     );
   }
 
-  Future<http.StreamedResponse> _sendWithTimeout(
-    http.BaseRequest request,
-  ) async {
+  Future<http.Response> _sendMultipartRequest(MultipartRequest request) async {
+    return await http.Response.fromStream(await _client.send(request));
+  }
+
+  Future<http.Response> _send(
+    HttpMethod method,
+    Uri uri, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
+    late Future<http.Response> response;
+
+    switch (method) {
+      case HttpMethod.get:
+        response = _client.get(uri, headers: headers);
+        break;
+      case HttpMethod.post:
+        response = _client.post(
+          uri,
+          headers: headers,
+          body:
+              body == null ? null : (body is String ? body : jsonEncode(body)),
+          encoding: encoding,
+        );
+        break;
+      case HttpMethod.put:
+        response = _client.put(
+          uri,
+          headers: headers,
+          body:
+              body == null ? null : (body is String ? body : jsonEncode(body)),
+          encoding: encoding,
+        );
+        break;
+      case HttpMethod.delete:
+        response = _client.delete(
+          uri,
+          headers: headers,
+          body:
+              body == null ? null : (body is String ? body : jsonEncode(body)),
+          encoding: encoding,
+        );
+        break;
+    }
+
     try {
-      http.StreamedResponse response =
-          await _client.send(request).timeout(Duration(seconds: apiTimeoutSec));
-      return response;
+      return await response.timeout(Duration(seconds: apiTimeoutSec));
     } on TimeoutException {
       sbLog.e(StackTrace.current,
           '[TimeoutException] apiTimeoutSec: $apiTimeoutSec');
@@ -83,25 +133,20 @@ class HttpClient {
     Map<String, dynamic>? queryParams,
     Map<String, String>? headers,
   }) async {
-    final request = http.Request('GET', uri);
-    request.headers.addAll(_commonHeaders());
-    request.headers.addAll(headers ?? {});
+    final allHeaders = _commonHeaders();
+    allHeaders.addAll(headers ?? {});
 
     _statManager?.startApiResultStat(
       endpoint: uri.toString(),
     );
 
     sbLog.d(StackTrace.current,
-        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}');
+        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(allHeaders)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}');
 
-    http.Response res =
-        await http.Response.fromStream(await _sendWithTimeout(request));
+    http.Response res = await _send(HttpMethod.get, uri, headers: allHeaders);
     if (await _checkSessionKeyExpired(res)) {
-      final secondRequest = _copyRequest(request);
-      if (secondRequest != null) {
-        res = await http.Response.fromStream(
-            await _sendWithTimeout(secondRequest));
-      }
+      allHeaders.addAll(_commonHeaders()); // Apply updated sessionKey
+      res = await _send(HttpMethod.get, uri, headers: allHeaders);
     }
     return _response(res);
   }
@@ -113,28 +158,21 @@ class HttpClient {
     Map<String, String> headers = const {},
     bool? isAuthenticateFeed,
   }) async {
-    final request = http.Request('POST', uri);
-    request.body = jsonEncode(body);
-    request.headers.addAll(_commonHeaders(
-      isAuthenticateFeed: isAuthenticateFeed,
-    ));
-    request.headers.addAll(headers);
+    final allHeaders = _commonHeaders(isAuthenticateFeed: isAuthenticateFeed);
+    allHeaders.addAll(headers);
 
     _statManager?.startApiResultStat(
       endpoint: uri.toString(),
     );
 
     sbLog.d(StackTrace.current,
-        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
+        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(allHeaders)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
     http.Response res =
-        await http.Response.fromStream(await _sendWithTimeout(request));
+        await _send(HttpMethod.post, uri, headers: allHeaders, body: body);
     if (await _checkSessionKeyExpired(res)) {
-      final secondRequest = _copyRequest(request);
-      if (secondRequest != null) {
-        res = await http.Response.fromStream(
-            await _sendWithTimeout(secondRequest));
-      }
+      allHeaders.addAll(_commonHeaders()); // Apply updated sessionKey
+      res = await _send(HttpMethod.post, uri, headers: allHeaders, body: body);
     }
     return _response(res);
   }
@@ -145,26 +183,21 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    final request = http.Request('PUT', uri);
-    request.body = jsonEncode(body);
-    request.headers.addAll(_commonHeaders());
-    request.headers.addAll(headers);
+    final allHeaders = _commonHeaders();
+    allHeaders.addAll(headers);
 
     _statManager?.startApiResultStat(
       endpoint: uri.toString(),
     );
 
     sbLog.d(StackTrace.current,
-        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
+        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(allHeaders)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
     http.Response res =
-        await http.Response.fromStream(await _sendWithTimeout(request));
+        await _send(HttpMethod.put, uri, headers: allHeaders, body: body);
     if (await _checkSessionKeyExpired(res)) {
-      final secondRequest = _copyRequest(request);
-      if (secondRequest != null) {
-        res = await http.Response.fromStream(
-            await _sendWithTimeout(secondRequest));
-      }
+      allHeaders.addAll(_commonHeaders()); // Apply updated sessionKey
+      res = await _send(HttpMethod.put, uri, headers: allHeaders, body: body);
     }
     return _response(res);
   }
@@ -175,26 +208,22 @@ class HttpClient {
     Map<String, dynamic> body = const {},
     Map<String, String> headers = const {},
   }) async {
-    final request = http.Request('DELETE', uri);
-    request.headers.addAll(_commonHeaders());
-    request.body = jsonEncode(body);
-    request.headers.addAll(headers);
+    final allHeaders = _commonHeaders();
+    allHeaders.addAll(headers);
 
     _statManager?.startApiResultStat(
       endpoint: uri.toString(),
     );
 
     sbLog.d(StackTrace.current,
-        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(request.headers)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
+        '\n-[url] $uri\n-[headers] ${jsonEncoder.convert(allHeaders)}\n-[queryParams] ${jsonEncoder.convert(queryParams)}\n-[body] ${jsonEncoder.convert(body)}');
 
     http.Response res =
-        await http.Response.fromStream(await _sendWithTimeout(request));
+        await _send(HttpMethod.delete, uri, headers: allHeaders, body: body);
     if (await _checkSessionKeyExpired(res)) {
-      final secondRequest = _copyRequest(request);
-      if (secondRequest != null) {
-        res = await http.Response.fromStream(
-            await _sendWithTimeout(secondRequest));
-      }
+      allHeaders.addAll(_commonHeaders()); // Apply updated sessionKey
+      res =
+          await _send(HttpMethod.delete, uri, headers: allHeaders, body: body);
     }
     return _response(res);
   }
@@ -249,7 +278,9 @@ class HttpClient {
     });
 
     request.headers.addAll(_commonHeaders());
-    if (headers != null && headers.isNotEmpty) request.headers.addAll(headers);
+    if (headers != null && headers.isNotEmpty) {
+      request.headers.addAll(headers);
+    }
 
     return request;
   }
@@ -276,8 +307,10 @@ class HttpClient {
     String? reqId = body?['request_id'];
     http.Response res;
     try {
-      if (reqId != null) uploadingMultipartRequests[reqId] = request;
-      res = await http.Response.fromStream(await request.send());
+      if (reqId != null) {
+        uploadingMultipartRequests[reqId] = request;
+      }
+      res = await _sendMultipartRequest(request);
     } catch (e) {
       if (e is http.ClientException) {
         await Future.delayed(const Duration(milliseconds: 1000)); // Check
@@ -291,8 +324,10 @@ class HttpClient {
         );
 
         sbLog.d(StackTrace.current, 'Retry');
-        if (reqId != null) uploadingMultipartRequests[reqId] = request;
-        res = await http.Response.fromStream(await retryRequest.send());
+        if (reqId != null) {
+          uploadingMultipartRequests[reqId] = retryRequest;
+        }
+        res = await _sendMultipartRequest(retryRequest);
 
         uploadingMultipartRequests.remove(reqId);
         return _response(res);
@@ -301,6 +336,8 @@ class HttpClient {
     }
 
     if (await _checkSessionKeyExpired(res)) {
+      await Future.delayed(const Duration(milliseconds: 1000)); // Check
+
       final secondRequest = _createMultipartRequest(
         method: method,
         uri: uri,
@@ -309,8 +346,10 @@ class HttpClient {
         progressHandler: progressHandler,
       );
 
-      if (reqId != null) uploadingMultipartRequests[reqId] = request;
-      res = await http.Response.fromStream(await secondRequest.send());
+      if (reqId != null) {
+        uploadingMultipartRequests[reqId] = secondRequest;
+      }
+      res = await _sendMultipartRequest(secondRequest);
     }
 
     uploadingMultipartRequests.remove(reqId);
@@ -418,25 +457,25 @@ class HttpClient {
     return false;
   }
 
-  http.BaseRequest? _copyRequest(http.BaseRequest request) {
-    http.BaseRequest requestCopy;
-
-    if (request is http.Request) {
-      requestCopy = http.Request(request.method, request.url)
-        ..encoding = request.encoding
-        ..bodyBytes = request.bodyBytes;
-    } else {
-      throw NotSupportedException();
-    }
-
-    requestCopy
-      ..persistentConnection = request.persistentConnection
-      ..followRedirects = request.followRedirects
-      ..maxRedirects = request.maxRedirects
-      ..headers.addAll(request.headers)
-      ..headers.addAll(_commonHeaders()); // Apply updated sessionKey
-    return requestCopy;
-  }
+  // http.BaseRequest? _copyRequest(http.BaseRequest request) {
+  //   http.BaseRequest requestCopy;
+  //
+  //   if (request is http.Request) {
+  //     requestCopy = http.Request(request.method, request.url)
+  //       ..encoding = request.encoding
+  //       ..bodyBytes = request.bodyBytes;
+  //   } else {
+  //     throw NotSupportedException();
+  //   }
+  //
+  //   requestCopy
+  //     ..persistentConnection = request.persistentConnection
+  //     ..followRedirects = request.followRedirects
+  //     ..maxRedirects = request.maxRedirects
+  //     ..headers.addAll(request.headers)
+  //     ..headers.addAll(_commonHeaders()); // Apply updated sessionKey
+  //   return requestCopy;
+  // }
 
   Map<String, dynamic> _convertQueryParams(Map<String, dynamic>? q) {
     if (q == null) return {};

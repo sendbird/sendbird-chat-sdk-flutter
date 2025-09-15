@@ -342,6 +342,33 @@ class CChannelMessage {
     return messages;
   }
 
+  static Future<FileMessage?> getFailedFileMessage(
+    Chat chat,
+    Isar isar,
+    ChannelType channelType,
+    String channelUrl,
+    String requestId,
+  ) async {
+    final cChannelMessages = await isar.cChannelMessages
+        .where()
+        .channelTypeChannelUrlEqualTo(channelType, channelUrl)
+        .filter()
+        .sendingStatusEqualTo(SendingStatus.failed)
+        .findAll();
+
+    FileMessage? fileMessage;
+    for (final cChannelMessage in cChannelMessages) {
+      final message = await cChannelMessage.toChannelMessage(chat, isar);
+      if (message != null && message.message is FileMessage) {
+        if ((message.message as FileMessage).requestId == requestId) {
+          fileMessage = message.message as FileMessage;
+          break;
+        }
+      }
+    }
+    return fileMessage;
+  }
+
   static Future<void> removeFailedMessages(
     Chat chat,
     Isar isar,

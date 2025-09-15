@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/model/log_publish_config.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_configuration.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/session_event.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
@@ -31,6 +32,9 @@ class LoginEvent extends SessionEvent {
   @JsonKey(name: 'config_sync_needed')
   final bool? configSyncNeeded;
 
+  @JsonKey(name: 'log_publish_config')
+  final LogPublishConfig? logPublishConfig;
+
   @JsonKey(includeFromJson: false, includeToJson: false)
   late AppInfo appInfo;
 
@@ -49,6 +53,7 @@ class LoginEvent extends SessionEvent {
     this.applicationAttributes = const [],
     this.deviceTokenLastDeletedAt = 0,
     this.configSyncNeeded,
+    this.logPublishConfig,
   }) : super(eKey: eKey, newKey: newKey, key: key);
 
   factory LoginEvent.fromJson(Map<String, dynamic> json) {

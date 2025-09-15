@@ -338,7 +338,13 @@ extension BaseChannelMessage on BaseChannel {
                         eventSource: CollectionEventSource.localMessageFailed,
                         sendingStatus: SendingStatus.failed,
                         updatedMessages: [pendingFileMessage],
-                      );
+                      ).then((_) {
+                        chat.fileCacheManager.copyFileForIOS(
+                          channel: this as GroupChannel,
+                          requestId: pendingFileMessage.requestId,
+                          originalFile: params.fileInfo.file,
+                        );
+                      });
                       break;
                     }
                   }
@@ -395,7 +401,13 @@ extension BaseChannelMessage on BaseChannel {
                     eventSource: CollectionEventSource.localMessageFailed,
                     sendingStatus: SendingStatus.failed,
                     updatedMessages: [messageBeforeSent],
-                  );
+                  ).then((_) {
+                    chat.fileCacheManager.copyFileForIOS(
+                      channel: this as GroupChannel,
+                      requestId: pendingFileMessage.requestId,
+                      originalFile: params.fileInfo.file,
+                    );
+                  });
                   break;
                 }
               }
@@ -504,7 +516,13 @@ extension BaseChannelMessage on BaseChannel {
                 eventSource: CollectionEventSource.localMessageFailed,
                 sendingStatus: SendingStatus.failed,
                 updatedMessages: [pendingFileMessage],
-              );
+              ).then((_) {
+                chat.fileCacheManager.copyFileForIOS(
+                  channel: this as GroupChannel,
+                  requestId: pendingFileMessage.requestId,
+                  originalFile: params.fileInfo.file,
+                );
+              });
               break;
             }
           }
