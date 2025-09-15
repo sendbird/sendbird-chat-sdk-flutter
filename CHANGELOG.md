@@ -1,3 +1,10 @@
+## v4.5.2 (Sep 15, 2025)
+
+### Improvements
+- Fixed a bug where the failed `FileMessage` does not load on iOS when restarting the app
+- Fixed a bug regarding offline login
+- Updated regarding statistics
+
 ## v4.5.1 (Jul 24, 2025)
 
 ### Improvements

@@ -55,7 +55,7 @@ class AppInfo {
 
   /// @since 4.4.0
   @JsonKey(includeFromJson: false, includeToJson: false)
-  late UIKitConfigInfo? uikitConfigInfo;
+  UIKitConfigInfo? uikitConfigInfo;
 
   AppInfo({
     required this.premiumFeatureList,

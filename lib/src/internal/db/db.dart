@@ -337,6 +337,20 @@ class DB {
     );
   }
 
+  Future<FileMessage?> getFailedFileMessage({
+    required ChannelType channelType,
+    required String channelUrl,
+    required String requestId,
+  }) async {
+    return await CChannelMessage.getFailedFileMessage(
+      _chat,
+      _isar,
+      channelType,
+      channelUrl,
+      requestId,
+    );
+  }
+
   Future<void> removeFailedMessages({
     required ChannelType channelType,
     required String channelUrl,

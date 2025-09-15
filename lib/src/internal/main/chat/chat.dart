@@ -18,6 +18,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/db_manager.dart
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/device_token_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_dispatcher.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/file_cache_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/session_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
@@ -53,7 +54,6 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/preference/user_snooze_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/push/user_push_register_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/push/user_push_unregister_request.dart';
-import 'package:sendbird_chat_sdk/src/public/main/params/channel/feed_channel_total_unread_message_count_params.dart';
 import 'package:universal_io/io.dart';
 
 part 'chat_auth.dart';
@@ -66,7 +66,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.5.1';
+const sdkVersion = '4.5.2';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -124,6 +124,7 @@ class Chat with WidgetsBindingObserver {
   late StatManager statManager;
   late DBManager dbManager;
   late DeviceTokenManager deviceTokenManager;
+  late FileCacheManager fileCacheManager;
 
   final int chatId;
 
@@ -148,6 +149,7 @@ class Chat with WidgetsBindingObserver {
     collectionManager = CollectionManager(chat: this);
     dbManager = DBManager(chat: this);
     deviceTokenManager = DeviceTokenManager();
+    fileCacheManager = FileCacheManager(chat: this);
 
     _listenConnectivityChangedEvent();
   }

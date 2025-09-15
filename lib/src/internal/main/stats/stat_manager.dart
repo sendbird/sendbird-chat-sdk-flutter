@@ -1,5 +1,8 @@
 // Copyright (c) 2023 Sendbird, Inc. All rights reserved.
 
+import 'dart:async';
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
@@ -40,17 +43,43 @@ class StatManager {
     },
   };
   static const int _errStatUploadNotAllowed = 403200;
-  static const int _initialMinStatCount = 100;
+  static const int _intervalCountToTryAgain = 20;
 
   final Chat _chat;
-  final int _maxStatCountPerRequest = 1000;
-  int _minStatCount = _initialMinStatCount;
-  final int _intervalCountToTryAgain = 20;
-  final int _minInterval = const Duration(hours: 3).inMilliseconds;
-  final int _lowerThreshold = 10;
+  final Random _random = Random();
+  Timer? sendingTimer;
+
+  int _initialMinStatCount = 100;
+  int _currentMinStatCount = 100;
+  int _minIntervalMilliSec =
+      const Duration(hours: 3).inMilliseconds; // milliseconds
+  int _maxStatCountPerRequest = 1000;
+  int _lowerThresholdCount = 10;
+  int _requestDelayRangeSec = 180; // seconds
 
   StatState state = StatState.pending;
   bool _isLoaded = false;
+
+  void _setStatConfig(LoginEvent event) {
+    final config = event.logPublishConfig?.defaultConfig;
+    if (config?.minStatCount != null) {
+      _initialMinStatCount = config!.minStatCount!;
+      _currentMinStatCount = config.minStatCount!;
+    }
+    if (config?.minInterval != null) {
+      _minIntervalMilliSec =
+          config!.minInterval! * 1000; // Convert seconds to milliseconds
+    }
+    if (config?.maxStatCountPerRequest != null) {
+      _maxStatCountPerRequest = config!.maxStatCountPerRequest!;
+    }
+    if (config?.lowerThreshold != null) {
+      _lowerThresholdCount = config!.lowerThreshold!;
+    }
+    if (config?.requestDelayRange != null) {
+      _requestDelayRangeSec = config!.requestDelayRange!;
+    }
+  }
 
   Future<void> _setState(value) async {
     state = value;
@@ -227,23 +256,45 @@ class StatManager {
     sbLog.d(StackTrace.current, 'dailyRecordStatCount: $dailyRecordStatCount');
     sbLog.d(StackTrace.current, 'count: $count');
 
-    if (state == StatState.enabled && count >= _lowerThreshold) {
+    if (state == StatState.enabled && count >= _lowerThresholdCount) {
       final lastSentAt = await defaultStatPrefs.lastSentAt;
       final interval = DateTime.now().millisecondsSinceEpoch - lastSentAt;
       sbLog.d(StackTrace.current, 'interval(sec): ${interval / 1000}');
 
-      final canSendRegardingInterval = (interval > _minInterval);
-      final canSendRegardingCount = (count >= _minStatCount);
+      final canSendRegardingInterval = (interval > _minIntervalMilliSec);
+      final canSendRegardingCount = (count >= _currentMinStatCount);
 
       if (canSendRegardingInterval || canSendRegardingCount) {
-        if (stat is ApiResultStat &&
-            stat.endpoint.contains(UploadStatRequest.statUrl)) {
-          // Defensive code
-          sbLog.w(StackTrace.current, 'Ignored the stat for statistics API');
-          return;
+        if (stat is ApiResultStat) {
+          if (stat.endpoint.contains(UploadStatRequest.statUrl) ||
+              stat.endpoint.contains(UploadNotificationStatRequest.statUrl)) {
+            // Defensive code
+            sbLog.w(StackTrace.current, 'Ignored the stat for statistics API');
+            return;
+          }
         }
 
-        await _sendStats();
+        if (_chat.isTest) {
+          await _sendStats();
+        } else {
+          if (sendingTimer == null || sendingTimer!.isActive == false) {
+            final delaySeconds = _random.nextInt(_requestDelayRangeSec) + 1;
+            sbLog.d(StackTrace.current,
+                'Sending stats after $delaySeconds seconds');
+            sendingTimer = Timer(Duration(seconds: delaySeconds), () async {
+              try {
+                await _sendStats();
+              } catch (e) {
+                sbLog.e(StackTrace.current, 'Error while sending stats: $e');
+              } finally {
+                sendingTimer = null;
+              }
+            });
+          } else {
+            sbLog.d(StackTrace.current,
+                'Sending timer is already active, skipping this time');
+          }
+        }
       }
     }
   }
@@ -308,8 +359,8 @@ class StatManager {
         }
       }
     } catch (e) {
-      if (copiedStats.length >= _minStatCount) {
-        _minStatCount += _intervalCountToTryAgain;
+      if (copiedStats.length >= _currentMinStatCount) {
+        _currentMinStatCount += _intervalCountToTryAgain;
       }
 
       exception = e;
@@ -322,7 +373,7 @@ class StatManager {
     }
 
     if (exception == null) {
-      _minStatCount = _initialMinStatCount;
+      _currentMinStatCount = _initialMinStatCount;
 
       cachedDefaultStats.clear();
       cachedDefaultStats.addAll(remainingDefaultStats);
@@ -339,7 +390,7 @@ class StatManager {
           ' defaultStatPrefs: ${await defaultStatPrefs.statCount},'
           ' dailyRecordStatPrefs: ${(await dailyRecordStatPrefs.stats).length}');
     } else if (wereNotificationStatsSent) {
-      _minStatCount = _initialMinStatCount;
+      _currentMinStatCount = _initialMinStatCount;
 
       cachedDefaultStats.clear();
       cachedDefaultStats.addAll(remainingDefaultStats);
@@ -377,6 +428,10 @@ class StatManager {
 
   Future<void> onLogout() async {
     sbLog.d(StackTrace.current);
+    if (sendingTimer != null && sendingTimer!.isActive) {
+      sendingTimer!.cancel();
+      sendingTimer = null;
+    }
     await _setState(StatState.disabled);
   }
 
@@ -418,6 +473,8 @@ class StatManager {
 
   Future<void> _checkLoginEvent(LoginEvent event) async {
     sbLog.d(StackTrace.current);
+
+    _setStatConfig(event);
 
     await defaultStatPrefs.checkToInitLastSentAt();
 
@@ -569,6 +626,11 @@ class StatManager {
     if (startTs == null) return;
 
     final latency = DateTime.now().millisecondsSinceEpoch - startTs;
+
+    if (endpoint.contains(UploadStatRequest.statUrl) ||
+        endpoint.contains(UploadNotificationStatRequest.statUrl)) {
+      await Future.delayed(const Duration(milliseconds: 100)); // Check
+    }
 
     await appendStat(
       type: StatUtils.getStatTypeString(StatType.apiResult),
