@@ -54,7 +54,7 @@ final CMessageChunkSchema = CollectionSchema(
   getId: _cMessageChunkGetId,
   getLinks: _cMessageChunkGetLinks,
   attach: _cMessageChunkAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.2',
 );
 
 int _cMessageChunkEstimateSize(
