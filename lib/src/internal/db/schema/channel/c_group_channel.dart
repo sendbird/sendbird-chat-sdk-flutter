@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/channel/c_base_channel.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_base_message.dart';

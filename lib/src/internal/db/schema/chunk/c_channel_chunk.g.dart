@@ -55,7 +55,7 @@ final CChannelChunkSchema = CollectionSchema(
   getId: _cChannelChunkGetId,
   getLinks: _cChannelChunkGetLinks,
   attach: _cChannelChunkAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.2',
 );
 
 int _cChannelChunkEstimateSize(
