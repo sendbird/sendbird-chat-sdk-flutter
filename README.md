@@ -50,7 +50,7 @@ Before installing Sendbird Chat SDK, you need to create a Sendbird application o
 
 ```yaml
 dependencies:
-  sendbird_chat_sdk: ^4.6.0-dev.1
+  sendbird_chat_sdk: ^4.6.0-dev.2
 ```
 
 - Run `flutter pub get` command in your project directory.

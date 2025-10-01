@@ -1,6 +1,6 @@
 name: sendbird_chat_sdk
 description: With Sendbird Chat for Flutter, you can easily build an in-app chat with all the essential messaging features.
-version: 4.6.0-dev.1
+version: 4.6.0-dev.2
 homepage: https://sendbird.com
 repository: https://github.com/sendbird/sendbird-chat-sdk-flutter
 documentation: https://sendbird.com/docs/chat/sdk/v4/flutter/getting-started/send-first-message
@@ -30,8 +30,8 @@ dependencies:
   web_socket_channel: '>=2.4.0 <4.0.0'
   universal_io: ^2.2.0
   async: ^2.10.0
-  isar_community: ^3.3.0-dev.2
-  isar_community_flutter_libs: ^3.3.0-dev.2
+  isar_community: ^3.3.0-dev.3
+  isar_community_flutter_libs: ^3.3.0-dev.3
   path_provider: ^2.1.1
   path: ^1.8.2
 
@@ -43,4 +43,4 @@ dev_dependencies:
   stack_trace: ^1.11.0
   json_serializable: ^6.6.2
   build_runner: ^2.3.3
-#  isar_community_generator: ^3.3.0-dev.2  # Flutter 3.27.0, Dart 3.6.0
+#  isar_community_generator: ^3.3.0-dev.3  # Flutter 3.27.0, Dart 3.6.0
