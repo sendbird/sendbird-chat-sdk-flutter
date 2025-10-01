@@ -1,3 +1,9 @@
+## v4.6.0-dev.2 (Oct 1, 2025)
+
+### Features
+- `isar` package has been updated with `isar_community v3.3.0-dev.3` to support android 16kb page size
+- To support this, `minSdkVersion` on Android must be 23 or higher
+
 ## v4.6.0-dev.1 (Sep 16, 2025)
 
 ### Features

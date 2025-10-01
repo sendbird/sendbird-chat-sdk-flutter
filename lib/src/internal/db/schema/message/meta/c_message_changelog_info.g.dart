@@ -59,7 +59,7 @@ final CMessageChangeLogInfoSchema = CollectionSchema(
   getId: _cMessageChangeLogInfoGetId,
   getLinks: _cMessageChangeLogInfoGetLinks,
   attach: _cMessageChangeLogInfoAttach,
-  version: '3.3.0-dev.2',
+  version: '3.3.0-dev.3',
 );
 
 int _cMessageChangeLogInfoEstimateSize(
