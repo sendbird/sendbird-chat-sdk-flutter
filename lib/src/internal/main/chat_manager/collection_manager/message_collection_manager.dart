@@ -538,9 +538,11 @@ extension MessageCollectionManager on CollectionManager {
       if (updatedChannels != null) {
         for (final channel in updatedChannels) {
           if (channel is GroupChannel) {
-            await _chat.dbManager.upsertGroupChannels([channel]);
+            _chat.dbManager
+                .upsertGroupChannels([channel]); // No await since 4.6.0
           } else if (channel is FeedChannel) {
-            await _chat.dbManager.upsertFeedChannels([channel]);
+            _chat.dbManager
+                .upsertFeedChannels([channel]); // No await since 4.6.0
           }
         }
       }

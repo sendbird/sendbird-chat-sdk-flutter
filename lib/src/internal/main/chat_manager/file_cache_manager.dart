@@ -55,6 +55,7 @@ class FileCacheManager {
           cachedFile.deleteSync();
         }
         cachedFile = await originalFile.copy(cachedFilePath);
+        await cachedFile.setLastModified(DateTime.now());
 
         final failedFileMessage = await _chat.dbManager.getFailedFileMessage(
           channelType: ChannelType.group,
@@ -102,11 +103,10 @@ class FileCacheManager {
         final now = DateTime.now();
 
         for (final fileEntity in cacheDir.listSync()) {
-          if (fileEntity is File) {
-            final stat = await fileEntity.stat();
-            if (now.difference(stat.accessed).inMinutes > retentionMinutes) {
-              filePathList.add(fileEntity.path);
-            }
+          final file = File(fileEntity.path);
+          final lastModified = file.lastModifiedSync();
+          if (now.difference(lastModified).inMinutes >= retentionMinutes) {
+            filePathList.add(fileEntity.path);
           }
         }
 

@@ -1,3 +1,11 @@
+## v4.6.0 (Oct 15, 2025)
+
+### Features
+- Support 16KB page sizes for Android (`minSdkVersion` on Android must be 23 or higher)
+
+### Improvements
+- Fixed a bug where the failed `FileMessage` does not load on iOS when restarting the app
+
 ## v4.6.0-dev.2 (Oct 1, 2025)
 
 ### Features
