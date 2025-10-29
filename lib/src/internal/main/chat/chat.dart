@@ -66,7 +66,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.6.0';
+const sdkVersion = '4.7.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -244,11 +244,14 @@ class Chat with WidgetsBindingObserver {
             results.contains(ConnectivityResult.ethernet) ||
             results.contains(ConnectivityResult.vpn) ||
             results.contains(ConnectivityResult.other)) {
-          if (SendbirdChat.currentUser != null) {
-            if (chatContext.isChatConnected) {
+          if (chatContext.isChatConnected) {
+            if (SendbirdChat.currentUser != null ||
+                chatContext.currentUserId != null) {
               sbLog.d(StackTrace.current, 'reconnect()');
               await connectionManager.reconnect(reset: true);
-            } else if (chatContext.isFeedAuthenticated) {
+            }
+          } else if (chatContext.isFeedAuthenticated) {
+            if (SendbirdChat.currentUser != null) {
               sbLog.d(StackTrace.current, 'refreshNotificationCollections()');
               collectionManager.refreshNotificationCollections();
             }

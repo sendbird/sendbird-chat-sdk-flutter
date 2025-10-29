@@ -7,8 +7,14 @@ class SendbirdException implements Exception {
   String? name;
   int? code;
   String? message;
+  Map<String, dynamic>? data;
 
-  SendbirdException({this.name, this.code, this.message});
+  SendbirdException({
+    this.name,
+    this.code,
+    this.message,
+    this.data,
+  });
 
   @override
   String toString() {
@@ -67,6 +73,18 @@ class RequestFailedException extends SendbirdException {
             name: (RequestFailedException).toString(),
             code: code ?? SendbirdError.requestFailed,
             message: message);
+}
+
+/// ServerOverloadedException
+/// @since 4.7.0
+class ServerOverloadedException extends SendbirdException {
+  ServerOverloadedException(
+      {int? code, String? message, Map<String, dynamic>? data})
+      : super(
+            name: (ServerOverloadedException).toString(),
+            code: code ?? SendbirdError.serverOverloaded,
+            message: message,
+            data: data);
 }
 
 /// InvalidInitializationException

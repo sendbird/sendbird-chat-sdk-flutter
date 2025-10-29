@@ -550,6 +550,7 @@ class StatManager {
     int? errorCode,
     String? errorDescription,
     String? connectionId,
+    bool? isSoftRateLimited,
   }) async {
     sbLog.d(StackTrace.current);
 
@@ -574,6 +575,7 @@ class StatManager {
         'error_code': errorCode,
         'error_description': errorDescription,
         'connection_id': connectionId ?? const Uuid().v1(),
+        'is_soft_rate_limited': isSoftRateLimited,
       },
     );
 

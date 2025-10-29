@@ -53,6 +53,7 @@ class SendbirdError {
   static int webSocketConnectionClosed = 800200;
   static int webSocketConnectionFailed = 800210;
   static int requestFailed = 800220;
+  static int serverOverloaded = 800221;
   static int fileUploadCancelFailed = 800230;
   static int fileUploadCanceled = 800240;
   static int fileUploadTimeout = 800250;

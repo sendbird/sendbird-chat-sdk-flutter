@@ -18,6 +18,8 @@ class MessageEvent extends BaseEvent {
   @JsonKey(name: 'msg_id')
   final int messageId;
 
+  final int? previousMessageId;
+
   final bool forceUpdateLastMessage;
 
   final bool silent;
@@ -43,6 +45,7 @@ class MessageEvent extends BaseEvent {
     required this.messageId,
     required this.channelType,
     required this.channelUrl,
+    this.previousMessageId,
     this.forceUpdateLastMessage = false,
     this.silent = false,
     this.sender,

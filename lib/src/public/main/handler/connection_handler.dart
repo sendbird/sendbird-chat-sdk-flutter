@@ -22,4 +22,11 @@ abstract class ConnectionHandler {
 
   /// A callback for when reconnection is failed.
   void onReconnectFailed();
+
+  /// A callback for when connection is delayed.
+  /// - Automatically attempts to connect to the server in [retryAfter] seconds
+  /// - Called when the server cannot handle the connection immediately when [SendbirdChat.connect] is called
+  /// - Called when the server is overloaded.
+  /// @since 4.7.0
+  void onConnectionDelayed(int retryAfter) {}
 }

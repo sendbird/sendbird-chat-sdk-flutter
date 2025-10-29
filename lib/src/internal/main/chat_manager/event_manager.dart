@@ -587,6 +587,14 @@ class EventManager {
     }
   }
 
+  void notifyConnectionDelayed(int retryAfter) {
+    sbLog.i(StackTrace.current);
+
+    for (final e in _connectionHandlers.values) {
+      e.onConnectionDelayed(retryAfter);
+    }
+  }
+
   // UserEventHandler
   void notifyTotalUnreadMessageCountChanged(
       UnreadMessageCount unreadMessageCount) {

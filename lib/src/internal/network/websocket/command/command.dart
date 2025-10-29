@@ -84,6 +84,8 @@ class Command {
 
   bool get isLogin => cmd == CommandString.login;
 
+  bool get isBusy => cmd == CommandString.busy;
+
   bool get isNewMessage =>
       cmd == CommandString.userMessage ||
       cmd == CommandString.fileMessage ||

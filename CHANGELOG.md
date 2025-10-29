@@ -1,3 +1,14 @@
+## v4.7.0 (Oct 29, 2025)
+
+### Features
+- Added `onConnectionDelayed(int retryAfter)` in `ConnectionHandler`
+  - Automatically attempts to connect to the server in `retryAfter` seconds
+  - Called when the server cannot handle the connection immediately when `SendbirdChat.connect()` is called
+  - Called when the server is overloaded
+
+### Improvements
+- Improved local caching
+
 ## v4.6.0 (Oct 15, 2025)
 
 ### Features

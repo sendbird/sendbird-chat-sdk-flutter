@@ -4,12 +4,22 @@ import 'dart:async';
 
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/base_connection_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/delayed_connecting_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 
 class DisconnectedState extends BaseConnectionState {
+  int? timeForDelayedConnectingState;
+  int? retryAfterForDelayedConnectingState;
+  int? reasonCodeForDelayedConnectingState;
+  String? messageForDelayedConnectingState;
+
   DisconnectedState({
     required Chat chat,
+    this.timeForDelayedConnectingState,
+    this.retryAfterForDelayedConnectingState,
+    this.reasonCodeForDelayedConnectingState,
+    this.messageForDelayedConnectingState,
   }) : super(chat: chat);
 
   @override
@@ -56,6 +66,29 @@ class DisconnectedState extends BaseConnectionState {
   @override
   Future<void> enterForeground() async {
     sbLog.i(StackTrace.current);
+
+    if (timeForDelayedConnectingState != null) {
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final elapsedMs = currentTime - timeForDelayedConnectingState!;
+      if (elapsedMs >= 0 &&
+          elapsedMs < retryAfterForDelayedConnectingState! * 1000) {
+        final elapsedSec = (elapsedMs / 1000).floor();
+        final remaining = retryAfterForDelayedConnectingState! - elapsedSec;
+        chat.connectionManager.changeState(DelayedConnectingState(
+          chat: chat,
+          retryAfter: remaining,
+          reasonCode: reasonCodeForDelayedConnectingState,
+          message: messageForDelayedConnectingState,
+        ));
+      } else {
+        await chat.connectionManager.doReconnect(
+          reset: true,
+          isDelayedConnecting: true,
+        );
+      }
+      return;
+    }
+
     await chat.connectionManager.doReconnect(reset: true);
   }
 }

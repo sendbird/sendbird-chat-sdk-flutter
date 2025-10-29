@@ -18,6 +18,7 @@ UserMessage _$UserMessageFromJson(Map<String, dynamic> json) => UserMessage(
             (k, e) => MapEntry(k, e as String),
           ) ??
           {},
+      previousMessageId: (json['previous_message_id'] as num?)?.toInt(),
       sender: json['user'] == null
           ? null
           : Sender.fromJson(json['user'] as Map<String, dynamic>),
@@ -85,6 +86,7 @@ Map<String, dynamic> _$UserMessageToJson(UserMessage instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'message_id': instance.messageId,
+      'previous_message_id': instance.previousMessageId,
       'request_id': instance.requestId,
       'message': instance.message,
       'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],

@@ -290,6 +290,31 @@ class CChannelMessage {
     return messages;
   }
 
+  static Future<BaseMessage?> getBaseMessageById(
+    Chat chat,
+    Isar isar,
+    ChannelType channelType,
+    String channelUrl,
+    int messageId,
+  ) async {
+    final cChannelMessages = await isar.cChannelMessages
+        .where()
+        .channelTypeChannelUrlEqualTo(channelType, channelUrl)
+        .filter()
+        .rootIdEqualTo(messageId.toString())
+        .findAll();
+
+    List<BaseMessage> messages = [];
+    for (final cChannelMessage in cChannelMessages) {
+      final message = await cChannelMessage.toChannelMessage(chat, isar);
+      if (message != null && message.message is BaseMessage) {
+        messages.add(message.message as BaseMessage);
+      }
+    }
+
+    return messages.isNotEmpty ? messages[0] : null;
+  }
+
   static Future<List<BaseMessage>> getPendingMessages(
     Chat chat,
     Isar isar,
