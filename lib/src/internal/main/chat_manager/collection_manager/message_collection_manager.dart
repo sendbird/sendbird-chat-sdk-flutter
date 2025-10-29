@@ -682,6 +682,30 @@ extension MessageCollectionManager on CollectionManager {
             channelUrl: baseChannel.channelUrl,
             messages: addedMessages,
           );
+        } else if (addedMessages.length == 1 &&
+            addedMessages[0] is BaseMessage &&
+            (addedMessages[0] as BaseMessage).previousMessageId != null &&
+            (addedMessages[0] as BaseMessage).sendingStatus ==
+                SendingStatus.succeeded) {
+          final previousMessageId =
+              (addedMessages[0] as BaseMessage).previousMessageId;
+          if (previousMessageId != null) {
+            if (messageCollection.removePreviousMessageIdForTest == true) {
+              messageCollection.removePreviousMessageIdForTest = false;
+            } else {
+              final previousMessage = messageCollection.messageList
+                  .firstWhereOrNull((e) =>
+                      (e is BaseMessage && e.messageId == previousMessageId));
+
+              if (previousMessage != null) {
+                // MessageChunk
+                await _chat.dbManager.upsertMessagesInChunk(
+                  channelUrl: baseChannel.channelUrl,
+                  messages: [previousMessage, addedMessages[0]],
+                );
+              }
+            }
+          }
         }
       }
 

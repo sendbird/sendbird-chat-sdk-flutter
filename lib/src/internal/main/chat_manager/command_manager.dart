@@ -11,6 +11,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/chat_context/chat_context.da
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/collection_manager/collection_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat_manager/event_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/connection_state/connected_state.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/connection_state/delayed_connecting_state.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
@@ -233,6 +234,8 @@ class CommandManager {
       await _processSessionRefresh(cmd);
     } else if (cmd.isLogin) {
       await _processLogin(cmd);
+    } else if (cmd.isBusy) {
+      await _processBusy(cmd);
     } else if (cmd.isSessionExpired) {
       await _processSessionExpired(cmd);
     } else if (cmd.isNewMessage) {
@@ -341,6 +344,7 @@ class CommandManager {
     _chat.chatContext
       ..currentUser = event.user
       ..currentUserId = event.user.userId
+      ..nickname = event.user.nickname
       ..sessionKey = event.sessionKey
       ..eKey = event.eKey
       ..appInfo = event.appInfo
@@ -395,6 +399,70 @@ class CommandManager {
       }
     } else {
       await _chat.eventDispatcher.onLogin(event);
+    }
+  }
+
+  Future<void> _processBusy(Command cmd) async {
+    int? retryAfter;
+    int? reasonCode;
+    String? message;
+
+    if (cmd.payload['retry_after'] != null &&
+        cmd.payload['retry_after'] is int &&
+        cmd.payload['retry_after'] >= 0) {
+      retryAfter = cmd.payload['retry_after'] as int;
+
+      if (cmd.payload['reason_code'] != null &&
+          cmd.payload['reason_code'] is int) {
+        reasonCode = cmd.payload['reason_code'] as int;
+      }
+
+      if (cmd.payload['message'] != null && cmd.payload['message'] is String) {
+        message = cmd.payload['message'] as String;
+      }
+
+      final e = ServerOverloadedException(
+        message: message,
+        data: {
+          'retry_after': retryAfter,
+          'reason_code': reasonCode,
+          'message': message,
+        },
+      );
+
+      if (_chat.connectionManager.isConnecting()) {
+        _chat.statManager.endWsConnectStat(
+          hostUrl: _chat.chatContext.connectingUrl ?? '',
+          success: false,
+          errorCode: e.code,
+          errorDescription: e.message,
+          accumTrial: 1,
+        );
+
+        if (_chat.chatContext.loginCompleter != null &&
+            !_chat.chatContext.loginCompleter!.isCompleted) {
+          _chat.chatContext.loginCompleter?.completeError(e);
+        }
+      } else if (_chat.connectionManager.isReconnecting()) {
+        _chat.statManager.endWsConnectStat(
+          hostUrl: _chat.chatContext.reconnectTask?.url ?? '',
+          success: false,
+          errorCode: e.code,
+          errorDescription: e.message,
+          accumTrial: _chat.chatContext.reconnectTask?.retryCount ?? 1,
+          connectionId:
+              _chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+        );
+      } else if (_chat.connectionManager.isConnected()) {
+        await _chat.connectionManager.disconnect(logout: false);
+      }
+
+      _chat.connectionManager.changeState(DelayedConnectingState(
+        chat: _chat,
+        retryAfter: retryAfter,
+        reasonCode: reasonCode,
+        message: message,
+      ));
     }
   }
 
@@ -654,7 +722,7 @@ class CommandManager {
     }
   }
 
-  // only for open channel and broadcast channel
+// only for open channel and broadcast channel
   Future<void> _processMemberCountChange(Command cmd) async {
     final event = MCNTEvent.fromJsonWithChat(_chat, cmd.payload);
 

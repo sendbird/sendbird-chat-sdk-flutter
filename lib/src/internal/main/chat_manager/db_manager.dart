@@ -450,6 +450,22 @@ class DBManager {
     return [];
   }
 
+  Future<BaseMessage?> getBaseMessageById({
+    required ChannelType channelType,
+    required String channelUrl,
+    required int messageId,
+  }) async {
+    if (isEnabled()) {
+      BaseMessage? message = await _db.getBaseMessageById(
+        channelType,
+        channelUrl,
+        messageId,
+      );
+      return message;
+    }
+    return null;
+  }
+
   Future<List<RootMessage>> _applyMessageOffset({
     required ChannelType channelType,
     required String channelUrl,

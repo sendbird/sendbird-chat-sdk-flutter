@@ -13,6 +13,7 @@ class WsConnectStat extends DefaultStat {
   final int? logiLatency; // until received LOGI
   final int? errorCode; // error code if exist
   final String? errorDescription; // detailed error message
+  final bool? isSoftRateLimited;
 
   WsConnectStat({
     required int ts,
@@ -24,6 +25,7 @@ class WsConnectStat extends DefaultStat {
     this.logiLatency,
     this.errorCode,
     this.errorDescription,
+    this.isSoftRateLimited,
   }) : super(StatType.wsConnect, ts);
 
   @override
@@ -37,6 +39,7 @@ class WsConnectStat extends DefaultStat {
       'logi_latency': logiLatency,
       'error_code': errorCode,
       'error_description': errorDescription,
+      'is_soft_rate_limited': isSoftRateLimited,
     };
     final result = super.toJson();
     result['data'] = json;
@@ -55,6 +58,7 @@ class WsConnectStat extends DefaultStat {
   //     'logi_latency': int?,
   //     'error_code': int?,
   //     'error_description': String?,
+  //     'is_soft_rate_limited': bool?,
   //   },
   // }
   static WsConnectStat? fromJson({
@@ -70,6 +74,7 @@ class WsConnectStat extends DefaultStat {
       final int? logiLatency = data['logi_latency'] as int?;
       final int? errorCode = data['error_code'] as int?;
       final String? errorDescription = data['error_description'] as String?;
+      final bool? isSoftRateLimited = data['is_soft_rate_limited'] as bool?;
 
       if (hostUrl == null ||
           success == null ||
@@ -89,6 +94,7 @@ class WsConnectStat extends DefaultStat {
         logiLatency: logiLatency,
         errorCode: errorCode,
         errorDescription: errorDescription,
+        isSoftRateLimited: isSoftRateLimited,
       );
     } catch (e) {
       sbLog.d(StackTrace.current, 'e: ${e.toString()}');

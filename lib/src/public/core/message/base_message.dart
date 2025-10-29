@@ -45,6 +45,8 @@ class BaseMessage extends RootMessage {
   @JsonKey(defaultValue: 0) // or msg_id
   int messageId;
 
+  int? previousMessageId;
+
   /// The request ID of the message.
   String? requestId;
 
@@ -135,6 +137,7 @@ class BaseMessage extends RootMessage {
     super.updatedAt,
     Sender? sender,
     this.messageId = 0,
+    this.previousMessageId,
     this.requestId,
     this.isReplyToChannel = false,
     this.parentMessageId,

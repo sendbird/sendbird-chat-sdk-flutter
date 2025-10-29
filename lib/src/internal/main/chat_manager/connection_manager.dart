@@ -110,12 +110,14 @@ class ConnectionManager {
     required bool fromWebSocket,
     required String userId,
     String? accessToken,
+    String? nickname,
     String? apiHost,
     String? wsHost,
   }) {
     chat.chatContext
       ..currentUserId = userId
       ..accessToken = accessToken
+      ..nickname = nickname
       ..apiHost = apiHost ?? getDefaultApiHost()
       ..apiHeaders = getDefaultApiHeader();
 
@@ -132,15 +134,19 @@ class ConnectionManager {
     String? accessToken,
     String? apiHost,
     String? wsHost,
+    bool isDelayedConnecting = false,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
-    chat.connectionManager.changeState(ConnectingState(chat: chat));
+    if (!isDelayedConnecting) {
+      chat.connectionManager.changeState(ConnectingState(chat: chat));
+    }
 
     setLoginInfo(
       fromWebSocket: true,
       userId: userId,
       accessToken: accessToken,
+      nickname: nickname,
       apiHost: apiHost,
       wsHost: wsHost,
     );
@@ -164,13 +170,16 @@ class ConnectionManager {
     runZonedGuarded(() {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
 
+      chat.chatContext.connectingUrl = url;
       chat.statManager.startWsConnectStat(hostUrl: url);
       webSocketClient.connect(url: url, accessToken: accessToken);
     }, (e, s) async {
       sbLog.e(StackTrace.current, 'e: $e');
 
-      if (isDisconnected() == false) {
-        changeState(DisconnectedState(chat: chat));
+      if (!isDisconnected()) {
+        if (!isDelayedConnecting) {
+          changeState(DisconnectedState(chat: chat));
+        }
 
         if (chat.chatContext.loginCompleter != null &&
             !chat.chatContext.loginCompleter!.isCompleted) {
@@ -180,7 +189,10 @@ class ConnectionManager {
               success: false,
               errorCode: e.code,
               errorDescription: e.message,
-              accumTrial: 1,
+              accumTrial: isDelayedConnecting
+                  ? chat.chatContext.reconnectTask?.retryCount ?? 1
+                  : 1,
+              isSoftRateLimited: isDelayedConnecting,
             );
 
             //+ [DBManager]
@@ -199,9 +211,16 @@ class ConnectionManager {
             }
             //- [DBManager]
 
-            if (chat.chatContext.loginCompleter != null &&
-                !chat.chatContext.loginCompleter!.isCompleted) {
-              chat.chatContext.loginCompleter?.completeError(e);
+            if (isDelayedConnecting) {
+              await chat.connectionManager.doReconnect(
+                reset: false,
+                isDelayedConnecting: true,
+              );
+            } else {
+              if (chat.chatContext.loginCompleter != null &&
+                  !chat.chatContext.loginCompleter!.isCompleted) {
+                chat.chatContext.loginCompleter?.completeError(e);
+              }
             }
           } else {
             final exception = WebSocketFailedException(message: e.toString());
@@ -211,34 +230,50 @@ class ConnectionManager {
               success: false,
               errorCode: exception.code,
               errorDescription: exception.message,
-              accumTrial: 1,
+              accumTrial: isDelayedConnecting
+                  ? chat.chatContext.reconnectTask?.retryCount ?? 1
+                  : 1,
+              isSoftRateLimited: isDelayedConnecting,
             );
 
-            if (chat.chatContext.loginCompleter != null &&
-                !chat.chatContext.loginCompleter!.isCompleted) {
-              chat.chatContext.loginCompleter?.completeError(exception);
+            if (isDelayedConnecting) {
+              await chat.connectionManager.doReconnect(
+                reset: false,
+                isDelayedConnecting: true,
+              );
+            } else {
+              if (chat.chatContext.loginCompleter != null &&
+                  !chat.chatContext.loginCompleter!.isCompleted) {
+                chat.chatContext.loginCompleter?.completeError(exception);
+              }
             }
           }
         }
       }
     });
 
-    final user = await chat.chatContext.loginCompleter!.future
-        .timeout(Duration(seconds: chat.chatContext.options.connectionTimeout),
-            onTimeout: () async {
-      final e = LoginTimeoutException();
+    final User user;
+    if (isDelayedConnecting) {
+      user = await chat.chatContext.loginCompleter!.future;
+    } else {
+      user = await chat.chatContext.loginCompleter!.future.timeout(
+          Duration(seconds: chat.chatContext.options.connectionTimeout),
+          onTimeout: () async {
+        final e = LoginTimeoutException();
 
-      chat.statManager.endWsConnectStat(
-        hostUrl: url,
-        success: false,
-        errorCode: e.code,
-        errorDescription: e.name,
-        accumTrial: 1,
-      );
+        chat.statManager.endWsConnectStat(
+          hostUrl: url,
+          success: false,
+          errorCode: e.code,
+          errorDescription: e.name,
+          accumTrial: 1,
+          isSoftRateLimited: isDelayedConnecting,
+        );
 
-      await doDisconnect(clear: true);
-      throw e;
-    });
+        await doDisconnect(clear: true);
+        throw e;
+      });
+    }
 
     // After 'LOGI' received
     chat.statManager.endWsConnectStat(
@@ -246,7 +281,10 @@ class ConnectionManager {
       success: true,
       connectedTs: webSocketClient.connectedTs,
       logiTs: chat.commandManager.logiTs,
-      accumTrial: 1,
+      accumTrial: isDelayedConnecting
+          ? chat.chatContext.reconnectTask?.retryCount ?? 1
+          : 1,
+      isSoftRateLimited: isDelayedConnecting,
     );
     return user;
   }
@@ -255,6 +293,10 @@ class ConnectionManager {
     required bool clear,
     bool logout = false,
     bool fromEnterBackground = false,
+    int? timeForDelayedConnectingState,
+    int? retryAfterForDelayedConnectingState,
+    int? reasonCodeForDelayedConnectingState,
+    String? messageForDelayedConnectingState,
   }) async {
     sbLog.i(
       StackTrace.current,
@@ -312,14 +354,26 @@ class ConnectionManager {
       await chat.eventDispatcher.onDisconnected();
     }
 
-    if (fromEnterBackground && !chat.isBackground && !isReconnecting()) {
+    if (fromEnterBackground &&
+        !chat.isBackground &&
+        !isReconnecting() &&
+        timeForDelayedConnectingState == null) {
       sbLog.i(StackTrace.current, 'reconnect()');
       chat.connectionManager.reconnect(reset: true); // Check
     } else {
-      if (isReconnecting()) {
+      if (isReconnecting() && timeForDelayedConnectingState == null) {
         chat.eventManager.notifyReconnectFailed();
       }
-      changeState(DisconnectedState(chat: chat));
+
+      changeState(DisconnectedState(
+        chat: chat,
+        timeForDelayedConnectingState: timeForDelayedConnectingState,
+        retryAfterForDelayedConnectingState:
+            retryAfterForDelayedConnectingState,
+        reasonCodeForDelayedConnectingState:
+            reasonCodeForDelayedConnectingState,
+        messageForDelayedConnectingState: messageForDelayedConnectingState,
+      ));
 
       if (clear && disconnectedUserId.isNotEmpty) {
         chat.eventManager.notifyDisconnected(disconnectedUserId);
@@ -327,15 +381,23 @@ class ConnectionManager {
     }
   }
 
-  Future<bool> doReconnect({bool reset = false}) async {
-    sbLog.i(StackTrace.current, 'reset: $reset');
+  Future<bool> doReconnect({
+    bool reset = false,
+    bool isDelayedConnecting = false,
+  }) async {
+    sbLog.i(StackTrace.current,
+        'reset: $reset, isDelayedConnecting: $isDelayedConnecting');
 
     bool doNotCallReconnectStartedEvent = false;
     if (isReconnecting() && reset) {
       doNotCallReconnectStartedEvent = true;
     }
 
-    if (chat.chatContext.currentUser == null ||
+    if (chat.chatContext.currentUser == null &&
+        chat.chatContext.sessionKey == null &&
+        chat.chatContext.currentUserId != null) {
+      isDelayedConnecting = true;
+    } else if (chat.chatContext.currentUser == null ||
         chat.chatContext.sessionKey == null) {
       changeState(DisconnectedState(chat: chat));
       return false;
@@ -359,24 +421,39 @@ class ConnectionManager {
     reconnectTimer?.cancel();
     reconnectTimer = Timer(
       Duration(seconds: chat.chatContext.reconnectTask!.backOffPeriod),
-      () async => await _reconnect(doNotCallReconnectStartedEvent),
+      () async {
+        sbLog.i(
+          StackTrace.current,
+          '[Timer() => RUN] ${chat.chatContext.reconnectTask?.backOffPeriod}sec, ${chat.chatContext.reconnectTask?.retryCount}/${chat.chatContext.reconnectTask?.config.maximumRetryCount}',
+        );
+
+        if (chat.chatContext.reconnectTask?.retryCount == 1) {
+          if (!doNotCallReconnectStartedEvent) {
+            await chat.eventDispatcher.onReconnecting();
+            chat.eventManager.notifyReconnectStarted();
+          }
+        }
+
+        if (isDelayedConnecting) {
+          if (chat.chatContext.currentUserId != null) {
+            await doConnect(
+              chat.chatContext.currentUserId!,
+              nickname: chat.chatContext.nickname,
+              accessToken: chat.chatContext.accessToken,
+              apiHost: chat.chatContext.apiHost,
+              wsHost: chat.chatContext.wsHost,
+              isDelayedConnecting: true,
+            );
+          }
+        } else {
+          await _reconnect();
+        }
+      },
     );
     return true;
   }
 
-  Future<void> _reconnect(bool doNotCallReconnectStartedEvent) async {
-    sbLog.i(
-      StackTrace.current,
-      '[Timer() => RUN] ${chat.chatContext.reconnectTask?.backOffPeriod}sec, ${chat.chatContext.reconnectTask?.retryCount}/${chat.chatContext.reconnectTask?.config.maximumRetryCount}',
-    );
-
-    if (chat.chatContext.reconnectTask?.retryCount == 1) {
-      if (!doNotCallReconnectStartedEvent) {
-        await chat.eventDispatcher.onReconnecting();
-        chat.eventManager.notifyReconnectStarted();
-      }
-    }
-
+  Future<void> _reconnect() async {
     // ===== Reconnect =====
     final sessionKey = await chat.sessionManager.getSessionKey();
     final params = {

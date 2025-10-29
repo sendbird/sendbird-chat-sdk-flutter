@@ -52,6 +52,7 @@ AdminMessage _$AdminMessageFromJson(Map<String, dynamic> json) => AdminMessage(
       ..allMetaArrays = (json['sorted_metaarray'] as List<dynamic>?)
           ?.map((e) => MessageMetaArray.fromJson(e as Map<String, dynamic>))
           .toList()
+      ..previousMessageId = (json['previous_message_id'] as num?)?.toInt()
       ..isReplyToChannel = json['is_reply_to_channel'] as bool? ?? false
       ..errorCode = (json['error_code'] as num?)?.toInt()
       ..sender = json['user'] == null
@@ -73,6 +74,7 @@ Map<String, dynamic> _$AdminMessageToJson(AdminMessage instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'message_id': instance.messageId,
+      'previous_message_id': instance.previousMessageId,
       'request_id': instance.requestId,
       'message': instance.message,
       'sending_status': _$SendingStatusEnumMap[instance.sendingStatus],

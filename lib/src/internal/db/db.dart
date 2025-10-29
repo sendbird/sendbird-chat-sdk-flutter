@@ -311,6 +311,20 @@ class DB {
     );
   }
 
+  Future<BaseMessage?> getBaseMessageById(
+    ChannelType channelType,
+    String channelUrl,
+    int messageId,
+  ) async {
+    return await CChannelMessage.getBaseMessageById(
+      _chat,
+      _isar,
+      channelType,
+      channelUrl,
+      messageId,
+    );
+  }
+
   Future<List<BaseMessage>> getPendingMessages({
     required ChannelType channelType,
     required String channelUrl,

@@ -24,7 +24,19 @@ class ChatContext {
   ChatContext({
     required this.appId,
     required this.options,
-  });
+  }) {
+    reconnectConfig = _getDefaultReconnectConfiguration(); // Check
+    reconnectTask = ReconnectTask(_getDefaultReconnectConfiguration()); // Check
+  }
+
+  ReconnectConfiguration _getDefaultReconnectConfiguration() {
+    return ReconnectConfiguration(
+      interval: 2,
+      maxInterval: 20,
+      multiplier: 2,
+      maximumRetryCount: -1,
+    ); // Check
+  }
 
   factory ChatContext.test() =>
       ChatContext(appId: '', options: SendbirdChatOptions());
@@ -38,6 +50,7 @@ class ChatContext {
   // 'LOGI' event
   User? currentUser;
   String? currentUserId;
+  String? nickname;
   List<Service> services = [];
   String? sessionKey;
   String? eKey;
@@ -50,6 +63,7 @@ class ChatContext {
   // Connection
   ReconnectTask? reconnectTask;
   Completer<User>? loginCompleter;
+  String? connectingUrl;
 
   // Entered OpenChannels
   Set<String> enteredOpenChannelUrls = {};
@@ -111,6 +125,7 @@ class ChatContext {
 
     currentUser = null;
     currentUserId = null;
+    nickname = null;
     services.clear();
     sessionKey = null;
     eKey = null;
@@ -118,10 +133,11 @@ class ChatContext {
     uploadSizeLimit = 0;
     maxUnreadCountOnSuperGroup = null;
     lastConnectedAt = null;
-    reconnectConfig = null;
+    reconnectConfig = _getDefaultReconnectConfiguration(); // Check
 
     loginCompleter = null;
-    reconnectTask = null;
+    reconnectTask = ReconnectTask(_getDefaultReconnectConfiguration()); // Check
+    connectingUrl = null;
 
     enteredOpenChannelUrls.clear();
 

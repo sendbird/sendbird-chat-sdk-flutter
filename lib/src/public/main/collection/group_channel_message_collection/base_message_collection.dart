@@ -94,6 +94,8 @@ abstract class BaseMessageCollection {
 
   Timer? unmuteTimer;
 
+  bool removePreviousMessageIdForTest = false;
+
   BaseMessageCollection({
     required BaseChannel channel,
     required MessageListParams params,

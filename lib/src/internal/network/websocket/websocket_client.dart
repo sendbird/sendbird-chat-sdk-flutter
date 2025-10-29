@@ -31,6 +31,7 @@ class WebSocketClient {
   Timer? _watchdogTimer;
 
   int? connectedTs;
+  dynamic testData;
 
   final Chat _chat;
   final ChatContext _chatContext;
@@ -125,7 +126,7 @@ class WebSocketClient {
       });
 
       _streamSubscription = _webSocketChannel?.stream.listen(
-        _onData,
+        onData,
         onError: _onError,
         onDone: _onDone,
         cancelOnError: true,
@@ -203,10 +204,19 @@ class WebSocketClient {
     return _webSocketChannel?.closeCode;
   }
 
-  Future<void> _onData(dynamic data) async {
+  void setTestData(dynamic data) {
+    testData = data;
+  }
+
+  Future<void> onData(dynamic data) async {
     _lastActiveAt = DateTime.now().millisecondsSinceEpoch;
     _stopWatchdog();
+
+    if (testData != null) {
+      data = testData;
+    }
     await _onWebSocketData(data);
+    testData = null;
   }
 
   Future<void> _onError(Object error) async {

@@ -20,6 +20,7 @@ class CommandString {
   static const String sessionExpired = 'EXPR';
   static const String error = 'EROR';
   static const String login = 'LOGI';
+  static const String busy = 'BUSY';
   static const String enter = 'ENTR';
   static const String exit = 'EXIT';
   static const String mack = 'MACK';

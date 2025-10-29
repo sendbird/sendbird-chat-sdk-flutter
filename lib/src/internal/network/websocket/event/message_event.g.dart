@@ -11,6 +11,7 @@ MessageEvent _$MessageEventFromJson(Map<String, dynamic> json) => MessageEvent(
       channelType: $enumDecode(_$ChannelTypeEnumMap, json['channel_type'],
           unknownValue: ChannelType.group),
       channelUrl: json['channel_url'] as String,
+      previousMessageId: (json['previous_message_id'] as num?)?.toInt(),
       forceUpdateLastMessage:
           json['force_update_last_message'] as bool? ?? false,
       silent: json['silent'] as bool? ?? false,
