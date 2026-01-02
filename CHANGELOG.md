@@ -1,3 +1,13 @@
+## v4.8.0 (Jan 2, 2026)
+
+### Features
+- Added `sendMultipleFilesMessage()` and `resendMultipleFilesMessage()` in `GroupChannel`
+- Added `multipleFilesMessageFileCountLimit` in `AppInfo`
+
+### Improvements
+- Fixed an issue related to closing WebSocket
+- `isar_community` package has been updated to v3.3.0
+
 ## v4.7.0 (Oct 29, 2025)
 
 ### Features

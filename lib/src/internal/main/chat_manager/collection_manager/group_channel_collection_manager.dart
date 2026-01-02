@@ -129,13 +129,11 @@ extension GroupChannelCollectionManager on CollectionManager {
             eventSource == CollectionEventSource.channelChangeLogs) {
           // Do upsertGroupChannels() in sendEventsToGroupChannelCollection().
         } else {
-          _chat.dbManager
-              .upsertGroupChannels(addedChannels); // No await since 4.6.0
+          await _chat.dbManager.upsertGroupChannels(addedChannels);
         }
       }
       if (updatedChannels != null) {
-        _chat.dbManager
-            .upsertGroupChannels(updatedChannels); // No await since 4.6.0
+        await _chat.dbManager.upsertGroupChannels(updatedChannels);
       }
     }
     //- [DBManager]
@@ -197,14 +195,12 @@ extension GroupChannelCollectionManager on CollectionManager {
           for (final channel in unavailableChannels) {
             addedChannels.remove(channel);
           }
-          _chat.dbManager
-              .upsertGroupChannels(addedChannels); // No await since 4.6.0
+          await _chat.dbManager.upsertGroupChannels(addedChannels);
         }
       }
       if (updatedChannels != null) {
         // Not used
-        _chat.dbManager
-            .upsertGroupChannels(updatedChannels); // No await since 4.6.0
+        await _chat.dbManager.upsertGroupChannels(updatedChannels);
       }
     }
     //- [DBManager]

@@ -11,7 +11,7 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      uploadSizeLimit: (json['file_upload_size_limit'] as num?)?.toInt() ?? 30,
+      uploadSizeLimit: json['file_upload_size_limit'] as int? ?? 30,
       attributesInUse: (json['application_attributes'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -25,7 +25,9 @@ AppInfo _$AppInfoFromJson(Map<String, dynamic> json) => AppInfo(
       allowSdkStatsUpload: json['allow_sdk_log_ingestion'] as bool? ?? true,
       disableSuperGroupMack: json['disable_supergroup_mack'] as bool? ?? false,
       unreadCntThreadingPolicy:
-          (json['unread_cnt_threading_policy'] as num?)?.toInt() ?? 0,
-      lastMsgThreadingPolicy:
-          (json['last_msg_threading_policy'] as num?)?.toInt() ?? 0,
+          json['unread_cnt_threading_policy'] as int? ?? 0,
+      lastMsgThreadingPolicy: json['last_msg_threading_policy'] as int? ?? 0,
+      multipleFilesMessageFileCountLimit:
+          json['multiple_file_send_max_size'] as int? ??
+              AppInfo.multipleFilesMessageDefaultFileCountLimit,
     );

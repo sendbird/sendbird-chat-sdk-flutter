@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'c_user_message.dart';
+part of 'c_multiple_files_message.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
@@ -9,13 +9,14 @@ part of 'c_user_message.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetCUserMessageCollection on Isar {
-  IsarCollection<CUserMessage> get cUserMessages => this.collection();
+extension GetCMultipleFilesMessageCollection on Isar {
+  IsarCollection<CMultipleFilesMessage> get cMultipleFilesMessages =>
+      this.collection();
 }
 
-final CUserMessageSchema = CollectionSchema(
-  name: r'CUserMessage',
-  id: BigInt.parse('-5236260095734839382').toInt(),
+final CMultipleFilesMessageSchema = CollectionSchema(
+  name: r'CMultipleFilesMessage',
+  id: BigInt.parse('6282540580451750083').toInt(),
   properties: {
     r'allMetaArrays': PropertySchema(
       id: 0,
@@ -27,7 +28,7 @@ final CUserMessageSchema = CollectionSchema(
       id: 1,
       name: r'channelType',
       type: IsarType.byte,
-      enumMap: _CUserMessagechannelTypeEnumValueMap,
+      enumMap: _CMultipleFilesMessagechannelTypeEnumValueMap,
     ),
     r'channelUrl': PropertySchema(
       id: 2,
@@ -59,135 +60,136 @@ final CUserMessageSchema = CollectionSchema(
       name: r'extendedMessage',
       type: IsarType.string,
     ),
-    r'isOperatorMessage': PropertySchema(
+    r'files': PropertySchema(
       id: 8,
+      name: r'files',
+      type: IsarType.objectList,
+      target: r'CUploadedFileInfo',
+    ),
+    r'isOperatorMessage': PropertySchema(
+      id: 9,
       name: r'isOperatorMessage',
       type: IsarType.bool,
     ),
     r'isReplyToChannel': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'isReplyToChannel',
       type: IsarType.bool,
     ),
     r'isSilent': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'isSilent',
       type: IsarType.bool,
     ),
     r'mentionType': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'mentionType',
       type: IsarType.byte,
-      enumMap: _CUserMessagementionTypeEnumValueMap,
+      enumMap: _CMultipleFilesMessagementionTypeEnumValueMap,
     ),
     r'mentionedUserIds': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'mentionedUserIds',
       type: IsarType.stringList,
     ),
     r'mentionedUsers': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'mentionedUsers',
       type: IsarType.stringList,
     ),
     r'message': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'message',
       type: IsarType.string,
     ),
+    r'messageCreateParams': PropertySchema(
+      id: 16,
+      name: r'messageCreateParams',
+      type: IsarType.object,
+      target: r'CMultipleFilesMessageCreateParams',
+    ),
     r'messageId': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'messageId',
       type: IsarType.long,
     ),
     r'messageSurvivalSeconds': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'messageSurvivalSeconds',
       type: IsarType.long,
     ),
     r'messageType': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'messageType',
       type: IsarType.byte,
-      enumMap: _CUserMessagemessageTypeEnumValueMap,
+      enumMap: _CMultipleFilesMessagemessageTypeEnumValueMap,
     ),
     r'ogMetaData': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'ogMetaData',
       type: IsarType.object,
       target: r'COGMetaData',
     ),
     r'parentMessageId': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'parentMessageId',
       type: IsarType.long,
     ),
     r'parentMessageRootId': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'parentMessageRootId',
       type: IsarType.string,
     ),
     r'parentMessageType': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'parentMessageType',
       type: IsarType.byte,
-      enumMap: _CUserMessageparentMessageTypeEnumValueMap,
-    ),
-    r'poll': PropertySchema(
-      id: 22,
-      name: r'poll',
-      type: IsarType.object,
-      target: r'CPoll',
+      enumMap: _CMultipleFilesMessageparentMessageTypeEnumValueMap,
     ),
     r'reactions': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'reactions',
       type: IsarType.objectList,
       target: r'CReaction',
     ),
     r'requestId': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'requestId',
       type: IsarType.string,
     ),
+    r'requireAuth': PropertySchema(
+      id: 26,
+      name: r'requireAuth',
+      type: IsarType.bool,
+    ),
     r'rootId': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'rootId',
       type: IsarType.string,
     ),
     r'scheduledInfo': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'scheduledInfo',
       type: IsarType.object,
       target: r'CScheduledInfo',
     ),
     r'sender': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'sender',
       type: IsarType.object,
       target: r'CSender',
     ),
     r'sendingStatus': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'sendingStatus',
       type: IsarType.byte,
-      enumMap: _CUserMessagesendingStatusEnumValueMap,
+      enumMap: _CMultipleFilesMessagesendingStatusEnumValueMap,
     ),
     r'threadInfo': PropertySchema(
-      id: 29,
+      id: 31,
       name: r'threadInfo',
       type: IsarType.object,
       target: r'CThreadInfo',
-    ),
-    r'translationTargetLanguages': PropertySchema(
-      id: 30,
-      name: r'translationTargetLanguages',
-      type: IsarType.stringList,
-    ),
-    r'translations': PropertySchema(
-      id: 31,
-      name: r'translations',
-      type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
       id: 32,
@@ -195,10 +197,10 @@ final CUserMessageSchema = CollectionSchema(
       type: IsarType.long,
     )
   },
-  estimateSize: _cUserMessageEstimateSize,
-  serialize: _cUserMessageSerialize,
-  deserialize: _cUserMessageDeserialize,
-  deserializeProp: _cUserMessageDeserializeProp,
+  estimateSize: _cMultipleFilesMessageEstimateSize,
+  serialize: _cMultipleFilesMessageSerialize,
+  deserialize: _cMultipleFilesMessageDeserialize,
+  deserializeProp: _cMultipleFilesMessageDeserializeProp,
   idName: r'id',
   indexes: {
     r'rootId': IndexSchema(
@@ -266,25 +268,29 @@ final CUserMessageSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
-    r'CPoll': CPollSchema,
-    r'CPollData': CPollDataSchema,
-    r'CPollOption': CPollOptionSchema,
+    r'CUploadedFileInfo': CUploadedFileInfoSchema,
+    r'CThumbnail': CThumbnailSchema,
+    r'CMultipleFilesMessageCreateParams':
+        CMultipleFilesMessageCreateParamsSchema,
+    r'CMessageMetaArray': CMessageMetaArraySchema,
+    r'CUploadableFileInfo': CUploadableFileInfoSchema,
+    r'CFileInfo': CFileInfoSchema,
+    r'CSize': CSizeSchema,
     r'CThreadInfo': CThreadInfoSchema,
     r'COGMetaData': COGMetaDataSchema,
     r'COGImage': COGImageSchema,
     r'CReaction': CReactionSchema,
     r'CScheduledInfo': CScheduledInfoSchema,
-    r'CSender': CSenderSchema,
-    r'CMessageMetaArray': CMessageMetaArraySchema
+    r'CSender': CSenderSchema
   },
-  getId: _cUserMessageGetId,
-  getLinks: _cUserMessageGetLinks,
-  attach: _cUserMessageAttach,
+  getId: _cMultipleFilesMessageGetId,
+  getLinks: _cMultipleFilesMessageGetLinks,
+  attach: _cMultipleFilesMessageAttach,
   version: '3.3.0',
 );
 
-int _cUserMessageEstimateSize(
-  CUserMessage object,
+int _cMultipleFilesMessageEstimateSize(
+  CMultipleFilesMessage object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -317,6 +323,15 @@ int _cUserMessageEstimateSize(
     }
   }
   bytesCount += 3 + object.extendedMessage.length * 3;
+  bytesCount += 3 + object.files.length * 3;
+  {
+    final offsets = allOffsets[CUploadedFileInfo]!;
+    for (var i = 0; i < object.files.length; i++) {
+      final value = object.files[i];
+      bytesCount +=
+          CUploadedFileInfoSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
   bytesCount += 3 + object.mentionedUserIds.length * 3;
   {
     for (var i = 0; i < object.mentionedUserIds.length; i++) {
@@ -333,6 +348,14 @@ int _cUserMessageEstimateSize(
   }
   bytesCount += 3 + object.message.length * 3;
   {
+    final value = object.messageCreateParams;
+    if (value != null) {
+      bytesCount += 3 +
+          CMultipleFilesMessageCreateParamsSchema.estimateSize(value,
+              allOffsets[CMultipleFilesMessageCreateParams]!, allOffsets);
+    }
+  }
+  {
     final value = object.ogMetaData;
     if (value != null) {
       bytesCount += 3 +
@@ -344,13 +367,6 @@ int _cUserMessageEstimateSize(
     final value = object.parentMessageRootId;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.poll;
-    if (value != null) {
-      bytesCount +=
-          3 + CPollSchema.estimateSize(value, allOffsets[CPoll]!, allOffsets);
     }
   }
   {
@@ -397,24 +413,11 @@ int _cUserMessageEstimateSize(
               value, allOffsets[CThreadInfo]!, allOffsets);
     }
   }
-  {
-    final list = object.translationTargetLanguages;
-    if (list != null) {
-      bytesCount += 3 + list.length * 3;
-      {
-        for (var i = 0; i < list.length; i++) {
-          final value = list[i];
-          bytesCount += value.length * 3;
-        }
-      }
-    }
-  }
-  bytesCount += 3 + object.translations.length * 3;
   return bytesCount;
 }
 
-void _cUserMessageSerialize(
-  CUserMessage object,
+void _cMultipleFilesMessageSerialize(
+  CMultipleFilesMessage object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -432,148 +435,161 @@ void _cUserMessageSerialize(
   writer.writeString(offsets[5], object.data);
   writer.writeLong(offsets[6], object.errorCode);
   writer.writeString(offsets[7], object.extendedMessage);
-  writer.writeBool(offsets[8], object.isOperatorMessage);
-  writer.writeBool(offsets[9], object.isReplyToChannel);
-  writer.writeBool(offsets[10], object.isSilent);
-  writer.writeByte(offsets[11], object.mentionType.index);
-  writer.writeStringList(offsets[12], object.mentionedUserIds);
-  writer.writeStringList(offsets[13], object.mentionedUsers);
-  writer.writeString(offsets[14], object.message);
-  writer.writeLong(offsets[15], object.messageId);
-  writer.writeLong(offsets[16], object.messageSurvivalSeconds);
-  writer.writeByte(offsets[17], object.messageType.index);
+  writer.writeObjectList<CUploadedFileInfo>(
+    offsets[8],
+    allOffsets,
+    CUploadedFileInfoSchema.serialize,
+    object.files,
+  );
+  writer.writeBool(offsets[9], object.isOperatorMessage);
+  writer.writeBool(offsets[10], object.isReplyToChannel);
+  writer.writeBool(offsets[11], object.isSilent);
+  writer.writeByte(offsets[12], object.mentionType.index);
+  writer.writeStringList(offsets[13], object.mentionedUserIds);
+  writer.writeStringList(offsets[14], object.mentionedUsers);
+  writer.writeString(offsets[15], object.message);
+  writer.writeObject<CMultipleFilesMessageCreateParams>(
+    offsets[16],
+    allOffsets,
+    CMultipleFilesMessageCreateParamsSchema.serialize,
+    object.messageCreateParams,
+  );
+  writer.writeLong(offsets[17], object.messageId);
+  writer.writeLong(offsets[18], object.messageSurvivalSeconds);
+  writer.writeByte(offsets[19], object.messageType.index);
   writer.writeObject<COGMetaData>(
-    offsets[18],
+    offsets[20],
     allOffsets,
     COGMetaDataSchema.serialize,
     object.ogMetaData,
   );
-  writer.writeLong(offsets[19], object.parentMessageId);
-  writer.writeString(offsets[20], object.parentMessageRootId);
-  writer.writeByte(offsets[21], object.parentMessageType.index);
-  writer.writeObject<CPoll>(
-    offsets[22],
-    allOffsets,
-    CPollSchema.serialize,
-    object.poll,
-  );
+  writer.writeLong(offsets[21], object.parentMessageId);
+  writer.writeString(offsets[22], object.parentMessageRootId);
+  writer.writeByte(offsets[23], object.parentMessageType.index);
   writer.writeObjectList<CReaction>(
-    offsets[23],
+    offsets[24],
     allOffsets,
     CReactionSchema.serialize,
     object.reactions,
   );
-  writer.writeString(offsets[24], object.requestId);
-  writer.writeString(offsets[25], object.rootId);
+  writer.writeString(offsets[25], object.requestId);
+  writer.writeBool(offsets[26], object.requireAuth);
+  writer.writeString(offsets[27], object.rootId);
   writer.writeObject<CScheduledInfo>(
-    offsets[26],
+    offsets[28],
     allOffsets,
     CScheduledInfoSchema.serialize,
     object.scheduledInfo,
   );
   writer.writeObject<CSender>(
-    offsets[27],
+    offsets[29],
     allOffsets,
     CSenderSchema.serialize,
     object.sender,
   );
-  writer.writeByte(offsets[28], object.sendingStatus.index);
+  writer.writeByte(offsets[30], object.sendingStatus.index);
   writer.writeObject<CThreadInfo>(
-    offsets[29],
+    offsets[31],
     allOffsets,
     CThreadInfoSchema.serialize,
     object.threadInfo,
   );
-  writer.writeStringList(offsets[30], object.translationTargetLanguages);
-  writer.writeString(offsets[31], object.translations);
   writer.writeLong(offsets[32], object.updatedAt);
 }
 
-CUserMessage _cUserMessageDeserialize(
+CMultipleFilesMessage _cMultipleFilesMessageDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = CUserMessage();
+  final object = CMultipleFilesMessage();
   object.allMetaArrays = reader.readObjectList<CMessageMetaArray>(
     offsets[0],
     CMessageMetaArraySchema.deserialize,
     allOffsets,
     CMessageMetaArray(),
   );
-  object.channelType =
-      _CUserMessagechannelTypeValueEnumMap[reader.readByteOrNull(offsets[1])] ??
-          ChannelType.group;
+  object.channelType = _CMultipleFilesMessagechannelTypeValueEnumMap[
+          reader.readByteOrNull(offsets[1])] ??
+      ChannelType.group;
   object.channelUrl = reader.readString(offsets[2]);
   object.createdAt = reader.readLong(offsets[3]);
   object.customType = reader.readStringOrNull(offsets[4]);
   object.data = reader.readStringOrNull(offsets[5]);
   object.errorCode = reader.readLongOrNull(offsets[6]);
   object.extendedMessage = reader.readString(offsets[7]);
+  object.files = reader.readObjectList<CUploadedFileInfo>(
+        offsets[8],
+        CUploadedFileInfoSchema.deserialize,
+        allOffsets,
+        CUploadedFileInfo(),
+      ) ??
+      [];
   object.id = id;
-  object.isOperatorMessage = reader.readBool(offsets[8]);
-  object.isReplyToChannel = reader.readBool(offsets[9]);
-  object.isSilent = reader.readBool(offsets[10]);
-  object.mentionType = _CUserMessagementionTypeValueEnumMap[
-          reader.readByteOrNull(offsets[11])] ??
+  object.isOperatorMessage = reader.readBool(offsets[9]);
+  object.isReplyToChannel = reader.readBool(offsets[10]);
+  object.isSilent = reader.readBool(offsets[11]);
+  object.mentionType = _CMultipleFilesMessagementionTypeValueEnumMap[
+          reader.readByteOrNull(offsets[12])] ??
       MentionType.users;
-  object.mentionedUserIds = reader.readStringList(offsets[12]) ?? [];
-  object.mentionedUsers = reader.readStringList(offsets[13]) ?? [];
-  object.message = reader.readString(offsets[14]);
-  object.messageId = reader.readLong(offsets[15]);
-  object.messageSurvivalSeconds = reader.readLongOrNull(offsets[16]);
-  object.messageType = _CUserMessagemessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[17])] ??
+  object.mentionedUserIds = reader.readStringList(offsets[13]) ?? [];
+  object.mentionedUsers = reader.readStringList(offsets[14]) ?? [];
+  object.message = reader.readString(offsets[15]);
+  object.messageCreateParams =
+      reader.readObjectOrNull<CMultipleFilesMessageCreateParams>(
+    offsets[16],
+    CMultipleFilesMessageCreateParamsSchema.deserialize,
+    allOffsets,
+  );
+  object.messageId = reader.readLong(offsets[17]);
+  object.messageSurvivalSeconds = reader.readLongOrNull(offsets[18]);
+  object.messageType = _CMultipleFilesMessagemessageTypeValueEnumMap[
+          reader.readByteOrNull(offsets[19])] ??
       MessageType.user;
   object.ogMetaData = reader.readObjectOrNull<COGMetaData>(
-    offsets[18],
+    offsets[20],
     COGMetaDataSchema.deserialize,
     allOffsets,
   );
-  object.parentMessageId = reader.readLongOrNull(offsets[19]);
-  object.parentMessageRootId = reader.readStringOrNull(offsets[20]);
-  object.parentMessageType = _CUserMessageparentMessageTypeValueEnumMap[
-          reader.readByteOrNull(offsets[21])] ??
-      MessageType.user;
-  object.poll = reader.readObjectOrNull<CPoll>(
-    offsets[22],
-    CPollSchema.deserialize,
-    allOffsets,
-  );
+  object.parentMessageId = reader.readLongOrNull(offsets[21]);
+  object.parentMessageRootId = reader.readStringOrNull(offsets[22]);
+  object.parentMessageType =
+      _CMultipleFilesMessageparentMessageTypeValueEnumMap[
+              reader.readByteOrNull(offsets[23])] ??
+          MessageType.user;
   object.reactions = reader.readObjectList<CReaction>(
-    offsets[23],
+    offsets[24],
     CReactionSchema.deserialize,
     allOffsets,
     CReaction(),
   );
-  object.requestId = reader.readStringOrNull(offsets[24]);
-  object.rootId = reader.readString(offsets[25]);
+  object.requestId = reader.readStringOrNull(offsets[25]);
+  object.requireAuth = reader.readBool(offsets[26]);
+  object.rootId = reader.readString(offsets[27]);
   object.scheduledInfo = reader.readObjectOrNull<CScheduledInfo>(
-    offsets[26],
+    offsets[28],
     CScheduledInfoSchema.deserialize,
     allOffsets,
   );
   object.sender = reader.readObjectOrNull<CSender>(
-    offsets[27],
+    offsets[29],
     CSenderSchema.deserialize,
     allOffsets,
   );
-  object.sendingStatus = _CUserMessagesendingStatusValueEnumMap[
-          reader.readByteOrNull(offsets[28])] ??
+  object.sendingStatus = _CMultipleFilesMessagesendingStatusValueEnumMap[
+          reader.readByteOrNull(offsets[30])] ??
       SendingStatus.none;
   object.threadInfo = reader.readObjectOrNull<CThreadInfo>(
-    offsets[29],
+    offsets[31],
     CThreadInfoSchema.deserialize,
     allOffsets,
   );
-  object.translationTargetLanguages = reader.readStringList(offsets[30]);
-  object.translations = reader.readString(offsets[31]);
   object.updatedAt = reader.readLong(offsets[32]);
   return object;
 }
 
-P _cUserMessageDeserializeProp<P>(
+P _cMultipleFilesMessageDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -588,7 +604,7 @@ P _cUserMessageDeserializeProp<P>(
         CMessageMetaArray(),
       )) as P;
     case 1:
-      return (_CUserMessagechannelTypeValueEnumMap[
+      return (_CMultipleFilesMessagechannelTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ChannelType.group) as P;
     case 2:
@@ -604,86 +620,92 @@ P _cUserMessageDeserializeProp<P>(
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readBool(offset)) as P;
+      return (reader.readObjectList<CUploadedFileInfo>(
+            offset,
+            CUploadedFileInfoSchema.deserialize,
+            allOffsets,
+            CUploadedFileInfo(),
+          ) ??
+          []) as P;
     case 9:
       return (reader.readBool(offset)) as P;
     case 10:
       return (reader.readBool(offset)) as P;
     case 11:
-      return (_CUserMessagementionTypeValueEnumMap[
+      return (reader.readBool(offset)) as P;
+    case 12:
+      return (_CMultipleFilesMessagementionTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MentionType.users) as P;
-    case 12:
-      return (reader.readStringList(offset) ?? []) as P;
     case 13:
       return (reader.readStringList(offset) ?? []) as P;
     case 14:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 15:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 16:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readObjectOrNull<CMultipleFilesMessageCreateParams>(
+        offset,
+        CMultipleFilesMessageCreateParamsSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 17:
-      return (_CUserMessagemessageTypeValueEnumMap[
+      return (reader.readLong(offset)) as P;
+    case 18:
+      return (reader.readLongOrNull(offset)) as P;
+    case 19:
+      return (_CMultipleFilesMessagemessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 18:
+    case 20:
       return (reader.readObjectOrNull<COGMetaData>(
         offset,
         COGMetaDataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 19:
-      return (reader.readLongOrNull(offset)) as P;
-    case 20:
-      return (reader.readStringOrNull(offset)) as P;
     case 21:
-      return (_CUserMessageparentMessageTypeValueEnumMap[
+      return (reader.readLongOrNull(offset)) as P;
+    case 22:
+      return (reader.readStringOrNull(offset)) as P;
+    case 23:
+      return (_CMultipleFilesMessageparentMessageTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           MessageType.user) as P;
-    case 22:
-      return (reader.readObjectOrNull<CPoll>(
-        offset,
-        CPollSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 23:
+    case 24:
       return (reader.readObjectList<CReaction>(
         offset,
         CReactionSchema.deserialize,
         allOffsets,
         CReaction(),
       )) as P;
-    case 24:
-      return (reader.readStringOrNull(offset)) as P;
     case 25:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 26:
+      return (reader.readBool(offset)) as P;
+    case 27:
+      return (reader.readString(offset)) as P;
+    case 28:
       return (reader.readObjectOrNull<CScheduledInfo>(
         offset,
         CScheduledInfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 27:
+    case 29:
       return (reader.readObjectOrNull<CSender>(
         offset,
         CSenderSchema.deserialize,
         allOffsets,
       )) as P;
-    case 28:
-      return (_CUserMessagesendingStatusValueEnumMap[
+    case 30:
+      return (_CMultipleFilesMessagesendingStatusValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SendingStatus.none) as P;
-    case 29:
+    case 31:
       return (reader.readObjectOrNull<CThreadInfo>(
         offset,
         CThreadInfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 30:
-      return (reader.readStringList(offset)) as P;
-    case 31:
-      return (reader.readString(offset)) as P;
     case 32:
       return (reader.readLong(offset)) as P;
     default:
@@ -691,56 +713,56 @@ P _cUserMessageDeserializeProp<P>(
   }
 }
 
-const _CUserMessagechannelTypeEnumValueMap = {
+const _CMultipleFilesMessagechannelTypeEnumValueMap = {
   'group': 0,
   'open': 1,
   'feed': 2,
 };
-const _CUserMessagechannelTypeValueEnumMap = {
+const _CMultipleFilesMessagechannelTypeValueEnumMap = {
   0: ChannelType.group,
   1: ChannelType.open,
   2: ChannelType.feed,
 };
-const _CUserMessagementionTypeEnumValueMap = {
+const _CMultipleFilesMessagementionTypeEnumValueMap = {
   'users': 0,
   'channel': 1,
 };
-const _CUserMessagementionTypeValueEnumMap = {
+const _CMultipleFilesMessagementionTypeValueEnumMap = {
   0: MentionType.users,
   1: MentionType.channel,
 };
-const _CUserMessagemessageTypeEnumValueMap = {
+const _CMultipleFilesMessagemessageTypeEnumValueMap = {
   'user': 0,
   'file': 1,
   'admin': 2,
   'notification': 3,
 };
-const _CUserMessagemessageTypeValueEnumMap = {
+const _CMultipleFilesMessagemessageTypeValueEnumMap = {
   0: MessageType.user,
   1: MessageType.file,
   2: MessageType.admin,
   3: MessageType.notification,
 };
-const _CUserMessageparentMessageTypeEnumValueMap = {
+const _CMultipleFilesMessageparentMessageTypeEnumValueMap = {
   'user': 0,
   'file': 1,
   'admin': 2,
   'notification': 3,
 };
-const _CUserMessageparentMessageTypeValueEnumMap = {
+const _CMultipleFilesMessageparentMessageTypeValueEnumMap = {
   0: MessageType.user,
   1: MessageType.file,
   2: MessageType.admin,
   3: MessageType.notification,
 };
-const _CUserMessagesendingStatusEnumValueMap = {
+const _CMultipleFilesMessagesendingStatusEnumValueMap = {
   'none': 0,
   'pending': 1,
   'failed': 2,
   'succeeded': 3,
   'canceled': 4,
 };
-const _CUserMessagesendingStatusValueEnumMap = {
+const _CMultipleFilesMessagesendingStatusValueEnumMap = {
   0: SendingStatus.none,
   1: SendingStatus.pending,
   2: SendingStatus.failed,
@@ -748,25 +770,27 @@ const _CUserMessagesendingStatusValueEnumMap = {
   4: SendingStatus.canceled,
 };
 
-Id _cUserMessageGetId(CUserMessage object) {
+Id _cMultipleFilesMessageGetId(CMultipleFilesMessage object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _cUserMessageGetLinks(CUserMessage object) {
+List<IsarLinkBase<dynamic>> _cMultipleFilesMessageGetLinks(
+    CMultipleFilesMessage object) {
   return [];
 }
 
-void _cUserMessageAttach(
-    IsarCollection<dynamic> col, Id id, CUserMessage object) {
+void _cMultipleFilesMessageAttach(
+    IsarCollection<dynamic> col, Id id, CMultipleFilesMessage object) {
   object.id = id;
 }
 
-extension CUserMessageByIndex on IsarCollection<CUserMessage> {
-  Future<CUserMessage?> getByRootId(String rootId) {
+extension CMultipleFilesMessageByIndex
+    on IsarCollection<CMultipleFilesMessage> {
+  Future<CMultipleFilesMessage?> getByRootId(String rootId) {
     return getByIndex(r'rootId', [rootId]);
   }
 
-  CUserMessage? getByRootIdSync(String rootId) {
+  CMultipleFilesMessage? getByRootIdSync(String rootId) {
     return getByIndexSync(r'rootId', [rootId]);
   }
 
@@ -778,12 +802,13 @@ extension CUserMessageByIndex on IsarCollection<CUserMessage> {
     return deleteByIndexSync(r'rootId', [rootId]);
   }
 
-  Future<List<CUserMessage?>> getAllByRootId(List<String> rootIdValues) {
+  Future<List<CMultipleFilesMessage?>> getAllByRootId(
+      List<String> rootIdValues) {
     final values = rootIdValues.map((e) => [e]).toList();
     return getAllByIndex(r'rootId', values);
   }
 
-  List<CUserMessage?> getAllByRootIdSync(List<String> rootIdValues) {
+  List<CMultipleFilesMessage?> getAllByRootIdSync(List<String> rootIdValues) {
     final values = rootIdValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'rootId', values);
   }
@@ -798,36 +823,38 @@ extension CUserMessageByIndex on IsarCollection<CUserMessage> {
     return deleteAllByIndexSync(r'rootId', values);
   }
 
-  Future<Id> putByRootId(CUserMessage object) {
+  Future<Id> putByRootId(CMultipleFilesMessage object) {
     return putByIndex(r'rootId', object);
   }
 
-  Id putByRootIdSync(CUserMessage object, {bool saveLinks = true}) {
+  Id putByRootIdSync(CMultipleFilesMessage object, {bool saveLinks = true}) {
     return putByIndexSync(r'rootId', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllByRootId(List<CUserMessage> objects) {
+  Future<List<Id>> putAllByRootId(List<CMultipleFilesMessage> objects) {
     return putAllByIndex(r'rootId', objects);
   }
 
-  List<Id> putAllByRootIdSync(List<CUserMessage> objects,
+  List<Id> putAllByRootIdSync(List<CMultipleFilesMessage> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'rootId', objects, saveLinks: saveLinks);
   }
 }
 
-extension CUserMessageQueryWhereSort
-    on QueryBuilder<CUserMessage, CUserMessage, QWhere> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhere> anyId() {
+extension CMultipleFilesMessageQueryWhereSort
+    on QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QWhere> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhere>
+      anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension CUserMessageQueryWhere
-    on QueryBuilder<CUserMessage, CUserMessage, QWhereClause> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> idEqualTo(Id id) {
+extension CMultipleFilesMessageQueryWhere on QueryBuilder<CMultipleFilesMessage,
+    CMultipleFilesMessage, QWhereClause> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -836,8 +863,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -859,9 +886,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -869,8 +895,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -878,7 +904,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> idBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -894,8 +921,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> rootIdEqualTo(
-      String rootId) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      rootIdEqualTo(String rootId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'rootId',
@@ -904,8 +931,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> rootIdNotEqualTo(
-      String rootId) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      rootIdNotEqualTo(String rootId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -939,7 +966,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeEqualToAnyRootId(MessageType messageType) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -949,7 +976,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeNotEqualToAnyRootId(MessageType messageType) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -984,7 +1011,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeGreaterThanAnyRootId(
     MessageType messageType, {
     bool include = false,
@@ -999,7 +1026,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeLessThanAnyRootId(
     MessageType messageType, {
     bool include = false,
@@ -1014,7 +1041,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeBetweenAnyRootId(
     MessageType lowerMessageType,
     MessageType upperMessageType, {
@@ -1032,7 +1059,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeRootIdEqualTo(MessageType messageType, String rootId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -1042,7 +1069,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       messageTypeEqualToRootIdNotEqualTo(
           MessageType messageType, String rootId) {
     return QueryBuilder.apply(this, (query) {
@@ -1078,8 +1105,8 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause> channelUrlEqualTo(
-      String channelUrl) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
+      channelUrlEqualTo(String channelUrl) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'channelUrl',
@@ -1088,7 +1115,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelUrlNotEqualTo(String channelUrl) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -1123,7 +1150,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeEqualToAnyChannelUrl(ChannelType channelType) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -1133,7 +1160,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeNotEqualToAnyChannelUrl(ChannelType channelType) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -1168,7 +1195,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeGreaterThanAnyChannelUrl(
     ChannelType channelType, {
     bool include = false,
@@ -1183,7 +1210,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeLessThanAnyChannelUrl(
     ChannelType channelType, {
     bool include = false,
@@ -1198,7 +1225,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeBetweenAnyChannelUrl(
     ChannelType lowerChannelType,
     ChannelType upperChannelType, {
@@ -1216,7 +1243,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeChannelUrlEqualTo(ChannelType channelType, String channelUrl) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -1226,7 +1253,7 @@ extension CUserMessageQueryWhere
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterWhereClause>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterWhereClause>
       channelTypeEqualToChannelUrlNotEqualTo(
           ChannelType channelType, String channelUrl) {
     return QueryBuilder.apply(this, (query) {
@@ -1263,10 +1290,10 @@ extension CUserMessageQueryWhere
   }
 }
 
-extension CUserMessageQueryFilter
-    on QueryBuilder<CUserMessage, CUserMessage, QFilterCondition> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysIsNull() {
+extension CMultipleFilesMessageQueryFilter on QueryBuilder<
+    CMultipleFilesMessage, CMultipleFilesMessage, QFilterCondition> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'allMetaArrays',
@@ -1274,8 +1301,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'allMetaArrays',
@@ -1283,8 +1310,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysLengthEqualTo(int length) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'allMetaArrays',
@@ -1296,8 +1323,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'allMetaArrays',
@@ -1309,8 +1336,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'allMetaArrays',
@@ -1322,8 +1349,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysLengthLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -1338,8 +1365,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysLengthGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -1354,8 +1381,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      allMetaArraysLengthBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> allMetaArraysLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1372,8 +1399,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelTypeEqualTo(ChannelType value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelTypeEqualTo(ChannelType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'channelType',
@@ -1382,8 +1409,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelTypeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelTypeGreaterThan(
     ChannelType value, {
     bool include = false,
   }) {
@@ -1396,8 +1423,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelTypeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelTypeLessThan(
     ChannelType value, {
     bool include = false,
   }) {
@@ -1410,8 +1437,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelTypeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelTypeBetween(
     ChannelType lower,
     ChannelType upper, {
     bool includeLower = true,
@@ -1428,8 +1455,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1442,8 +1469,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1458,8 +1485,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1474,8 +1501,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1494,8 +1521,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1508,8 +1535,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1522,7 +1549,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       channelUrlContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1533,7 +1561,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       channelUrlMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -1544,8 +1573,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'channelUrl',
@@ -1554,8 +1583,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      channelUrlIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> channelUrlIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'channelUrl',
@@ -1564,8 +1593,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      createdAtEqualTo(int value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> createdAtEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'createdAt',
@@ -1574,8 +1603,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      createdAtGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> createdAtGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -1588,8 +1617,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      createdAtLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> createdAtLessThan(
     int value, {
     bool include = false,
   }) {
@@ -1602,8 +1631,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      createdAtBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> createdAtBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1620,8 +1649,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'customType',
@@ -1629,8 +1658,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'customType',
@@ -1638,8 +1667,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -1652,8 +1681,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1668,8 +1697,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1684,8 +1713,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1704,8 +1733,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1718,8 +1747,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1732,7 +1761,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       customTypeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1743,7 +1773,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       customTypeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -1754,8 +1785,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'customType',
@@ -1764,8 +1795,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      customTypeIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> customTypeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'customType',
@@ -1774,7 +1805,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'data',
@@ -1782,8 +1814,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      dataIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'data',
@@ -1791,7 +1823,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -1804,8 +1837,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      dataGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1820,7 +1853,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1835,7 +1869,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1854,8 +1889,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      dataStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1868,7 +1903,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1881,9 +1917,9 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
+      dataContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'data',
@@ -1893,9 +1929,9 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> dataMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
+      dataMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'data',
@@ -1905,8 +1941,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      dataIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'data',
@@ -1915,8 +1951,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      dataIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> dataIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'data',
@@ -1925,8 +1961,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'errorCode',
@@ -1934,8 +1970,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'errorCode',
@@ -1943,8 +1979,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeEqualTo(int? value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'errorCode',
@@ -1953,8 +1989,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -1967,8 +2003,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -1981,8 +2017,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      errorCodeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> errorCodeBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -1999,8 +2035,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2013,8 +2049,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2029,8 +2065,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2045,8 +2081,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2065,8 +2101,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2079,8 +2115,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2093,7 +2129,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       extendedMessageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -2104,7 +2141,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       extendedMessageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -2115,8 +2153,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'extendedMessage',
@@ -2125,8 +2163,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      extendedMessageIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> extendedMessageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'extendedMessage',
@@ -2135,8 +2173,97 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> idEqualTo(
-      Id value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'files',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -2145,7 +2272,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -2158,7 +2286,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> idLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -2171,7 +2300,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> idBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -2188,8 +2318,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      isOperatorMessageEqualTo(bool value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> isOperatorMessageEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isOperatorMessage',
@@ -2198,8 +2328,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      isReplyToChannelEqualTo(bool value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> isReplyToChannelEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isReplyToChannel',
@@ -2208,8 +2338,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      isSilentEqualTo(bool value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> isSilentEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isSilent',
@@ -2218,8 +2348,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionTypeEqualTo(MentionType value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionTypeEqualTo(MentionType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'mentionType',
@@ -2228,8 +2358,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionTypeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionTypeGreaterThan(
     MentionType value, {
     bool include = false,
   }) {
@@ -2242,8 +2372,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionTypeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionTypeLessThan(
     MentionType value, {
     bool include = false,
   }) {
@@ -2256,8 +2386,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionTypeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionTypeBetween(
     MentionType lower,
     MentionType upper, {
     bool includeLower = true,
@@ -2274,8 +2404,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2288,8 +2418,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2304,8 +2434,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2320,8 +2450,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2340,8 +2470,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2354,8 +2484,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2368,7 +2498,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       mentionedUserIdsElementContains(String value,
           {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2380,7 +2511,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       mentionedUserIdsElementMatches(String pattern,
           {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2392,8 +2524,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'mentionedUserIds',
@@ -2402,8 +2534,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsElementIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsElementIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'mentionedUserIds',
@@ -2412,8 +2544,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsLengthEqualTo(int length) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUserIds',
@@ -2425,8 +2557,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUserIds',
@@ -2438,8 +2570,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUserIds',
@@ -2451,8 +2583,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsLengthLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -2467,8 +2599,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsLengthGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -2483,8 +2615,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUserIdsLengthBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUserIdsLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -2501,8 +2633,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2515,8 +2647,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2531,8 +2663,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2547,8 +2679,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2567,8 +2699,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2581,8 +2713,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2595,7 +2727,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       mentionedUsersElementContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -2606,7 +2739,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       mentionedUsersElementMatches(String pattern,
           {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2618,8 +2752,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'mentionedUsers',
@@ -2628,8 +2762,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersElementIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersElementIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'mentionedUsers',
@@ -2638,8 +2772,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersLengthEqualTo(int length) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUsers',
@@ -2651,8 +2785,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUsers',
@@ -2664,8 +2798,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'mentionedUsers',
@@ -2677,8 +2811,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersLengthLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -2693,8 +2827,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersLengthGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -2709,8 +2843,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      mentionedUsersLengthBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> mentionedUsersLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -2727,8 +2861,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2741,8 +2875,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2757,8 +2891,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2773,8 +2907,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2793,8 +2927,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2807,8 +2941,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2821,7 +2955,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       messageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -2832,7 +2967,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       messageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -2843,8 +2979,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'message',
@@ -2853,8 +2989,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'message',
@@ -2863,8 +2999,26 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIdEqualTo(int value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageCreateParamsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'messageCreateParams',
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageCreateParamsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'messageCreateParams',
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'messageId',
@@ -2873,8 +3027,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIdGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIdGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -2887,8 +3041,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIdLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIdLessThan(
     int value, {
     bool include = false,
   }) {
@@ -2901,8 +3055,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageIdBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageIdBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -2919,8 +3073,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'messageSurvivalSeconds',
@@ -2928,8 +3082,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'messageSurvivalSeconds',
@@ -2937,8 +3091,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsEqualTo(int? value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'messageSurvivalSeconds',
@@ -2947,8 +3101,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -2961,8 +3115,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -2975,8 +3129,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageSurvivalSecondsBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageSurvivalSecondsBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -2993,8 +3147,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageTypeEqualTo(MessageType value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageTypeEqualTo(MessageType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'messageType',
@@ -3003,8 +3157,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageTypeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageTypeGreaterThan(
     MessageType value, {
     bool include = false,
   }) {
@@ -3017,8 +3171,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageTypeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageTypeLessThan(
     MessageType value, {
     bool include = false,
   }) {
@@ -3031,8 +3185,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      messageTypeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> messageTypeBetween(
     MessageType lower,
     MessageType upper, {
     bool includeLower = true,
@@ -3049,8 +3203,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      ogMetaDataIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> ogMetaDataIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'ogMetaData',
@@ -3058,8 +3212,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      ogMetaDataIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> ogMetaDataIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'ogMetaData',
@@ -3067,8 +3221,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'parentMessageId',
@@ -3076,8 +3230,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'parentMessageId',
@@ -3085,8 +3239,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdEqualTo(int? value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'parentMessageId',
@@ -3095,8 +3249,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdGreaterThan(
     int? value, {
     bool include = false,
   }) {
@@ -3109,8 +3263,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdLessThan(
     int? value, {
     bool include = false,
   }) {
@@ -3123,8 +3277,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageIdBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageIdBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -3141,8 +3295,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'parentMessageRootId',
@@ -3150,8 +3304,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'parentMessageRootId',
@@ -3159,8 +3313,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -3173,8 +3327,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3189,8 +3343,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3205,8 +3359,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3225,8 +3379,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3239,8 +3393,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3253,7 +3407,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       parentMessageRootIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -3264,7 +3419,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       parentMessageRootIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -3275,8 +3431,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'parentMessageRootId',
@@ -3285,8 +3441,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageRootIdIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageRootIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'parentMessageRootId',
@@ -3295,8 +3451,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageTypeEqualTo(MessageType value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageTypeEqualTo(MessageType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'parentMessageType',
@@ -3305,8 +3461,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageTypeGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageTypeGreaterThan(
     MessageType value, {
     bool include = false,
   }) {
@@ -3319,8 +3475,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageTypeLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageTypeLessThan(
     MessageType value, {
     bool include = false,
   }) {
@@ -3333,8 +3489,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      parentMessageTypeBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> parentMessageTypeBetween(
     MessageType lower,
     MessageType upper, {
     bool includeLower = true,
@@ -3351,25 +3507,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> pollIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'poll',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      pollIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'poll',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'reactions',
@@ -3377,8 +3516,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'reactions',
@@ -3386,8 +3525,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsLengthEqualTo(int length) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'reactions',
@@ -3399,8 +3538,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'reactions',
@@ -3412,8 +3551,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'reactions',
@@ -3425,8 +3564,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsLengthLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -3441,8 +3580,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsLengthGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -3457,8 +3596,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsLengthBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -3475,8 +3614,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'requestId',
@@ -3484,8 +3623,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'requestId',
@@ -3493,8 +3632,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -3507,8 +3646,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3523,8 +3662,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3539,8 +3678,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3559,8 +3698,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3573,8 +3712,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3587,7 +3726,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       requestIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -3598,7 +3738,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       requestIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -3609,8 +3750,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'requestId',
@@ -3619,8 +3760,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      requestIdIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requestIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'requestId',
@@ -3629,7 +3770,18 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> rootIdEqualTo(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> requireAuthEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'requireAuth',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3642,8 +3794,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3658,8 +3810,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3674,7 +3826,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> rootIdBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3693,8 +3846,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdStartsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3707,8 +3860,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdEndsWith(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3721,7 +3874,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       rootIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -3732,9 +3886,9 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> rootIdMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
+      rootIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'rootId',
@@ -3744,8 +3898,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdIsEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'rootId',
@@ -3754,8 +3908,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      rootIdIsNotEmpty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> rootIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'rootId',
@@ -3764,8 +3918,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      scheduledInfoIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> scheduledInfoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'scheduledInfo',
@@ -3773,8 +3927,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      scheduledInfoIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> scheduledInfoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'scheduledInfo',
@@ -3782,8 +3936,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      senderIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> senderIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sender',
@@ -3791,8 +3945,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      senderIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> senderIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sender',
@@ -3800,8 +3954,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      sendingStatusEqualTo(SendingStatus value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> sendingStatusEqualTo(SendingStatus value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sendingStatus',
@@ -3810,8 +3964,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      sendingStatusGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> sendingStatusGreaterThan(
     SendingStatus value, {
     bool include = false,
   }) {
@@ -3824,8 +3978,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      sendingStatusLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> sendingStatusLessThan(
     SendingStatus value, {
     bool include = false,
   }) {
@@ -3838,8 +3992,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      sendingStatusBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> sendingStatusBetween(
     SendingStatus lower,
     SendingStatus upper, {
     bool includeLower = true,
@@ -3856,8 +4010,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      threadInfoIsNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> threadInfoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'threadInfo',
@@ -3865,8 +4019,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      threadInfoIsNotNull() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> threadInfoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'threadInfo',
@@ -3874,389 +4028,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'translationTargetLanguages',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'translationTargetLanguages',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'translationTargetLanguages',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementContains(String value,
-          {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'translationTargetLanguages',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementMatches(String pattern,
-          {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'translationTargetLanguages',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'translationTargetLanguages',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesElementIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'translationTargetLanguages',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationTargetLanguagesLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'translationTargetLanguages',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'translations',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'translations',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'translations',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'translations',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      translationsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'translations',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      updatedAtEqualTo(int value) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> updatedAtEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'updatedAt',
@@ -4265,8 +4038,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      updatedAtGreaterThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> updatedAtGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -4279,8 +4052,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      updatedAtLessThan(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> updatedAtLessThan(
     int value, {
     bool include = false,
   }) {
@@ -4293,8 +4066,8 @@ extension CUserMessageQueryFilter
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      updatedAtBetween(
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> updatedAtBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4312,796 +4085,864 @@ extension CUserMessageQueryFilter
   }
 }
 
-extension CUserMessageQueryObject
-    on QueryBuilder<CUserMessage, CUserMessage, QFilterCondition> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
+extension CMultipleFilesMessageQueryObject on QueryBuilder<
+    CMultipleFilesMessage, CMultipleFilesMessage, QFilterCondition> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
       allMetaArraysElement(FilterQuery<CMessageMetaArray> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'allMetaArrays');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> ogMetaData(
-      FilterQuery<COGMetaData> q) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> filesElement(FilterQuery<CUploadedFileInfo> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'files');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+          QAfterFilterCondition>
+      messageCreateParams(FilterQuery<CMultipleFilesMessageCreateParams> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'messageCreateParams');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> ogMetaData(FilterQuery<COGMetaData> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'ogMetaData');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> poll(
-      FilterQuery<CPoll> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'poll');
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition>
-      reactionsElement(FilterQuery<CReaction> q) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> reactionsElement(FilterQuery<CReaction> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'reactions');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> scheduledInfo(
-      FilterQuery<CScheduledInfo> q) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> scheduledInfo(FilterQuery<CScheduledInfo> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'scheduledInfo');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> sender(
-      FilterQuery<CSender> q) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> sender(FilterQuery<CSender> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'sender');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterFilterCondition> threadInfo(
-      FilterQuery<CThreadInfo> q) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage,
+      QAfterFilterCondition> threadInfo(FilterQuery<CThreadInfo> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'threadInfo');
     });
   }
 }
 
-extension CUserMessageQueryLinks
-    on QueryBuilder<CUserMessage, CUserMessage, QFilterCondition> {}
+extension CMultipleFilesMessageQueryLinks on QueryBuilder<CMultipleFilesMessage,
+    CMultipleFilesMessage, QFilterCondition> {}
 
-extension CUserMessageQuerySortBy
-    on QueryBuilder<CUserMessage, CUserMessage, QSortBy> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByChannelType() {
+extension CMultipleFilesMessageQuerySortBy
+    on QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QSortBy> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByChannelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByChannelTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByChannelUrl() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByChannelUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelUrl', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByChannelUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelUrl', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByCreatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByCreatedAtDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByCustomType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByCustomType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByCustomTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByData() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByData() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByDataDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByDataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByErrorCode() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByErrorCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'errorCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByErrorCodeDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByErrorCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'errorCode', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByExtendedMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'extendedMessage', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByExtendedMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'extendedMessage', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByIsOperatorMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOperatorMessage', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByIsOperatorMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOperatorMessage', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByIsReplyToChannel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReplyToChannel', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByIsReplyToChannelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReplyToChannel', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByIsSilent() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByIsSilent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSilent', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByIsSilentDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByIsSilentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSilent', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMentionType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMentionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mentionType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByMentionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mentionType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMessage() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'message', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMessageDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'message', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMessageId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMessageIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMessageIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByMessageSurvivalSeconds() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageSurvivalSeconds', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByMessageSurvivalSecondsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageSurvivalSeconds', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByMessageType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByMessageTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageRootId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageRootId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageRootIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageRootId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortByParentMessageTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByRequestId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRequestId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'requestId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByRequestIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRequestIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'requestId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByRootId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRequireAuth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'requireAuth', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRequireAuthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'requireAuth', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRootId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rootId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByRootIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByRootIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rootId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortBySendingStatus() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortBySendingStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sendingStatus', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       sortBySendingStatusDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sendingStatus', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByTranslations() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'translations', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
-      sortByTranslationsDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'translations', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByUpdatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> sortByUpdatedAtDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
 
-extension CUserMessageQuerySortThenBy
-    on QueryBuilder<CUserMessage, CUserMessage, QSortThenBy> {
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByChannelType() {
+extension CMultipleFilesMessageQuerySortThenBy
+    on QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QSortThenBy> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByChannelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByChannelTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByChannelUrl() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByChannelUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelUrl', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByChannelUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'channelUrl', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByCreatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByCreatedAtDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByCustomType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByCustomType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByCustomTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByData() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByData() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByDataDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByDataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByErrorCode() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByErrorCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'errorCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByErrorCodeDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByErrorCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'errorCode', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByExtendedMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'extendedMessage', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByExtendedMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'extendedMessage', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenById() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByIsOperatorMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOperatorMessage', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByIsOperatorMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOperatorMessage', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByIsReplyToChannel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReplyToChannel', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByIsReplyToChannelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isReplyToChannel', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByIsSilent() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByIsSilent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSilent', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByIsSilentDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByIsSilentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSilent', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMentionType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMentionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mentionType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByMentionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mentionType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMessage() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'message', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMessageDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMessageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'message', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMessageId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMessageIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMessageIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByMessageSurvivalSeconds() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageSurvivalSeconds', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByMessageSurvivalSecondsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageSurvivalSeconds', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByMessageType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByMessageTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'messageType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageRootId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageRootId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageRootIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageRootId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageType', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenByParentMessageTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'parentMessageType', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByRequestId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRequestId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'requestId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByRequestIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRequestIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'requestId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByRootId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRequireAuth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'requireAuth', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRequireAuthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'requireAuth', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRootId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rootId', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByRootIdDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByRootIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rootId', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenBySendingStatus() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenBySendingStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sendingStatus', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
       thenBySendingStatusDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sendingStatus', Sort.desc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByTranslations() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'translations', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy>
-      thenByTranslationsDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'translations', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByUpdatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QAfterSortBy> thenByUpdatedAtDesc() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QAfterSortBy>
+      thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
 
-extension CUserMessageQueryWhereDistinct
-    on QueryBuilder<CUserMessage, CUserMessage, QDistinct> {
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByChannelType() {
+extension CMultipleFilesMessageQueryWhereDistinct
+    on QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct> {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByChannelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'channelType');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByChannelUrl(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByChannelUrl({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'channelUrl', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByCreatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByCustomType(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByCustomType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'customType', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByData(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByData({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'data', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByErrorCode() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByErrorCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'errorCode');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByExtendedMessage(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByExtendedMessage({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'extendedMessage',
           caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByIsOperatorMessage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isOperatorMessage');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByIsReplyToChannel() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isReplyToChannel');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByIsSilent() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByIsSilent() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSilent');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByMentionType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByMentionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mentionType');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByMentionedUserIds() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mentionedUserIds');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByMentionedUsers() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mentionedUsers');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByMessage(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByMessage({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'message', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByMessageId() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'messageId');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByMessageSurvivalSeconds() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'messageSurvivalSeconds');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByMessageType() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'messageType');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByParentMessageId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'parentMessageId');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByParentMessageRootId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'parentMessageRootId',
@@ -5109,274 +4950,283 @@ extension CUserMessageQueryWhereDistinct
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctByParentMessageType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'parentMessageType');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByRequestId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByRequestId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'requestId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByRootId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByRequireAuth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'requireAuth');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByRootId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rootId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
       distinctBySendingStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sendingStatus');
     });
   }
 
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct>
-      distinctByTranslationTargetLanguages() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'translationTargetLanguages');
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByTranslations(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'translations', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<CUserMessage, CUserMessage, QDistinct> distinctByUpdatedAt() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessage, QDistinct>
+      distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
     });
   }
 }
 
-extension CUserMessageQueryProperty
-    on QueryBuilder<CUserMessage, CUserMessage, QQueryProperty> {
-  QueryBuilder<CUserMessage, int, QQueryOperations> idProperty() {
+extension CMultipleFilesMessageQueryProperty on QueryBuilder<
+    CMultipleFilesMessage, CMultipleFilesMessage, QQueryProperty> {
+  QueryBuilder<CMultipleFilesMessage, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<CUserMessage, List<CMessageMetaArray>?, QQueryOperations>
-      allMetaArraysProperty() {
+  QueryBuilder<CMultipleFilesMessage, List<CMessageMetaArray>?,
+      QQueryOperations> allMetaArraysProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'allMetaArrays');
     });
   }
 
-  QueryBuilder<CUserMessage, ChannelType, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, ChannelType, QQueryOperations>
       channelTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'channelType');
     });
   }
 
-  QueryBuilder<CUserMessage, String, QQueryOperations> channelUrlProperty() {
+  QueryBuilder<CMultipleFilesMessage, String, QQueryOperations>
+      channelUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'channelUrl');
     });
   }
 
-  QueryBuilder<CUserMessage, int, QQueryOperations> createdAtProperty() {
+  QueryBuilder<CMultipleFilesMessage, int, QQueryOperations>
+      createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
     });
   }
 
-  QueryBuilder<CUserMessage, String?, QQueryOperations> customTypeProperty() {
+  QueryBuilder<CMultipleFilesMessage, String?, QQueryOperations>
+      customTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'customType');
     });
   }
 
-  QueryBuilder<CUserMessage, String?, QQueryOperations> dataProperty() {
+  QueryBuilder<CMultipleFilesMessage, String?, QQueryOperations>
+      dataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'data');
     });
   }
 
-  QueryBuilder<CUserMessage, int?, QQueryOperations> errorCodeProperty() {
+  QueryBuilder<CMultipleFilesMessage, int?, QQueryOperations>
+      errorCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'errorCode');
     });
   }
 
-  QueryBuilder<CUserMessage, String, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, String, QQueryOperations>
       extendedMessageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'extendedMessage');
     });
   }
 
-  QueryBuilder<CUserMessage, bool, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, List<CUploadedFileInfo>, QQueryOperations>
+      filesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'files');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, bool, QQueryOperations>
       isOperatorMessageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isOperatorMessage');
     });
   }
 
-  QueryBuilder<CUserMessage, bool, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, bool, QQueryOperations>
       isReplyToChannelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isReplyToChannel');
     });
   }
 
-  QueryBuilder<CUserMessage, bool, QQueryOperations> isSilentProperty() {
+  QueryBuilder<CMultipleFilesMessage, bool, QQueryOperations>
+      isSilentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSilent');
     });
   }
 
-  QueryBuilder<CUserMessage, MentionType, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, MentionType, QQueryOperations>
       mentionTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mentionType');
     });
   }
 
-  QueryBuilder<CUserMessage, List<String>, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, List<String>, QQueryOperations>
       mentionedUserIdsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mentionedUserIds');
     });
   }
 
-  QueryBuilder<CUserMessage, List<String>, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, List<String>, QQueryOperations>
       mentionedUsersProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mentionedUsers');
     });
   }
 
-  QueryBuilder<CUserMessage, String, QQueryOperations> messageProperty() {
+  QueryBuilder<CMultipleFilesMessage, String, QQueryOperations>
+      messageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'message');
     });
   }
 
-  QueryBuilder<CUserMessage, int, QQueryOperations> messageIdProperty() {
+  QueryBuilder<CMultipleFilesMessage, CMultipleFilesMessageCreateParams?,
+      QQueryOperations> messageCreateParamsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'messageCreateParams');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, int, QQueryOperations>
+      messageIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'messageId');
     });
   }
 
-  QueryBuilder<CUserMessage, int?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, int?, QQueryOperations>
       messageSurvivalSecondsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'messageSurvivalSeconds');
     });
   }
 
-  QueryBuilder<CUserMessage, MessageType, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, MessageType, QQueryOperations>
       messageTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'messageType');
     });
   }
 
-  QueryBuilder<CUserMessage, COGMetaData?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, COGMetaData?, QQueryOperations>
       ogMetaDataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ogMetaData');
     });
   }
 
-  QueryBuilder<CUserMessage, int?, QQueryOperations> parentMessageIdProperty() {
+  QueryBuilder<CMultipleFilesMessage, int?, QQueryOperations>
+      parentMessageIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'parentMessageId');
     });
   }
 
-  QueryBuilder<CUserMessage, String?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, String?, QQueryOperations>
       parentMessageRootIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'parentMessageRootId');
     });
   }
 
-  QueryBuilder<CUserMessage, MessageType, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, MessageType, QQueryOperations>
       parentMessageTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'parentMessageType');
     });
   }
 
-  QueryBuilder<CUserMessage, CPoll?, QQueryOperations> pollProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'poll');
-    });
-  }
-
-  QueryBuilder<CUserMessage, List<CReaction>?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, List<CReaction>?, QQueryOperations>
       reactionsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'reactions');
     });
   }
 
-  QueryBuilder<CUserMessage, String?, QQueryOperations> requestIdProperty() {
+  QueryBuilder<CMultipleFilesMessage, String?, QQueryOperations>
+      requestIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'requestId');
     });
   }
 
-  QueryBuilder<CUserMessage, String, QQueryOperations> rootIdProperty() {
+  QueryBuilder<CMultipleFilesMessage, bool, QQueryOperations>
+      requireAuthProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'requireAuth');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessage, String, QQueryOperations>
+      rootIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'rootId');
     });
   }
 
-  QueryBuilder<CUserMessage, CScheduledInfo?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, CScheduledInfo?, QQueryOperations>
       scheduledInfoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduledInfo');
     });
   }
 
-  QueryBuilder<CUserMessage, CSender?, QQueryOperations> senderProperty() {
+  QueryBuilder<CMultipleFilesMessage, CSender?, QQueryOperations>
+      senderProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sender');
     });
   }
 
-  QueryBuilder<CUserMessage, SendingStatus, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, SendingStatus, QQueryOperations>
       sendingStatusProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sendingStatus');
     });
   }
 
-  QueryBuilder<CUserMessage, CThreadInfo?, QQueryOperations>
+  QueryBuilder<CMultipleFilesMessage, CThreadInfo?, QQueryOperations>
       threadInfoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'threadInfo');
     });
   }
 
-  QueryBuilder<CUserMessage, List<String>?, QQueryOperations>
-      translationTargetLanguagesProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'translationTargetLanguages');
-    });
-  }
-
-  QueryBuilder<CUserMessage, String, QQueryOperations> translationsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'translations');
-    });
-  }
-
-  QueryBuilder<CUserMessage, int, QQueryOperations> updatedAtProperty() {
+  QueryBuilder<CMultipleFilesMessage, int, QQueryOperations>
+      updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
     });
@@ -5390,196 +5240,125 @@ extension CUserMessageQueryProperty
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-final CPollSchema = Schema(
-  name: r'CPoll',
-  id: BigInt.parse('-6002142452581641545').toInt(),
+final CUploadedFileInfoSchema = Schema(
+  name: r'CUploadedFileInfo',
+  id: BigInt.parse('7074409426857052605').toInt(),
   properties: {
-    r'allowMultipleVotes': PropertySchema(
+    r'name': PropertySchema(
       id: 0,
-      name: r'allowMultipleVotes',
-      type: IsarType.bool,
+      name: r'name',
+      type: IsarType.string,
     ),
-    r'allowUserSuggestion': PropertySchema(
+    r'requireAuth': PropertySchema(
       id: 1,
-      name: r'allowUserSuggestion',
+      name: r'requireAuth',
       type: IsarType.bool,
     ),
-    r'closeAt': PropertySchema(
+    r'size': PropertySchema(
       id: 2,
-      name: r'closeAt',
+      name: r'size',
       type: IsarType.long,
     ),
-    r'createdAt': PropertySchema(
+    r'thumbnails': PropertySchema(
       id: 3,
-      name: r'createdAt',
-      type: IsarType.long,
-    ),
-    r'createdBy': PropertySchema(
-      id: 4,
-      name: r'createdBy',
-      type: IsarType.string,
-    ),
-    r'data': PropertySchema(
-      id: 5,
-      name: r'data',
-      type: IsarType.object,
-      target: r'CPollData',
-    ),
-    r'id': PropertySchema(
-      id: 6,
-      name: r'id',
-      type: IsarType.long,
-    ),
-    r'messageId': PropertySchema(
-      id: 7,
-      name: r'messageId',
-      type: IsarType.long,
-    ),
-    r'options': PropertySchema(
-      id: 8,
-      name: r'options',
+      name: r'thumbnails',
       type: IsarType.objectList,
-      target: r'CPollOption',
+      target: r'CThumbnail',
     ),
-    r'status': PropertySchema(
-      id: 9,
-      name: r'status',
-      type: IsarType.byte,
-      enumMap: _CPollstatusEnumValueMap,
-    ),
-    r'title': PropertySchema(
-      id: 10,
-      name: r'title',
+    r'type': PropertySchema(
+      id: 4,
+      name: r'type',
       type: IsarType.string,
     ),
-    r'updatedAt': PropertySchema(
-      id: 11,
-      name: r'updatedAt',
-      type: IsarType.long,
-    ),
-    r'votedPollOptionIds': PropertySchema(
-      id: 12,
-      name: r'votedPollOptionIds',
-      type: IsarType.longList,
-    ),
-    r'voterCount': PropertySchema(
-      id: 13,
-      name: r'voterCount',
-      type: IsarType.long,
+    r'url': PropertySchema(
+      id: 5,
+      name: r'url',
+      type: IsarType.string,
     )
   },
-  estimateSize: _cPollEstimateSize,
-  serialize: _cPollSerialize,
-  deserialize: _cPollDeserialize,
-  deserializeProp: _cPollDeserializeProp,
+  estimateSize: _cUploadedFileInfoEstimateSize,
+  serialize: _cUploadedFileInfoSerialize,
+  deserialize: _cUploadedFileInfoDeserialize,
+  deserializeProp: _cUploadedFileInfoDeserializeProp,
 );
 
-int _cPollEstimateSize(
-  CPoll object,
+int _cUploadedFileInfoEstimateSize(
+  CUploadedFileInfo object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
   {
-    final value = object.createdBy;
+    final value = object.name;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
   }
   {
-    final value = object.data;
-    if (value != null) {
-      bytesCount += 3 +
-          CPollDataSchema.estimateSize(
-              value, allOffsets[CPollData]!, allOffsets);
+    final list = object.thumbnails;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CThumbnail]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount +=
+              CThumbnailSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
     }
   }
-  bytesCount += 3 + object.options.length * 3;
   {
-    final offsets = allOffsets[CPollOption]!;
-    for (var i = 0; i < object.options.length; i++) {
-      final value = object.options[i];
-      bytesCount += CPollOptionSchema.estimateSize(value, offsets, allOffsets);
-    }
-  }
-  bytesCount += 3 + object.title.length * 3;
-  {
-    final value = object.votedPollOptionIds;
+    final value = object.type;
     if (value != null) {
-      bytesCount += 3 + value.length * 8;
+      bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.url.length * 3;
   return bytesCount;
 }
 
-void _cPollSerialize(
-  CPoll object,
+void _cUploadedFileInfoSerialize(
+  CUploadedFileInfo object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.allowMultipleVotes);
-  writer.writeBool(offsets[1], object.allowUserSuggestion);
-  writer.writeLong(offsets[2], object.closeAt);
-  writer.writeLong(offsets[3], object.createdAt);
-  writer.writeString(offsets[4], object.createdBy);
-  writer.writeObject<CPollData>(
-    offsets[5],
+  writer.writeString(offsets[0], object.name);
+  writer.writeBool(offsets[1], object.requireAuth);
+  writer.writeLong(offsets[2], object.size);
+  writer.writeObjectList<CThumbnail>(
+    offsets[3],
     allOffsets,
-    CPollDataSchema.serialize,
-    object.data,
+    CThumbnailSchema.serialize,
+    object.thumbnails,
   );
-  writer.writeLong(offsets[6], object.id);
-  writer.writeLong(offsets[7], object.messageId);
-  writer.writeObjectList<CPollOption>(
-    offsets[8],
-    allOffsets,
-    CPollOptionSchema.serialize,
-    object.options,
-  );
-  writer.writeByte(offsets[9], object.status.index);
-  writer.writeString(offsets[10], object.title);
-  writer.writeLong(offsets[11], object.updatedAt);
-  writer.writeLongList(offsets[12], object.votedPollOptionIds);
-  writer.writeLong(offsets[13], object.voterCount);
+  writer.writeString(offsets[4], object.type);
+  writer.writeString(offsets[5], object.url);
 }
 
-CPoll _cPollDeserialize(
+CUploadedFileInfo _cUploadedFileInfoDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = CPoll();
-  object.allowMultipleVotes = reader.readBool(offsets[0]);
-  object.allowUserSuggestion = reader.readBool(offsets[1]);
-  object.closeAt = reader.readLong(offsets[2]);
-  object.createdAt = reader.readLong(offsets[3]);
-  object.createdBy = reader.readStringOrNull(offsets[4]);
-  object.data = reader.readObjectOrNull<CPollData>(
-    offsets[5],
-    CPollDataSchema.deserialize,
+  final object = CUploadedFileInfo();
+  object.name = reader.readStringOrNull(offsets[0]);
+  object.requireAuth = reader.readBool(offsets[1]);
+  object.size = reader.readLongOrNull(offsets[2]);
+  object.thumbnails = reader.readObjectList<CThumbnail>(
+    offsets[3],
+    CThumbnailSchema.deserialize,
     allOffsets,
+    CThumbnail(),
   );
-  object.id = reader.readLong(offsets[6]);
-  object.messageId = reader.readLongOrNull(offsets[7]);
-  object.options = reader.readObjectList<CPollOption>(
-        offsets[8],
-        CPollOptionSchema.deserialize,
-        allOffsets,
-        CPollOption(),
-      ) ??
-      [];
-  object.status = _CPollstatusValueEnumMap[reader.readByteOrNull(offsets[9])] ??
-      PollStatus.open;
-  object.title = reader.readString(offsets[10]);
-  object.updatedAt = reader.readLong(offsets[11]);
-  object.votedPollOptionIds = reader.readLongList(offsets[12]);
-  object.voterCount = reader.readLong(offsets[13]);
+  object.type = reader.readStringOrNull(offsets[4]);
+  object.url = reader.readString(offsets[5]);
   return object;
 }
 
-P _cPollDeserializeProp<P>(
+P _cUploadedFileInfoDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -5587,214 +5366,63 @@ P _cPollDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readObjectList<CThumbnail>(
+        offset,
+        CThumbnailSchema.deserialize,
+        allOffsets,
+        CThumbnail(),
+      )) as P;
     case 4:
       return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readObjectOrNull<CPollData>(
-        offset,
-        CPollDataSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 6:
-      return (reader.readLong(offset)) as P;
-    case 7:
-      return (reader.readLongOrNull(offset)) as P;
-    case 8:
-      return (reader.readObjectList<CPollOption>(
-            offset,
-            CPollOptionSchema.deserialize,
-            allOffsets,
-            CPollOption(),
-          ) ??
-          []) as P;
-    case 9:
-      return (_CPollstatusValueEnumMap[reader.readByteOrNull(offset)] ??
-          PollStatus.open) as P;
-    case 10:
       return (reader.readString(offset)) as P;
-    case 11:
-      return (reader.readLong(offset)) as P;
-    case 12:
-      return (reader.readLongList(offset)) as P;
-    case 13:
-      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-const _CPollstatusEnumValueMap = {
-  'open': 0,
-  'closed': 1,
-};
-const _CPollstatusValueEnumMap = {
-  0: PollStatus.open,
-  1: PollStatus.closed,
-};
-
-extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> allowMultipleVotesEqualTo(
-      bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'allowMultipleVotes',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> allowUserSuggestionEqualTo(
-      bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'allowUserSuggestion',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> closeAtEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'closeAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> closeAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'closeAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> closeAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'closeAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> closeAtBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'closeAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdAtEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdAtBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByIsNull() {
+extension CUploadedFileInfoQueryFilter
+    on QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QFilterCondition> {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'createdBy',
+        property: r'name',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByIsNotNull() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'createdBy',
+        property: r'name',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByEqualTo(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByGreaterThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5802,14 +5430,15 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByLessThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5817,14 +5446,15 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByBetween(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5833,7 +5463,7 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'createdBy',
+        property: r'name',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -5843,195 +5473,144 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByStartsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByEndsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'createdBy',
+        property: r'name',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'createdBy',
+        property: r'name',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByIsEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdBy',
+        property: r'name',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> createdByIsNotEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'createdBy',
+        property: r'name',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> dataIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'data',
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> dataIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'data',
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> idEqualTo(int value) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      requireAuthEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
+        property: r'requireAuth',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> idGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> idLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdIsNull() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'messageId',
+        property: r'size',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdIsNotNull() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'messageId',
+        property: r'size',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdEqualTo(
-      int? value) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'messageId',
+        property: r'size',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdGreaterThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'messageId',
+        property: r'size',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdLessThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'messageId',
+        property: r'size',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> messageIdBetween(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      sizeBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -6039,7 +5618,7 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'messageId',
+        property: r'size',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -6048,11 +5627,29 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsLengthEqualTo(
-      int length) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'thumbnails',
+      ));
+    });
+  }
+
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'thumbnails',
+      ));
+    });
+  }
+
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         length,
         true,
         length,
@@ -6061,10 +5658,11 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsIsEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         0,
         true,
         0,
@@ -6073,10 +5671,11 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsIsNotEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         0,
         false,
         999999,
@@ -6085,13 +5684,14 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsLengthLessThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsLengthLessThan(
     int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         0,
         true,
         length,
@@ -6100,13 +5700,14 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsLengthGreaterThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         length,
         include,
         999999,
@@ -6115,7 +5716,8 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsLengthBetween(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -6123,7 +5725,7 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
-        r'options',
+        r'thumbnails',
         lower,
         includeLower,
         upper,
@@ -6132,886 +5734,40 @@ extension CPollQueryFilter on QueryBuilder<CPoll, CPoll, QFilterCondition> {
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> statusEqualTo(
-      PollStatus value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> statusGreaterThan(
-    PollStatus value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> statusLessThan(
-    PollStatus value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'status',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> statusBetween(
-    PollStatus lower,
-    PollStatus upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'status',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'title',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleContains(String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleMatches(String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'title',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> titleIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> updatedAtEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> updatedAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> updatedAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> updatedAtBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> votedPollOptionIdsIsNull() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'votedPollOptionIds',
+        property: r'type',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsIsNotNull() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'votedPollOptionIds',
+        property: r'type',
       ));
     });
   }
 
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsElementEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'votedPollOptionIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsElementGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'votedPollOptionIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsElementLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'votedPollOptionIds',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsElementBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'votedPollOptionIds',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition>
-      votedPollOptionIdsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'votedPollOptionIds',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> voterCountEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'voterCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> voterCountGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'voterCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> voterCountLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'voterCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> voterCountBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'voterCount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-}
-
-extension CPollQueryObject on QueryBuilder<CPoll, CPoll, QFilterCondition> {
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> data(
-      FilterQuery<CPollData> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'data');
-    });
-  }
-
-  QueryBuilder<CPoll, CPoll, QAfterFilterCondition> optionsElement(
-      FilterQuery<CPollOption> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'options');
-    });
-  }
-}
-
-// coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
-
-final CPollDataSchema = Schema(
-  name: r'CPollData',
-  id: BigInt.parse('213822990569344781').toInt(),
-  properties: {
-    r'text': PropertySchema(
-      id: 0,
-      name: r'text',
-      type: IsarType.string,
-    )
-  },
-  estimateSize: _cPollDataEstimateSize,
-  serialize: _cPollDataSerialize,
-  deserialize: _cPollDataDeserialize,
-  deserializeProp: _cPollDataDeserializeProp,
-);
-
-int _cPollDataEstimateSize(
-  CPollData object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  bytesCount += 3 + object.text.length * 3;
-  return bytesCount;
-}
-
-void _cPollDataSerialize(
-  CPollData object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeString(offsets[0], object.text);
-}
-
-CPollData _cPollDataDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = CPollData();
-  object.text = reader.readString(offsets[0]);
-  return object;
-}
-
-P _cPollDataDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readString(offset)) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-extension CPollDataQueryFilter
-    on QueryBuilder<CPollData, CPollData, QFilterCondition> {
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'text',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'text',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'text',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'text',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CPollData, CPollData, QAfterFilterCondition> textIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'text',
-        value: '',
-      ));
-    });
-  }
-}
-
-extension CPollDataQueryObject
-    on QueryBuilder<CPollData, CPollData, QFilterCondition> {}
-
-// coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
-
-final CPollOptionSchema = Schema(
-  name: r'CPollOption',
-  id: BigInt.parse('-1226183442370331930').toInt(),
-  properties: {
-    r'createdAt': PropertySchema(
-      id: 0,
-      name: r'createdAt',
-      type: IsarType.long,
-    ),
-    r'createdBy': PropertySchema(
-      id: 1,
-      name: r'createdBy',
-      type: IsarType.string,
-    ),
-    r'id': PropertySchema(
-      id: 2,
-      name: r'id',
-      type: IsarType.long,
-    ),
-    r'pollId': PropertySchema(
-      id: 3,
-      name: r'pollId',
-      type: IsarType.long,
-    ),
-    r'text': PropertySchema(
-      id: 4,
-      name: r'text',
-      type: IsarType.string,
-    ),
-    r'updatedAt': PropertySchema(
-      id: 5,
-      name: r'updatedAt',
-      type: IsarType.long,
-    ),
-    r'voteCount': PropertySchema(
-      id: 6,
-      name: r'voteCount',
-      type: IsarType.long,
-    )
-  },
-  estimateSize: _cPollOptionEstimateSize,
-  serialize: _cPollOptionSerialize,
-  deserialize: _cPollOptionDeserialize,
-  deserializeProp: _cPollOptionDeserializeProp,
-);
-
-int _cPollOptionEstimateSize(
-  CPollOption object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  {
-    final value = object.createdBy;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  bytesCount += 3 + object.text.length * 3;
-  return bytesCount;
-}
-
-void _cPollOptionSerialize(
-  CPollOption object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeLong(offsets[0], object.createdAt);
-  writer.writeString(offsets[1], object.createdBy);
-  writer.writeLong(offsets[2], object.id);
-  writer.writeLong(offsets[3], object.pollId);
-  writer.writeString(offsets[4], object.text);
-  writer.writeLong(offsets[5], object.updatedAt);
-  writer.writeLong(offsets[6], object.voteCount);
-}
-
-CPollOption _cPollOptionDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = CPollOption();
-  object.createdAt = reader.readLong(offsets[0]);
-  object.createdBy = reader.readStringOrNull(offsets[1]);
-  object.id = reader.readLong(offsets[2]);
-  object.pollId = reader.readLong(offsets[3]);
-  object.text = reader.readString(offsets[4]);
-  object.updatedAt = reader.readLong(offsets[5]);
-  object.voteCount = reader.readLong(offsets[6]);
-  return object;
-}
-
-P _cPollOptionDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readLong(offset)) as P;
-    case 1:
-      return (reader.readStringOrNull(offset)) as P;
-    case 2:
-      return (reader.readLong(offset)) as P;
-    case 3:
-      return (reader.readLong(offset)) as P;
-    case 4:
-      return (reader.readString(offset)) as P;
-    case 5:
-      return (reader.readLong(offset)) as P;
-    case 6:
-      return (reader.readLong(offset)) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-extension CPollOptionQueryFilter
-    on QueryBuilder<CPollOption, CPollOption, QFilterCondition> {
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdAtEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdAtBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'createdBy',
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'createdBy',
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByEqualTo(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByGreaterThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7019,15 +5775,15 @@ extension CPollOptionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByLessThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7035,15 +5791,15 @@ extension CPollOptionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByBetween(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7052,7 +5808,7 @@ extension CPollOptionQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'createdBy',
+        property: r'type',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -7062,197 +5818,92 @@ extension CPollOptionQueryFilter
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByStartsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByEndsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'createdBy',
+        property: r'type',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'createdBy',
+        property: r'type',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByIsEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdBy',
+        property: r'type',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      createdByIsNotEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      typeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'createdBy',
+        property: r'type',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> idEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> idGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> idLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> pollIdEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'pollId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      pollIdGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'pollId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> pollIdLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'pollId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> pollIdBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'pollId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textEqualTo(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textGreaterThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7260,14 +5911,15 @@ extension CPollOptionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textLessThan(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7275,14 +5927,15 @@ extension CPollOptionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textBetween(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7291,7 +5944,7 @@ extension CPollOptionQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'text',
+        property: r'url',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -7301,187 +5954,1690 @@ extension CPollOptionQueryFilter
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textStartsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textEndsWith(
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'text',
+        property: r'url',
         value: value,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'text',
+        property: r'url',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition> textIsEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'text',
+        property: r'url',
         value: '',
       ));
     });
   }
 
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      textIsNotEmpty() {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      urlIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'text',
+        property: r'url',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      updatedAtEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      updatedAtLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      updatedAtBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      voteCountEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'voteCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      voteCountGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'voteCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      voteCountLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'voteCount',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CPollOption, CPollOption, QAfterFilterCondition>
-      voteCountBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'voteCount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
 }
 
-extension CPollOptionQueryObject
-    on QueryBuilder<CPollOption, CPollOption, QFilterCondition> {}
+extension CUploadedFileInfoQueryObject
+    on QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QFilterCondition> {
+  QueryBuilder<CUploadedFileInfo, CUploadedFileInfo, QAfterFilterCondition>
+      thumbnailsElement(FilterQuery<CThumbnail> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'thumbnails');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+final CMultipleFilesMessageCreateParamsSchema = Schema(
+  name: r'CMultipleFilesMessageCreateParams',
+  id: BigInt.parse('43571134612513255').toInt(),
+  properties: {
+    r'customType': PropertySchema(
+      id: 0,
+      name: r'customType',
+      type: IsarType.string,
+    ),
+    r'data': PropertySchema(
+      id: 1,
+      name: r'data',
+      type: IsarType.string,
+    ),
+    r'isPinnedMessage': PropertySchema(
+      id: 2,
+      name: r'isPinnedMessage',
+      type: IsarType.bool,
+    ),
+    r'mentionType': PropertySchema(
+      id: 3,
+      name: r'mentionType',
+      type: IsarType.byte,
+      enumMap: _CMultipleFilesMessageCreateParamsmentionTypeEnumValueMap,
+    ),
+    r'mentionedUserIds': PropertySchema(
+      id: 4,
+      name: r'mentionedUserIds',
+      type: IsarType.stringList,
+    ),
+    r'metaArrays': PropertySchema(
+      id: 5,
+      name: r'metaArrays',
+      type: IsarType.objectList,
+      target: r'CMessageMetaArray',
+    ),
+    r'parentMessageId': PropertySchema(
+      id: 6,
+      name: r'parentMessageId',
+      type: IsarType.long,
+    ),
+    r'pushNotificationDeliveryOption': PropertySchema(
+      id: 7,
+      name: r'pushNotificationDeliveryOption',
+      type: IsarType.byte,
+      enumMap:
+          _CMultipleFilesMessageCreateParamspushNotificationDeliveryOptionEnumValueMap,
+    ),
+    r'replyToChannel': PropertySchema(
+      id: 8,
+      name: r'replyToChannel',
+      type: IsarType.bool,
+    ),
+    r'uploadableFileInfoList': PropertySchema(
+      id: 9,
+      name: r'uploadableFileInfoList',
+      type: IsarType.objectList,
+      target: r'CUploadableFileInfo',
+    )
+  },
+  estimateSize: _cMultipleFilesMessageCreateParamsEstimateSize,
+  serialize: _cMultipleFilesMessageCreateParamsSerialize,
+  deserialize: _cMultipleFilesMessageCreateParamsDeserialize,
+  deserializeProp: _cMultipleFilesMessageCreateParamsDeserializeProp,
+);
+
+int _cMultipleFilesMessageCreateParamsEstimateSize(
+  CMultipleFilesMessageCreateParams object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.customType;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.data;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final list = object.mentionedUserIds;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
+    }
+  }
+  {
+    final list = object.metaArrays;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CMessageMetaArray]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount +=
+              CMessageMetaArraySchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  bytesCount += 3 + object.uploadableFileInfoList.length * 3;
+  {
+    final offsets = allOffsets[CUploadableFileInfo]!;
+    for (var i = 0; i < object.uploadableFileInfoList.length; i++) {
+      final value = object.uploadableFileInfoList[i];
+      bytesCount +=
+          CUploadableFileInfoSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
+  return bytesCount;
+}
+
+void _cMultipleFilesMessageCreateParamsSerialize(
+  CMultipleFilesMessageCreateParams object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.customType);
+  writer.writeString(offsets[1], object.data);
+  writer.writeBool(offsets[2], object.isPinnedMessage);
+  writer.writeByte(offsets[3], object.mentionType.index);
+  writer.writeStringList(offsets[4], object.mentionedUserIds);
+  writer.writeObjectList<CMessageMetaArray>(
+    offsets[5],
+    allOffsets,
+    CMessageMetaArraySchema.serialize,
+    object.metaArrays,
+  );
+  writer.writeLong(offsets[6], object.parentMessageId);
+  writer.writeByte(offsets[7], object.pushNotificationDeliveryOption.index);
+  writer.writeBool(offsets[8], object.replyToChannel);
+  writer.writeObjectList<CUploadableFileInfo>(
+    offsets[9],
+    allOffsets,
+    CUploadableFileInfoSchema.serialize,
+    object.uploadableFileInfoList,
+  );
+}
+
+CMultipleFilesMessageCreateParams _cMultipleFilesMessageCreateParamsDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = CMultipleFilesMessageCreateParams();
+  object.customType = reader.readStringOrNull(offsets[0]);
+  object.data = reader.readStringOrNull(offsets[1]);
+  object.isPinnedMessage = reader.readBool(offsets[2]);
+  object.mentionType =
+      _CMultipleFilesMessageCreateParamsmentionTypeValueEnumMap[
+              reader.readByteOrNull(offsets[3])] ??
+          MentionType.users;
+  object.mentionedUserIds = reader.readStringList(offsets[4]);
+  object.metaArrays = reader.readObjectList<CMessageMetaArray>(
+    offsets[5],
+    CMessageMetaArraySchema.deserialize,
+    allOffsets,
+    CMessageMetaArray(),
+  );
+  object.parentMessageId = reader.readLongOrNull(offsets[6]);
+  object.pushNotificationDeliveryOption =
+      _CMultipleFilesMessageCreateParamspushNotificationDeliveryOptionValueEnumMap[
+              reader.readByteOrNull(offsets[7])] ??
+          PushNotificationDeliveryOption.normal;
+  object.replyToChannel = reader.readBool(offsets[8]);
+  object.uploadableFileInfoList = reader.readObjectList<CUploadableFileInfo>(
+        offsets[9],
+        CUploadableFileInfoSchema.deserialize,
+        allOffsets,
+        CUploadableFileInfo(),
+      ) ??
+      [];
+  return object;
+}
+
+P _cMultipleFilesMessageCreateParamsDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
+    case 3:
+      return (_CMultipleFilesMessageCreateParamsmentionTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          MentionType.users) as P;
+    case 4:
+      return (reader.readStringList(offset)) as P;
+    case 5:
+      return (reader.readObjectList<CMessageMetaArray>(
+        offset,
+        CMessageMetaArraySchema.deserialize,
+        allOffsets,
+        CMessageMetaArray(),
+      )) as P;
+    case 6:
+      return (reader.readLongOrNull(offset)) as P;
+    case 7:
+      return (_CMultipleFilesMessageCreateParamspushNotificationDeliveryOptionValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          PushNotificationDeliveryOption.normal) as P;
+    case 8:
+      return (reader.readBool(offset)) as P;
+    case 9:
+      return (reader.readObjectList<CUploadableFileInfo>(
+            offset,
+            CUploadableFileInfoSchema.deserialize,
+            allOffsets,
+            CUploadableFileInfo(),
+          ) ??
+          []) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+const _CMultipleFilesMessageCreateParamsmentionTypeEnumValueMap = {
+  'users': 0,
+  'channel': 1,
+};
+const _CMultipleFilesMessageCreateParamsmentionTypeValueEnumMap = {
+  0: MentionType.users,
+  1: MentionType.channel,
+};
+const _CMultipleFilesMessageCreateParamspushNotificationDeliveryOptionEnumValueMap =
+    {
+  'normal': 0,
+  'suppress': 1,
+  'force': 2,
+};
+const _CMultipleFilesMessageCreateParamspushNotificationDeliveryOptionValueEnumMap =
+    {
+  0: PushNotificationDeliveryOption.normal,
+  1: PushNotificationDeliveryOption.suppress,
+  2: PushNotificationDeliveryOption.force,
+};
+
+extension CMultipleFilesMessageCreateParamsQueryFilter on QueryBuilder<
+    CMultipleFilesMessageCreateParams,
+    CMultipleFilesMessageCreateParams,
+    QFilterCondition> {
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'customType',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'customType',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'customType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      customTypeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'customType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      customTypeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'customType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> customTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'customType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'data',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> dataIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'data',
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'data',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      dataContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'data',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      dataMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'data',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams, QAfterFilterCondition> dataIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'data',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> dataIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'data',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> isPinnedMessageEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isPinnedMessage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionTypeEqualTo(MentionType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionTypeGreaterThan(
+    MentionType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mentionType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionTypeLessThan(
+    MentionType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mentionType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionTypeBetween(
+    MentionType lower,
+    MentionType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mentionType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'mentionedUserIds',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'mentionedUserIds',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mentionedUserIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      mentionedUserIdsElementContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mentionedUserIds',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      mentionedUserIdsElementMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mentionedUserIds',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mentionedUserIds',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> mentionedUserIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mentionedUserIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'metaArrays',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'metaArrays',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> metaArraysLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'metaArrays',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'parentMessageId',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'parentMessageId',
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'parentMessageId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'parentMessageId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'parentMessageId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> parentMessageIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'parentMessageId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      pushNotificationDeliveryOptionEqualTo(
+          PushNotificationDeliveryOption value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'pushNotificationDeliveryOption',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> pushNotificationDeliveryOptionGreaterThan(
+    PushNotificationDeliveryOption value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'pushNotificationDeliveryOption',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> pushNotificationDeliveryOptionLessThan(
+    PushNotificationDeliveryOption value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'pushNotificationDeliveryOption',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> pushNotificationDeliveryOptionBetween(
+    PushNotificationDeliveryOption lower,
+    PushNotificationDeliveryOption upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'pushNotificationDeliveryOption',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> replyToChannelEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'replyToChannel',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<
+      CMultipleFilesMessageCreateParams,
+      CMultipleFilesMessageCreateParams,
+      QAfterFilterCondition> uploadableFileInfoListLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'uploadableFileInfoList',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+}
+
+extension CMultipleFilesMessageCreateParamsQueryObject on QueryBuilder<
+    CMultipleFilesMessageCreateParams,
+    CMultipleFilesMessageCreateParams,
+    QFilterCondition> {
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      metaArraysElement(FilterQuery<CMessageMetaArray> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'metaArrays');
+    });
+  }
+
+  QueryBuilder<CMultipleFilesMessageCreateParams,
+          CMultipleFilesMessageCreateParams, QAfterFilterCondition>
+      uploadableFileInfoListElement(FilterQuery<CUploadableFileInfo> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'uploadableFileInfoList');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+final CUploadableFileInfoSchema = Schema(
+  name: r'CUploadableFileInfo',
+  id: BigInt.parse('-6703378113458311977').toInt(),
+  properties: {
+    r'fileInfo': PropertySchema(
+      id: 0,
+      name: r'fileInfo',
+      type: IsarType.object,
+      target: r'CFileInfo',
+    ),
+    r'thumbnailSizes': PropertySchema(
+      id: 1,
+      name: r'thumbnailSizes',
+      type: IsarType.objectList,
+      target: r'CSize',
+    )
+  },
+  estimateSize: _cUploadableFileInfoEstimateSize,
+  serialize: _cUploadableFileInfoSerialize,
+  deserialize: _cUploadableFileInfoDeserialize,
+  deserializeProp: _cUploadableFileInfoDeserializeProp,
+);
+
+int _cUploadableFileInfoEstimateSize(
+  CUploadableFileInfo object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 +
+      CFileInfoSchema.estimateSize(
+          object.fileInfo, allOffsets[CFileInfo]!, allOffsets);
+  {
+    final list = object.thumbnailSizes;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CSize]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CSizeSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  return bytesCount;
+}
+
+void _cUploadableFileInfoSerialize(
+  CUploadableFileInfo object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeObject<CFileInfo>(
+    offsets[0],
+    allOffsets,
+    CFileInfoSchema.serialize,
+    object.fileInfo,
+  );
+  writer.writeObjectList<CSize>(
+    offsets[1],
+    allOffsets,
+    CSizeSchema.serialize,
+    object.thumbnailSizes,
+  );
+}
+
+CUploadableFileInfo _cUploadableFileInfoDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = CUploadableFileInfo();
+  object.fileInfo = reader.readObjectOrNull<CFileInfo>(
+        offsets[0],
+        CFileInfoSchema.deserialize,
+        allOffsets,
+      ) ??
+      CFileInfo();
+  object.thumbnailSizes = reader.readObjectList<CSize>(
+    offsets[1],
+    CSizeSchema.deserialize,
+    allOffsets,
+    CSize(),
+  );
+  return object;
+}
+
+P _cUploadableFileInfoDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readObjectOrNull<CFileInfo>(
+            offset,
+            CFileInfoSchema.deserialize,
+            allOffsets,
+          ) ??
+          CFileInfo()) as P;
+    case 1:
+      return (reader.readObjectList<CSize>(
+        offset,
+        CSizeSchema.deserialize,
+        allOffsets,
+        CSize(),
+      )) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension CUploadableFileInfoQueryFilter on QueryBuilder<CUploadableFileInfo,
+    CUploadableFileInfo, QFilterCondition> {
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'thumbnailSizes',
+      ));
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'thumbnailSizes',
+      ));
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'thumbnailSizes',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+}
+
+extension CUploadableFileInfoQueryObject on QueryBuilder<CUploadableFileInfo,
+    CUploadableFileInfo, QFilterCondition> {
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      fileInfo(FilterQuery<CFileInfo> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'fileInfo');
+    });
+  }
+
+  QueryBuilder<CUploadableFileInfo, CUploadableFileInfo, QAfterFilterCondition>
+      thumbnailSizesElement(FilterQuery<CSize> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'thumbnailSizes');
+    });
+  }
+}

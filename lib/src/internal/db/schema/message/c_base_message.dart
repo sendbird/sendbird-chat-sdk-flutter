@@ -5,11 +5,13 @@ import 'dart:convert';
 import 'package:isar_community/isar.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_admin_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_file_message.dart';
+import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_root_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_user_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/user/c_sender.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/user/c_user.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
@@ -145,6 +147,7 @@ class CBaseMessage extends CRootMessage {
       message = await CUserMessage.get(chat, isar, rootId);
     } else if (messageType == MessageType.file) {
       message = await CFileMessage.get(chat, isar, rootId);
+      message ??= await CMultipleFilesMessage.get(chat, isar, rootId);
     } else if (messageType == MessageType.admin) {
       message = await CAdminMessage.get(chat, isar, rootId);
     }
@@ -163,6 +166,9 @@ class CBaseMessage extends CRootMessage {
       await isar.cUserMessages.put(CUserMessage.fromUserMessage(message));
     } else if (message is FileMessage) {
       await isar.cFileMessages.put(CFileMessage.fromFileMessage(message));
+    } else if (message is MultipleFilesMessage) {
+      await isar.cMultipleFilesMessages
+          .put(CMultipleFilesMessage.fromMultipleFilesMessage(message));
     } else if (message is AdminMessage) {
       await isar.cAdminMessages.put(CAdminMessage.fromAdminMessage(message));
     }

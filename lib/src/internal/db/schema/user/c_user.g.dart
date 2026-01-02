@@ -99,7 +99,7 @@ final CUserSchema = CollectionSchema(
   getId: _cUserGetId,
   getLinks: _cUserGetLinks,
   attach: _cUserAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cUserEstimateSize(

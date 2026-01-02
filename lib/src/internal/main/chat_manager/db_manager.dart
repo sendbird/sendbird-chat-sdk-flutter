@@ -18,6 +18,7 @@ import 'package:sendbird_chat_sdk/src/internal/db/schema/login/c_login.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/login/login.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_admin_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_file_message.dart';
+import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_notification_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_user_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/meta/c_channel_access.dart';
@@ -97,6 +98,7 @@ class DBManager {
           CChannelAccessSchema,
           CChannelMessageSchema,
           CFileMessageSchema,
+          CMultipleFilesMessageSchema,
           CNotificationMessageSchema,
           CUserMessageSchema,
           // User
@@ -400,10 +402,30 @@ class DBManager {
             await _db.upsertUserMessage(message as UserMessage);
             break;
           case MessageType.file:
-            // withFileBytes() is not supported.
-            final params = (message as FileMessage).messageCreateParams;
-            if (params == null || params.fileInfo.fileBytes == null) {
-              await _db.upsertFileMessage(message);
+            if (message is FileMessage) {
+              final params = message.messageCreateParams;
+              // fileBytes is not supported on db.
+              if (params == null || params.fileInfo.fileBytes == null) {
+                await _db.upsertFileMessage(message);
+              }
+            } else if (message is MultipleFilesMessage) {
+              bool hasFileBytes = false;
+
+              final params = message.messageCreateParams;
+              if (params != null) {
+                for (final uploadableFileInfo
+                    in params.uploadableFileInfoList) {
+                  if (uploadableFileInfo?.fileInfo.fileBytes != null) {
+                    hasFileBytes = true;
+                    break;
+                  }
+                }
+              }
+
+              // fileBytes is not supported on db.
+              if (!hasFileBytes) {
+                await _db.upsertMultipleFilesMessage(message);
+              }
             }
             break;
           case MessageType.admin:

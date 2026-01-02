@@ -8,6 +8,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/utils/type_checker.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
@@ -120,7 +121,7 @@ class RootMessage {
 
   MessageType get messageType => this is UserMessage
       ? MessageType.user
-      : this is FileMessage
+      : (this is FileMessage || this is MultipleFilesMessage)
           ? MessageType.file
           : this is AdminMessage
               ? MessageType.admin
@@ -208,6 +209,9 @@ class RootMessage {
     if (chat != null) {
       if (T == UserMessage || CommandString.isUserMessage(type)) {
         message = UserMessage.fromJsonWithChat(chat, json) as T;
+      } else if (T == MultipleFilesMessage ||
+          (json['files'] != null && json['files'].length >= 2)) {
+        message = MultipleFilesMessage.fromJsonWithChat(chat, json) as T;
       } else if (T == FileMessage || CommandString.isFileMessage(type)) {
         message = FileMessage.fromJsonWithChat(chat, json) as T;
       } else if (T == AdminMessage || CommandString.isAdminMessage(type)) {
@@ -218,6 +222,8 @@ class RootMessage {
     } else {
       if (CommandString.isUserMessage(type)) {
         message = UserMessage.fromJson(json);
+      } else if (json['files'] != null && json['files'].length >= 2) {
+        message = MultipleFilesMessage.fromJson(json);
       } else if (CommandString.isFileMessage(type)) {
         message = FileMessage.fromJson(json);
       } else if (CommandString.isAdminMessage(type)) {

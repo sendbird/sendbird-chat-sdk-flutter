@@ -67,7 +67,7 @@ class DefaultStatPrefs {
     final prefs = (await _prefs);
     String? deviceId = prefs.getString(prefDefaultStatsDeviceId);
     if (deviceId == null) {
-      deviceId = const Uuid().v1();
+      deviceId = const Uuid().v4();
       prefs.setString(prefDefaultStatsDeviceId, deviceId);
     }
     return deviceId;

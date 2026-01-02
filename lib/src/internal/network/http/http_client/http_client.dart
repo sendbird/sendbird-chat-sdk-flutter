@@ -260,7 +260,9 @@ class HttpClient {
             value.file!.openRead(),
             value.file!.lengthSync(),
             filename: value.fileName,
-            contentType: MediaType.parse(value.mimeType!),
+            contentType: (value.mimeType == null || value.mimeType == "")
+                ? null
+                : MediaType.parse(value.mimeType!),
           );
         }
 

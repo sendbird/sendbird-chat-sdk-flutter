@@ -11,6 +11,8 @@ part 'app_info.g.dart';
 /// The values for this will be set after a connection has been made.
 @JsonSerializable(createToJson: false)
 class AppInfo {
+  static const multipleFilesMessageDefaultFileCountLimit = 30;
+
   /// List of all premium features that application is using.
   @JsonKey(defaultValue: [])
   final List<String> premiumFeatureList;
@@ -57,6 +59,11 @@ class AppInfo {
   @JsonKey(includeFromJson: false, includeToJson: false)
   UIKitConfigInfo? uikitConfigInfo;
 
+  /// The maximum count of files that can be included in a single [com.sendbird.android.message.MultipleFilesMessage].
+  /// @since 4.8.0
+  @JsonKey(name: 'multiple_file_send_max_size')
+  final int multipleFilesMessageFileCountLimit;
+
   AppInfo({
     required this.premiumFeatureList,
     required this.uploadSizeLimit,
@@ -68,6 +75,8 @@ class AppInfo {
     this.disableSuperGroupMack = false,
     this.unreadCntThreadingPolicy = 0,
     this.lastMsgThreadingPolicy = 0,
+    this.multipleFilesMessageFileCountLimit =
+        AppInfo.multipleFilesMessageDefaultFileCountLimit,
   });
 
   /// Checks whether the emoji list needs to be updated.

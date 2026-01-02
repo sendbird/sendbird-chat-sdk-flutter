@@ -66,7 +66,7 @@ final CChannelAccessSchema = CollectionSchema(
   getId: _cChannelAccessGetId,
   getLinks: _cChannelAccessGetLinks,
   attach: _cChannelAccessAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cChannelAccessEstimateSize(

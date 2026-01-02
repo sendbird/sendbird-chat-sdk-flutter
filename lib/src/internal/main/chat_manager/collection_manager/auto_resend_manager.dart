@@ -64,6 +64,15 @@ class AutoResendManager {
                     completer.complete();
                   },
                 );
+              } else if (failedMessage is MultipleFilesMessage) {
+                collection.channel.resendMultipleFilesMessage(
+                  failedMessage,
+                  handler:
+                      (MultipleFilesMessage message, SendbirdException? e) {
+                    exception = e;
+                    completer.complete();
+                  },
+                );
               } else {
                 // Defensive code
                 completer.complete();

@@ -574,7 +574,7 @@ class StatManager {
         'logi_latency': logiLatency,
         'error_code': errorCode,
         'error_description': errorDescription,
-        'connection_id': connectionId ?? const Uuid().v1(),
+        'connection_id': connectionId ?? const Uuid().v4(),
         'is_soft_rate_limited': isSoftRateLimited,
       },
     );

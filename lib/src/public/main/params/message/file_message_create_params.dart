@@ -42,6 +42,16 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
           pushNotificationDeliveryOption: pushNotificationDeliveryOption,
           isPinnedMessage: isPinnedMessage,
         ) {
+    fileInfo = createFileInfoFromFile(
+      file: file,
+      fileName: fileName,
+    );
+  }
+
+  static FileInfo createFileInfoFromFile({
+    required File file,
+    String? fileName,
+  }) {
     if (kIsWeb) {
       sbLog.e(StackTrace.current,
           'FileMessageCreateParams.withFile() is not supported for web');
@@ -66,7 +76,7 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
       fileMimeType = lookupMimeType(file.path);
     }
 
-    fileInfo = FileInfo.fromFile(
+    return FileInfo.fromFile(
       fileName: fileName ?? 'file',
       file: file,
       mimeType: fileMimeType ?? 'application/octet-stream',
@@ -99,6 +109,18 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
           pushNotificationDeliveryOption: pushNotificationDeliveryOption,
           isPinnedMessage: isPinnedMessage,
         ) {
+    fileInfo = createFileInfoFromFileBytes(
+      fileBytes: fileBytes,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+  }
+
+  static FileInfo createFileInfoFromFileBytes({
+    required Uint8List fileBytes,
+    String? fileName,
+    String? mimeType,
+  }) {
     final fileMimeType = lookupMimeType('', headerBytes: fileBytes);
 
     if (fileMimeType != null) {
@@ -107,7 +129,7 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
       sbLog.w(StackTrace.current, 'Unknown file mimeType');
     }
 
-    fileInfo = FileInfo.fromFileBytes(
+    return FileInfo.fromFileBytes(
       fileBytes: fileBytes,
       fileName: fileName ?? 'file',
       mimeType: mimeType ?? 'application/octet-stream',
@@ -130,7 +152,7 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
     PushNotificationDeliveryOption pushNotificationDeliveryOption =
         PushNotificationDeliveryOption.normal,
     bool isPinnedMessage = false,
-  })  : fileInfo = FileInfo.fromFileUrl(
+  })  : fileInfo = createFileInfoFromFileUrl(
           fileName: fileName ?? 'file',
           mimeType: mimeType ?? 'application/octet-stream',
           fileUrl: fileUrl,
@@ -147,6 +169,20 @@ class FileMessageCreateParams extends BaseMessageCreateParams {
           replyToChannel: replyToChannel ?? false,
           isPinnedMessage: isPinnedMessage,
         );
+
+  static FileInfo createFileInfoFromFileUrl({
+    required String fileUrl,
+    String? fileName,
+    String? mimeType,
+    int? fileSize,
+  }) {
+    return FileInfo.fromFileUrl(
+      fileName: fileName ?? 'file',
+      mimeType: mimeType ?? 'application/octet-stream',
+      fileUrl: fileUrl,
+      fileSize: fileSize,
+    );
+  }
 
   /// withMessage
   FileMessageCreateParams.withMessage(FileMessage fileMessage)

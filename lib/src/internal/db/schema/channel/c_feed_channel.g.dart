@@ -143,7 +143,7 @@ final CFeedChannelSchema = CollectionSchema(
   getId: _cFeedChannelGetId,
   getLinks: _cFeedChannelGetLinks,
   attach: _cFeedChannelAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cFeedChannelEstimateSize(

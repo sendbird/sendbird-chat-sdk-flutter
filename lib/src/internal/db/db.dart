@@ -26,6 +26,7 @@ import 'package:sendbird_chat_sdk/src/internal/db/schema/user/c_user.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/chat/chat.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/feed_channel/feed_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
@@ -37,6 +38,8 @@ import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/params/message/message_list_params.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/channel/feed_channel_list_query.dart';
 import 'package:sendbird_chat_sdk/src/public/main/query/channel/group_channel_list_query.dart';
+
+import 'schema/message/c_multiple_files_message.dart';
 
 class DB {
   final Chat _chat;
@@ -441,6 +444,15 @@ class DB {
       await deleteFileMessage(cFileMessage.rootId);
     }
 
+    // MultipleFilesMessage
+    final cMultipleFilesMessages = await _isar.cMultipleFilesMessages
+        .where()
+        .channelUrlEqualTo(channelUrl)
+        .findAll();
+    for (final cMultipleFilesMessage in cMultipleFilesMessages) {
+      await deleteFileMessage(cMultipleFilesMessage.rootId);
+    }
+
     // AdminMessage
     final cAdminMessages = await _isar.cAdminMessages
         .where()
@@ -492,6 +504,23 @@ class DB {
 
   Future<int> getFileMessageCount() async {
     return await _isar.cFileMessages.count();
+  }
+
+  // MultipleFilesMessage
+  Future<void> upsertMultipleFilesMessage(MultipleFilesMessage message) async {
+    await CMultipleFilesMessage.upsert(_chat, _isar, message);
+  }
+
+  Future<MultipleFilesMessage?> getMultipleFilesMessage(String rootId) async {
+    return await CMultipleFilesMessage.get(_chat, _isar, rootId);
+  }
+
+  Future<void> deleteMultipleFilesMessage(String rootId) async {
+    await CMultipleFilesMessage.delete(_chat, _isar, rootId);
+  }
+
+  Future<int> getMultipleFilesMessageCount() async {
+    return await _isar.cMultipleFilesMessages.count();
   }
 
   // AdminMessage

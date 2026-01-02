@@ -41,7 +41,7 @@ class FileInfo {
     required this.file,
     required this.fileName,
     required this.mimeType,
-  })  : fileSize = file?.lengthSync(),
+  })  : fileSize = file?.lengthSync() ?? 0,
         fileBytes = null,
         fileUrl = null;
 
@@ -68,6 +68,7 @@ class FileInfo {
   Map<String, dynamic> toJson() => _$FileInfoToJson(this);
 
   bool get hasBinary => file != null || fileBytes != null;
+
   bool get hasSource =>
       file != null || (fileUrl != null && fileUrl != '') || fileBytes != null;
 }

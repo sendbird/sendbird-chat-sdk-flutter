@@ -61,16 +61,18 @@ extension MessageCollectionManager on CollectionManager {
     sbLog.d(StackTrace.current);
 
     for (final messageCollection in baseMessageCollections) {
-      sendEventsToMessageCollection(
-        messageCollection: messageCollection,
-        baseChannel: messageCollection.baseChannel,
-        eventSource: CollectionEventSource.eventMessageSent,
-        sendingStatus: SendingStatus.succeeded,
-        addedMessages: [sentMessage],
-        isReversedAddedMessages: messageCollection.params.reverse,
-        deletedMessageIds: [pendingMessage.messageId],
-        doNotSendDeleteEvent: true,
-      );
+      if (messageCollection.baseChannel.channelUrl == channel.channelUrl) {
+        sendEventsToMessageCollection(
+          messageCollection: messageCollection,
+          baseChannel: messageCollection.baseChannel,
+          eventSource: CollectionEventSource.eventMessageSent,
+          sendingStatus: SendingStatus.succeeded,
+          addedMessages: [sentMessage],
+          isReversedAddedMessages: messageCollection.params.reverse,
+          deletedRequestIdForPendingMessage: pendingMessage.requestId,
+          doNotSendDeleteEvent: true,
+        );
+      }
     }
 
     if (channel is GroupChannel) {
@@ -538,11 +540,9 @@ extension MessageCollectionManager on CollectionManager {
       if (updatedChannels != null) {
         for (final channel in updatedChannels) {
           if (channel is GroupChannel) {
-            _chat.dbManager
-                .upsertGroupChannels([channel]); // No await since 4.6.0
+            await _chat.dbManager.upsertGroupChannels([channel]);
           } else if (channel is FeedChannel) {
-            _chat.dbManager
-                .upsertFeedChannels([channel]); // No await since 4.6.0
+            await _chat.dbManager.upsertFeedChannels([channel]);
           }
         }
       }
@@ -627,6 +627,7 @@ extension MessageCollectionManager on CollectionManager {
     bool isContinuousAddedMessages = false,
     List<RootMessage>? updatedMessages,
     List<dynamic>? deletedMessageIds,
+    String? deletedRequestIdForPendingMessage,
     bool doNotSendDeleteEvent = false,
     bool isMessageOffsetUpdated = false,
   }) async {
@@ -733,13 +734,42 @@ extension MessageCollectionManager on CollectionManager {
       }
     }
 
+    if (deletedRequestIdForPendingMessage != null) {
+      for (int index = 0;
+          index < messageCollection.messageList.length;
+          index++) {
+        final message = messageCollection.messageList[index];
+        if (message is BaseMessage &&
+            message.requestId == deletedRequestIdForPendingMessage) {
+          messageCollection.messageList.removeAt(index);
+
+          // If there are no pending messages in messageList
+          bool hasPendingMessage = false;
+          for (final msg in messageCollection.messageList) {
+            if (msg is BaseMessage &&
+                msg.sendingStatus == SendingStatus.pending) {
+              hasPendingMessage = true;
+              break;
+            }
+          }
+
+          if (!hasPendingMessage) {
+            _chat.dbManager.deleteMessages(baseChannel, ['0']); // No await
+          }
+          break;
+        }
+      }
+    }
+
     if (addedMessages != null && addedMessages.isNotEmpty) {
       for (final addedMessage in addedMessages) {
         bool isMessageExists = false;
         for (final message in messageCollection.messageList) {
-          if (message.getMessageId() == addedMessage.getMessageId()) {
-            isMessageExists = true;
-            break;
+          if (eventSource != CollectionEventSource.localMessagePendingCreated) {
+            if (message.getMessageId() == addedMessage.getMessageId()) {
+              isMessageExists = true;
+              break;
+            }
           }
         }
 
@@ -897,7 +927,9 @@ extension MessageCollectionManager on CollectionManager {
     }
 
     if (updatedMessagesForEvent.isNotEmpty) {
-      messageCollection.sort();
+      if (eventSource != CollectionEventSource.eventMessageSent) {
+        messageCollection.sort();
+      }
 
       if (!messageCollection.isDisposed) {
         if (messageCollection.baseHandler is MessageCollectionHandler &&

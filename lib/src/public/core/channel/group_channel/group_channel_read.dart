@@ -23,7 +23,7 @@ extension GroupChannelRead on GroupChannel {
       messageId: message.messageId,
       isExcluded: true,
       uniqueId: chat.commandManager.addToDedupIdMap(
-        dedupId: const Uuid().v1(),
+        dedupId: const Uuid().v4(),
         dedupCount: 2,
       ),
     ));
