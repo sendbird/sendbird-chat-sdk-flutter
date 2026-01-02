@@ -6,6 +6,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/extensions/extensions.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message_create_params.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/user_message.dart';
@@ -55,7 +57,7 @@ class Command {
     this.payload = const {},
   }) {
     if (payload.isNotEmpty) {
-      requestId ??= const Uuid().v1();
+      requestId ??= const Uuid().v4();
       payload['req_id'] = requestId;
       replyToChannel = payload['reply_to_channel'] ?? replyToChannel;
       payload.removeWhere((key, value) => value == null);
@@ -203,6 +205,52 @@ class Command {
     );
   }
 
+  static Command buildMultipleFilesMessage({
+    required String channelUrl,
+    required MultipleFilesMessageCreateParams params,
+    required String? requestId,
+    required List<bool?> requireAuthList,
+    required List<List<dynamic>?> thumbnailsList,
+  }) {
+    final payload = <String, dynamic>{
+      'channel_url': channelUrl,
+    };
+
+    payload.addAll(params.toJson());
+
+    final files = [];
+    if (requireAuthList.isNotEmpty &&
+        requireAuthList.length == params.uploadableFileInfoList.length &&
+        thumbnailsList.isNotEmpty &&
+        thumbnailsList.length == params.uploadableFileInfoList.length) {
+      for (int i = 0; i < params.uploadableFileInfoList.length; i++) {
+        final uploadableFileInfo = params.uploadableFileInfoList[i];
+
+        if (uploadableFileInfo != null) {
+          Map<String, dynamic> fileInfo = {};
+          fileInfo['url'] = uploadableFileInfo.fileInfo.fileUrl;
+          fileInfo['file_name'] = uploadableFileInfo.fileInfo.fileName;
+          fileInfo['file_size'] = uploadableFileInfo.fileInfo.fileSize;
+          fileInfo['file_type'] = uploadableFileInfo.fileInfo.mimeType;
+          fileInfo['require_auth'] = requireAuthList[i];
+          fileInfo['thumbnails'] = thumbnailsList[i];
+
+          fileInfo.removeWhere((key, value) => value == null);
+          files.add(fileInfo);
+        }
+      }
+    }
+    payload['files'] = files;
+    payload['created_at'] = DateTime.now().millisecondsSinceEpoch;
+    payload.removeWhere((key, value) => value == null);
+
+    return Command(
+      cmd: CommandString.fileMessage,
+      payload: payload,
+      requestId: requestId,
+    );
+  }
+
   static Command buildUpdateFileMessage(
       String channelUrl, int messageId, FileMessageUpdateParams params) {
     final payload = <String, dynamic>{
@@ -233,7 +281,7 @@ class Command {
     String type;
     if (message is UserMessage) {
       type = CommandString.userMessageUpdate;
-    } else if (message is FileMessage) {
+    } else if (message is FileMessage || message is MultipleFilesMessage) {
       type = CommandString.fileMessageUpdate;
     } else {
       throw InvalidParameterException();

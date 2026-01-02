@@ -19,9 +19,9 @@ part 'message_collection_manager.dart';
 
 class CollectionManager {
   final identifierForInternalGroupChannelHandlerForCollectionManager =
-      'InternalGroupChannelHandlerForCollectionManager_${const Uuid().v1()}';
+      'InternalGroupChannelHandlerForCollectionManager_${const Uuid().v4()}';
   final identifierForInternalFeedChannelHandlerForCollectionManager =
-      'InternalFeedChannelHandlerForCollectionManager_${const Uuid().v1()}';
+      'InternalFeedChannelHandlerForCollectionManager_${const Uuid().v4()}';
 
   final Chat _chat;
 

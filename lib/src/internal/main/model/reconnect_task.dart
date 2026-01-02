@@ -6,7 +6,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/model/reconnect_configuratio
 import 'package:uuid/uuid.dart';
 
 class ReconnectTask {
-  final String _id = const Uuid().v1();
+  final String _id = const Uuid().v4();
   String? url;
   int _backOffPeriod = 0;
   int _retryCount = 0;

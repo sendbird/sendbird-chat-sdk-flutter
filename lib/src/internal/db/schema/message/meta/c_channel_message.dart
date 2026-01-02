@@ -4,6 +4,7 @@ import 'package:isar_community/isar.dart';
 import 'package:sendbird_chat_sdk/sendbird_chat_sdk.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_admin_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_file_message.dart';
+import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_notification_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/c_user_message.dart';
 import 'package:sendbird_chat_sdk/src/internal/db/schema/message/meta/c_channel_access.dart';
@@ -61,8 +62,15 @@ class CChannelMessage {
       final cUserMessage = await isar.cUserMessages.getByRootId(rootId);
       message = await cUserMessage?.toUserMessage(chat, isar);
     } else if (messageType == MessageType.file) {
-      final cFileMessage = await isar.cFileMessages.getByRootId(rootId);
-      message = await cFileMessage?.toFileMessage(chat, isar);
+      CFileMessage? cFileMessage = await isar.cFileMessages.getByRootId(rootId);
+      if (cFileMessage != null) {
+        message = await cFileMessage.toFileMessage(chat, isar);
+      } else {
+        final cMultipleFilesMessage =
+            await isar.cMultipleFilesMessages.getByRootId(rootId);
+        message =
+            await cMultipleFilesMessage?.toMultipleFilesMessage(chat, isar);
+      }
     } else if (messageType == MessageType.admin) {
       final cAdminMessage = await isar.cAdminMessages.getByRootId(rootId);
       message = await cAdminMessage?.toAdminMessage(chat, isar);
@@ -419,6 +427,12 @@ class CChannelMessage {
           .where((message) => message.sendingStatus == SendingStatus.failed)
           .map((message) => message.rootId)
           .toList());
+
+      // MultipleFilesMessage
+      await isar.cMultipleFilesMessages.deleteAllByRootId(messages
+          .where((message) => message.sendingStatus == SendingStatus.failed)
+          .map((message) => message.rootId)
+          .toList());
     });
   }
 
@@ -452,6 +466,14 @@ class CChannelMessage {
           .filter()
           .sendingStatusEqualTo(SendingStatus.failed)
           .deleteAll();
+
+      // MultipleFilesMessage
+      await isar.cMultipleFilesMessages
+          .where()
+          .channelTypeChannelUrlEqualTo(channelType, channelUrl)
+          .filter()
+          .sendingStatusEqualTo(SendingStatus.failed)
+          .deleteAll();
     });
   }
 
@@ -480,6 +502,14 @@ class CChannelMessage {
 
       // FileMessage
       await isar.cFileMessages
+          .where()
+          .channelTypeChannelUrlEqualTo(channelType, channelUrl)
+          .filter()
+          .sendingStatusEqualTo(SendingStatus.pending)
+          .deleteAll();
+
+      // MultipleFilesMessage
+      await isar.cMultipleFilesMessages
           .where()
           .channelTypeChannelUrlEqualTo(channelType, channelUrl)
           .filter()

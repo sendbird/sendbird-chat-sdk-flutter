@@ -371,7 +371,7 @@ class CommandManager {
           logiTs: _chat.commandManager.logiTs,
           accumTrial: _chat.chatContext.reconnectTask?.retryCount ?? 1,
           connectionId:
-              _chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+              _chat.chatContext.reconnectTask?.id ?? const Uuid().v4(),
         );
       }
 
@@ -451,7 +451,7 @@ class CommandManager {
           errorDescription: e.message,
           accumTrial: _chat.chatContext.reconnectTask?.retryCount ?? 1,
           connectionId:
-              _chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+              _chat.chatContext.reconnectTask?.id ?? const Uuid().v4(),
         );
       } else if (_chat.connectionManager.isConnected()) {
         await _chat.connectionManager.disconnect(logout: false);

@@ -15,6 +15,7 @@ class ApiClient {
   final HttpClient _httpClient;
 
   bool throwExceptionForTest = false;
+  int? uploadingIndexToThrowExceptionForTest;
 
   ApiClient({
     required ChatContext chatContext,
@@ -39,7 +40,7 @@ class ApiClient {
   // possible other solution T is return type
   Future<T> send<T>(ApiRequest request) async {
     if (throwExceptionForTest) {
-      throw Exception();
+      throw NetworkErrorException();
     }
 
     final url = '/${request.version}/${request.url}';

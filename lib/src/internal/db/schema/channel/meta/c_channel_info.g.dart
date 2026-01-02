@@ -39,7 +39,7 @@ final CChannelInfoSchema = CollectionSchema(
   getId: _cChannelInfoGetId,
   getLinks: _cChannelInfoGetLinks,
   attach: _cChannelInfoAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cChannelInfoEstimateSize(

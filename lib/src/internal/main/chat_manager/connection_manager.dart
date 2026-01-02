@@ -28,6 +28,7 @@ class ConnectionManager {
   final Chat chat;
   late WebSocketClient webSocketClient;
   late BaseConnectionState _currentState;
+  Timer? _reconnectIfNeededTimer;
 
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
@@ -498,7 +499,7 @@ class ConnectionManager {
           errorCode: e.code,
           errorDescription: e.message,
           accumTrial: chat.chatContext.reconnectTask?.retryCount ?? 1,
-          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v4(),
         );
       } else {
         final exception = WebSocketFailedException(message: e.toString());
@@ -509,7 +510,7 @@ class ConnectionManager {
           errorCode: exception.code,
           errorDescription: exception.message,
           accumTrial: chat.chatContext.reconnectTask?.retryCount ?? 1,
-          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v1(),
+          connectionId: chat.chatContext.reconnectTask?.id ?? const Uuid().v4(),
         );
       }
     });
@@ -522,7 +523,7 @@ class ConnectionManager {
     // Nothing to do here.
   }
 
-  void _onWebSocketClosed() {
+  void _onWebSocketClosed() async {
     chat.commandManager.clearCompleterMap();
 
     final closeCode = webSocketClient.getCloseCode();
@@ -532,6 +533,20 @@ class ConnectionManager {
         errorCode: SendbirdError.webSocketConnectionClosed,
         errorDescription: "cause=$closeCode",
       );
+    }
+
+    // On iOS, when connection is automatically disconnected after 1 hour in idle state,
+    // attempt reconnection if still in connected state after 1 second
+    if (isConnected() && !webSocketClient.isConnected()) {
+      if (_reconnectIfNeededTimer != null) {
+        _reconnectIfNeededTimer!.cancel();
+      }
+      _reconnectIfNeededTimer = Timer(const Duration(seconds: 1), () async {
+        if (isConnected() && !webSocketClient.isConnected()) {
+          sbLog.d(StackTrace.current, '_reconnectIfNeeded()');
+          await _reconnectIfNeeded();
+        }
+      });
     }
   }
 
@@ -568,6 +583,11 @@ class ConnectionManager {
   }
 
   Future<void> _onWebSocketError(Object e) async {
+    await _reconnectIfNeeded();
+  }
+
+  Future<void> _reconnectIfNeeded() async {
+    sbLog.d(StackTrace.current);
     if (chat.chatContext.currentUser != null) {
       if (isReconnecting()) {
         await Future.delayed(const Duration(

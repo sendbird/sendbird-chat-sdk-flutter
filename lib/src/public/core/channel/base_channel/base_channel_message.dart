@@ -26,6 +26,22 @@ typedef ProgressHandler = void Function(
   int totalBytes,
 );
 
+/// MultipleFilesMessageHandler
+/// @since 4.8.0
+typedef MultipleFilesMessageHandler = void Function(
+  MultipleFilesMessage message,
+  SendbirdException? e,
+);
+
+/// FileUploadHandler
+/// @since 4.8.0
+typedef FileUploadHandler = void Function(
+  String requestId,
+  int index,
+  UploadableFileInfo? uploadableFileInfo,
+  SendbirdException? e,
+);
+
 /// BaseChannelMessage
 extension BaseChannelMessage on BaseChannel {
   /// Sends a user message with text.
@@ -59,7 +75,7 @@ extension BaseChannelMessage on BaseChannel {
     final cmd = Command.buildUserMessage(
       channelUrl,
       params,
-      const Uuid().v1(),
+      const Uuid().v4(),
     );
 
     final pendingUserMessage =
@@ -198,7 +214,8 @@ extension BaseChannelMessage on BaseChannel {
     sbLog.i(StackTrace.current, 'message.requestId: ${message.requestId}');
     checkUnsupportedAction();
 
-    if (message.sendingStatus != SendingStatus.failed) {
+    if (message.sendingStatus != SendingStatus.failed &&
+        message.sendingStatus != SendingStatus.canceled) {
       throw InvalidParameterException();
     }
     if (message.channelUrl != channelUrl) {
@@ -254,7 +271,7 @@ extension BaseChannelMessage on BaseChannel {
     int? resendMessageId,
   }) {
     sbLog.i(StackTrace.current,
-        'params.uploadFile.name: ${params.fileInfo.fileName}');
+        'params.fileInfo.fileName: ${params.fileInfo.fileName}');
     checkUnsupportedAction();
 
     if (params.fileInfo.hasSource == false) {
@@ -317,7 +334,8 @@ extension BaseChannelMessage on BaseChannel {
                 .send<UploadResponse>(ChannelFileUploadRequest(chat,
                     channelUrl: channelUrl,
                     requestId: pendingFileMessage.requestId!,
-                    params: params,
+                    fileInfo: params.fileInfo,
+                    thumbnailSizes: params.thumbnailSizes,
                     progressHandler: progressHandler))
                 .timeout(
               Duration(seconds: chat.chatContext.options.fileTransferTimeout),
@@ -468,6 +486,7 @@ extension BaseChannelMessage on BaseChannel {
         onCancel: () {
           isCanceled = true;
           pendingFileMessage.sendingStatus = SendingStatus.canceled;
+          pendingFileMessage.errorCode = SendbirdError.fileUploadCanceled;
 
           if (this is GroupChannel) {
             for (final messageCollection
@@ -557,7 +576,7 @@ extension BaseChannelMessage on BaseChannel {
   }
 
   /// Resends a file with given file information.
-  /// [fileMessage] Failed fileMessage.
+  /// [message] Failed fileMessage.
   /// [file] File to resend. If there is a fileUrl or a fileBytes in fileMessage, this will be ignored.
   FileMessage resendFileMessage(
     FileMessage message, {
@@ -568,7 +587,8 @@ extension BaseChannelMessage on BaseChannel {
     sbLog.i(StackTrace.current, 'message.requestId: ${message.requestId}');
     checkUnsupportedAction();
 
-    if (message.sendingStatus != SendingStatus.failed) {
+    if (message.sendingStatus != SendingStatus.failed &&
+        message.sendingStatus != SendingStatus.canceled) {
       throw InvalidParameterException();
     }
     if (message.channelUrl != channelUrl) {
@@ -703,6 +723,13 @@ extension BaseChannelMessage on BaseChannel {
     } else if (message is FileMessage) {
       final params = FileMessageCreateParams.withMessage(message);
       return targetChannel.sendFileMessage(
+        params,
+        handler: handler,
+      );
+    } else if (message is MultipleFilesMessage &&
+        targetChannel is GroupChannel) {
+      final params = MultipleFilesMessageCreateParams.withMessage(message);
+      return targetChannel.sendMultipleFilesMessage(
         params,
         handler: handler,
       );

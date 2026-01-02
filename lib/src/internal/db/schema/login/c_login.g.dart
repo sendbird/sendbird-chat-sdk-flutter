@@ -85,7 +85,7 @@ final CLoginSchema = CollectionSchema(
   getId: _cLoginGetId,
   getLinks: _cLoginGetLinks,
   attach: _cLoginAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cLoginEstimateSize(

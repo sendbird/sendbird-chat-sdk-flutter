@@ -170,7 +170,7 @@ class FileMessage extends BaseMessage {
       channelType: channel.channelType,
       channelUrl: channel.channelUrl,
       messageId: 0,
-      requestId: const Uuid().v1(),
+      requestId: const Uuid().v4(),
       // BaseMessageCreateParams
       data: params.data,
       customType: params.customType,

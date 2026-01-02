@@ -13,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command_type.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/group_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/root_message.dart';
@@ -243,6 +244,10 @@ class BaseMessage extends RootMessage {
   }
 
   bool isAutoResendable() {
+    // if (this is MultipleFilesMessage) { // Check
+    //   return false;
+    // }
+
     if (errorCode == SendbirdError.connectionRequired ||
         errorCode == SendbirdError.webSocketConnectionClosed ||
         errorCode == SendbirdError.webSocketConnectionFailed ||
@@ -431,7 +436,12 @@ class BaseMessage extends RootMessage {
     if (json['message_type'] == MessageType.user.name) {
       return UserMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
     } else if (json['message_type'] == MessageType.file.name) {
-      return FileMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
+      if (json['files'] != null) {
+        return MultipleFilesMessage.fromJson(
+            jsonDecode(String.fromCharCodes(data)));
+      } else {
+        return FileMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
+      }
     } else if (json['message_type'] == MessageType.admin.name) {
       return AdminMessage.fromJson(jsonDecode(String.fromCharCodes(data)));
     }

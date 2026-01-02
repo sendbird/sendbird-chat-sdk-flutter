@@ -108,7 +108,7 @@ abstract class BaseMessageCollection {
         _loadNextParams = MessageListParams()..copyWith(params),
         _handler = handler,
         _startingPoint = startingPoint,
-        _collectionId = const Uuid().v1(),
+        _collectionId = const Uuid().v4(),
         _chat = chat {
     sbLog.i(StackTrace.current, 'BaseMessageCollection()');
     _chat.collectionManager.addMessageCollection(this);
@@ -784,14 +784,43 @@ abstract class BaseMessageCollection {
   }
 
   void sort() {
+    if (messageList.length <= 1) return;
+
+    // Extract pending messages and remove them from messageList
+    final pendingMessages = <BaseMessage>[];
+    messageList.removeWhere((message) {
+      if (message is BaseMessage &&
+          message.sendingStatus == SendingStatus.pending) {
+        pendingMessages.add(message);
+        return true; // Remove from messageList
+      }
+      return false; // Keep in messageList
+    });
+
+    // Sort non-pending messages (remaining in messageList)
     if (params.reverse) {
-      messageList.sort((a, b) {
-        return b.createdAt.compareTo(a.createdAt);
-      });
+      messageList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     } else {
-      messageList.sort((a, b) {
-        return a.createdAt.compareTo(b.createdAt);
-      });
+      messageList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    }
+
+    // Sort pending messages if any exist
+    if (pendingMessages.isNotEmpty) {
+      if (params.reverse) {
+        pendingMessages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+        for (final pendingMessage in pendingMessages) {
+          // Add pending messages at the first
+          messageList.insert(0, pendingMessage);
+        }
+      } else {
+        pendingMessages.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+        for (final pendingMessage in pendingMessages) {
+          // Add pending messages at the end
+          messageList.add(pendingMessage);
+        }
+      }
     }
   }
 

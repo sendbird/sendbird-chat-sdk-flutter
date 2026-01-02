@@ -13,6 +13,7 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 import 'package:sendbird_chat_sdk/src/internal/main/model/delivery_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/read_status.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/model/typing_status.dart';
+import 'package:sendbird_chat_sdk/src/internal/main/utils/async/async_task.dart';
 import 'package:sendbird_chat_sdk/src/internal/main/utils/json_converter.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_create_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/group_channel_delete_request.dart';
@@ -40,6 +41,8 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_message_send_now_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_user_message_send_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/group_channel/scheduled_message/group_channel_scheduled_user_message_update_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_file_upload_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/channel/message/channel_multiple_files_message_send_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_changelogs_get_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_close_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/main/poll/poll_delete_request.dart';
@@ -51,6 +54,8 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/response
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/command/command.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/websocket/event/channel_event.dart';
 import 'package:sendbird_chat_sdk/src/public/core/channel/base_channel/base_channel.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message.dart';
+import 'package:sendbird_chat_sdk/src/public/core/channel/group_channel/mfm/multiple_files_message_create_params.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/admin_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/base_message.dart';
 import 'package:sendbird_chat_sdk/src/public/core/message/file_message.dart';
@@ -61,9 +66,11 @@ import 'package:sendbird_chat_sdk/src/public/core/user/member.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/sender.dart';
 import 'package:sendbird_chat_sdk/src/public/core/user/user.dart';
 import 'package:sendbird_chat_sdk/src/public/main/chat/sendbird_chat.dart';
+import 'package:sendbird_chat_sdk/src/public/main/collection/collection_event_source.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/enums.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/sendbird_error.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/info/app_info.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_change_logs.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/poll/poll_vote_event.dart';
@@ -79,6 +86,7 @@ import 'package:uuid/uuid.dart';
 
 part 'group_channel.g.dart';
 part 'group_channel_configuration.dart';
+part 'group_channel_message.dart';
 part 'group_channel_operation.dart';
 part 'group_channel_pinned_message.dart';
 part 'group_channel_poll.dart';
