@@ -16,11 +16,15 @@
 #   - chat-sdk-android
 #   - chat-sdk-flutter
 #   - chat-sdk-unity
+#   - chat-sdk-dotnet
+#   - chat-sdk-unreal
 #   - uikit-react
 #   - uikit-react-native
 #   - uikit-ios
 #   - uikit-android
 #   - uikit-swiftui
+#   - uikit-jetpack-compose
+#   - uikit-flutter
 
 name: Notify Docs Repository on Release
 
