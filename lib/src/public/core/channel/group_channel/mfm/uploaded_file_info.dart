@@ -46,6 +46,7 @@ class UploadedFileInfo {
 
   bool requireAuth;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   File? file;
 
   UploadedFileInfo({

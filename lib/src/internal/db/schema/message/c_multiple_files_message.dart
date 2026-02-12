@@ -59,12 +59,14 @@ class CMultipleFilesMessage extends CBaseMessage {
       files: uploadedFileInfos,
     )..set(chat);
 
-    return await CBaseMessage.setCBaseMessage(
+    final result = await CBaseMessage.setCBaseMessage(
         chat, isar, multipleFilesMessage, this) as MultipleFilesMessage
       // MultipleFilesMessage
       ..messageCreateParams =
           messageCreateParams?.toMultipleFilesMessageCreateParams()
       ..requireAuth = requireAuth;
+    result.messageCreateParams?.message ??= result.message;
+    return result;
   }
 
   static Future<CMultipleFilesMessage> upsert(
@@ -172,6 +174,7 @@ class CMultipleFilesMessageCreateParams {
   late List<CUploadableFileInfo> uploadableFileInfoList;
 
   CMultipleFilesMessageCreateParams();
+  String? messageInCreateParams;
 
   factory CMultipleFilesMessageCreateParams.fromMultipleFilesMessageCreateParams(
       MultipleFilesMessageCreateParams params) {
@@ -199,7 +202,8 @@ class CMultipleFilesMessageCreateParams {
       ..isPinnedMessage = params.isPinnedMessage
 
       // MultipleFilesMessageCreateParams
-      ..uploadableFileInfoList = cUploadableFileInfoList;
+      ..uploadableFileInfoList = cUploadableFileInfoList
+      ..messageInCreateParams = params.message;
   }
 
   MultipleFilesMessageCreateParams? toMultipleFilesMessageCreateParams() {
@@ -225,6 +229,7 @@ class CMultipleFilesMessageCreateParams {
       replyToChannel: replyToChannel,
       pushNotificationDeliveryOption: pushNotificationDeliveryOption,
       isPinnedMessage: isPinnedMessage,
+      message: messageInCreateParams,
     );
   }
 }

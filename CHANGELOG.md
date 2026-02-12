@@ -1,3 +1,11 @@
+## v4.9.0 (Feb 12, 2026)
+
+### Features
+- Added `message` parameter in `FileMessageCreateParams` and `MultipleFilesMessageCreateParams`
+
+### Improvements
+- Fixed bugs regarding message huge gap
+
 ## v4.8.0 (Jan 2, 2026)
 
 ### Features

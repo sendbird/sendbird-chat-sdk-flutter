@@ -10,7 +10,7 @@ UploadedFileInfo _$UploadedFileInfoFromJson(Map<String, dynamic> json) =>
     UploadedFileInfo(
       url: json['url'] as String,
       name: json['name'] as String?,
-      size: json['size'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
       type: json['type'] as String?,
       thumbnails: (json['thumbnails'] as List<dynamic>?)
           ?.map((e) => Thumbnail.fromJson(e as Map<String, dynamic>))

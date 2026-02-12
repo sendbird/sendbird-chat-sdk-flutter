@@ -376,7 +376,7 @@ extension MessageCollectionManager on CollectionManager {
           res.prevHasMore!) {
         // Fill messages from latestTs to oldestTs
         final oldestTs = prevStartTs;
-        final latestTs = prevMessages.map((message) => message.createdAt).min;
+        int latestTs = prevMessages.map((message) => message.createdAt).min;
 
         const resultSize = 100;
         final params = MessageListParams()
@@ -385,6 +385,8 @@ extension MessageCollectionManager on CollectionManager {
           ..inclusive = true;
 
         bool hasPrevious = false;
+        int maxCount = 5;
+        bool repeat = false;
         do {
           ChannelMessagesGetResponse? res = await _chat.apiClient
               .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
@@ -417,16 +419,25 @@ extension MessageCollectionManager on CollectionManager {
                 hasPrevious = false;
               }
             }
+
+            if (hasPrevious) {
+              latestTs = prevMessages.map((message) => message.createdAt).min;
+            }
           }
-        } while (hasPrevious);
+
+          maxCount--;
+          repeat = (hasPrevious && maxCount > 0);
+          if (repeat) {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        } while (repeat);
       }
 
       if (nextMessages.isNotEmpty &&
           res.nextHasMore != null &&
           res.nextHasMore!) {
-        // Fill messages from oldestTs to latestTs
-        final oldestTs = nextMessages.map((message) => message.createdAt).max;
-        final latestTs = nextEndTs;
+        // Fill messages forward starting from oldestTs until there are no more next messages
+        int oldestTs = nextMessages.map((message) => message.createdAt).max;
 
         const resultSize = 100;
         final params = MessageListParams()
@@ -435,6 +446,8 @@ extension MessageCollectionManager on CollectionManager {
           ..inclusive = true;
 
         bool hasNext = false;
+        int maxCount = 5;
+        bool repeat = false;
         do {
           ChannelMessagesGetResponse? res = await _chat.apiClient
               .send<ChannelMessagesGetResponse>(ChannelMessagesGetRequest(
@@ -455,23 +468,29 @@ extension MessageCollectionManager on CollectionManager {
             }
 
             for (final message in res.messages) {
-              if (message.createdAt <= latestTs) {
-                bool found = false;
-                for (final nextMessage in nextMessages) {
-                  if (nextMessage.rootId == message.rootId) {
-                    found = true;
-                    break;
-                  }
+              bool found = false;
+              for (final nextMessage in nextMessages) {
+                if (nextMessage.rootId == message.rootId) {
+                  found = true;
+                  break;
                 }
-                if (!found) {
-                  nextMessages.add(message);
-                }
-              } else {
-                hasNext = false;
+              }
+              if (!found) {
+                nextMessages.add(message);
               }
             }
+
+            if (hasNext) {
+              oldestTs = nextMessages.map((message) => message.createdAt).max;
+            }
           }
-        } while (hasNext);
+
+          maxCount--;
+          repeat = (hasNext && maxCount > 0);
+          if (repeat) {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        } while (repeat);
       }
 
       if (prevMessages.isNotEmpty) {
