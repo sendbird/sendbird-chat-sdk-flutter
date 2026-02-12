@@ -9,6 +9,10 @@ import '../../../../../../sendbird_chat_sdk.dart';
 class MultipleFilesMessageCreateParams extends BaseMessageCreateParams {
   List<UploadableFileInfo?> uploadableFileInfoList = [];
 
+  /// The message text.
+  /// @since 4.9.0
+  String? message;
+
   MultipleFilesMessageCreateParams(
     List<UploadableFileInfo?> uploadableFileInfoList, {
     String? data,
@@ -21,6 +25,7 @@ class MultipleFilesMessageCreateParams extends BaseMessageCreateParams {
     PushNotificationDeliveryOption pushNotificationDeliveryOption =
         PushNotificationDeliveryOption.normal,
     bool isPinnedMessage = false,
+    this.message,
   }) : super(
           data: data,
           customType: customType,
@@ -38,6 +43,8 @@ class MultipleFilesMessageCreateParams extends BaseMessageCreateParams {
   /// withMessage
   MultipleFilesMessageCreateParams.withMessage(MultipleFilesMessage message)
       : super.withMessage(message) {
+    this.message = message.message;
+
     for (final uploadedFileInfo in message.files) {
       FileInfo? fileInfo;
 
@@ -73,5 +80,14 @@ class MultipleFilesMessageCreateParams extends BaseMessageCreateParams {
         ));
       }
     }
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final ret = super.toJson();
+    ret['message'] = message;
+
+    ret.removeWhere((key, value) => value == null);
+    return ret;
   }
 }

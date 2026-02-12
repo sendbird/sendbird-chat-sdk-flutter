@@ -186,6 +186,7 @@ class FileMessage extends BaseMessage {
       size: params.fileInfo.fileSize ?? 0,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
+      message: params.message,
     );
 
     // mentionedUserIds

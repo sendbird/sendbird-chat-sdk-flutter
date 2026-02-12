@@ -159,6 +159,7 @@ class MultipleFilesMessage extends BaseMessage {
       files: files,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       requireAuth: false,
+      message: params.message,
     );
 
     // mentionedUserIds

@@ -112,6 +112,7 @@ class CBaseMessage extends CRootMessage {
     baseMessage
       ..messageId = cBaseMessage.messageId
       ..requestId = cBaseMessage.requestId
+      ..message = cBaseMessage.message
       ..sendingStatus = cBaseMessage.sendingStatus
       ..isReplyToChannel = cBaseMessage.isReplyToChannel
       ..parentMessageId = cBaseMessage.parentMessageId

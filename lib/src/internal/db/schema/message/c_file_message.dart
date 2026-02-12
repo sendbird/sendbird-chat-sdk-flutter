@@ -58,8 +58,8 @@ class CFileMessage extends CBaseMessage {
       // FileMessage
       url: url,
     )..set(chat);
-    return await CBaseMessage.setCBaseMessage(chat, isar, fileMessage, this)
-        as FileMessage
+    final result = await CBaseMessage.setCBaseMessage(
+        chat, isar, fileMessage, this) as FileMessage
       // FileMessage
       ..name = name
       ..size = size
@@ -68,6 +68,8 @@ class CFileMessage extends CBaseMessage {
           thumbnails?.map((cThumbnail) => cThumbnail.toThumbnail()).toList()
       ..messageCreateParams = messageCreateParams?.toFileMessageCreateParams()
       ..requireAuth = requireAuth;
+    result.messageCreateParams?.message ??= result.message;
+    return result;
   }
 
   static Future<CFileMessage> upsert(
@@ -163,6 +165,7 @@ class CFileMessageCreateParams {
   // FileMessageCreateParams
   late CFileInfo fileInfo;
   List<CSize>? thumbnailSizes;
+  String? messageInCreateParams;
 
   CFileMessageCreateParams();
 
@@ -187,7 +190,8 @@ class CFileMessageCreateParams {
       ..fileInfo = CFileInfo.fromFileInfo(params.fileInfo)
       ..thumbnailSizes = params.thumbnailSizes
           ?.map((thumbnailSize) => CSize.fromSize(thumbnailSize))
-          .toList();
+          .toList()
+      ..messageInCreateParams = params.message;
   }
 
   FileMessageCreateParams? toFileMessageCreateParams() {
@@ -212,6 +216,7 @@ class CFileMessageCreateParams {
         replyToChannel: replyToChannel,
         pushNotificationDeliveryOption: pushNotificationDeliveryOption,
         isPinnedMessage: isPinnedMessage,
+        message: messageInCreateParams,
       );
     }
     if (fileInfo.localFilePath != null && fileInfo.localFilePath!.isNotEmpty) {
@@ -232,6 +237,7 @@ class CFileMessageCreateParams {
         replyToChannel: replyToChannel,
         pushNotificationDeliveryOption: pushNotificationDeliveryOption,
         isPinnedMessage: isPinnedMessage,
+        message: messageInCreateParams,
       );
     }
     return null;
