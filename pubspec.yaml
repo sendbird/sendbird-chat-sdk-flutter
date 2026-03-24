@@ -30,8 +30,8 @@ dependencies:
   web_socket_channel: '>=2.4.0 <4.0.0'
   universal_io: ^2.2.0
   async: ^2.10.0
-  isar_community: 3.3.0
-  isar_community_flutter_libs: 3.3.0
+  isar_community: 3.3.2
+  isar_community_flutter_libs: 3.3.2
   path_provider: ^2.1.1
   path: ^1.8.2
 
