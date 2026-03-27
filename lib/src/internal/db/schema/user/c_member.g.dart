@@ -28,31 +28,36 @@ final CMemberSchema = Schema(
       name: r'isMuted',
       type: IsarType.bool,
     ),
-    r'memberState': PropertySchema(
+    r'joinedAt': PropertySchema(
       id: 3,
+      name: r'joinedAt',
+      type: IsarType.long,
+    ),
+    r'memberState': PropertySchema(
+      id: 4,
       name: r'memberState',
       type: IsarType.byte,
       enumMap: _CMembermemberStateEnumValueMap,
     ),
     r'nickname': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'nickname',
       type: IsarType.string,
     ),
     r'restrictionInfo': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'restrictionInfo',
       type: IsarType.object,
       target: r'CRestrictionInfo',
     ),
     r'role': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'role',
       type: IsarType.byte,
       enumMap: _CMemberroleEnumValueMap,
     ),
     r'userId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'userId',
       type: IsarType.string,
     )
@@ -91,16 +96,17 @@ void _cMemberSerialize(
   writer.writeBool(offsets[0], object.isBlockedByMe);
   writer.writeBool(offsets[1], object.isBlockingMe);
   writer.writeBool(offsets[2], object.isMuted);
-  writer.writeByte(offsets[3], object.memberState.index);
-  writer.writeString(offsets[4], object.nickname);
+  writer.writeLong(offsets[3], object.joinedAt);
+  writer.writeByte(offsets[4], object.memberState.index);
+  writer.writeString(offsets[5], object.nickname);
   writer.writeObject<CRestrictionInfo>(
-    offsets[5],
+    offsets[6],
     allOffsets,
     CRestrictionInfoSchema.serialize,
     object.restrictionInfo,
   );
-  writer.writeByte(offsets[6], object.role.index);
-  writer.writeString(offsets[7], object.userId);
+  writer.writeByte(offsets[7], object.role.index);
+  writer.writeString(offsets[8], object.userId);
 }
 
 CMember _cMemberDeserialize(
@@ -113,18 +119,19 @@ CMember _cMemberDeserialize(
   object.isBlockedByMe = reader.readBool(offsets[0]);
   object.isBlockingMe = reader.readBool(offsets[1]);
   object.isMuted = reader.readBool(offsets[2]);
+  object.joinedAt = reader.readLongOrNull(offsets[3]);
   object.memberState =
-      _CMembermemberStateValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+      _CMembermemberStateValueEnumMap[reader.readByteOrNull(offsets[4])] ??
           MemberState.none;
-  object.nickname = reader.readString(offsets[4]);
+  object.nickname = reader.readString(offsets[5]);
   object.restrictionInfo = reader.readObjectOrNull<CRestrictionInfo>(
-    offsets[5],
+    offsets[6],
     CRestrictionInfoSchema.deserialize,
     allOffsets,
   );
   object.role =
-      _CMemberroleValueEnumMap[reader.readByteOrNull(offsets[6])] ?? Role.none;
-  object.userId = reader.readString(offsets[7]);
+      _CMemberroleValueEnumMap[reader.readByteOrNull(offsets[7])] ?? Role.none;
+  object.userId = reader.readString(offsets[8]);
   return object;
 }
 
@@ -142,20 +149,22 @@ P _cMemberDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (_CMembermemberStateValueEnumMap[reader.readByteOrNull(offset)] ??
           MemberState.none) as P;
-    case 4:
-      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readString(offset)) as P;
+    case 6:
       return (reader.readObjectOrNull<CRestrictionInfo>(
         offset,
         CRestrictionInfoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 6:
+    case 7:
       return (_CMemberroleValueEnumMap[reader.readByteOrNull(offset)] ??
           Role.none) as P;
-    case 7:
+    case 8:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -209,6 +218,75 @@ extension CMemberQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isMuted',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'joinedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'joinedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'joinedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'joinedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'joinedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CMember, CMember, QAfterFilterCondition> joinedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'joinedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }

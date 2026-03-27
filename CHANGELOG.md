@@ -1,3 +1,13 @@
+## v4.10.0 (Mar 27, 2026)
+
+### Features
+- Added `setWeeklyDoNotDisturb()`, `getWeeklyDoNotDisturb()` and `clearWeeklyDoNotDisturb()` in `SendbirdChat`
+- Deprecated `setDoNotDisturb()` and `getDoNotDisturb()` in `SendbirdChat`
+- Added `joinedAt` in `Member`
+
+### Improvements
+- Expanded `connectivity_plus` dependency version constraint to `>=5.0.1 <8.0.0`
+
 ## v4.9.0 (Feb 12, 2026)
 
 ### Features

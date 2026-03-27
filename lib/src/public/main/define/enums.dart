@@ -339,3 +339,15 @@ enum NotificationMessageStatus {
   sent,
   read,
 }
+
+/// Represents a day of the week.
+/// @since 4.10.0
+enum DayOfWeek {
+  sunday,
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+}

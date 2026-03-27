@@ -17,6 +17,8 @@ import 'package:sendbird_chat_sdk/src/public/main/handler/user_event_handler.dar
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/feed_channel_change_logs.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_change_logs.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/channel/group_channel_unread_item_count.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/dnd/dnd_schedule.dart';
+import 'package:sendbird_chat_sdk/src/public/main/model/chat/dnd/weekly_do_not_disturb.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/do_not_disturb.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/emoji.dart';
 import 'package:sendbird_chat_sdk/src/public/main/model/chat/global_notification_channel_setting.dart';
@@ -623,10 +625,40 @@ class SendbirdChat {
     await _instance._chat.unblockUser(userId);
   }
 
+  /// Sets weekly do-not-disturb schedules for the current `User`.
+  /// If this option is enabled,
+  /// the current `User` does not receive push notification during the specified time windows on each day of the week.
+  /// @since 4.10.0
+  static Future<void> setWeeklyDoNotDisturb({
+    required List<DndSchedule> dndSchedules,
+    String timezone = 'UTC',
+  }) async {
+    sbLog.i(StackTrace.current);
+    await _instance._chat.setWeeklyDoNotDisturb(
+      dndSchedules: dndSchedules,
+      timezone: timezone,
+    );
+  }
+
+  /// Gets weekly do-not-disturb schedules for the current `User`.
+  /// @since 4.10.0
+  static Future<WeeklyDoNotDisturb> getWeeklyDoNotDisturb() async {
+    sbLog.i(StackTrace.current);
+    return await _instance._chat.getWeeklyDoNotDisturb();
+  }
+
+  /// Clears weekly do-not-disturb schedules for the current `User`.
+  /// @since 4.10.0
+  static Future<void> clearWeeklyDoNotDisturb() async {
+    sbLog.i(StackTrace.current);
+    await _instance._chat.clearWeeklyDoNotDisturb();
+  }
+
   /// Sets Do-not-disturb option for the current `User`.
   /// If this option is enabled,
   /// the current `User` does not receive push notification during the specified time repeatedly.
   /// If you want to snooze specific period, use [setSnoozePeriod].
+  @Deprecated('Use [setWeeklyDoNotDisturb] instead.')
   static Future<void> setDoNotDisturb({
     required bool enable,
     int startHour = 0,
@@ -647,6 +679,7 @@ class SendbirdChat {
   }
 
   /// Gets Do-not-disturb option for the current `User`.
+  @Deprecated('Use [getWeeklyDoNotDisturb] instead.')
   static Future<DoNotDisturb> getDoNotDisturb() async {
     sbLog.i(StackTrace.current);
     return await _instance._chat.getDoNotDisturb();
@@ -656,7 +689,7 @@ class SendbirdChat {
   /// If this option is enabled,
   /// the current `User` does not receive push notification during the given period.
   /// It's not a repetitive operation.
-  /// If you want to snooze repeatedly, use [setDoNotDisturb].
+  /// If you want to snooze repeatedly, use [setWeeklyDoNotDisturb].
   static Future<void> setSnoozePeriod({
     required bool enable,
     DateTime? startDate,

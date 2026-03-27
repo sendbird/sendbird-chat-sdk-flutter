@@ -24,6 +24,8 @@ class CMember {
   @enumerated
   late Role role;
 
+  int? joinedAt;
+
   CRestrictionInfo? restrictionInfo;
 
   CMember();
@@ -39,6 +41,7 @@ class CMember {
       ..isBlockingMe = member.isBlockingMe
       ..isMuted = member.isMuted
       ..role = member.role
+      ..joinedAt = member.joinedAt
       ..restrictionInfo = member.restrictionInfo != null
           ? CRestrictionInfo.fromRestrictionInfo(member.restrictionInfo!)
           : null;
@@ -60,6 +63,7 @@ class CMember {
       ..isBlockingMe = isBlockingMe
       ..isMuted = isMuted
       ..role = role
+      ..joinedAt = joinedAt
       ..restrictionInfo = restrictionInfo?.toRestrictionInfo();
     return CUser.setCUser(member, cUser) as Member;
   }

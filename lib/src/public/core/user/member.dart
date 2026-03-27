@@ -30,6 +30,11 @@ class Member extends User {
   @JsonKey(unknownEnumValue: Role.none)
   Role role;
 
+  /// The timestamp of when this member joined the channel, in seconds.
+  /// @since 4.10.0
+  @JsonKey(name: 'joined_ts')
+  int? joinedAt;
+
   /// Restriction information for the current member.
   /// Only `Nonnull` if the member is muted.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -41,6 +46,7 @@ class Member extends User {
     this.isBlockingMe = false,
     this.isMuted = false,
     this.role = Role.none,
+    this.joinedAt,
     required String userId,
     required String nickname,
     String profileUrl = '',

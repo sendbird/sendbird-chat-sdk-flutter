@@ -16,6 +16,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) => Member(
       role: $enumDecodeNullable(_$RoleEnumMap, json['role'],
               unknownValue: Role.none) ??
           Role.none,
+      joinedAt: (json['joined_ts'] as num?)?.toInt(),
       userId: json['user_id'] as String,
       nickname: json['nickname'] as String,
       profileUrl: json['profile_url'] as String? ?? '',
@@ -52,6 +53,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'is_blocking_me': instance.isBlockingMe,
       'is_muted': instance.isMuted,
       'role': _$RoleEnumMap[instance.role]!,
+      'joined_ts': instance.joinedAt,
     };
 
 const _$MemberStateEnumMap = {

@@ -52,6 +52,7 @@ import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/preference/user_push_template_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/preference/user_push_trigger_option_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/preference/user_snooze_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/preference/user_weekly_do_not_disturb_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/push/user_push_register_request.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/user/push/user_push_unregister_request.dart';
 import 'package:universal_io/io.dart';
@@ -66,7 +67,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.9.0';
+const sdkVersion = '4.10.0';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
