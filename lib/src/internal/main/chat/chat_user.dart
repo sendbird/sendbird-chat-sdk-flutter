@@ -41,6 +41,75 @@ extension ChatUser on Chat {
     await apiClient.send(UserUnblockRequest(this, targetId: userId));
   }
 
+  Future<void> setWeeklyDoNotDisturb({
+    required List<DndSchedule> dndSchedules,
+    String timezone = 'UTC',
+  }) async {
+    sbLog.i(StackTrace.current);
+
+    if (dndSchedules.isEmpty) {
+      throw InvalidParameterException();
+    }
+
+    final dayOfWeekSet = <DayOfWeek>{};
+    for (final dndSchedule in dndSchedules) {
+      if (!dayOfWeekSet.add(dndSchedule.dayOfWeek)) {
+        throw InvalidParameterException();
+      }
+
+      final timeWindows = dndSchedule.dndTimeWindows;
+      if (timeWindows.isEmpty) {
+        throw InvalidParameterException();
+      }
+
+      for (int i = 0; i < timeWindows.length; i++) {
+        final a = timeWindows[i];
+        if (a.startHour < 0 ||
+            a.startHour > 23 ||
+            a.startMin < 0 ||
+            a.startMin > 59 ||
+            a.endHour < 0 ||
+            a.endHour > 23 ||
+            a.endMin < 0 ||
+            a.endMin > 59) {
+          throw InvalidParameterException();
+        }
+
+        final aStart = a.startHour * 60 + a.startMin;
+        final aEnd = a.endHour * 60 + a.endMin;
+        if (aStart >= aEnd) {
+          throw InvalidParameterException();
+        }
+
+        for (int j = i + 1; j < timeWindows.length; j++) {
+          final b = timeWindows[j];
+          final bStart = b.startHour * 60 + b.startMin;
+          final bEnd = b.endHour * 60 + b.endMin;
+          if (aStart <= bEnd && bStart <= aEnd) {
+            throw InvalidParameterException();
+          }
+        }
+      }
+    }
+
+    await apiClient.send(UserWeeklyDoNotDisturbSetRequest(
+      this,
+      dndSchedules: dndSchedules,
+      timezone: timezone,
+    ));
+  }
+
+  Future<WeeklyDoNotDisturb> getWeeklyDoNotDisturb() async {
+    sbLog.i(StackTrace.current);
+    return await apiClient
+        .send<WeeklyDoNotDisturb>(UserWeeklyDoNotDisturbGetRequest(this));
+  }
+
+  Future<void> clearWeeklyDoNotDisturb() async {
+    sbLog.i(StackTrace.current);
+    await apiClient.send(UserWeeklyDoNotDisturbDeleteRequest(this));
+  }
+
   Future<void> setDoNotDisturb({
     required bool enable,
     int startHour = 0,

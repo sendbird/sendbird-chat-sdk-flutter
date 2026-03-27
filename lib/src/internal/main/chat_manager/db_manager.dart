@@ -39,7 +39,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 
 class DBManager {
-  final int _dbVersion = 2;
+  final int _dbVersion = 3;
   final String _dbName = 'sendbird_chat';
   final int _maxDBFileSize = 256; // MB
   final String _dbVersionKey = 'com.sendbird.chat.db_version';
