@@ -35,6 +35,9 @@ class LoginEvent extends SessionEvent {
   @JsonKey(name: 'log_publish_config')
   final LogPublishConfig? logPublishConfig;
 
+  @JsonKey(name: 'request_dedup_interval_ms', defaultValue: 0)
+  final int requestDedupIntervalMs;
+
   @JsonKey(includeFromJson: false, includeToJson: false)
   late AppInfo appInfo;
 
@@ -54,6 +57,7 @@ class LoginEvent extends SessionEvent {
     this.deviceTokenLastDeletedAt = 0,
     this.configSyncNeeded,
     this.logPublishConfig,
+    this.requestDedupIntervalMs = 0,
   }) : super(eKey: eKey, newKey: newKey, key: key);
 
   factory LoginEvent.fromJson(Map<String, dynamic> json) {

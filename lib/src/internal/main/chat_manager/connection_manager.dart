@@ -322,6 +322,12 @@ class ConnectionManager {
       await webSocketClient.close();
     }
 
+    // The request-dedup cache is per-connection session state; drop it on every
+    // WS teardown (background/network/logout) so a reconnect — or an HTTP
+    // request made while the socket is down — never reuses a previous session's
+    // result.
+    chat.apiClient.clearRequestDedup();
+
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
     if (clear || logout) {
@@ -525,6 +531,10 @@ class ConnectionManager {
 
   void _onWebSocketClosed() async {
     chat.commandManager.clearCompleterMap();
+    // The dedup cache is per-connection session state; drop it the moment the
+    // socket closes — before the 1s reconnect-if-needed delay — so a request
+    // issued during that gap can't reuse a previous session's result.
+    chat.apiClient.clearRequestDedup();
 
     final closeCode = webSocketClient.getCloseCode();
     if (closeCode != null) {

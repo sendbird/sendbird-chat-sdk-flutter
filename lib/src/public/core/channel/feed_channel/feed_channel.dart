@@ -177,7 +177,8 @@ class FeedChannel extends BaseChannel {
     }
 
     try {
-      final channel = await FeedChannel.refresh(channelUrl, chat: chat);
+      final channel =
+          await FeedChannel._refresh(channelUrl, chat: chat, dedup: true);
       return channel;
     } catch (e) {
       //+ [DBManager]
@@ -202,6 +203,16 @@ class FeedChannel extends BaseChannel {
     String channelUrl, {
     Chat? chat,
   }) async {
+    return _refresh(channelUrl, chat: chat);
+  }
+
+  // Internal refresh with optional in-flight deduplication. `dedup` is kept off
+  // the public `refresh()` surface — only the getChannel() path opts in.
+  static Future<FeedChannel> _refresh(
+    String channelUrl, {
+    Chat? chat,
+    bool dedup = false,
+  }) async {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
 
@@ -216,7 +227,7 @@ class FeedChannel extends BaseChannel {
           ChannelListQueryIncludeOption.includeDeliveryReceipt,
         ],
         passive: false,
-      ),
+      )..dedup = dedup,
     );
 
     //+ [DBManager]

@@ -21,6 +21,11 @@ abstract class ApiRequest {
   bool isMultipart = false;
   bool isAuthenticateFeed = false;
 
+  /// When true, this request opts into in-flight deduplication (see
+  /// [apiDedupKey] / RequestDeduplicator). Only set for idempotent GETs that
+  /// are safe to coalesce (e.g. getChannel refreshes).
+  bool dedup = false;
+
   final Chat chat;
   String? userId;
   String? apiToken;
@@ -34,4 +39,25 @@ abstract class ApiRequest {
   }
 
   Future response(Map<String, dynamic> res) async {}
+
+  /// Key used to coalesce identical in-flight requests via `RequestDeduplicator`.
+  ///
+  /// Non-null only when [dedup] is set, so a request participates in
+  /// deduplication only when its caller opted in. The key is derived from the
+  /// request signature — see [buildDedupKey].
+  String? get apiDedupKey =>
+      dedup ? buildDedupKey(method, url, queryParams) : null;
+
+  /// Builds a canonical dedup key from a request's [method], [url] and
+  /// [queryParams] so that identical requests map to the same key.
+  static String buildDedupKey(
+    HttpMethod method,
+    String url,
+    Map<String, dynamic> queryParams,
+  ) {
+    final entries = queryParams.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    final query = entries.map((e) => '${e.key}=${e.value}').join('&');
+    return '${method.name}:$url?$query';
+  }
 }

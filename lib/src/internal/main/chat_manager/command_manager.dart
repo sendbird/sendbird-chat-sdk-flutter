@@ -350,6 +350,7 @@ class CommandManager {
       ..appInfo = event.appInfo
       ..uploadSizeLimit = event.appInfo.uploadSizeLimit * 1024 * 1024
       ..maxUnreadCountOnSuperGroup = event.maxUnreadCountOnSuperGroup
+      ..requestDedupIntervalMs = event.requestDedupIntervalMs
       ..lastConnectedAt = event.loginTimestamp
       ..reconnectConfig = event.reconnectConfiguration;
 

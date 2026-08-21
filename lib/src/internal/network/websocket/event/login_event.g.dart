@@ -28,4 +28,6 @@ LoginEvent _$LoginEventFromJson(Map<String, dynamic> json) => LoginEvent(
           ? null
           : LogPublishConfig.fromJson(
               json['log_publish_config'] as Map<String, dynamic>),
+      requestDedupIntervalMs:
+          (json['request_dedup_interval_ms'] as num?)?.toInt() ?? 0,
     );

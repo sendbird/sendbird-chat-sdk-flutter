@@ -69,13 +69,23 @@ class OpenChannel extends BaseChannel {
       return channel;
     }
 
-    return await OpenChannel.refresh(channelUrl, chat: chat);
+    return await OpenChannel._refresh(channelUrl, chat: chat, dedup: true);
   }
 
   /// Refreshes all the data of this channel.
   static Future<OpenChannel> refresh(
     String channelUrl, {
     Chat? chat,
+  }) async {
+    return _refresh(channelUrl, chat: chat);
+  }
+
+  // Internal refresh with optional in-flight deduplication. `dedup` is kept off
+  // the public `refresh()` surface — only the getChannel() path opts in.
+  static Future<OpenChannel> _refresh(
+    String channelUrl, {
+    Chat? chat,
+    bool dedup = false,
   }) async {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
@@ -86,7 +96,7 @@ class OpenChannel extends BaseChannel {
         channelUrl: channelUrl,
         options: [ChannelListQueryIncludeOption.includeMetadata],
         passive: false,
-      ),
+      )..dedup = dedup,
     );
     return channel;
   }

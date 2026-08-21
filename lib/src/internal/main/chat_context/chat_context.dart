@@ -58,6 +58,8 @@ class ChatContext {
   int uploadSizeLimit = 0;
   int? maxUnreadCountOnSuperGroup;
   int? lastConnectedAt;
+  // Server-driven request deduplication window (ms) from the 'LOGI' event.
+  int requestDedupIntervalMs = 0;
   ReconnectConfiguration? reconnectConfig;
 
   // Connection
@@ -133,6 +135,7 @@ class ChatContext {
     uploadSizeLimit = 0;
     maxUnreadCountOnSuperGroup = null;
     lastConnectedAt = null;
+    requestDedupIntervalMs = 0;
     reconnectConfig = _getDefaultReconnectConfiguration(); // Check
 
     loginCompleter = null;
