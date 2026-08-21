@@ -14,6 +14,8 @@ extension ChatPush on Chat {
     bool unique = false,
   }) async {
     sbLog.i(StackTrace.current, 'PushTokenType: $type');
+    // .trim() also rejects whitespace-only tokens (matches chat-js PR #1808)
+    if (token.trim().isEmpty) throw InvalidParameterException();
 
     if (currentUser == null) {
       chatContext.pendingPushToken = token;

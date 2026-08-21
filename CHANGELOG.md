@@ -1,3 +1,9 @@
+## v4.10.1 (Aug 21, 2026)
+
+### Improvements
+- Deduplicate concurrent GET channel requests on join event bursts
+- Throw `InvalidParameterException` for empty/whitespace-only push token in `registerPushToken`
+
 ## v4.10.0 (Mar 27, 2026)
 
 ### Features

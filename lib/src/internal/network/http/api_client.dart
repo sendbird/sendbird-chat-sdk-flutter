@@ -8,20 +8,28 @@ import 'package:sendbird_chat_sdk/src/internal/main/logger/sendbird_logger.dart'
 import 'package:sendbird_chat_sdk/src/internal/main/stats/stat_manager.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/http_client.dart';
 import 'package:sendbird_chat_sdk/src/internal/network/http/http_client/request/api_request.dart';
+import 'package:sendbird_chat_sdk/src/internal/network/http/request_deduplicator.dart';
 import 'package:sendbird_chat_sdk/src/public/main/define/exceptions.dart';
 
 class ApiClient {
   final StatManager? _statManager;
   final HttpClient _httpClient;
+  final RequestDeduplicator _requestDeduplicator;
 
   bool throwExceptionForTest = false;
   int? uploadingIndexToThrowExceptionForTest;
+
+  /// Test-only hook invoked for every request that actually reaches the
+  /// network (i.e. after request deduplication). Used to assert how many
+  /// GET requests are issued for a channel.
+  void Function(ApiRequest request)? requestObserverForTest;
 
   ApiClient({
     required ChatContext chatContext,
     required SessionManager sessionManager,
     StatManager? statManager,
   })  : _statManager = statManager,
+        _requestDeduplicator = RequestDeduplicator(chatContext),
         _httpClient = HttpClient(
           chatContext: chatContext,
           sessionManager: sessionManager,
@@ -32,6 +40,12 @@ class ApiClient {
     _httpClient.cleanUp();
   }
 
+  /// Clears the request-dedup cache. Called on every WS teardown so dedup
+  /// state does not survive across connection sessions.
+  void clearRequestDedup() {
+    _requestDeduplicator.clear();
+  }
+
   HttpClient get httpClient => _httpClient;
 
   Stream? get errorStreamController =>
@@ -39,6 +53,16 @@ class ApiClient {
 
   // possible other solution T is return type
   Future<T> send<T>(ApiRequest request) async {
+    final dedupKey = request.apiDedupKey;
+    if (dedupKey == null) {
+      return _send<T>(request);
+    }
+    return _requestDeduplicator.run<T>(dedupKey, () => _send<T>(request));
+  }
+
+  Future<T> _send<T>(ApiRequest request) async {
+    requestObserverForTest?.call(request);
+
     if (throwExceptionForTest) {
       throw NetworkErrorException();
     }

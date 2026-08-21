@@ -88,7 +88,7 @@ class ChannelEvent extends BaseEvent {
 
   List<Member> get joinedMembers {
     if (data['users'] != null) {
-      final dics = data['users'] as List<Map<String, dynamic>>;
+      final dics = data['users'] as List;
       final users = dics.map((e) => Member.fromJsonWithChat(chat, e)).toList();
       for (final e in users) {
         e.memberState = MemberState.joined;

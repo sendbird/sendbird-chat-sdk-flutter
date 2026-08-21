@@ -292,7 +292,8 @@ class GroupChannel extends BaseChannel {
     }
 
     try {
-      final channel = await GroupChannel.refresh(channelUrl, chat: chat);
+      final channel =
+          await GroupChannel._refresh(channelUrl, chat: chat, dedup: true);
       return channel;
     } catch (e) {
       //+ [DBManager]
@@ -345,6 +346,16 @@ class GroupChannel extends BaseChannel {
     String channelUrl, {
     Chat? chat,
   }) async {
+    return _refresh(channelUrl, chat: chat);
+  }
+
+  // Internal refresh with optional in-flight deduplication. `dedup` is kept off
+  // the public `refresh()` surface — only the getChannel() path opts in.
+  static Future<GroupChannel> _refresh(
+    String channelUrl, {
+    Chat? chat,
+    bool dedup = false,
+  }) async {
     sbLog.i(StackTrace.current, 'channelUrl: $channelUrl');
     chat ??= SendbirdChat().chat;
 
@@ -359,7 +370,7 @@ class GroupChannel extends BaseChannel {
           ChannelListQueryIncludeOption.includeDeliveryReceipt,
         ],
         passive: false,
-      ),
+      )..dedup = dedup,
     );
 
     return channel;
