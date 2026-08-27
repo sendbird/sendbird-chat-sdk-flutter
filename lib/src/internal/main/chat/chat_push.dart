@@ -14,8 +14,12 @@ extension ChatPush on Chat {
     bool unique = false,
   }) async {
     sbLog.i(StackTrace.current, 'PushTokenType: $type');
-    // .trim() also rejects whitespace-only tokens (matches chat-js PR #1808)
-    if (token.trim().isEmpty) throw InvalidParameterException();
+    // Return error early for empty/whitespace-only tokens instead of throwing (matches chat-js PR #1808)
+    if (token.trim().isEmpty) {
+      sbLog.w(StackTrace.current,
+          'registerPushToken() failed because the token is empty.');
+      return PushTokenRegistrationStatus.error;
+    }
 
     if (currentUser == null) {
       chatContext.pendingPushToken = token;

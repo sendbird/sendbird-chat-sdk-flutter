@@ -1,3 +1,9 @@
+## v4.10.2 (Aug 27, 2026)
+
+### Improvements
+- Fixed reconnection issues after repeated session key refreshes
+- `registerPushToken()` returns an error instead of throwing for an empty token
+
 ## v4.10.1 (Aug 21, 2026)
 
 ### Improvements
