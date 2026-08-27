@@ -28,6 +28,7 @@ class WebSocketClient {
   bool _isConnected = false;
   bool _isClosing = false; // Track if close is in progress
   bool _isCleanedUp = false; // Track if cleanup has been done
+  int _generation = 0; // Monotonic per-connect() attempt id (see connect())
   final _closeLock = Object(); // Lock for synchronization
   int _lastActiveAt = 0;
   Timer? _pingTimer;
@@ -64,18 +65,34 @@ class WebSocketClient {
     String? sessionKey,
     bool reconnect = false,
   }) {
-    if (url == _url && _isConnected) return;
+    // A reconnect must always re-establish the socket, even when the URL is
+    // unchanged and the socket still looks connected: it re-authenticates with
+    // a refreshed session key (the key travels in the header, not the URL) and
+    // its LOGI response is what completes the reconnect (onReconnectSucceeded).
+    // Skipping it here would strand the SDK in ReconnectingState after the 2nd+
+    // session refresh (reconnect URL is identical across refreshes).
+    if (url == _url && _isConnected && !reconnect) return;
+
+    // Each connect() attempt gets a monotonically increasing generation; a later
+    // attempt bumps it, so an earlier attempt's async callbacks (e.g. the web
+    // reconnect timeout) can detect that they were superseded — a null channel
+    // is not proof of ownership, since a superseding attempt may also have
+    // cleaned up.
+    final int myGen = ++_generation;
 
     sbLog.d(StackTrace.current, '[url] $url');
 
     // Wait for any ongoing close operation to complete and clean up if needed
     bool shouldCleanup = false;
     bool isClosing = false;
+    WebSocketChannel? supersededChannel;
     synchronized(_closeLock, () {
       isClosing = _isClosing;
       if (_webSocketChannel != null) {
         // Have existing connection - need cleanup
         shouldCleanup = true;
+        // Capture it so its sink can be closed after cleanup (see below).
+        supersededChannel = _webSocketChannel;
       }
       // Reset cleanup state for new connection
       _isCleanedUp = false;
@@ -84,7 +101,29 @@ class WebSocketClient {
     if (shouldCleanup) {
       sbLog.d(StackTrace.current, 'Cleaning up - isClosing: $isClosing');
       _cleanUp();
+
+      // _cleanUp() cancels the superseded subscription and drops the reference
+      // but does NOT close the sink, so without this the old server connection
+      // would linger until an idle timeout — leaking one socket per reconnect
+      // (e.g. on every session refresh). Close its sink now to release it. The
+      // subscription is already cancelled, so its onDone cannot reach the new
+      // socket generation. Fire-and-forget; swallow errors from an
+      // already-closing sink.
+      final supersededSink = supersededChannel?.sink;
+      if (supersededSink != null) {
+        unawaited(supersededSink.close().catchError((e) {
+          sbLog.e(StackTrace.current, 'superseded sink close failed: $e');
+        }));
+      }
     }
+
+    // _cleanUp() above sets _isCleanedUp = true; reset it for the new socket
+    // generation. Otherwise _onDone()'s `if (wasCleanedUp) return` would
+    // suppress this socket's close lifecycle (no _onWebSocketClosed, no
+    // auto-reconnect) after a reconnect over a still-live socket.
+    synchronized(_closeLock, () {
+      _isCleanedUp = false;
+    });
 
     connectedTs = null;
     runZonedGuarded(() async {
@@ -108,11 +147,24 @@ class WebSocketClient {
         );
 
         if (reconnect) {
+          final attemptChannel = _webSocketChannel;
           reconnectTimeoutCompleter = Completer();
           reconnectTimeoutCompleter.future.timeout(
               Duration(seconds: _chat.chatContext.options.connectionTimeout),
               onTimeout: () async {
+            // Bail unless this attempt is still live. Before the await, require
+            // both an unchanged generation (no later connect() superseded us) and
+            // that our channel is still current — the generation alone would miss
+            // this attempt's own socket being torn down (close()/background/error
+            // null it out) without a new connect(). After the await our own
+            // close() is expected to have nulled the channel, so re-check by
+            // generation only (a superseding connect() would have bumped it).
+            if (_generation != myGen ||
+                !identical(_webSocketChannel, attemptChannel)) {
+              return;
+            }
             await close();
+            if (_generation != myGen) return;
 
             final exception = WebSocketFailedException(
               message: 'Reconnection timeout on web',
@@ -242,12 +294,25 @@ class WebSocketClient {
       }).timeout(
         const Duration(milliseconds: 500),
         onTimeout: () {
-          _cancelForceCloseTimer();
-          synchronized(_closeLock, () {
-            _isClosing = false;
-          });
-          _cleanUp();
-          _onWebSocketClosed();
+          // If a concurrent connect() superseded (and already cleaned up) the
+          // channel we were closing while we awaited its onDone, this fallback
+          // is stale: the closing/timer state now belongs to the replacement's
+          // generation, so touch nothing global — only drop our own dangling
+          // completer. Otherwise finish this close normally (tear down + notify).
+          if (identical(_webSocketChannel, channelToClose)) {
+            _cancelForceCloseTimer();
+            synchronized(_closeLock, () {
+              _isClosing = false;
+            });
+            _cleanUp();
+            _onWebSocketClosed();
+          } else {
+            synchronized(_closeLock, () {
+              if (identical(_onDoneCompleter, localCompleter)) {
+                _onDoneCompleter = null;
+              }
+            });
+          }
           return false;
         },
       );
