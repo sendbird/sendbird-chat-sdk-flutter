@@ -29,6 +29,13 @@ enum HttpMethod {
 
 class HttpClient {
   final apiTimeoutSec = 10; // Check
+  // Statistics uploads carry a large payload (up to 1000 stats) and are a
+  // background, retryable call with no user waiting, so they get a longer
+  // timeout than user-facing API calls (which stay at apiTimeoutSec). Android
+  // uses 25s as its general API call timeout; we adopt that value for stat
+  // uploads specifically. chat-js has no dedicated stat-upload timeout.
+  // (CLNP-8835)
+  final statUploadTimeoutSec = 25;
   final Map<String, MultipartRequest> uploadingMultipartRequests = {};
   StreamController? errorStreamController =
       StreamController<SendbirdException>.broadcast(sync: true);
@@ -71,6 +78,22 @@ class HttpClient {
       path: url,
       queryParameters: _convertQueryParams(queryParams),
     );
+  }
+
+  // Statistics uploads get a longer timeout than user-facing API calls
+  // (CLNP-8835). Exposed so the selection logic can be unit-tested.
+  //
+  // Match the two stat-upload endpoints by exact path suffix rather than a
+  // `contains('statistics')` substring test — otherwise an unrelated request
+  // whose path merely contains "statistics" (e.g. a user whose id is
+  // "statistics" -> /v3/users/statistics) would wrongly get the 25s timeout.
+  // Suffixes mirror UploadStatRequest.statUrl ('sdk/statistics') and
+  // UploadNotificationStatRequest.statUrl ('sdk/notification_statistics').
+  int timeoutSecForUri(Uri uri) {
+    final path = uri.path;
+    final isStatUpload = path.endsWith('sdk/statistics') ||
+        path.endsWith('sdk/notification_statistics');
+    return isStatUpload ? statUploadTimeoutSec : apiTimeoutSec;
   }
 
   Future<http.Response> _sendMultipartRequest(MultipartRequest request) async {
@@ -119,11 +142,11 @@ class HttpClient {
         break;
     }
 
+    final timeoutSec = timeoutSecForUri(uri);
     try {
-      return await response.timeout(Duration(seconds: apiTimeoutSec));
+      return await response.timeout(Duration(seconds: timeoutSec));
     } on TimeoutException {
-      sbLog.e(StackTrace.current,
-          '[TimeoutException] apiTimeoutSec: $apiTimeoutSec');
+      sbLog.e(StackTrace.current, '[TimeoutException] timeoutSec: $timeoutSec');
       rethrow;
     }
   }

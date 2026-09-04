@@ -67,7 +67,7 @@ part 'chat_notifications.dart';
 part 'chat_push.dart';
 part 'chat_user.dart';
 
-const sdkVersion = '4.10.2';
+const sdkVersion = '4.10.3';
 
 // Internal implementation for main class. Do not directly access this class.
 class Chat with WidgetsBindingObserver {
@@ -98,10 +98,10 @@ class Chat with WidgetsBindingObserver {
   int lastMarkAsReadTimestamp;
   bool isBackground = false;
 
-  // This allows a value of type T or T? to be treated as a value of type T?.
-  // We use this so that APIs that have become non-nullable can still be used
-  // with `!` and `?` to support older versions of the API as well.
-  T? _ambiguate<T>(T? value) => value; // (?)
+  // Mirrors kIsWeb in production. Kept as an overridable field (not a direct
+  // kIsWeb reference) so tests can exercise the web lifecycle branch — keep the
+  // socket on hide, defer reconnect — on the VM. (CLNP-8835)
+  bool isWeb = kIsWeb;
 
   // isTest
   bool get isTest {
@@ -173,14 +173,56 @@ class Chat with WidgetsBindingObserver {
   //- FileMessage
 
   void listenAppLifecycleState() {
-    if (_isObserverRegistered == null) {
-      if (_ambiguate(WidgetsBinding.instance) != null) {
-        sbLog.i(StackTrace.current, '(WidgetsBinding.instance).addObserver()');
-        _ambiguate(WidgetsBinding.instance)?.addObserver(this);
-        _isObserverRegistered = true;
-      } else {
-        sbLog.w(StackTrace.current, '(WidgetsBinding.instance) == null');
-      }
+    // Obtain (initializing if needed) the widgets binding ourselves instead of
+    // assuming the app already called WidgetsFlutterBinding.ensureInitialized().
+    // Previously, when connect()/authenticate() ran before the binding existed,
+    // registration silently no-opped (release builds) and ALL app-lifecycle
+    // handling was lost — so backgrounding was never detected and surfaced later
+    // as ws:disconnect/ping_pong_timedout instead of cause=background
+    // (CLNP-8835).
+    final WidgetsBinding? binding = _resolveWidgetsBinding();
+    if (binding == null) {
+      // No binding available (e.g. connect() from a non-UI/background isolate).
+      // Retried on the next connect()/authenticate().
+      sbLog.w(
+        StackTrace.current,
+        'WidgetsBinding unavailable; app-lifecycle handling not registered. '
+        'Call WidgetsFlutterBinding.ensureInitialized() before connect().',
+      );
+      return;
+    }
+
+    if (_isObserverRegistered != true) {
+      binding.addObserver(this);
+      _isObserverRegistered = true;
+    }
+
+    // addObserver does NOT replay the current lifecycle state to a newly-added
+    // observer, and isBackground is otherwise only cleared by a `resumed` event.
+    // So connect()/authenticate() while the app is ALREADY backgrounded/hidden
+    // (a background push handler, an app launched straight into the background,
+    // or a hidden web tab) — or a stale `true` left over from an earlier
+    // background — would leave the background reconnect guards wrong. Re-derive
+    // isBackground from the binding's current state on every (re)connect so it
+    // is always accurate (set both true AND false). (CLNP-8835)
+    final AppLifecycleState? state = binding.lifecycleState;
+    isBackground = state == AppLifecycleState.paused || state?.name == 'hidden';
+
+    sbLog.i(StackTrace.current,
+        'App-lifecycle state synced. isBackground: $isBackground');
+  }
+
+  // ensureInitialized() is idempotent on the platform isolate — it returns the
+  // existing binding (including a custom or TestWidgetsFlutterBinding) if one is
+  // already set up, and only creates one otherwise. It throws on non-UI
+  // isolates, so it is guarded.
+  WidgetsBinding? _resolveWidgetsBinding() {
+    try {
+      return WidgetsFlutterBinding.ensureInitialized();
+    } catch (e) {
+      sbLog.w(StackTrace.current,
+          'WidgetsFlutterBinding.ensureInitialized() failed: $e');
+      return null;
     }
   }
 
@@ -188,18 +230,39 @@ class Chat with WidgetsBindingObserver {
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     sbLog.i(StackTrace.current, 'state: $state');
 
-    if (state == AppLifecycleState.paused) {
-      isBackground = true;
-      await _handleEnterBackground();
+    // `hidden` (Flutter 3.13+) is the cross-platform "app is hidden" signal — on
+    // web/desktop it is the ONLY background signal (`paused` is iOS/Android only).
+    // Compared by name so the SDK still compiles on the supported Flutter >=3.7.
+    // On iOS/Android `hidden` is synthesized just before `paused`, so the
+    // isBackground guard keeps the transition from being handled twice.
+    // `inactive` (transient: call/app-switcher) and `detached` are intentionally
+    // ignored. (CLNP-8835)
+    final isHidden = state.name == 'hidden';
+
+    if (state == AppLifecycleState.paused || isHidden) {
+      if (!isBackground) {
+        isBackground = true;
+        await _handleEnterBackground();
+      }
     } else if (state == AppLifecycleState.resumed) {
-      isBackground = false;
-      await _handleEnterForeground();
+      if (isBackground) {
+        isBackground = false;
+        await _handleEnterForeground();
+      }
     }
   }
 
   Future<void> _handleEnterBackground() async {
     sbLog.i(StackTrace.current);
     channelCache.markAsDirtyAll();
+
+    // Web: a hidden tab can keep running and be shown again shortly, so do NOT
+    // proactively disconnect — keep the connection. If it drops while hidden,
+    // _reconnectIfNeeded defers reconnection until foreground (chat-js model),
+    // which avoids reconnect/ping_pong churn. On mobile, background means the OS
+    // suspends the app, so disconnect proactively (matches native SDKs and
+    // records cause=background). (CLNP-8835)
+    if (isWeb) return;
 
     if (chatContext.isChatConnected) {
       await connectionManager.enterBackground();
@@ -248,8 +311,16 @@ class Chat with WidgetsBindingObserver {
           if (chatContext.isChatConnected) {
             if (SendbirdChat.currentUser != null ||
                 chatContext.currentUserId != null) {
-              sbLog.d(StackTrace.current, 'reconnect()');
-              await connectionManager.reconnect(reset: true);
+              if (isBackground) {
+                // Network returned while backgrounded/hidden — don't reconnect
+                // now (it would churn); the foreground/resume path reconnects
+                // via DisconnectedState.enterForeground. (CLNP-8835)
+                sbLog.d(StackTrace.current,
+                    'network online while backgrounded; defer reconnect to foreground');
+              } else {
+                sbLog.d(StackTrace.current, 'reconnect()');
+                await connectionManager.reconnect(reset: true);
+              }
             }
           } else if (chatContext.isFeedAuthenticated) {
             if (SendbirdChat.currentUser != null) {

@@ -234,8 +234,9 @@ class GroupChannelListQuery extends BaseQuery {
       ..createdAfter = GroupChannelFilter.toSec(createdAfter);
 
     final options = [
-      if (includeEmpty) ChannelListQueryIncludeOption.includeEmpty,
-      if (includeFrozen) ChannelListQueryIncludeOption.includeFrozen,
+      // includeEmpty / includeFrozen are passed to the request as booleans so
+      // `false` is sent explicitly (show_empty=false / show_frozen=false). The
+      // include-option list can only ever represent `true`. (CLNP-8901)
       if (includeMetaData) ChannelListQueryIncludeOption.includeMetadata,
       if (includeChatNotification)
         ChannelListQueryIncludeOption.includeChatNotification,
@@ -252,6 +253,8 @@ class GroupChannelListQuery extends BaseQuery {
           limit: limit,
           filter: filter,
           options: options,
+          includeEmpty: includeEmpty,
+          includeFrozen: includeFrozen,
           queryType: queryType,
           token: token,
           order: order,

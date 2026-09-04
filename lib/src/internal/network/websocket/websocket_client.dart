@@ -15,7 +15,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 typedef OnWebSocketConnected = void Function();
-typedef OnWebSocketClosed = void Function();
+typedef OnWebSocketClosed = void Function({int? unexpectedCloseCode});
 typedef OnWebSocketData = Future<void> Function(dynamic data);
 typedef OnWebSocketError = Future<void> Function(Object error);
 
@@ -349,9 +349,20 @@ class WebSocketClient {
     return _isConnected;
   }
 
-  int? getCloseCode() {
-    return _webSocketChannel?.closeCode;
+  // Test seam: drive the unexpected-close path (server/transport closed the
+  // socket) without a live server, so the guarded ws:disconnect cause=<code>
+  // recording can be verified. Mirrors what _onDone's else branch passes.
+  // (CLNP-8835)
+  void simulateUnexpectedCloseForTest(int closeCode) {
+    _onWebSocketClosed(unexpectedCloseCode: closeCode);
   }
+
+  // Test seam: drive the real error path (_onError -> _cleanUp + _onWebSocketError
+  // -> _reconnectIfNeeded) without a live socket failure, so the state-aware
+  // background defer can be verified from non-Connected states (e.g.
+  // DelayedConnectingState). Returns the future so a test can await completion
+  // instead of racing a fixed delay. (CLNP-8835)
+  Future<void> simulateErrorForTest(Object error) => _onError(error);
 
   void setTestData(dynamic data) {
     testData = data;
@@ -417,9 +428,13 @@ class WebSocketClient {
       _cleanUp();
       _onWebSocketClosed();
     } else {
-      // onDone called without close() - unexpected disconnection
+      // onDone fired without a local close() — the server or transport closed
+      // the socket. Capture the close code before _cleanUp() drops the channel
+      // so it can be recorded as the disconnect cause, mirroring native's
+      // onWebSocketClosedUnexpectedly. (CLNP-8835)
+      final unexpectedCloseCode = _webSocketChannel?.closeCode;
       _cleanUp();
-      _onWebSocketClosed(); // Need to notify about disconnection
+      _onWebSocketClosed(unexpectedCloseCode: unexpectedCloseCode);
     }
   }
 

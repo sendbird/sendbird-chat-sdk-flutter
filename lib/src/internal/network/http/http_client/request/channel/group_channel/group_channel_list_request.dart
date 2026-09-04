@@ -34,6 +34,10 @@ class GroupChannelListRequest extends ApiRequest {
     required GroupChannelListQueryType queryType,
     List<GroupChannelListQuerySearchField> searchFields = const [],
     List<ChannelListQueryIncludeOption> options = const [],
+    // includeEmpty / includeFrozen are sent explicitly below (see CLNP-8901),
+    // so they are passed as booleans rather than via the include-option list.
+    required bool includeEmpty,
+    required bool includeFrozen,
     required GroupChannelFilter filter,
     String? userId,
   }) : super(chat: chat, userId: userId) {
@@ -54,6 +58,13 @@ class GroupChannelListRequest extends ApiRequest {
 
     queryParams.addAll(options.toJson());
     queryParams.addAll(filter.toJson());
+
+    // Always send show_empty / show_frozen explicitly (including `false`). The
+    // include-option list can only ever emit `true` keys, so a `false` flag
+    // would otherwise be dropped and the server default applied. Both are
+    // non-null, so the removeWhere(value == null) below keeps them. (CLNP-8901)
+    queryParams['show_empty'] = includeEmpty;
+    queryParams['show_frozen'] = includeFrozen;
 
     if (filter.membersIncludeIn != null &&
         filter.membersIncludeIn!.isNotEmpty) {

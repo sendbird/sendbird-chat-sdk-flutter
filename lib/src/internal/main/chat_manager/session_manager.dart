@@ -53,7 +53,13 @@ class SessionManager {
     await _encryptSessionKey(sessionKey);
   }
 
-  Future<String?> getSessionKey() async {
+  // [cache] false returns the (in-memory or decrypted) session key WITHOUT caching
+  // it back into ChatContext. The DB login fallback passes false: getSessionKey()'s
+  // `??=` cache-back happens the instant decryption finishes and can't be undone, so
+  // a logout that clears the key mid-decryption would be resurrected by it — before
+  // the caller's validity gate runs. With false the caller's gated write owns
+  // ChatContext.sessionKey instead. (CLNP-8835)
+  Future<String?> getSessionKey({bool cache = true}) async {
     sbLog.d(StackTrace.current);
 
     if (_chat.chatContext.sessionKey != null) {
@@ -61,7 +67,9 @@ class SessionManager {
     }
 
     final decryptedSessionKey = await _decryptSessionKey();
-    _chat.chatContext.sessionKey ??= decryptedSessionKey;
+    if (cache) {
+      _chat.chatContext.sessionKey ??= decryptedSessionKey;
+    }
     return decryptedSessionKey;
   }
 

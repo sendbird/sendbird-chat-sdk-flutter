@@ -43,7 +43,9 @@ class OpenChannelListQuery extends BaseQuery {
     isLoading = true;
 
     final options = [
-      if (includeFrozen) ChannelListQueryIncludeOption.includeFrozen,
+      // includeFrozen is passed to the request as a boolean so `false` is sent
+      // explicitly as show_frozen=false. The include-option list can only ever
+      // represent `true`. (CLNP-8901)
       if (includeMetaData) ChannelListQueryIncludeOption.includeMetadata
     ];
 
@@ -58,6 +60,7 @@ class OpenChannelListQuery extends BaseQuery {
           customType: customTypeFilter,
           token: token,
           options: options,
+          includeFrozen: includeFrozen,
         ),
       );
 

@@ -1,3 +1,9 @@
+## v4.10.3 (Sep 4, 2026)
+
+### Improvements
+- Fixed `includeFrozen`/`includeEmpty` being ignored when set to `false` on channel list queries
+- Reduced internal statistics-upload errors and unnecessary background reconnect attempts
+
 ## v4.10.2 (Aug 27, 2026)
 
 ### Improvements

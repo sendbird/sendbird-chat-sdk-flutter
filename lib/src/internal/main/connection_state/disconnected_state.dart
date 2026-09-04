@@ -51,9 +51,10 @@ class DisconnectedState extends BaseConnectionState {
   }
 
   @override
-  Future<bool> reconnect({bool reset = false}) async {
+  Future<bool> reconnect({bool reset = false, bool byUser = false}) async {
     sbLog.i(StackTrace.current);
-    return await chat.connectionManager.doReconnect(reset: reset);
+    return await chat.connectionManager
+        .doReconnect(reset: reset, byUser: byUser);
   }
 
   @override
@@ -66,6 +67,15 @@ class DisconnectedState extends BaseConnectionState {
   @override
   Future<void> enterForeground() async {
     sbLog.i(StackTrace.current);
+
+    // A delayed (soft-rate-limit) reconnect that was in flight when the app
+    // backgrounded is torn down to THIS state (ReconnectingState.enterBackground
+    // -> DisconnectedState), so its resume lands here — not in
+    // ReconnectingState.enterForeground. Consume the latch so the resume re-issues
+    // the delayed path and keeps is_soft_rate_limited faithful; doReconnect can't
+    // re-infer it because the session still exists. (CLNP-8835)
+    final resumeAsDelayed =
+        chat.connectionManager.consumeResumeReconnectAsDelayed();
 
     if (timeForDelayedConnectingState != null) {
       final currentTime = DateTime.now().millisecondsSinceEpoch;
@@ -89,6 +99,7 @@ class DisconnectedState extends BaseConnectionState {
       return;
     }
 
-    await chat.connectionManager.doReconnect(reset: true);
+    await chat.connectionManager
+        .doReconnect(reset: true, isDelayedConnecting: resumeAsDelayed);
   }
 }

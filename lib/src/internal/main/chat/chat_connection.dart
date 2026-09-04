@@ -44,7 +44,7 @@ extension ChatConnection on Chat {
       );
     }
 
-    return await connectionManager.reconnect(reset: reset);
+    return await connectionManager.reconnect(reset: reset, byUser: true);
   }
 
   int? getLastConnectedAt() {

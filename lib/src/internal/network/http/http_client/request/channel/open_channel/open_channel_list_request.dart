@@ -19,6 +19,8 @@ class OpenChannelListRequest extends ApiRequest {
     String? urlKeyword,
     String? customType,
     List<ChannelListQueryIncludeOption>? options,
+    // includeFrozen is sent explicitly below (see CLNP-8901).
+    required bool includeFrozen,
     String? token,
   }) : super(chat: chat) {
     url = 'open_channels';
@@ -31,6 +33,12 @@ class OpenChannelListRequest extends ApiRequest {
     };
 
     queryParams.addAll(options?.toJson() ?? {});
+
+    // Open channels only expose includeFrozen; send it explicitly (including
+    // `false`). Intentionally do NOT emit show_empty/show_member/etc. here —
+    // open-channel list must stay a minimal param set, matching the other
+    // platform SDKs. (CLNP-8901)
+    queryParams['show_frozen'] = includeFrozen;
   }
 
   @override
