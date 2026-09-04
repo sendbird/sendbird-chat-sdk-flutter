@@ -16,7 +16,7 @@ abstract class BaseConnectionState {
     String? wsHost,
   });
   Future<void> disconnect({required bool logout});
-  Future<bool> reconnect({required bool reset});
+  Future<bool> reconnect({required bool reset, bool byUser = false});
 
   Future<void> enterBackground();
   Future<void> enterForeground();

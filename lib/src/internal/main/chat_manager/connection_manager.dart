@@ -30,6 +30,13 @@ class ConnectionManager {
   late BaseConnectionState _currentState;
   Timer? _reconnectIfNeededTimer;
 
+  // Test seams for the auto-reconnect background-defer race (CLNP-8835): when
+  // set, _reconnect signals reconnectSocketGateReachedForTest and awaits
+  // reconnectSocketGateForTest just before its background re-check, letting a
+  // test flip isBackground in between.
+  Completer<void>? reconnectSocketGateForTest;
+  Completer<void>? reconnectSocketGateReachedForTest;
+
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
       chat: chat,
@@ -92,8 +99,8 @@ class ConnectionManager {
     await _currentState.disconnect(logout: logout);
   }
 
-  Future<bool> reconnect({required bool reset}) async {
-    return await _currentState.reconnect(reset: reset);
+  Future<bool> reconnect({required bool reset, bool byUser = false}) async {
+    return await _currentState.reconnect(reset: reset, byUser: byUser);
   }
 
   Future<void> enterBackground() async {
@@ -331,6 +338,12 @@ class ConnectionManager {
     final disconnectedUserId = chat.chatContext.currentUserId ?? '';
 
     if (clear || logout) {
+      // The connected span ends here without a disconnect stat (logout, or
+      // connecting a different user via doDisconnect(clear: true)); close it so a
+      // stale span can't be consumed by the next connection's socket close.
+      // (CLNP-8835)
+      chat.statManager.closeWsSpan();
+
       chat.messageQueueMap.forEach((key, q) => q.cleanUp());
       chat.messageQueueMap.clear();
       // chat.uploads.forEach((key, value) => _api.cancelUploadingFile(key));
@@ -391,6 +404,7 @@ class ConnectionManager {
   Future<bool> doReconnect({
     bool reset = false,
     bool isDelayedConnecting = false,
+    bool byUser = false,
   }) async {
     sbLog.i(StackTrace.current,
         'reset: $reset, isDelayedConnecting: $isDelayedConnecting');
@@ -453,14 +467,14 @@ class ConnectionManager {
             );
           }
         } else {
-          await _reconnect();
+          await _reconnect(byUser: byUser);
         }
       },
     );
     return true;
   }
 
-  Future<void> _reconnect() async {
+  Future<void> _reconnect({bool byUser = false}) async {
     // ===== Reconnect =====
     final sessionKey = await chat.sessionManager.getSessionKey();
     final params = {
@@ -477,6 +491,24 @@ class ConnectionManager {
 
     final url =
         '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
+
+    // Test seam: lets the auto-reconnect-defer test flip isBackground right
+    // before the background re-check below. (CLNP-8835)
+    if (reconnectSocketGateForTest != null) {
+      reconnectSocketGateReachedForTest?.complete();
+      await reconnectSocketGateForTest!.future;
+    }
+
+    // Auto reconnect only: if the app was backgrounded/hidden while we awaited the
+    // session key/params, don't open a socket into a suspended/throttled app (the
+    // ping_pong churn this ticket removes). Stay paused in ReconnectingState; the
+    // resume path (enterForeground -> doReconnect) continues this attempt.
+    // Explicit reconnect() (byUser) always proceeds. (CLNP-8835)
+    if (!byUser && chat.isBackground) {
+      sbLog.i(StackTrace.current,
+          'auto reconnect reached socket-open while backgrounded; defer to foreground');
+      return;
+    }
 
     runZonedGuarded(() {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
@@ -529,19 +561,22 @@ class ConnectionManager {
     // Nothing to do here.
   }
 
-  void _onWebSocketClosed() async {
+  void _onWebSocketClosed({int? unexpectedCloseCode}) async {
     chat.commandManager.clearCompleterMap();
     // The dedup cache is per-connection session state; drop it the moment the
     // socket closes — before the 1s reconnect-if-needed delay — so a request
     // issued during that gap can't reuse a previous session's result.
     chat.apiClient.clearRequestDedup();
 
-    final closeCode = webSocketClient.getCloseCode();
-    if (closeCode != null) {
+    // Only a server/transport-initiated close carries a meaningful code: a local
+    // close() always passes 1000 and already records its own semantic cause
+    // (background/network/explicit/...). Record it span-guarded so it's dropped
+    // if a semantic cause already closed this connection span. (CLNP-8835)
+    if (unexpectedCloseCode != null) {
       chat.statManager.appendWsDisconnectStat(
         success: true,
         errorCode: SendbirdError.webSocketConnectionClosed,
-        errorDescription: "cause=$closeCode",
+        errorDescription: "cause=$unexpectedCloseCode",
       );
     }
 
@@ -599,6 +634,18 @@ class ConnectionManager {
   Future<void> _reconnectIfNeeded() async {
     sbLog.d(StackTrace.current);
     if (chat.chatContext.currentUser != null) {
+      // Don't reconnect while the app is backgrounded/hidden: reconnecting into a
+      // suspended/throttled app just churns (the socket dies again -> ping_pong ->
+      // retry). Disconnect and let the foreground/resume path reconnect
+      // (DisconnectedState.enterForeground -> doReconnect). Matches chat-js's
+      // "defer reconnect while hidden". (CLNP-8835)
+      if (chat.isBackground) {
+        sbLog.i(StackTrace.current,
+            'ws closed while backgrounded; defer reconnect until foreground');
+        await disconnect(logout: false);
+        return;
+      }
+
       if (isReconnecting()) {
         await Future.delayed(const Duration(
             milliseconds: 1)); // [Timing issue] Because of endWsConnectStat()

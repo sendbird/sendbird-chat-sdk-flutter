@@ -32,10 +32,13 @@ extension ChannelTypeUrlString on ChannelType {
 
 extension ChannelListQueryIncludeOptionListToJson
     on List<ChannelListQueryIncludeOption> {
+  // show_empty / show_frozen are intentionally NOT handled here: they must be
+  // sent explicitly (including `false`), but this presence-based serialization
+  // can only ever emit `true`. Each list request sets them directly from the
+  // query's boolean instead (group/public: both; open: show_frozen only; feed:
+  // show_empty only) — do not re-add them here. (CLNP-8901)
   Map<String, bool> toJson() {
-    final hasEmpty = contains(ChannelListQueryIncludeOption.includeEmpty);
     final hasMember = contains(ChannelListQueryIncludeOption.includeMember);
-    final hasFrozen = contains(ChannelListQueryIncludeOption.includeFrozen);
     final hasMetaData = contains(ChannelListQueryIncludeOption.includeMetadata);
     final hasReadReceipt =
         contains(ChannelListQueryIncludeOption.includeReadReceipt);
@@ -45,9 +48,7 @@ extension ChannelListQueryIncludeOptionListToJson
         contains(ChannelListQueryIncludeOption.includeChatNotification);
 
     return {
-      if (hasEmpty) 'show_empty': true,
       if (hasMember) 'show_member': true,
-      if (hasFrozen) 'show_frozen': true,
       if (hasMetaData) 'show_metadata': true,
       if (hasReadReceipt) 'show_read_receipt': true,
       if (hasDeliveryReceipt) 'show_delivery_receipt': true,
@@ -57,9 +58,7 @@ extension ChannelListQueryIncludeOptionListToJson
 }
 
 enum ChannelListQueryIncludeOption {
-  includeEmpty,
   includeMember,
-  includeFrozen,
   includeMetadata,
   includeReadReceipt,
   includeDeliveryReceipt,

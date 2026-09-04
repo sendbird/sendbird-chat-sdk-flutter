@@ -16,6 +16,8 @@ class FeedChannelListRequest extends ApiRequest {
     Chat chat, {
     required int limit,
     List<ChannelListQueryIncludeOption> options = const [],
+    // includeEmpty is sent explicitly below (see CLNP-8901).
+    required bool includeEmpty,
     String? token,
   }) : super(chat: chat) {
     url = 'users/${getUrlEncodedUserId(chat, userId)}/my_group_channels';
@@ -28,6 +30,11 @@ class FeedChannelListRequest extends ApiRequest {
     queryParams.addAll(options.toJson());
     queryParams['is_feed_channel'] = true;
     queryParams['order'] = 'latest_last_message';
+
+    // Always send show_empty explicitly (including `false`); the include-option
+    // list can only emit `true`. Non-null, so the removeWhere below keeps it.
+    // Matches the Android/iOS/JS feed queries. (CLNP-8901)
+    queryParams['show_empty'] = includeEmpty;
 
     queryParams.removeWhere((key, value) => value == null);
   }

@@ -108,8 +108,9 @@ class PublicGroupChannelListQuery extends BaseQuery {
     isLoading = true;
 
     final options = <ChannelListQueryIncludeOption>[
-      if (includeFrozen) ChannelListQueryIncludeOption.includeFrozen,
-      if (includeEmpty) ChannelListQueryIncludeOption.includeEmpty,
+      // includeFrozen / includeEmpty are passed to the request as booleans so
+      // `false` is sent explicitly (show_frozen=false / show_empty=false). The
+      // include-option list can only ever represent `true`. (CLNP-8901)
       if (includeMetaData) ChannelListQueryIncludeOption.includeMetadata,
       ChannelListQueryIncludeOption.includeMember,
       ChannelListQueryIncludeOption.includeReadReceipt,
@@ -140,6 +141,8 @@ class PublicGroupChannelListQuery extends BaseQuery {
           token: token,
           channelUrls: channelUrlsFilter,
           options: options,
+          includeEmpty: includeEmpty,
+          includeFrozen: includeFrozen,
           filter: filter,
         ),
       );

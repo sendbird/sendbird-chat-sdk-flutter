@@ -514,6 +514,10 @@ class CommandManager {
         success: true,
         errorCode: SendbirdError.sessionKeyExpired,
         errorDescription: "cause=session_expired",
+        // A session refresh is not a terminal disconnect: record it without
+        // consuming the connection span (native onSessionRefreshed appends
+        // directly, bypassing the Connected guard). (CLNP-8835)
+        spanGuarded: false,
       );
 
       await _chat.sessionManager.updateSessionKey();

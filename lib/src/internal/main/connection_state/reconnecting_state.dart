@@ -42,9 +42,10 @@ class ReconnectingState extends BaseConnectionState {
   }
 
   @override
-  Future<bool> reconnect({bool reset = false}) async {
+  Future<bool> reconnect({bool reset = false, bool byUser = false}) async {
     sbLog.i(StackTrace.current);
-    return await chat.connectionManager.doReconnect(reset: reset);
+    return await chat.connectionManager
+        .doReconnect(reset: reset, byUser: byUser);
   }
 
   @override

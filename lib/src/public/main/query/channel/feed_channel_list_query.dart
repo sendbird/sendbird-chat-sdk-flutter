@@ -43,7 +43,9 @@ class FeedChannelListQuery extends BaseQuery {
     isLoading = true;
 
     final options = [
-      if (includeEmpty) ChannelListQueryIncludeOption.includeEmpty,
+      // includeEmpty is passed to the request as a boolean so `false` is sent
+      // explicitly as show_empty=false. The include-option list can only ever
+      // represent `true`. (CLNP-8901)
       ChannelListQueryIncludeOption.includeMember,
       ChannelListQueryIncludeOption.includeReadReceipt,
       ChannelListQueryIncludeOption.includeDeliveryReceipt,
@@ -57,6 +59,7 @@ class FeedChannelListQuery extends BaseQuery {
           chat,
           limit: limit,
           options: options,
+          includeEmpty: includeEmpty,
           token: token,
         ),
       );
