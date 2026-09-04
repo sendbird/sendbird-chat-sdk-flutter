@@ -664,7 +664,17 @@ class ConnectionManager {
         if (isConnected()) {
           await doDisconnect(clear: false, fromEnterBackground: true);
         } else {
+          // Non-connected states also reach here via _onWebSocketError. Those
+          // whose enterForeground() is a no-op (e.g. ConnectingState) have the
+          // same race — a resume during this async teardown is lost, leaving us
+          // Disconnected — so replay it after the teardown. DelayedConnectingState's
+          // non-logout disconnect is a no-op that keeps us non-Disconnected, so
+          // its backoff timer is untouched (isDisconnected() stays false).
+          // (CLNP-8835)
           await disconnect(logout: false);
+          if (!chat.isBackground && isDisconnected()) {
+            await enterForeground();
+          }
         }
         return;
       }
