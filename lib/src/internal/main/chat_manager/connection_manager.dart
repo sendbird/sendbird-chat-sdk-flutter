@@ -30,6 +30,17 @@ class ConnectionManager {
   late BaseConnectionState _currentState;
   Timer? _reconnectIfNeededTimer;
 
+  // Monotonic id claimed when a connect/reconnect attempt is accepted:
+  // synchronously in doReconnect (and passed into its Timer's doConnect), or by a
+  // direct doConnect; and bumped by doDisconnect so any teardown invalidates an
+  // in-progress attempt. A delayed doConnect that paused in its setup await
+  // compares it after the await: if a newer attempt has since been accepted (or a
+  // teardown ran), it aborts without opening a socket or touching the shared
+  // loginCompleter — the newer attempt owns it now (an explicit reconnect via
+  // _reconnect reuses the SAME completer rather than replacing it), and completing
+  // it would crash that attempt's LOGI handler. (CLNP-8835)
+  int _connectGeneration = 0;
+
   // Test seams for the auto-reconnect background-defer race (CLNP-8835): when
   // set, _reconnect signals reconnectSocketGateReachedForTest and awaits
   // reconnectSocketGateForTest just before its background re-check, letting a
@@ -42,6 +53,34 @@ class ConnectionManager {
   // isBackground to simulate a resume that lands mid-teardown. (CLNP-8835)
   Completer<void>? disconnectResumeGateForTest;
   Completer<void>? disconnectResumeGateReachedForTest;
+  // Test seam for the delayed-connect setup race: when set, doConnect signals
+  // delayedConnectGateReachedForTest and awaits delayedConnectGateForTest just
+  // before its pre-socket background re-check, letting a test swap the shared
+  // loginCompleter (simulate a superseding connect) and flip isBackground in the
+  // window that _getWebSocketParams() would occupy. (CLNP-8835)
+  Completer<void>? delayedConnectGateForTest;
+  Completer<void>? delayedConnectGateReachedForTest;
+
+  // Delayed-ness of the CURRENT reconnect attempt, so the foreground resume path
+  // can re-issue a deferred soft-rate-limit retry as delayed (access-token)
+  // rather than a plain session-key reconnect that drops its is_soft_rate_limited
+  // stat — doReconnect only re-infers isDelayedConnecting when there is no
+  // session, so an existing connection couldn't recover it otherwise.
+  // doReconnect (re)sets this on every attempt, so a superseding reconnect —
+  // explicit byUser or a fresh auto attempt — can't inherit a stale value; a
+  // teardown clears it. Consumed by ReconnectingState.enterForeground. (CLNP-8835)
+  bool _resumeReconnectAsDelayed = false;
+
+  bool consumeResumeReconnectAsDelayed() {
+    final value = _resumeReconnectAsDelayed;
+    _resumeReconnectAsDelayed = false;
+    return value;
+  }
+
+  // Test-only: records whether the last auto-reconnect that actually opened a
+  // socket took the delayed (soft-rate-limit) path. (CLNP-8835)
+  @visibleForTesting
+  bool? lastAutoConnectDelayedForTest;
 
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
@@ -149,6 +188,8 @@ class ConnectionManager {
     String? apiHost,
     String? wsHost,
     bool isDelayedConnecting = false,
+    bool byUser = false,
+    int? generation,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
 
@@ -164,6 +205,17 @@ class ConnectionManager {
       apiHost: apiHost,
       wsHost: wsHost,
     );
+    // This attempt's generation: for a reconnect it was claimed synchronously by
+    // doReconnect (passed in) so a paused doConnect is marked stale the moment a
+    // newer reconnect is accepted — not only once its Timer runs; a direct connect
+    // claims its own. The stale/defer checks after the setup await use it. (CLNP-8835)
+    final myGeneration = generation ?? ++_connectGeneration;
+    // Register an error handler on THIS attempt's completer NOW, before the first
+    // await below. A concurrent teardown (doDisconnect) can completeError it while
+    // we're still paused in setup, and the stale/defer checks below abort by
+    // throwing rather than awaiting it — so without this the teardown's error would
+    // surface as an uncaught async error. (CLNP-8835)
+    chat.chatContext.loginCompleter?.future.ignore();
 
     // ===== Connect =====
     final params = {
@@ -180,6 +232,51 @@ class ConnectionManager {
 
     final url =
         '${chat.chatContext.wsHost}/?${Uri(queryParameters: params).query}';
+
+    // Test seam: pause here (the window _getWebSocketParams() would occupy) so a
+    // test can supersede the shared completer / flip isBackground. (CLNP-8835)
+    if (isDelayedConnecting && delayedConnectGateForTest != null) {
+      delayedConnectGateReachedForTest?.complete();
+      await delayedConnectGateForTest!.future;
+    }
+
+    // Superseded during setup? A newer connect/reconnect (its generation already
+    // bumped synchronously when it was accepted), or a teardown (doDisconnect
+    // bumps it too), owns things now — abort WITHOUT opening a socket or touching
+    // the completer. Applies to EVERY attempt (delayed or plain), so a connect
+    // that raced a disconnect/logout can't open a socket with torn-down
+    // credentials, and a delayed one won't crash a newer attempt's LOGI handler by
+    // completing the SAME completer it reuses. (CLNP-8835)
+    if (myGeneration != _connectGeneration) {
+      sbLog.i(StackTrace.current, 'connect superseded during setup; abort');
+      // Never touch the completer — a newer attempt owns it now, and any teardown
+      // error on ours is already handled by the ignore() above.
+      throw ConnectionCanceledException();
+    }
+
+    // Still the current attempt: if the app backgrounded while _getWebSocketParams()
+    // awaited above (a window the timer callback's pre-doConnect check can't see),
+    // defer instead of opening a socket into a hidden/suspended tab (mirror
+    // _reconnect). We still own the completer, so cancel it and stay paused in
+    // ReconnectingState for the resume path. Explicit/byUser connects proceed.
+    // (CLNP-8835)
+    if (isDelayedConnecting && !byUser && chat.isBackground) {
+      sbLog.i(StackTrace.current,
+          'delayed connect backgrounded during setup; defer to foreground');
+      // We passed the stale check, so we still own the completer. SETTLE it (with
+      // ConnectionCanceled) before throwing: a same-user SendbirdChat.connect()
+      // issued in ReconnectingState adopts this completer's future
+      // (ReconnectingState.connect returns it), and the resume path replaces the
+      // completer via setLoginInfo — so if we left it incomplete, that public call
+      // would hang forever. The ignore() above covers the no-adopter case, and the
+      // resume re-issues via a fresh doConnect. (CLNP-8835)
+      final completer = chat.chatContext.loginCompleter;
+      if (completer != null && !completer.isCompleted) {
+        completer.completeError(ConnectionCanceledException());
+      }
+      throw ConnectionCanceledException();
+    }
+    if (isDelayedConnecting) lastAutoConnectDelayedForTest = true;
 
     runZonedGuarded(() {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
@@ -317,6 +414,19 @@ class ConnectionManager {
       'clear: $clear, logout: $logout, userId: ${chat.chatContext.currentUserId}',
     );
 
+    // Any teardown supersedes a pending "resume as delayed" intent: the deferred
+    // delayed retry is being abandoned (logout, a further ws-close that lands in
+    // DisconnectedState, connecting a different user…). Clear the latch so it
+    // can't leak into a later, unrelated reconnect and mis-tag it soft-rate-
+    // limited. The delayed-defer's own preceding doDisconnect runs before it sets
+    // the flag, so this doesn't clobber that path. (CLNP-8835)
+    _resumeReconnectAsDelayed = false;
+    // Invalidate any in-progress connect attempt: bump the generation before the
+    // first await below, so a delayed doConnect paused in its setup await sees it's
+    // stale on resume and aborts — instead of opening a socket with torn-down
+    // credentials or dereferencing a cleared loginCompleter. (CLNP-8835)
+    ++_connectGeneration;
+
     if (chat.dbManager.isEnabled() == false) {
       if (chat.chatContext.loginCompleter != null &&
           !chat.chatContext.loginCompleter!.isCompleted) {
@@ -443,6 +553,20 @@ class ConnectionManager {
     }
 
     changeState(ReconnectingState(chat: chat));
+    // Record THIS attempt's delayed-ness up front (post-inference), so:
+    //  - a superseding reconnect (explicit byUser, or a fresh auto attempt)
+    //    overwrites any stale latch from an earlier attempt — the reconnectTimer
+    //    is a single field, so only this attempt's timer survives; and
+    //  - a resume that preempts the reconnect timer still consumes the right
+    //    value (it's set here, not later at the defer).
+    // Consumed by ReconnectingState.enterForeground on resume. (CLNP-8835)
+    _resumeReconnectAsDelayed = isDelayedConnecting;
+    // Claim the attempt generation now — synchronously, as this reconnect is
+    // accepted — not later when the Timer runs. That way a delayed doConnect
+    // paused in its setup await is marked stale the instant a newer reconnect is
+    // scheduled, closing the schedule-vs-fire window. Passed into the Timer's
+    // doConnect below. (CLNP-8835)
+    final myGeneration = ++_connectGeneration;
     chat.chatContext.reconnectTask?.increaseRetryCount(reset: reset); // Check
 
     sbLog.i(
@@ -468,25 +592,48 @@ class ConnectionManager {
 
         if (isDelayedConnecting) {
           if (chat.chatContext.currentUserId != null) {
-            await doConnect(
-              chat.chatContext.currentUserId!,
-              nickname: chat.chatContext.nickname,
-              accessToken: chat.chatContext.accessToken,
-              apiHost: chat.chatContext.apiHost,
-              wsHost: chat.chatContext.wsHost,
-              isDelayedConnecting: true,
-            );
+            // Fast path: skip the work if we're already backgrounded. doConnect
+            // re-checks again right before the socket open, since the app can also
+            // background during doConnect's _getWebSocketParams() await — which
+            // this check can't see. The resume path (enterForeground -> doReconnect)
+            // re-issues it as delayed via _resumeReconnectAsDelayed (set at the top
+            // of this doReconnect) rather than a plain reconnect. (CLNP-8835)
+            if (!byUser && chat.isBackground) {
+              sbLog.i(StackTrace.current,
+                  'delayed reconnect reached socket-open while backgrounded; defer to foreground');
+              return;
+            }
+            try {
+              await doConnect(
+                chat.chatContext.currentUserId!,
+                nickname: chat.chatContext.nickname,
+                accessToken: chat.chatContext.accessToken,
+                apiHost: chat.chatContext.apiHost,
+                wsHost: chat.chatContext.wsHost,
+                isDelayedConnecting: true,
+                byUser: byUser,
+                generation: myGeneration,
+              );
+            } on ConnectionCanceledException {
+              // doConnect backgrounded during setup and deferred; stay paused in
+              // ReconnectingState, the resume path re-issues it. (CLNP-8835)
+            }
           }
         } else {
-          await _reconnect(byUser: byUser);
+          await _reconnect(byUser: byUser, generation: myGeneration);
         }
       },
     );
     return true;
   }
 
-  Future<void> _reconnect({bool byUser = false}) async {
+  Future<void> _reconnect(
+      {bool byUser = false, required int generation}) async {
     // ===== Reconnect =====
+    // generation was claimed synchronously in doReconnect (before this Timer ran)
+    // and is re-checked right before the socket open below: a teardown or a newer
+    // attempt bumps it while we await the session key/params, and we must not then
+    // open a socket with torn-down credentials/host. (CLNP-8835)
     final sessionKey = await chat.sessionManager.getSessionKey();
     final params = {
       if (sessionKey == null) 'user_id': chat.chatContext.currentUserId,
@@ -513,14 +660,25 @@ class ConnectionManager {
     // Auto reconnect only: if the app was backgrounded/hidden while we awaited the
     // session key/params, don't open a socket into a suspended/throttled app (the
     // ping_pong churn this ticket removes). Stay paused in ReconnectingState; the
-    // resume path (enterForeground -> doReconnect) continues this attempt.
-    // Explicit reconnect() (byUser) always proceeds. (CLNP-8835)
+    // resume path (enterForeground -> doReconnect) continues this attempt (as a
+    // plain reconnect, since _resumeReconnectAsDelayed was set false at the top of
+    // this doReconnect). Explicit reconnect() (byUser) always proceeds. (CLNP-8835)
     if (!byUser && chat.isBackground) {
       sbLog.i(StackTrace.current,
           'auto reconnect reached socket-open while backgrounded; defer to foreground');
       return;
     }
 
+    // Superseded during setup? A newer connect/reconnect was accepted, or a
+    // teardown ran (doDisconnect bumps the generation) — don't open a socket with
+    // torn-down credentials/host. Applies even to byUser: after a logout, an
+    // in-flight reconnect must not reconnect. (CLNP-8835)
+    if (generation != _connectGeneration) {
+      sbLog.i(StackTrace.current, 'reconnect superseded during setup; abort');
+      return;
+    }
+
+    lastAutoConnectDelayedForTest = false;
     runZonedGuarded(() {
       sbLog.d(StackTrace.current, 'webSocketClient?.connect()');
 

@@ -58,6 +58,12 @@ class ReconnectingState extends BaseConnectionState {
   @override
   Future<void> enterForeground() async {
     sbLog.i(StackTrace.current);
-    await chat.connectionManager.doReconnect(reset: true);
+    // If the deferred attempt was a delayed (soft-rate-limit) retry, resume it as
+    // one — doReconnect can't re-infer that here because the session still
+    // exists. (CLNP-8835)
+    final isDelayedConnecting =
+        chat.connectionManager.consumeResumeReconnectAsDelayed();
+    await chat.connectionManager
+        .doReconnect(reset: true, isDelayedConnecting: isDelayedConnecting);
   }
 }
