@@ -41,6 +41,12 @@ import 'package:sendbird_chat_sdk/src/public/main/query/channel/group_channel_li
 
 import 'schema/message/c_multiple_files_message.dart';
 
+// Thrown inside DB.clear()'s writeTxn to abort (roll back) a clear whose attempt
+// was superseded while _isar.clear() ran; caught and swallowed by clear(). (CLNP-8835)
+class _ClearSupersededException implements Exception {
+  const _ClearSupersededException();
+}
+
 class DB {
   final Chat _chat;
   final Isar _isar;
@@ -58,10 +64,29 @@ class DB {
     });
   }
 
-  Future<void> clear() async {
-    await _isar.writeTxn(() async {
-      await _isar.clear();
-    });
+  // [isValid] gates the destructive clear against a supersede. writeTxn() awaits the
+  // write lock and _isar.clear() then deletes collections asynchronously, so the
+  // generation can change at two points, and both are re-checked: INSIDE the txn
+  // before the delete (skip it) and again AFTER the delete before commit (throw to
+  // ROLL the transaction back). A stale attempt therefore can't wipe the
+  // replacement session's cached data. One tiny residual remains — between the
+  // post-delete check and the commit itself — that would need a shared
+  // generation/clear lock to close entirely. (CLNP-8835)
+  Future<void> clear({bool Function()? isValid}) async {
+    try {
+      await _isar.writeTxn(() async {
+        if (isValid != null && !isValid()) {
+          return;
+        }
+        await _isar.clear();
+        if (isValid != null && !isValid()) {
+          throw const _ClearSupersededException();
+        }
+      });
+    } on _ClearSupersededException {
+      // Superseded while _isar.clear() ran: the transaction rolled back, so the
+      // replacement session's cache is preserved.
+    }
   }
 
   // Login

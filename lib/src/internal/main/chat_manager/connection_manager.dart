@@ -82,6 +82,19 @@ class ConnectionManager {
   @visibleForTesting
   bool? lastAutoConnectDelayedForTest;
 
+  // Test-only: the current in-flight-attempt generation, so a test can supply a
+  // stale value to doConnect and assert it aborts before mutating login state.
+  // (CLNP-8835)
+  @visibleForTesting
+  int get connectGenerationForTest => _connectGeneration;
+
+  // Test-only: bump the generation to model a concurrent supersede — exactly what
+  // doDisconnect/doReconnect/doConnect do synchronously. (CLNP-8835)
+  @visibleForTesting
+  void bumpConnectGenerationForTest() {
+    _connectGeneration++;
+  }
+
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
       chat: chat,
@@ -175,6 +188,17 @@ class ConnectionManager {
       ..apiHeaders = getDefaultApiHeader();
 
     if (fromWebSocket) {
+      // A new attempt is taking over the login completer; settle the one it
+      // replaces so anything that adopted its future — a same-user connect() gets
+      // it back from ReconnectingState.connect — settles instead of hanging on the
+      // now-orphaned completer. (A plain reconnect reuses the completer via
+      // _reconnect without setLoginInfo and completes it on LOGI, so it is not
+      // affected here.) The prior attempt's future.ignore() covers the no-adopter
+      // case. (CLNP-8835)
+      final previous = chat.chatContext.loginCompleter;
+      if (previous != null && !previous.isCompleted) {
+        previous.completeError(ConnectionCanceledException());
+      }
       chat.chatContext
         ..wsHost = wsHost ?? _getDefaultWsHost()
         ..loginCompleter = Completer();
@@ -192,6 +216,22 @@ class ConnectionManager {
     int? generation,
   }) async {
     sbLog.i(StackTrace.current, 'userId: $userId');
+
+    // A timer-driven reconnect supplies its generation (claimed synchronously by
+    // doReconnect). Reject a stale attempt HERE — before changeState()/setLoginInfo()
+    // mutate shared login state below. setLoginInfo() overwrites wsHost and
+    // completeError()s + replaces the login completer, so a stale delayed-reconnect
+    // timer that resumed (e.g. across its callback's `await onReconnecting()`) after
+    // a newer connect/reconnect installed fresh credentials would otherwise clobber
+    // the newer host and fail the newer attempt's (possibly adopted) login future.
+    // A direct connect passes no generation and claims its own below, so it is never
+    // stale here. The post-await check further down still guards a supersede during
+    // this attempt's own _getWebSocketParams(). (CLNP-8835)
+    if (generation != null && generation != _connectGeneration) {
+      sbLog.i(StackTrace.current,
+          'connect superseded before setup; abort without touching login state');
+      throw ConnectionCanceledException();
+    }
 
     if (!isDelayedConnecting) {
       chat.connectionManager.changeState(ConnectingState(chat: chat));
@@ -308,10 +348,27 @@ class ConnectionManager {
 
             //+ [DBManager]
             if (chat.dbManager.isEnabled()) {
-              final user =
-                  await chat.dbManager.getLoginInfoByException(userId, e);
+              // Gate the DB lookup's ChatContext writes on THIS attempt still being
+              // current (a clear/logout/newer attempt bumps the generation during the
+              // lookup's awaits), so it can't resurrect torn-down user state.
+              // (CLNP-8835)
+              final user = await chat.dbManager.getLoginInfoByException(
+                userId,
+                e,
+                isValid: () => myGeneration == _connectGeneration,
+              );
+              // Re-check after the await: a teardown/newer attempt may have run. If
+              // stale, abort — don't complete a completer a newer attempt now owns
+              // (double-complete / wrong user), and don't reconnect after a logout.
+              // (CLNP-8835)
+              if (myGeneration != _connectGeneration) {
+                return;
+              }
               if (user != null) {
-                chat.chatContext.loginCompleter?.complete(user);
+                final completer = chat.chatContext.loginCompleter;
+                if (completer != null && !completer.isCompleted) {
+                  completer.complete(user);
+                }
                 chat.chatContext.loginCompleter = null;
 
                 if (chat.chatContext.isChatConnected) {
@@ -387,6 +444,15 @@ class ConnectionManager {
     }
 
     // After 'LOGI' received
+    // We're connected now, so this attempt is no longer a deferred delayed
+    // reconnect awaiting resume: clear the resume-as-delayed latch. doReconnect
+    // sets it per attempt but nothing clears it on success, and a background
+    // teardown now PRESERVES it (fromEnterBackground) — so without clearing it
+    // here a delayed reconnect that SUCCEEDED would leave it set, and the next
+    // ordinary background/resume would wrongly resume via the delayed (soft-rate-
+    // limit / access-token) path instead of a plain session-key reconnect.
+    // (CLNP-8835)
+    _resumeReconnectAsDelayed = false;
     chat.statManager.endWsConnectStat(
       hostUrl: url,
       success: true,
@@ -414,20 +480,41 @@ class ConnectionManager {
       'clear: $clear, logout: $logout, userId: ${chat.chatContext.currentUserId}',
     );
 
-    // Any teardown supersedes a pending "resume as delayed" intent: the deferred
-    // delayed retry is being abandoned (logout, a further ws-close that lands in
-    // DisconnectedState, connecting a different user…). Clear the latch so it
-    // can't leak into a later, unrelated reconnect and mis-tag it soft-rate-
-    // limited. The delayed-defer's own preceding doDisconnect runs before it sets
-    // the flag, so this doesn't clobber that path. (CLNP-8835)
-    _resumeReconnectAsDelayed = false;
+    // Clear a pending "resume as delayed" intent only on a FOREGROUND teardown:
+    // there the deferred delayed retry is being abandoned or replaced by a fresh
+    // reconnect (logout, a foreground ws-close that reconnects immediately,
+    // connecting a different user…), so the latch must not leak into that later
+    // reconnect and mis-tag it soft-rate-limited. A BACKGROUND-driven teardown is
+    // the opposite — it DEFERS the active reconnect until foreground, so it must
+    // PRESERVE the latch (DisconnectedState.enterForeground consumes it on
+    // resume). Key off chat.isBackground, not only fromEnterBackground: the
+    // explicit enterBackground path sets fromEnterBackground, but the hidden-tab
+    // ws-error defer reaches here via the state's own disconnect()
+    // (_reconnectIfNeeded -> ReconnectingState.disconnect) WITHOUT it — both are
+    // background defers and both must keep the latch. A stale latch left by a
+    // background abandon (e.g. logout) is harmless: no reconnect runs without a
+    // user, and the next successful connect clears it on LOGI. The delayed-defer's
+    // own preceding doDisconnect runs before it sets the flag, so this doesn't
+    // clobber that path. (CLNP-8835)
+    if (!fromEnterBackground && !chat.isBackground) {
+      _resumeReconnectAsDelayed = false;
+    }
     // Invalidate any in-progress connect attempt: bump the generation before the
     // first await below, so a delayed doConnect paused in its setup await sees it's
     // stale on resume and aborts — instead of opening a socket with torn-down
     // credentials or dereferencing a cleared loginCompleter. (CLNP-8835)
     ++_connectGeneration;
 
-    if (chat.dbManager.isEnabled() == false) {
+    // Settle the in-flight login completer so an adopter — a same-user connect()
+    // that got this future back from ReconnectingState.connect — can't hang. When
+    // the local DB is enabled we normally leave completion to doConnect's
+    // offline-login path (it may complete the completer with a cached user on a
+    // connection failure), so we skip it here. But an abandoning teardown (clear /
+    // logout) has no such follow-up: logout runs no replacement attempt, and the
+    // stale doConnect deliberately won't touch the completer, so cleanUp() would
+    // just drop the reference and strand the adopted future. Settle it here for
+    // abandons regardless of DB. (CLNP-8835)
+    if (chat.dbManager.isEnabled() == false || clear || logout) {
       if (chat.chatContext.loginCompleter != null &&
           !chat.chatContext.loginCompleter!.isCompleted) {
         chat.chatContext.loginCompleter
