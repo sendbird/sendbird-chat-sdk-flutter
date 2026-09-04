@@ -36,6 +36,12 @@ class ConnectionManager {
   // test flip isBackground in between.
   Completer<void>? reconnectSocketGateForTest;
   Completer<void>? reconnectSocketGateReachedForTest;
+  // Test seam for the resume-during-teardown race: when set, doDisconnect signals
+  // disconnectResumeGateReachedForTest and awaits disconnectResumeGateForTest just
+  // before its fromEnterBackground foreground re-check, letting a test flip
+  // isBackground to simulate a resume that lands mid-teardown. (CLNP-8835)
+  Completer<void>? disconnectResumeGateForTest;
+  Completer<void>? disconnectResumeGateReachedForTest;
 
   ConnectionManager({required this.chat}) {
     webSocketClient = WebSocketClient(
@@ -374,6 +380,11 @@ class ConnectionManager {
       await chat.eventDispatcher.onDisconnected();
     }
 
+    if (disconnectResumeGateForTest != null) {
+      disconnectResumeGateReachedForTest?.complete();
+      await disconnectResumeGateForTest!.future;
+    }
+
     if (fromEnterBackground &&
         !chat.isBackground &&
         !isReconnecting() &&
@@ -642,7 +653,19 @@ class ConnectionManager {
       if (chat.isBackground) {
         sbLog.i(StackTrace.current,
             'ws closed while backgrounded; defer reconnect until foreground');
-        await disconnect(logout: false);
+        // Only ConnectedState needs the fromEnterBackground re-check: its
+        // enterForeground() is a no-op, so a resume during the async teardown
+        // would otherwise be lost (the disconnect commits DisconnectedState after
+        // the resume already passed). Mirrors ConnectedState.enterBackground().
+        // Other states can reach here via _onWebSocketError, where their own
+        // disconnect() is load-bearing — e.g. DelayedConnectingState's non-logout
+        // disconnect is a no-op that preserves the server backoff timer; bypassing
+        // it would strand that timer and risk a duplicate reconnect. (CLNP-8835)
+        if (isConnected()) {
+          await doDisconnect(clear: false, fromEnterBackground: true);
+        } else {
+          await disconnect(logout: false);
+        }
         return;
       }
 

@@ -357,6 +357,13 @@ class WebSocketClient {
     _onWebSocketClosed(unexpectedCloseCode: closeCode);
   }
 
+  // Test seam: drive the real error path (_onError -> _cleanUp + _onWebSocketError
+  // -> _reconnectIfNeeded) without a live socket failure, so the state-aware
+  // background defer can be verified from non-Connected states (e.g.
+  // DelayedConnectingState). Returns the future so a test can await completion
+  // instead of racing a fixed delay. (CLNP-8835)
+  Future<void> simulateErrorForTest(Object error) => _onError(error);
+
   void setTestData(dynamic data) {
     testData = data;
   }
