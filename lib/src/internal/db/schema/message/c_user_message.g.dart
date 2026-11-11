@@ -280,7 +280,7 @@ final CUserMessageSchema = CollectionSchema(
   getId: _cUserMessageGetId,
   getLinks: _cUserMessageGetLinks,
   attach: _cUserMessageAttach,
-  version: '3.3.0',
+  version: '3.4.1',
 );
 
 int _cUserMessageEstimateSize(

@@ -286,7 +286,7 @@ final CMultipleFilesMessageSchema = CollectionSchema(
   getId: _cMultipleFilesMessageGetId,
   getLinks: _cMultipleFilesMessageGetLinks,
   attach: _cMultipleFilesMessageAttach,
-  version: '3.3.0',
+  version: '3.4.1',
 );
 
 int _cMultipleFilesMessageEstimateSize(

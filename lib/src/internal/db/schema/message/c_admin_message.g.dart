@@ -261,7 +261,7 @@ final CAdminMessageSchema = CollectionSchema(
   getId: _cAdminMessageGetId,
   getLinks: _cAdminMessageGetLinks,
   attach: _cAdminMessageAttach,
-  version: '3.3.0',
+  version: '3.4.1',
 );
 
 int _cAdminMessageEstimateSize(
