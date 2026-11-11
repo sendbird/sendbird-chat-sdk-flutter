@@ -1,3 +1,8 @@
+## v4.10.5 (Nov 11, 2026)
+
+### Improvements
+- `isar_community` package has been updated to v3.4.1 to support Swift Package Manager on iOS
+
 ## v4.10.4 (Sep 10, 2026)
 
 ### Improvements

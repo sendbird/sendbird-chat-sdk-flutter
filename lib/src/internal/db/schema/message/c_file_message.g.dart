@@ -302,7 +302,7 @@ final CFileMessageSchema = CollectionSchema(
   getId: _cFileMessageGetId,
   getLinks: _cFileMessageGetLinks,
   attach: _cFileMessageAttach,
-  version: '3.3.0',
+  version: '3.4.1',
 );
 
 int _cFileMessageEstimateSize(

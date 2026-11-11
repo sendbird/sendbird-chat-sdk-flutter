@@ -320,7 +320,7 @@ final CGroupChannelSchema = CollectionSchema(
   getId: _cGroupChannelGetId,
   getLinks: _cGroupChannelGetLinks,
   attach: _cGroupChannelAttach,
-  version: '3.3.0',
+  version: '3.4.1',
 );
 
 int _cGroupChannelEstimateSize(
